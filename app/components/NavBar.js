@@ -11,7 +11,7 @@ export default function Navbar() {
   return (
     <header className="flex justify-between items-center p-4 bg-white shadow-md">
       <Link href="/" className="flex items-center space-x-2">
-        <img src="/logo.png" alt="Logo" className="w-8 h-8" />
+        <img src="/logo.jpeg" alt="Logo" className="w-8 h-8" />
         <span className="font-bold text-lg text-black">
           Tech Connect Alberta
         </span>

@@ -1,29 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { List, Calendar } from "lucide-react";
 import Navbar from "../components/NavBar";
 import EventCard from "../components/event/eventCard";
 import TabToggle from "../components/event/TabToggle";
-import dummyEvents from "../data/events.json"; // ← you forgot to import this
+import { getAllEvents } from "@/lib/event_crud";
 
 export default function EventPage() {
+  const [events, setEvents] = useState([]);
   const [view, setView] = useState("list");
   const [tab, setTab] = useState("upcoming");
-  const [selectedEvent, setSelectedEvent] = useState(null);
+
+  useEffect(() => {
+    async function fetchEvents() {
+      const data = await getAllEvents();
+      console.log("Fetched events:", data); // 👈 Add this
+      setEvents(data);
+    }
+    fetchEvents();
+  }, []);
 
   const now = new Date();
-  const filteredEvents = dummyEvents.filter((event) => {
+  const filteredEvents = events.filter((event) => {
     const eventDate = new Date(event.date);
-    if (tab === "upcoming") return eventDate >= now;
-    if (tab === "past") return eventDate < now;
+    return tab === "upcoming" ? eventDate >= now : eventDate < now;
   });
 
   return (
     <main className="bg-gray-100 min-h-screen">
       <Navbar />
-
-      {/* Page Title & Toggle */}
       <section className="bg-white py-6 px-4 border-b">
         <h1 className="text-center text-xl font-semibold text-orange-500">
           Join our events and Connect with Tech Connect Alberta
@@ -55,26 +61,17 @@ export default function EventPage() {
         </div>
       </section>
 
-      {/* Main Content Area */}
+      {/* Main content */}
       {view === "list" && (
         <section className="flex px-8 py-4 gap-6">
-          {/* Left column: tab toggle */}
           <div className="w-1/4">
             <TabToggle current={tab} onChange={setTab} />
           </div>
-
-          {/* Right column: event list */}
           <div className="w-3/4">
             {filteredEvents.length > 0 ? (
               <div className="space-y-4">
                 {filteredEvents.map((event) => (
-                  <div
-                    key={event.id}
-                    onClick={() => setSelectedEvent(event)}
-                    className="cursor-pointer hover:opacity-90"
-                  >
-                    <EventCard {...event} />
-                  </div>
+                  <EventCard key={event.id} {...event} />
                 ))}
               </div>
             ) : (
