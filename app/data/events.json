@@ -1,0 +1,47 @@
+[
+  {
+    "id": "e001",
+    "tag": "Upcoming_event_1",
+    "date": "FRI, JUN 27, 2025, 6:00 PM MDT",
+    "title": "Ace the Interview: Confidence Meets Strategy",
+    "location": "Online Meeting",
+    "highlight": "Join Us for an Empowering Career Workshop: Ace the Interview - Confidence Meets Strategy!",
+    "description": "Tech Connect Alberta is excited to be part of this engaging career development session."
+  },
+  {
+    "id": "e002",
+    "tag": "Upcoming_event_2",
+    "date": "MON, JUL 1, 2025, 12:00 PM MDT",
+    "title": "Launch Your Startup: Funding & Pitching Essentials",
+    "location": "Calgary Tech Hub",
+    "highlight": "Get expert guidance on pitching, funding, and launching your own tech startup.",
+    "description": "This workshop will help you refine your pitch, understand funding stages, and build investor confidence."
+  },
+  {
+    "id": "e003",
+    "tag": "Upcoming_event_3",
+    "date": "WED, JUL 10, 2025, 3:00 PM MDT",
+    "title": "AI Tools for Career Advancement",
+    "location": "Online Webinar",
+    "highlight": "Explore modern AI tools that can help you level up your career.",
+    "description": "Discover how to use tools like ChatGPT, LinkedIn AI, and job matchers to boost your job hunt."
+  },
+  {
+    "id": "e004",
+    "tag": "Upcoming_event_4",
+    "date": "THU, AUG 15, 2025, 1:00 PM MDT",
+    "title": "Building Your Brand as a Developer",
+    "location": "Online Workshop",
+    "highlight": "Learn how to craft your personal brand and digital portfolio effectively.",
+    "description": "We'll explore LinkedIn optimization, GitHub portfolios, and storytelling strategies for tech professionals."
+  },
+  {
+    "id": "e005",
+    "tag": "Upcoming_event_5",
+    "date": "TUE, SEP 3, 2025, 5:00 PM MDT",
+    "title": "Tech Industry Mixer",
+    "location": "SAIT Downtown Campus",
+    "highlight": "Network with employers, alumni, and industry mentors.",
+    "description": "An in-person event to connect with key players in Calgary's tech scene — refreshments provided!"
+  }
+]

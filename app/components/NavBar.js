@@ -43,6 +43,19 @@ export default function Navbar() {
               Home
             </Link>
           </li>
+          <li>
+            <Link
+              href="/event"
+              className="block py-2 md:py-0 hover:text-orange-500"
+            >
+              Upcoming Event
+            </Link>
+          </li>
+          <li>
+            <Link href="#" className="block py-2 md:py-0 hover:text-orange-500">
+              My Calender
+            </Link>
+          </li>
           <li className="relative group">
             <button className="flex items-center gap-1 py-2 hover:text-orange-500">
               Services <ChevronDown className="w-4 h-4" />
@@ -61,6 +74,21 @@ export default function Navbar() {
                 Option 2
               </Link>
             </div>
+          </li>
+          <li>
+            <Link href="#" className="block py-2 md:py-0 hover:text-orange-500">
+              Joy Board
+            </Link>
+          </li>
+          <li>
+            <Link href="#" className="block py-2 md:py-0 hover:text-orange-500">
+              Profile
+            </Link>
+          </li>
+          <li>
+            <Link href="#" className="block py-2 md:py-0 hover:text-orange-500">
+              Log Out
+            </Link>
           </li>
         </ul>
       </nav>
