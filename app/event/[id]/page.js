@@ -18,7 +18,23 @@ export default async function EventDetailPage({ params }) {
     return notFound();
   }
 
-  const imageUrl = `https://mvxperspoentcqazciyx.supabase.co/storage/v1/object/public/eventbanner/${event.id}.jpg`;
+  function convertNewlinesAndLinks(text) {
+    const escaped = text
+      .replace(/&/g, "&amp;") // escape basic HTML
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+
+    const withLinks = escaped.replace(
+      /((https?:\/\/)[^\s<]+)/g,
+      (match) =>
+        `<a href="${match}" class="text-blue-600 underline" target="_blank" rel="noopener noreferrer">${match}</a>`
+    );
+
+    const withBreaks = withLinks.replace(/\n/g, "<br />");
+
+    return withBreaks;
+  }
+
   return (
     <main className="bg-gray-100 min-h-screen text-black">
       <Navbar />
@@ -33,17 +49,21 @@ export default async function EventDetailPage({ params }) {
       <div className="max-w-4xl mx-auto px-4 py-8 ">
         <div className="rounded-md mt-4 mb-6 flex justify-center">
           <SafeImage
-            src={`https://mvxperspoentcqazciyx.supabase.co/storage/v1/object/public/eventbanner/${id}.jpg`}
-            fallbackSrc="https://mvxperspoentcqazciyx.supabase.co/storage/v1/object/public/eventbanner/fallback.png"
+            srcBase={`https://mvxperspoentcqazciyx.supabase.co/storage/v1/object/public/eventbanner/${id}`}
+            fallbackSrc="https://via.placeholder.com/600x400?text=No+Image"
             alt={event.title}
             width={600}
             height={400}
             className="rounded-md border"
           />
         </div>
-
         <h1 className="text-2xl font-bold mb-4">{event.title}</h1>
-        <p className="mb-6 leading-relaxed">{event.description}</p>
+        <div
+          className="mb-6 leading-relaxed prose prose-sm prose-a:text-blue-600 prose-a:underline"
+          dangerouslySetInnerHTML={{
+            __html: convertNewlinesAndLinks(event.description),
+          }}
+        />
       </div>
 
       <div className="text-gray-700 mb-2">
