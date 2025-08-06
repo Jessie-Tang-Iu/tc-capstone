@@ -35,7 +35,7 @@ export default function EventCard({
       {/* Description */}
       <div className="pt-2 text-sm">
         <p className="font-semibold text-black">{highlight}</p>
-        <p>{description}</p>
+        <p className="line-clamp-1">{description}</p>{" "}
       </div>
     </div>
   );
