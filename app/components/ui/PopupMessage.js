@@ -9,7 +9,7 @@ export default function PopupMessage({
   description,
   onClose,
   onConfirm,
-  buttonText, // ✅ optional custom button label
+  buttonText, //  optional custom button label
 }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
