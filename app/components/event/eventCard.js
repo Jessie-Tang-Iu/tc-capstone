@@ -24,7 +24,9 @@ export default function EventCard({
     >
       {/* Date */}
       <div className="text-[13px] text-gray-700 uppercase tracking-wide font-medium">
-        {formatDateToFullDisplay(date)}
+        {date && !isNaN(Date.parse(date))
+          ? formatDateToFullDisplay(date)
+          : "Invalid date"}
       </div>
 
       {/* Title */}

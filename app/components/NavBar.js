@@ -52,7 +52,10 @@ export default function Navbar() {
             </Link>
           </li>
           <li>
-            <Link href="#" className="block py-2 md:py-0 hover:text-orange-500">
+            <Link
+              href="/myCalender"
+              className="block py-2 md:py-0 hover:text-orange-500"
+            >
               My Calender
             </Link>
           </li>
