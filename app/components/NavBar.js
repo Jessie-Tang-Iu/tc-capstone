@@ -39,7 +39,7 @@ export default function Navbar() {
       >
         <ul className="md:flex md:items-center md:space-x-6 text-black">
           <li>
-            <Link href="#" className="block py-2 md:py-0 hover:text-orange-500">
+            <Link href="/" className="block py-2 md:py-0 hover:text-orange-500">
               Home
             </Link>
           </li>

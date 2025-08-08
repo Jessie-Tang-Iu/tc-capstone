@@ -5,7 +5,7 @@ import { List, Calendar } from "lucide-react";
 import Navbar from "../components/NavBar";
 import EventCard from "../components/event/eventCard";
 import TabToggle from "../components/event/TabToggle";
-import { getAllEvents } from "@/lib/event_crud";
+import { getAllEvents } from "@/lib/workshop_crud";
 
 export default function EventPage() {
   const [events, setEvents] = useState([]);

@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import Button from "@/app/components/ui/Button";
 import Navbar from "@/app/components/NavBar";
-import { getEventById } from "@/lib/event_crud";
+import { getEventById } from "@/lib/workshop_crud";
 import SafeImage from "@/app/components/fallback";
+import EventDetailClient from "@/app/components/event/EventDetailClient";
 
 export default async function EventDetailPage({ params }) {
   const { id } = await params;
@@ -36,17 +36,15 @@ export default async function EventDetailPage({ params }) {
   }
 
   return (
-    <main className="bg-gray-100 min-h-screen text-black">
+    <main className="bg-gray-100 min-h-screen text-black flex flex-col">
       <Navbar />
-
       <Link
         href="/event"
         className="mt-6 ml-8 text-sm text-gray-600 hover:underline inline-block mb-4"
       >
         &lt; Back to All Events
       </Link>
-
-      <div className="max-w-4xl mx-auto px-4 py-8 ">
+      <div className="max-w-5xl mx-auto px-4 pt-8 pb-40 flex-grow">
         <div className="rounded-md mt-4 mb-6 flex justify-center">
           <SafeImage
             srcBase={`https://mvxperspoentcqazciyx.supabase.co/storage/v1/object/public/eventbanner/${id}`}
@@ -65,18 +63,7 @@ export default async function EventDetailPage({ params }) {
           }}
         />
       </div>
-
-      <div className="text-gray-700 mb-2">
-        <strong>Date:</strong> {event.date}
-      </div>
-
-      <div className="text-gray-700 mb-6">
-        <strong>Location:</strong> {event.location}
-      </div>
-
-      <div className="flex justify-end">
-        <Button text="Register Me" />
-      </div>
+      <EventDetailClient event={event} />
     </main>
   );
 }
