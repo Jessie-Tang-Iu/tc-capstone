@@ -1,4 +1,5 @@
 import Navbar from "./components/NavBar";
+import Link from "next/link";
 
 export default function Page() {
   return (
@@ -13,6 +14,12 @@ export default function Page() {
           <p className="text-center text-gray-700">
             Connect with your community and explore upcoming events.
           </p>
+          <Link
+            href="/testing"
+            className="block text-center mt-6 text-blue-600 hover:underline"
+          >
+            Go to Testing Page
+          </Link>
         </div>
       </main>
     </>

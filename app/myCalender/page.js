@@ -3,25 +3,65 @@
 import { useRef, useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import { DateTime } from "luxon";
+
 import Navbar from "../components/NavBar";
 import Button from "../components/ui/Button";
 import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
-import { DateTime } from "luxon";
+import { getBookingsByUser } from "@/lib/workshop_booking_crud";
+import EventCard from "../components/event/eventCard";
+import CalendarBigEvent from "../components/myCalender/calenderBig";
+import { deleteBookingByWorkshopId } from "@/lib/workshop_booking_crud";
 
 const MyCalendarPage = () => {
   const calendarRef = useRef(null);
-  const [events] = useState([
-    {
-      title: "Advisory Session with John Doe",
-      start: "2025-06-24T11:00:00",
-    },
-    {
-      title: "Ace the Interview: Confidence, Motifs, Strategy",
-      start: "2025-06-27T18:00:00",
-    },
-  ]);
+  const [events, setEvents] = useState([]);
+  const [bookingData, setBookingData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentTitle, setCurrentTitle] = useState("");
   const [isTodayDisabled, setIsTodayDisabled] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setShowModal(false);
+      }
+    };
+
+    if (showModal) {
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [showModal]);
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const dummyUserId = 1;
+        const bookings = await getBookingsByUser(dummyUserId);
+        console.log("📦 Bookings returned:", bookings);
+
+        const formatted = bookings.map((item) => ({
+          title: item.workshop?.title ?? "Workshop",
+          start: `${item.workshop?.date}T${item.workshop?.start_time}`,
+        }));
+
+        setEvents(formatted);
+        setBookingData(bookings);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error loading bookings:", err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchBookings();
+  }, []);
 
   const updateTitle = () => {
     const api = calendarRef.current?.getApi();
@@ -42,6 +82,31 @@ const MyCalendarPage = () => {
   useEffect(() => {
     updateTitle();
   }, []);
+
+  const handleEventClick = (eventInfo) => {
+    console.log(" Clicked event:");
+    console.log("  - title:", eventInfo.event.title);
+    console.log("  - startStr:", eventInfo.event.startStr);
+
+    const clickedWorkshop = bookingData.find((item) => {
+      const bookingStart = DateTime.fromISO(
+        `${item.workshop?.date}T${item.workshop?.start_time}`
+      );
+      const eventStart = DateTime.fromISO(eventInfo.event.startStr);
+
+      return (
+        item.workshop?.title === eventInfo.event.title &&
+        bookingStart.toISO() === eventStart.toISO()
+      );
+    });
+
+    if (clickedWorkshop?.workshop) {
+      setSelectedEvent(clickedWorkshop.workshop);
+      setShowModal(true);
+    } else {
+      console.warn(" No matching workshop found for event click");
+    }
+  };
 
   const handleCalendarNav = (action) => {
     const api = calendarRef.current?.getApi();
@@ -79,8 +144,8 @@ const MyCalendarPage = () => {
         My Calendar
       </h1>
 
-      {/* Custom Toolbar */}
-      <div className="max-w-screen-md mx-auto px-4 flex justify-between items-center mb-4">
+      {/* Toolbar */}
+      <div className="max-w-screen-lg mx-auto px-4 flex justify-between items-center mb-4">
         <div className="flex space-x-2">
           <Button text="❮" onClick={() => handleCalendarNav("prev")} />
           <Button
@@ -100,7 +165,8 @@ const MyCalendarPage = () => {
         </div>
       </div>
 
-      <div className="max-w-screen-md mx-auto bg-white p-4 rounded shadow-md">
+      {/* Calendar */}
+      <div className="max-w-screen-lg mx-auto bg-white p-4 rounded shadow-md">
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin]}
@@ -109,15 +175,88 @@ const MyCalendarPage = () => {
           headerToolbar={false}
           height="auto"
           contentHeight="auto"
+          eventClick={handleEventClick} // for the pop up
           eventContent={({ event }) => {
-            const dateTime = DateTime.fromISO(event.startStr);
-            const timeStr = dateTime.toFormat("h:mm a");
-            return <CalenderSmallEvent time={timeStr} title={event.title} />;
+            try {
+              const dateTime = DateTime.fromISO(event.startStr);
+              const timeStr = dateTime.toFormat("h:mm a");
+              return <CalenderSmallEvent time={timeStr} title={event.title} />;
+            } catch {
+              return <div>{event.title}</div>;
+            }
           }}
         />
       </div>
 
-      {/* Calendar dark style override */}
+      {/* My Booked Workshops */}
+      <div className="max-w-screen-lg mx-auto mt-8">
+        <h2 className="text-xl font-semibold text-black mb-4">
+          My Booked Workshops
+        </h2>
+
+        <div className="space-y-4">
+          {loading ? (
+            <p className="text-gray-600">Loading...</p>
+          ) : bookingData.length === 0 ? (
+            <p className="text-gray-600">No bookings yet.</p>
+          ) : (
+            bookingData.map((item) => (
+              <EventCard
+                key={item.id}
+                id={item.id}
+                date={`${item.workshop?.date}T${item.workshop?.start_time}`}
+                title={item.workshop?.title}
+                location="Workshop Location"
+                highlight="Upcoming workshop"
+                description={`Booked by ${item.users?.firstname || "someone"}`}
+              />
+            ))
+          )}
+        </div>
+      </div>
+
+      {showModal && selectedEvent && (
+        <div
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50"
+          onClick={() => setShowModal(false)} // backdrop click closes
+        >
+          <div
+            className="w-full max-w-lg"
+            onClick={(e) => e.stopPropagation()} // click inside modal does NOT close
+          >
+            <CalendarBigEvent
+              workshop={selectedEvent}
+              onClose={() => setShowModal(false)}
+              onDelete={() => {
+                if (selectedEvent) {
+                  const workshopId = selectedEvent.id;
+                  const userId = 1; // Replace with actual logged-in user ID if available
+                  deleteBookingByWorkshopId(workshopId, userId)
+                    .then(() => {
+                      // Update UI: remove the event and close the modal
+                      setEvents((prev) =>
+                        prev.filter(
+                          (e) =>
+                            !(
+                              e.title === selectedEvent.title &&
+                              e.start ===
+                                `${selectedEvent.date}T${selectedEvent.start_time}`
+                            )
+                        )
+                      );
+                      setShowModal(false);
+                    })
+                    .catch((err) => {
+                      alert("Failed to delete booking: " + err.message);
+                    });
+                }
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* FullCalendar styling override */}
       <style jsx global>{`
         .fc {
           color: black;
@@ -137,8 +276,32 @@ const MyCalendarPage = () => {
           color: black;
         }
         .fc .fc-event {
-          background-color: #e55b3c;
-          border: none;
+          background: none !important;
+          border: none !important;
+          padding: 0 !important;
+          box-shadow: none !important;
+        }
+        .fc .fc-event:focus,
+        .fc .fc-event:active {
+          outline: none !important;
+          box-shadow: none !important;
+        }
+        .fc-daygrid-day {
+          height: 100px !important; /* adjust this value as needed */
+          vertical-align: top;
+        }
+
+        .fc-daygrid-day-frame {
+          height: 100% !important;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+        }
+
+        .fc-event {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
       `}</style>
     </div>
