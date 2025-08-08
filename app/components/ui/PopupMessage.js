@@ -4,32 +4,39 @@ import React, { useEffect } from "react";
 import Button from "@/app/components/ui/Button";
 
 export default function PopupMessage({
-  type = "confirm", // 'confirm' | 'success'
+  type = "confirm", // 'confirm' | 'success' | 'error'
   title,
   description,
   onClose,
   onConfirm,
+  buttonText, // ✅ optional custom button label
 }) {
-  // Close on ESC key
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
-        onClose();
-      }
+      if (e.key === "Escape") onClose();
     };
-
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
-        {/* Main Message */}
+    <div
+      className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Title + Description */}
         <div className="text-center mb-6">
           <h3
             className={`text-lg font-bold mb-2 ${
-              type === "confirm" ? "text-[#E55B3C]" : "text-green-600"
+              type === "confirm"
+                ? "text-[#E55B3C]"
+                : type === "error"
+                ? "text-red-600"
+                : "text-green-600"
             }`}
           >
             {title}
@@ -45,7 +52,7 @@ export default function PopupMessage({
           )}
         </div>
 
-        {/* Action Buttons */}
+        {/* Buttons */}
         <div className="flex justify-center gap-4">
           {type === "confirm" && (
             <>
@@ -59,7 +66,9 @@ export default function PopupMessage({
             </>
           )}
 
-          {type === "success" && <Button text="OK" onClick={onClose} />}
+          {(type === "success" || type === "error") && (
+            <Button text={buttonText || "OK"} onClick={onClose} />
+          )}
         </div>
       </div>
     </div>

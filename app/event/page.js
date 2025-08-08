@@ -5,7 +5,7 @@ import { List, Calendar } from "lucide-react";
 import Navbar from "../components/NavBar";
 import EventCard from "../components/event/eventCard";
 import TabToggle from "../components/event/TabToggle";
-import { getAllEvents } from "@/lib/workshop_crud";
+import { getAllEvents, updateEventStatus } from "@/lib/workshop_crud";
 
 export default function EventPage() {
   const [events, setEvents] = useState([]);
@@ -13,19 +13,31 @@ export default function EventPage() {
   const [tab, setTab] = useState("upcoming");
 
   useEffect(() => {
-    async function fetchEvents() {
+    async function fetchAndUpdateEvents() {
       const data = await getAllEvents();
-      console.log("Fetched events:", data); // 👈 Add this
-      setEvents(data);
+      const now = new Date();
+
+      // Auto-update events with past dates
+      const updates = await Promise.all(
+        data.map(async (event) => {
+          const eventDate = new Date(event.date);
+          if (event.status === "active" && eventDate < now) {
+            await updateEventStatus(event.id, "completed");
+            return { ...event, status: "completed" };
+          }
+          return event;
+        })
+      );
+
+      setEvents(updates);
     }
-    fetchEvents();
+
+    fetchAndUpdateEvents();
   }, []);
 
-  const now = new Date();
-  const filteredEvents = events.filter((event) => {
-    const eventDate = new Date(event.date);
-    return tab === "upcoming" ? eventDate >= now : eventDate < now;
-  });
+  const filteredEvents = events.filter((event) =>
+    tab === "upcoming" ? event.status === "active" : event.status !== "active"
+  );
 
   return (
     <main className="bg-gray-100 min-h-screen">
@@ -61,7 +73,6 @@ export default function EventPage() {
         </div>
       </section>
 
-      {/* Main content */}
       {view === "list" && (
         <section className="flex px-8 py-4 gap-6">
           <div className="w-1/4">
