@@ -2,7 +2,16 @@ export default function Button({ text, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="bg-orange-500 text-white font-semibold px-6 py-2 rounded-md hover:bg-orange-600 transition"
+      className="text-white font-semibold px-6 py-2 rounded-md transition cursor-pointer"
+      style={{
+        backgroundColor: "#E55B3C",
+      }}
+      onMouseOver={(e) => {
+        e.currentTarget.style.backgroundColor = "#d14f32";
+      }}
+      onMouseOut={(e) => {
+        e.currentTarget.style.backgroundColor = "#E55B3C";
+      }}
     >
       {text}
     </button>

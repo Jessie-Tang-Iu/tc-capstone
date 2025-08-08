@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { formatDateToFullDisplay } from "@/app/components/ui/formatDate";
 
 export default function EventCard({
   id,
@@ -16,18 +17,6 @@ export default function EventCard({
     router.push(`/event/${id}`);
   };
 
-  const formattedDate = new Intl.DateTimeFormat("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "2-digit",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-    timeZoneName: "short",
-    timeZone: "America/Edmonton", // MST/MDT
-  }).format(new Date(date));
-
   return (
     <div
       className="bg-white rounded-lg shadow px-6 py-4 space-y-2 text-black cursor-pointer hover:opacity-95 transition"
@@ -35,7 +24,7 @@ export default function EventCard({
     >
       {/* Date */}
       <div className="text-[13px] text-gray-700 uppercase tracking-wide font-medium">
-        {formattedDate}
+        {formatDateToFullDisplay(date)}
       </div>
 
       {/* Title */}
