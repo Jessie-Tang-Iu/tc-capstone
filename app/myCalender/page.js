@@ -189,7 +189,7 @@ const MyCalendarPage = () => {
       </div>
 
       {/* My Booked Workshops */}
-      <div className="max-w-screen-lg mx-auto mt-8">
+      {/* <div className="max-w-screen-lg mx-auto mt-8">
         <h2 className="text-xl font-semibold text-black mb-4">
           My Booked Workshops
         </h2>
@@ -213,7 +213,7 @@ const MyCalendarPage = () => {
             ))
           )}
         </div>
-      </div>
+      </div> */}
 
       {showModal && selectedEvent && (
         <div
