@@ -3,10 +3,23 @@
 import { useState } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
 import Link from "next/link";
+import { signOut } from "@/lib/supabase_auth";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      router.push("/signIn"); // Redirect to sign-in page
+    } catch (error) {
+      console.error("Logout error:", error.message);
+    }
+  };
 
   return (
     <header className="flex justify-between items-center p-4 bg-white shadow-md">
@@ -89,9 +102,12 @@ export default function Navbar() {
             </Link>
           </li>
           <li>
-            <Link href="#" className="block py-2 md:py-0 hover:text-orange-500">
+            <button
+              onClick={handleLogout}
+              className="block py-2 md:py-0 hover:text-orange-500"
+            >
               Log Out
-            </Link>
+            </button>
           </li>
         </ul>
       </nav>
