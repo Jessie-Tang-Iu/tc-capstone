@@ -106,8 +106,8 @@ const SupabaseAuth = () => {
             <div className="w-px bg-gray-400 h-130 mx-4" />
             <div className="p-5 flex-1/3">
                 <p className="text-black font-bold text-2xl mb-5">Welcome Back!</p>
-                <p className="text-black text-sm">Don't have an account? <Link href="/signUp" className=" underline hover:text-blue-400">Create an account now</Link></p>
-                <p className="text-black text-sm mb-2">It's FREE!</p>
+                <p className="text-black text-sm">Do not have an account? <Link href="/signUp" className=" underline hover:text-blue-400">Create an account now</Link></p>
+                <p className="text-black text-sm mb-2">It is FREE!</p>
                 {error && <p className="text-red-600 font-bold">{error}</p>}
                 <div className="flex flex-col">
                     <label className="text-black">Email Address</label>
