@@ -8,10 +8,9 @@ import { DateTime } from "luxon";
 import Navbar from "../components/NavBar";
 import Button from "../components/ui/Button";
 import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
-import { getBookingsByUser } from "@/lib/workshop_booking_crud";
-import EventCard from "../components/event/eventCard";
 import CalendarBigEvent from "../components/myCalender/calenderBig";
 import { deleteBookingByWorkshopId } from "@/lib/workshop_booking_crud";
+import { supabase } from "@/lib/supabaseClient"; // <-- IMPORTANT
 
 const MyCalendarPage = () => {
   const calendarRef = useRef(null);
@@ -23,39 +22,53 @@ const MyCalendarPage = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
+  // esc closes modal
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
-        setShowModal(false);
-      }
-    };
-
-    if (showModal) {
-      document.addEventListener("keydown", handleKeyDown);
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
+    const handleKeyDown = (e) => e.key === "Escape" && setShowModal(false);
+    if (showModal) document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [showModal]);
 
+  // fetch "my" bookings (RLS filters rows)
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const dummyUserId = 1;
-        const bookings = await getBookingsByUser(dummyUserId);
-        console.log("📦 Bookings returned:", bookings);
+        setLoading(true);
 
-        const formatted = bookings.map((item) => ({
-          title: item.workshop?.title ?? "Workshop",
-          start: `${item.workshop?.date}T${item.workshop?.start_time}`,
-        }));
+        // ensure signed-in (optional guard)
+        const {
+          data: { user },
+          error: authErr,
+        } = await supabase.auth.getUser();
+        if (authErr || !user) throw new Error("Not signed in.");
+
+        // embed workshop via FK column name
+        const { data: bookings, error } = await supabase.from(
+          "workshop_booking"
+        ).select(`
+            id,
+            userID,
+            workshopID,
+            status,
+            workshop:workshopID (
+              id, title, date, start_time
+            )
+          `);
+
+        if (error) throw error;
+
+        const formatted = (bookings ?? [])
+          .filter((b) => b.workshop?.date && b.workshop?.start_time)
+          .map((b) => ({
+            title: b.workshop.title ?? "Workshop",
+            start: `${b.workshop.date}T${b.workshop.start_time}`, // ISO-like
+          }));
 
         setEvents(formatted);
-        setBookingData(bookings);
-        setLoading(false);
+        setBookingData(bookings ?? []);
       } catch (err) {
-        console.error("Error loading bookings:", err.message);
+        console.error("Error loading bookings:", err.message || err);
+      } finally {
         setLoading(false);
       }
     };
@@ -66,13 +79,11 @@ const MyCalendarPage = () => {
   const updateTitle = () => {
     const api = calendarRef.current?.getApi();
     if (!api) return;
-
     setCurrentTitle(api.view.title);
 
     if (api.view.type === "dayGridMonth") {
       const today = new Date();
-      const start = api.view.currentStart;
-      const end = api.view.currentEnd;
+      const { currentStart: start, currentEnd: end } = api.view;
       setIsTodayDisabled(today >= start && today < end);
     } else {
       setIsTodayDisabled(false);
@@ -84,55 +95,34 @@ const MyCalendarPage = () => {
   }, []);
 
   const handleEventClick = (eventInfo) => {
-    console.log(" Clicked event:");
-    console.log("  - title:", eventInfo.event.title);
-    console.log("  - startStr:", eventInfo.event.startStr);
-
-    const clickedWorkshop = bookingData.find((item) => {
+    const clicked = bookingData.find((item) => {
       const bookingStart = DateTime.fromISO(
         `${item.workshop?.date}T${item.workshop?.start_time}`
       );
       const eventStart = DateTime.fromISO(eventInfo.event.startStr);
-
       return (
         item.workshop?.title === eventInfo.event.title &&
         bookingStart.toISO() === eventStart.toISO()
       );
     });
 
-    if (clickedWorkshop?.workshop) {
-      setSelectedEvent(clickedWorkshop.workshop);
+    if (clicked?.workshop) {
+      setSelectedEvent(clicked.workshop);
       setShowModal(true);
     } else {
-      console.warn(" No matching workshop found for event click");
+      console.warn("No matching workshop found for event click");
     }
   };
 
   const handleCalendarNav = (action) => {
     const api = calendarRef.current?.getApi();
     if (!api) return;
-
-    switch (action) {
-      case "prev":
-        api.prev();
-        break;
-      case "next":
-        api.next();
-        break;
-      case "today":
-        api.today();
-        break;
-      case "month":
-        api.changeView("dayGridMonth");
-        break;
-      case "week":
-        api.changeView("dayGridWeek");
-        break;
-      case "day":
-        api.changeView("dayGridDay");
-        break;
-    }
-
+    if (action === "prev") api.prev();
+    else if (action === "next") api.next();
+    else if (action === "today") api.today();
+    else if (action === "month") api.changeView("dayGridMonth");
+    else if (action === "week") api.changeView("dayGridWeek");
+    else if (action === "day") api.changeView("dayGridDay");
     updateTitle();
   };
 
@@ -175,7 +165,7 @@ const MyCalendarPage = () => {
           headerToolbar={false}
           height="auto"
           contentHeight="auto"
-          eventClick={handleEventClick} // for the pop up
+          eventClick={handleEventClick}
           eventContent={({ event }) => {
             try {
               const dateTime = DateTime.fromISO(event.startStr);
@@ -186,70 +176,37 @@ const MyCalendarPage = () => {
             }
           }}
         />
+        {loading && <p className="text-gray-600 mt-2">Loading…</p>}
       </div>
-
-      {/* My Booked Workshops */}
-      {/* <div className="max-w-screen-lg mx-auto mt-8">
-        <h2 className="text-xl font-semibold text-black mb-4">
-          My Booked Workshops
-        </h2>
-
-        <div className="space-y-4">
-          {loading ? (
-            <p className="text-gray-600">Loading...</p>
-          ) : bookingData.length === 0 ? (
-            <p className="text-gray-600">No bookings yet.</p>
-          ) : (
-            bookingData.map((item) => (
-              <EventCard
-                key={item.id}
-                id={item.id}
-                date={`${item.workshop?.date}T${item.workshop?.start_time}`}
-                title={item.workshop?.title}
-                location="Workshop Location"
-                highlight="Upcoming workshop"
-                description={`Booked by ${item.users?.firstname || "someone"}`}
-              />
-            ))
-          )}
-        </div>
-      </div> */}
 
       {showModal && selectedEvent && (
         <div
           className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50"
-          onClick={() => setShowModal(false)} // backdrop click closes
+          onClick={() => setShowModal(false)}
         >
-          <div
-            className="w-full max-w-lg"
-            onClick={(e) => e.stopPropagation()} // click inside modal does NOT close
-          >
+          <div className="w-full max-w-lg" onClick={(e) => e.stopPropagation()}>
             <CalendarBigEvent
               workshop={selectedEvent}
               onClose={() => setShowModal(false)}
               onDelete={() => {
-                if (selectedEvent) {
-                  const workshopId = selectedEvent.id;
-                  const userId = 1; // Replace with actual logged-in user ID if available
-                  deleteBookingByWorkshopId(workshopId, userId)
-                    .then(() => {
-                      // Update UI: remove the event and close the modal
-                      setEvents((prev) =>
-                        prev.filter(
-                          (e) =>
-                            !(
-                              e.title === selectedEvent.title &&
-                              e.start ===
-                                `${selectedEvent.date}T${selectedEvent.start_time}`
-                            )
-                        )
-                      );
-                      setShowModal(false);
-                    })
-                    .catch((err) => {
-                      alert("Failed to delete booking: " + err.message);
-                    });
-                }
+                if (!selectedEvent) return;
+                deleteBookingByWorkshopId(selectedEvent.id)
+                  .then(() => {
+                    setEvents((prev) =>
+                      prev.filter(
+                        (e) =>
+                          !(
+                            e.title === selectedEvent.title &&
+                            e.start ===
+                              `${selectedEvent.date}T${selectedEvent.start_time}`
+                          )
+                      )
+                    );
+                    setShowModal(false);
+                  })
+                  .catch((err) =>
+                    alert("Failed to delete booking: " + err.message)
+                  );
               }}
             />
           </div>
@@ -262,18 +219,14 @@ const MyCalendarPage = () => {
           color: black;
         }
         .fc .fc-button,
-        .fc .fc-toolbar-title {
-          color: black;
-        }
-        .fc .fc-daygrid-day-number {
+        .fc .fc-toolbar-title,
+        .fc .fc-daygrid-day-number,
+        .fc .fc-col-header-cell-cushion {
           color: black;
         }
         .fc .fc-scrollgrid,
         .fc .fc-daygrid-day-frame {
           border-color: black !important;
-        }
-        .fc .fc-col-header-cell-cushion {
-          color: black;
         }
         .fc .fc-event {
           background: none !important;
@@ -287,17 +240,15 @@ const MyCalendarPage = () => {
           box-shadow: none !important;
         }
         .fc-daygrid-day {
-          height: 100px !important; /* adjust this value as needed */
+          height: 100px !important;
           vertical-align: top;
         }
-
         .fc-daygrid-day-frame {
           height: 100% !important;
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
         }
-
         .fc-event {
           overflow: hidden;
           text-overflow: ellipsis;
