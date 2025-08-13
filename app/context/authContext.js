@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 const UserContext = createContext();
 
-const router = useRouter();
+
 
 export const useUsercontext = () => {
     const context = useContext(UserContext);
@@ -24,6 +24,8 @@ export const UserContextProvider = ({ children }) => {
     const [session, setSession] = useState();
     const [profile, setProfile] = useState();
     const [isLoading, setIsLoading] = useState(true);
+
+    const router = useRouter();
 
     useEffect(() => {
         const initializeAuth = async () => {
