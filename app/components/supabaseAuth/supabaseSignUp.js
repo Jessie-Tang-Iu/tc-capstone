@@ -43,7 +43,11 @@ export default function SupabaseAuthSignUp() {
         // Keep local setters per your requirement
         setUsername(username);
         setLastName(lastName);
-        router.push("/signIn"); // Ask user to sign in after verifying email
+        router.push(
+          `/signIn?email=${encodeURIComponent(
+            email
+          )}&password=${encodeURIComponent(password)}`
+        );
         return;
       }
 

@@ -2,16 +2,21 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "@/lib/supabase_auth";
-import { ensureProfile } from "@/lib/user_crud"; // ✅ use this
+import { ensureProfile } from "@/lib/user_crud";
 
 export default function SupabaseAuth() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // auth inputs
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // read from query params once
+  const qpEmail = searchParams.get("email") || "";
+  const qpPassword = searchParams.get("password") || "";
+
+  // controlled inputs (editable)
+  const [email, setEmail] = useState(qpEmail);
+  const [password, setPassword] = useState(qpPassword);
 
   // local profile state
   const [username, setUsername] = useState("");
@@ -24,6 +29,13 @@ export default function SupabaseAuth() {
   const [loading, setLoading] = useState(false);
 
   const [profile, setProfile] = useState(null);
+
+  // if query params change (rare), sync once
+  useEffect(() => {
+    setEmail(qpEmail);
+    setPassword(qpPassword);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [qpEmail, qpPassword]);
 
   const handleAuth = async (e) => {
     e.preventDefault();
