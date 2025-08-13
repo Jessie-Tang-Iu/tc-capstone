@@ -1,7 +1,35 @@
+"use client";
+
 import Navbar from "./components/NavBar";
 import Link from "next/link";
+import { getSession } from "@/lib/supabase_auth";
+import { UserProvider, useUserContext } from "./context/userContext";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-export default function Page() {
+function PageContent() {
+
+  const { user, setEmail } = useUserContext();
+
+  const router = useRouter();
+
+  const getCurrentSession = async () => {
+        try {
+            const session = await getSession();
+            setEmail(session?.user?.email || '');
+            if (!session) { 
+                router.push('/signIn');
+            }
+        } catch (error) {
+            console.error("Error fetching session:", error);
+            alert("Error", "Failed to fetch session. Please sign in again.");
+        }
+    };
+
+  useEffect(() => {
+    getCurrentSession();
+  }, []);
+  
   return (
     <>
       <Navbar />
@@ -23,5 +51,13 @@ export default function Page() {
         </div>
       </main>
     </>
+  );
+}
+
+export default function Page() {
+  return (
+    <UserProvider>
+      <PageContent />
+    </UserProvider>
   );
 }
