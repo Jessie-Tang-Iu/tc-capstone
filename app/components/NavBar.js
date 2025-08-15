@@ -13,6 +13,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const popRef = useRef(null);
 
+  // handle Log out function for user
   const handleLogout = async () => {
     try {
       await signOut();

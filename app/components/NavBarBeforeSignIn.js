@@ -3,10 +3,15 @@
 import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const popRef = useRef(null);
+  const pathname = usePathname();
+
+  // Close popover on route change
+  useEffect(() => setIsMobileMenuOpen(false), [pathname]);
 
   // Close when clicking outside
   useEffect(() => {
@@ -29,7 +34,7 @@ export default function Navbar() {
       </Link>
 
       {/* Mobile Menu Button + Dropdown */}
-      <div className="relative md:hidden">
+      <div className="relative lg:hidden">
         <button
           className="p-2 text-black"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
