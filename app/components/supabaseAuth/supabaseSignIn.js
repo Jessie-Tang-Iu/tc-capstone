@@ -49,6 +49,7 @@ export default function SupabaseAuth() {
 
     try {
       // 1) authenticate (creates session)
+      console.log("Logging in with:", { email, password });
       await signIn(email, password);
 
       // 2) ensure there is a profile (creates minimal one if missing)
@@ -71,7 +72,9 @@ export default function SupabaseAuth() {
 
       // 4) redirect
       router.push("/");
+      console.log(p);
     } catch (err) {
+      console.error("Login error:", err);
       setError(err?.message || String(err));
     } finally {
       setLoading(false);
@@ -154,10 +157,8 @@ export default function SupabaseAuth() {
 
             <p className="text-gray-600 text-sm mt-2 text-center">
               Forget Password?{" "}
-              <Link
-                href="/forgetPassword"
-                className="underline hover:text-blue-400"
-              >
+
+              <Link href="/forgetPassword" className="underline hover:text-blue-400">
                 Click Here
               </Link>
             </p>
