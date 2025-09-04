@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import NaNvbar from "../../components/NavBar";
 import EmployerSidebar from "../../components/employerDashboard/EmployerSideBar";
+import ChatWindow from "@/app/components/ChatWindow";
 
 const MOCK_MESSAGES = [
   {
@@ -16,7 +17,7 @@ const MOCK_MESSAGES = [
   // dummy data → total 50 messages
   ...Array.from({ length: 49 }, (_, i) => ({
     id: i + 2,
-    name: "Joy Wong",
+    name: `Joy Wong ${i + 1}`,
     message: "Yes, you are right about the job application, i will have a …",
     date: "Jun 15, 2025",
   })),
@@ -92,6 +93,13 @@ const MessagePage = () => {
   const pageSize = 15;
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState(MOCK_MESSAGES);
+  const [openChat, setOpenChat] = useState(false);
+  const [chatRecipient, setChatRecipient] = useState("");
+
+  const handleRowClick = (row) => {
+    setChatRecipient(row.name);
+    setOpenChat(true);
+  };
 
   // selection
   const [selected, setSelected] = useState(new Set());
@@ -134,12 +142,12 @@ const MessagePage = () => {
   const pageRows = rows.slice(start, start + pageSize);
 
   return (
-    <div className="min-h-screen bg-[#F3F3F3]">
+    <div className="min-h-screen bg-white">
       <NaNvbar />
 
-      <main className="mx-auto max-w-7xl px-4 py-8">
+      <main className="mx-auto w-full px-6 py-8 bg-white rounded-xl">
         <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
-          Employer Dashboard
+          Employer DashBoard
         </h1>
 
         <div className="flex gap-6">
@@ -223,14 +231,14 @@ const MessagePage = () => {
                 <tbody>
                   {pageRows.map((row, idx) => {
                     const checked = selected.has(row.id);
-                    const zebra = idx % 2 === 0 ? "bg-[#FBF5F1]" : "bg-white";
+                    const zebra = idx % 2 === 0 ? "bg-white" : "bg-white";
                     return (
                       <tr
                         key={row.id}
                         className={`${
                           checked ? "bg-[#F0D6C2]" : zebra
-                        } transition hover:bg-gray-100`}
-                        onClick={() => toggleOne(row.id)}
+                        } transition hover:bg-gray-100 ursor-pointer`}
+                        onClick={() => handleRowClick(row)}
                       >
                         <td className="px-4 py-3">
                           <input
@@ -269,6 +277,14 @@ const MessagePage = () => {
             </div>
           </section>
         </div>
+
+        {openChat && (
+          <ChatWindow
+            recipient={chatRecipient}
+            onClose={() => setOpenChat(false)}
+            onSend={(text) => console.log("send:", { to: chatRecipient, text })}
+          />
+        )}
       </main>
     </div>
   );

@@ -15,7 +15,7 @@ export default function ApplicationItem({
   return (
     <div className="flex items-stretch gap-4">
       {/* Left mini card */}
-      <div className="w-52 rounded-md border bg-[#F7F3F0] px-3 py-3 text-xs text-black">
+      <div className="w-40 rounded-md border bg-[#F0E0D5] px-3 py-3 text-xs text-black">
         <div className="font-semibold">{jobTitle}</div>
         <div className="mt-2">Application #:</div>
         <div className="font-mono">{applicationNo}</div>
@@ -26,7 +26,7 @@ export default function ApplicationItem({
         <div className="font-semibold">{applicant}</div>
         {headline && <div className="mt-1">{headline}</div>}
         {location && <div className="mt-1 font-semibold">{location}</div>}
-        {appliedAgo && <div className="mt-1">{appliedAgo}</div>}
+        {appliedAgo && <div className="mt-1 text-grey-300">{appliedAgo}</div>}
       </div>
 
       {/* Right action */}

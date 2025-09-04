@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import NaNvbar from "../../components/NavBar";
 import EmployerSidebar from "../../components/employerDashboard/EmployerSideBar";
 import EmployerJobPostItem from "../../components/employerDashboard/EmployerJobPostItem";
+import jobs from "../../data/jobs.json";
 
 const IconChevronLeft = () => (
   <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
@@ -22,74 +24,23 @@ const IconChevronRight = () => (
   </svg>
 );
 
-const JOBS = [
-  {
-    id: 1,
-    title: "Customer Service Representative",
-    company: "ABC Company",
-    location: "Calgary, Alberta",
-    workplace: "On-site",
-    status: "open",
-    weeksAgo: 3,
-    views: 137,
-  },
-  {
-    id: 2,
-    title: "Junior Developer",
-    company: "ABC Company",
-    location: "Calgary, Alberta",
-    workplace: "Remote",
-    status: "open",
-    weeksAgo: 5,
-    views: 137,
-  },
-  {
-    id: 3,
-    title: "Summer Intern",
-    company: "ABC Company",
-    location: "Calgary, Alberta",
-    workplace: "On-site",
-    status: "closed",
-    weeksAgo: 6,
-    views: 137,
-  },
-  {
-    id: 4,
-    title: "Customer Service Representative",
-    company: "ABC Company",
-    location: "Calgary, Alberta",
-    workplace: "On-site",
-    status: "open",
-    weeksAgo: 3,
-    views: 137,
-  },
-  {
-    id: 5,
-    title: "Customer Service Representative",
-    company: "ABC Company",
-    location: "Calgary, Alberta",
-    workplace: "On-site",
-    status: "open",
-    weeksAgo: 3,
-    views: 137,
-  },
-];
-
 export default function JobPostsPage() {
+  const router = useRouter();
+
   const pageSize = 5;
   const [page, setPage] = useState(1);
   const [selectedId, setSelectedId] = useState(3);
 
-  const total = JOBS.length;
+  const total = jobs.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const start = (page - 1) * pageSize;
   const end = Math.min(start + pageSize, total);
-  const rows = useMemo(() => JOBS.slice(start, end), [page]);
+  const rows = useMemo(() => jobs.slice(start, end), [page]);
 
   return (
     <div className="min-h-screen bg-white">
       <NaNvbar />
-      <main className="mx-auto w-full  px-6 py-8">
+      <main className="mx-auto w-full px-6 py-8">
         <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
           Employer DashBoard
         </h1>
@@ -107,6 +58,7 @@ export default function JobPostsPage() {
                 className="rounded-md p-1 hover:bg-gray-100"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
+                aria-label="Previous"
               >
                 <IconChevronLeft />
               </button>
@@ -114,6 +66,7 @@ export default function JobPostsPage() {
                 className="rounded-md p-1 hover:bg-gray-100"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
+                aria-label="Next"
               >
                 <IconChevronRight />
               </button>
@@ -126,7 +79,9 @@ export default function JobPostsPage() {
                     {...job}
                     selected={selectedId === job.id}
                     onClick={() => setSelectedId(job.id)}
-                    onManage={() => console.log("Manage job", job.id)}
+                    onManage={() =>
+                      router.push(`/employerDashboard/jobPost/${job.id}`)
+                    }
                   />
                 </li>
               ))}

@@ -116,7 +116,7 @@ export default function Navbar() {
 
               <li>
                 <Link href="#" className="block px-4 py-2 hover:bg-gray-50">
-                  Joy Board
+                  Job Board
                 </Link>
               </li>
               <li>
@@ -178,7 +178,7 @@ export default function Navbar() {
 
           <li>
             <Link href="#" className="hover:text-orange-500">
-              Joy Board
+              Job Board
             </Link>
           </li>
           <li>
