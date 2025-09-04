@@ -37,7 +37,7 @@ export default function Navbar() {
   }, [isMobileMenuOpen]);
 
   return (
-    <header className="top-0 z-50 flex justify-between items-center p-4 bg-white border-b border-gray-200 shadow-[0_6px_14px_-6px_rgba(0,0,0,0.18)]">
+    <header className="sticky top-0 z-50 flex justify-between items-center p-4 bg-white border-b border-gray-200 shadow-[0_6px_14px_-6px_rgba(0,0,0,0.18)]">
       {/* Brand: icon always; text only ≥ sm */}
       <Link href="/" className="flex items-center space-x-2">
         <img src="/logo.jpeg" alt="Logo" className="w-8 h-8 shrink-0" />
@@ -116,7 +116,7 @@ export default function Navbar() {
 
               <li>
                 <Link href="#" className="block px-4 py-2 hover:bg-gray-50">
-                  Joy Board
+                  Job Board
                 </Link>
               </li>
               <li>
@@ -178,7 +178,7 @@ export default function Navbar() {
 
           <li>
             <Link href="#" className="hover:text-orange-500">
-              Joy Board
+              Job Board
             </Link>
           </li>
           <li>
