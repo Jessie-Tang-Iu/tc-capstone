@@ -154,7 +154,10 @@ export default function SupabaseAuth() {
 
             <p className="text-gray-600 text-sm mt-2 text-center">
               Forget Password?{" "}
-              <Link href="#" className="underline hover:text-blue-400">
+              <Link
+                href="/forgetPassword"
+                className="underline hover:text-blue-400"
+              >
                 Click Here
               </Link>
             </p>

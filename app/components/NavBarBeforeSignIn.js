@@ -82,7 +82,7 @@ export default function Navbar() {
             </Link>
           </li>
           <li>
-            <Link href="#" className="hover:text-orange-500">
+            <Link href="/employerRegister" className="hover:text-orange-500">
               Register as Employer
             </Link>
           </li>
