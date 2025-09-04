@@ -5,10 +5,10 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { DateTime } from "luxon";
 
-import Navbar from "../components/NavBar";
-import Button from "../components/ui/Button";
-import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
-import CalendarBigEvent from "../components/myCalender/calenderBig";
+import Navbar from "../../components/MemberNavBar";
+import Button from "../../components/ui/Button";
+import CalenderSmallEvent from "../../components/myCalender/calenderSmallEvent";
+import CalendarBigEvent from "../../components/myCalender/calenderBig";
 import { deleteBookingByWorkshopId } from "@/lib/workshop_booking_crud";
 import { supabase } from "@/lib/supabaseClient"; // <-- IMPORTANT
 
