@@ -23,6 +23,7 @@ export default function SupabaseAuth() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [status, setStatus] = useState("");
+  const [role, setRole] = useState("");
 
   // ui
   const [error, setError] = useState("");
@@ -69,9 +70,23 @@ export default function SupabaseAuth() {
       setFirstName(p.firstName || "");
       setLastName(p.lastName || "");
       setStatus(p.status || "");
+      setRole(p.role || "member");
 
       // 4) redirect
-      router.push("/");
+      switch (p.role) {
+        case "admin":
+          router.push("/adminFlow");
+          break;
+        case "member":
+          router.push("/memberFlow");
+          break;
+        case "employer":
+          router.push("/employerFlow");
+          break;
+        case "advisor":
+          router.push("/advisorFlow");
+          break;
+      }
       console.log(p);
     } catch (err) {
       console.error("Login error:", err);
@@ -87,6 +102,7 @@ export default function SupabaseAuth() {
       setFirstName(profile.firstName || "");
       setLastName(profile.lastName || "");
       setStatus(profile.status || "");
+      setRole(profile.role || "member");
     }
   }, [profile]);
 
