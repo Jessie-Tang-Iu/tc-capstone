@@ -40,9 +40,9 @@ export default function Navbar() {
   }, [isMobileMenuOpen]);
 
   return (
-    <header className="sticky top-0 z-50 flex justify-between items-center p-4 bg-white border-b border-gray-200 shadow-[0_6px_14px_-6px_rgba(0,0,0,0.18)]">
+    <header className="top-0 z-50 flex justify-between items-center p-4 bg-white border-b border-gray-200 shadow-[0_6px_14px_-6px_rgba(0,0,0,0.18)]">
       {/* Brand: icon always; text only ≥ sm */}
-      <Link href="/" className="flex items-center space-x-2">
+      <Link href="/memberFlow" className="flex items-center space-x-2">
         <img src="/logo.jpeg" alt="Logo" className="w-8 h-8 shrink-0" />
         <span className="hidden sm:inline font-bold text-lg text-black whitespace-nowrap">
           Tech Connect Alberta
@@ -70,7 +70,7 @@ export default function Navbar() {
               </li>
               <li>
                 <Link
-                  href="/userFlow/event"
+                  href="/event"
                   className="block px-4 py-2 hover:bg-gray-50"
                 >
                   Upcoming Event
@@ -78,7 +78,7 @@ export default function Navbar() {
               </li>
               <li>
                 <Link
-                  href="/memebrFlow/myCalendar"
+                  href="/memberFlow/myCalendar"
                   className="block px-4 py-2 hover:bg-gray-50"
                 >
                   My Calendar
@@ -181,7 +181,7 @@ export default function Navbar() {
             </Link>
           </li>
           <li>
-            <Link href="/memberFlow/event" className="hover:text-orange-500">
+            <Link href="/event" className="hover:text-orange-500">
               Upcoming Event
             </Link>
           </li>

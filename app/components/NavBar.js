@@ -37,7 +37,7 @@ export default function Navbar() {
   }, [isMobileMenuOpen]);
 
   return (
-    <header className="sticky top-0 z-50 flex justify-between items-center p-4 bg-white border-b border-gray-200 shadow-[0_6px_14px_-6px_rgba(0,0,0,0.18)]">
+    <header className="top-0 z-50 flex justify-between items-center p-4 bg-white border-b border-gray-200 shadow-[0_6px_14px_-6px_rgba(0,0,0,0.18)]">
       {/* Brand: icon always; text only ≥ sm */}
       <Link href="/" className="flex items-center space-x-2">
         <img src="/logo.jpeg" alt="Logo" className="w-8 h-8 shrink-0" />
