@@ -6,6 +6,7 @@ import EmployerSidebar from "../../../components/employerDashboard/EmployerSideB
 import applications from "../../../data/applications.json";
 import ChatWindow from "@/app/components/ChatWindow";
 import PopupMessage from "@/app/components/ui/PopupMessage";
+import SavedDocCard from "@/app/components/employerDashboard/SavedDocCard";
 
 /* UI bits */
 const Pill = ({ children, variant = "solid", onClick }) => {
@@ -35,29 +36,10 @@ const Panel = ({ label, children }) => (
   </div>
 );
 
-const DocCard = ({ title, children, onDownload, disabled }) => (
-  <div className="max-w-md rounded-lg border border-gray-400 px-5 py-4">
-    <div className="mb-3 text-sm text-[#EE7D5E]">{title}</div>
-    <div className="border-t pt-3">{children}</div>
-    <button
-      className={`mt-4 w-full rounded-md px-4 py-2 text-sm font-medium ${
-        disabled
-          ? "bg-gray-300 text-white cursor-not-allowed"
-          : "bg-[#EE7D5E] text-white hover:opacity-90"
-      }`}
-      onClick={onDownload}
-      disabled={disabled}
-    >
-      Download
-    </button>
-  </div>
-);
-
 export default function ApplicationDetailsPage({ params }) {
   const [openChat, setOpenChat] = useState(false);
   const [popup, setPopup] = useState(null);
 
-  // Pull the item from applications.json; fallback to first item if missing
   const app = useMemo(
     () =>
       applications.find((a) => a.id === Number(params.id)) || applications[0],
@@ -68,7 +50,7 @@ export default function ApplicationDetailsPage({ params }) {
     <div className="min-h-screen bg-white">
       <NaNvbar />
 
-      <main className="mx-auto w-full  px-6 py-8">
+      <main className="mx-auto w-full px-6 py-8">
         <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
           Employer DashBoard
         </h1>
@@ -77,7 +59,7 @@ export default function ApplicationDetailsPage({ params }) {
           <EmployerSidebar />
 
           <section className="flex-1 rounded-xl bg-white shadow">
-            {/* Top header: Application # + actions */}
+            {/* Top header */}
             <div className="flex items-center justify-between border-b px-4 py-3">
               <div className="text-sm font-semibold text-black">
                 Application #:{" "}
@@ -159,12 +141,11 @@ export default function ApplicationDetailsPage({ params }) {
                 Insights from profile
               </h2>
 
-              {/* Experience */}
               {Array.isArray(app.experience) && app.experience.length > 0 && (
                 <>
                   <SectionTitle>Experience</SectionTitle>
                   <Panel label="Experience">
-                    <div className="space-y-6 text-sm ">
+                    <div className="space-y-6 text-sm">
                       {app.experience.map((e, idx) => (
                         <div key={idx}>
                           <div className="font-semibold">{e.title}</div>
@@ -177,7 +158,6 @@ export default function ApplicationDetailsPage({ params }) {
                 </>
               )}
 
-              {/* Education */}
               {Array.isArray(app.education) && app.education.length > 0 && (
                 <>
                   <SectionTitle>Education</SectionTitle>
@@ -195,35 +175,44 @@ export default function ApplicationDetailsPage({ params }) {
                 </>
               )}
 
-              {/* Resume (placeholder only, since applications.json has no file fields) */}
+              {/* Resume */}
               <SectionTitle>Resume</SectionTitle>
-              <div className="mb-6">
-                <DocCard title="Saved Resume" disabled onDownload={() => {}}>
-                  <div className="text-sm">
-                    <div className="font-semibold">{app.applicant}</div>
-                    <p className="mt-2 text-gray-700">No resume uploaded.</p>
-                  </div>
-                </DocCard>
+              <div className="mb-6 flex justify-center">
+                <div className="mb-6 flex justify-center">
+                  <SavedDocCard
+                    title="Saved Resume"
+                    name={app.applicant}
+                    contact={[
+                      "joywong1228@gmail.com",
+                      "+1 (519) XXX XXXX",
+                      app.location || "Calgary, AB",
+                    ]}
+                    bullets={[
+                      "Project Manager | AAA Company",
+                      "Intern | BBB Limited Company",
+                      "XXX | XXXXX",
+                    ]}
+                    // If you have a working link, pass it:
+                    // downloadUrl={app.resumeUrl}
+                    // Otherwise omit it, and the popup will appear.
+                  />
+                </div>
               </div>
 
-              {/* Cover Letter (placeholder) */}
+              {/* Cover Letter */}
               <SectionTitle>Cover Letter</SectionTitle>
-              <div className="mb-6">
-                <DocCard
+              <div className="mb-6 flex justify-center">
+                <SavedDocCard
                   title="Saved Cover Letter"
-                  disabled
-                  onDownload={() => {}}
-                >
-                  <div className="text-sm">
-                    <div className="font-semibold">{app.applicant}</div>
-                    <p className="mt-2 text-gray-700">
-                      No cover letter uploaded.
-                    </p>
-                  </div>
-                </DocCard>
+                  name={app.applicant}
+                  body={`Dear Hiring Manager,
+
+I'm excited to apply for the Web Development Internship at ABC Company...`}
+                  // downloadUrl={app.coverLetterUrl}
+                />
               </div>
 
-              {/* Additional Questions (only render if present in JSON in the future) */}
+              {/* Additional Questions */}
               <SectionTitle>Additional Question</SectionTitle>
               <div className="border-t pt-4">
                 {app.additionalQuestions?.map((qa, i) => (
@@ -241,7 +230,6 @@ export default function ApplicationDetailsPage({ params }) {
           </section>
         </div>
 
-        {/* all the pop up  */}
         {openChat && (
           <ChatWindow
             recipient={app.applicant}
