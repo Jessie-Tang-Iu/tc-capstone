@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState } from  "react";
+import { useRouter } from "next/navigation";
+import { createContext, use, useContext, useEffect, useState } from  "react";
 
 const UserContext = createContext();
 
@@ -15,11 +16,35 @@ export const useUserContext = () => {
 
 export const UserProvider = ({ children }) => {
 
-    const [username, setUsername] = useState("");
+    const [user, setUser] = useState(null);
     const [email, setEmail] = useState("");
+    const [role, setRole] = useState(null);
+
+    const router = useRouter();
+
+    useEffect(() => {
+        if (user) {
+            setEmail(user.email);
+            setRole(user.role);
+            switch (user.role) {
+            case "admin":
+                router.push("/adminFlow");
+                break;
+            case "member":
+                router.push("/memberFlow");
+                break;
+            case "employer":
+                router.push("/employerFlow");
+                break;
+            case "advisor":
+                router.push("/advisorFlow");
+                break;
+            }
+        }
+    }, [user]);
 
     return (
-        <UserContext.Provider value={{ username, email, setUsername, setEmail}}>
+        <UserContext.Provider value={{ user, email, role, setUser, setEmail, setRole }}>
             {children}
         </UserContext.Provider>
     )

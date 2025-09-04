@@ -1,0 +1,400 @@
+[
+  {
+    "id": 1,
+    "jobTitle": "Junior Developer",
+    "applicationNo": "1234#000",
+    "applicant": "Joy Wong",
+    "headline": "Frontend | React | TailwindCSS",
+    "location": "Calgary, Alberta, Canada",
+    "appliedAgo": "Applied 1 week ago",
+    "experience": [
+      {
+        "title": "Frontend Intern",
+        "company": "ABC Tech",
+        "date": "2024 - 2025"
+      }
+    ],
+    "education": [
+      {
+        "school": "SAIT",
+        "program": "Software Development",
+        "date": "2023 - 2025"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "jobTitle": "Data Analyst",
+    "applicationNo": "1234#001",
+    "applicant": "John Smith",
+    "headline": "SQL | Python | Power BI",
+    "location": "Edmonton, Alberta, Canada",
+    "appliedAgo": "Applied 3 days ago",
+    "experience": [
+      {
+        "title": "Business Analyst",
+        "company": "XYZ Finance",
+        "date": "2022 - 2024"
+      }
+    ],
+    "education": [
+      { "school": "UofA", "program": "Data Analytics", "date": "2020 - 2022" }
+    ]
+  },
+  {
+    "id": 3,
+    "jobTitle": "UX Designer",
+    "applicationNo": "1234#002",
+    "applicant": "Alice Lee",
+    "headline": "Figma | Prototyping | UI/UX",
+    "location": "Vancouver, BC, Canada",
+    "appliedAgo": "Applied yesterday",
+    "experience": [
+      { "title": "UX Intern", "company": "Design Co.", "date": "2023 - 2024" }
+    ],
+    "education": [
+      {
+        "school": "BCIT",
+        "program": "Interactive Design",
+        "date": "2021 - 2023"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "jobTitle": "Project Manager",
+    "applicationNo": "1234#003",
+    "applicant": "Robert Chen",
+    "headline": "Agile | Scrum | Jira",
+    "location": "Toronto, Ontario, Canada",
+    "appliedAgo": "Applied 2 weeks ago",
+    "experience": [
+      {
+        "title": "Scrum Master",
+        "company": "AgileWorks",
+        "date": "2021 - 2023"
+      }
+    ],
+    "education": [
+      {
+        "school": "UofT",
+        "program": "MBA Project Management",
+        "date": "2019 - 2021"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "jobTitle": "Marketing Specialist",
+    "applicationNo": "1234#004",
+    "applicant": "Emma Davis",
+    "headline": "SEO | Google Ads | Social Media",
+    "location": "Calgary, Alberta, Canada",
+    "appliedAgo": "Applied 5 days ago",
+    "experience": [
+      {
+        "title": "Digital Marketer",
+        "company": "MarketPro",
+        "date": "2022 - 2025"
+      }
+    ],
+    "education": [
+      { "school": "MRU", "program": "Marketing", "date": "2018 - 2022" }
+    ]
+  },
+  {
+    "id": 6,
+    "jobTitle": "Systems Engineer",
+    "applicationNo": "1234#005",
+    "applicant": "Michael Brown",
+    "headline": "Cloud | Azure | Linux",
+    "location": "Ottawa, Ontario, Canada",
+    "appliedAgo": "Applied 2 days ago",
+    "experience": [
+      { "title": "Systems Admin", "company": "GovTech", "date": "2020 - 2024" }
+    ],
+    "education": [
+      {
+        "school": "Carleton University",
+        "program": "Computer Systems",
+        "date": "2016 - 2020"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "jobTitle": "Business Analyst",
+    "applicationNo": "1234#006",
+    "applicant": "Sophia Patel",
+    "headline": "Requirements Gathering | Stakeholder Communication",
+    "location": "Winnipeg, Manitoba, Canada",
+    "appliedAgo": "Applied 1 day ago",
+    "experience": [
+      { "title": "BA Intern", "company": "HealthCo", "date": "2023 - 2024" }
+    ],
+    "education": [
+      {
+        "school": "UofM",
+        "program": "Business Analysis",
+        "date": "2021 - 2023"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "jobTitle": "QA Tester",
+    "applicationNo": "1234#007",
+    "applicant": "Daniel Green",
+    "headline": "Manual Testing | Selenium | Cypress",
+    "location": "Calgary, Alberta, Canada",
+    "appliedAgo": "Applied 4 days ago",
+    "experience": [
+      { "title": "QA Intern", "company": "SoftWorks", "date": "2022 - 2023" }
+    ],
+    "education": [
+      { "school": "SAIT", "program": "Software Testing", "date": "2020 - 2022" }
+    ]
+  },
+  {
+    "id": 9,
+    "jobTitle": "Cybersecurity Analyst",
+    "applicationNo": "1234#008",
+    "applicant": "Hannah Kim",
+    "headline": "Network Security | SIEM | Threat Analysis",
+    "location": "Halifax, Nova Scotia, Canada",
+    "appliedAgo": "Applied 1 month ago",
+    "experience": [
+      {
+        "title": "Security Intern",
+        "company": "SecureNet",
+        "date": "2023 - 2024"
+      }
+    ],
+    "education": [
+      {
+        "school": "Dalhousie University",
+        "program": "Cybersecurity",
+        "date": "2021 - 2023"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "jobTitle": "HR Coordinator",
+    "applicationNo": "1234#009",
+    "applicant": "Lucas Nguyen",
+    "headline": "Recruitment | Onboarding | Employee Relations",
+    "location": "Calgary, Alberta, Canada",
+    "appliedAgo": "Applied 6 days ago",
+    "experience": [
+      {
+        "title": "HR Assistant",
+        "company": "PeopleFirst",
+        "date": "2021 - 2023"
+      }
+    ],
+    "education": [
+      { "school": "UofC", "program": "Human Resources", "date": "2018 - 2022" }
+    ]
+  },
+  {
+    "id": 11,
+    "jobTitle": "Mobile Developer",
+    "applicationNo": "1234#010",
+    "applicant": "Oliver Scott",
+    "headline": "React Native | iOS | Android",
+    "location": "Kelowna, BC, Canada",
+    "appliedAgo": "Applied 2 weeks ago",
+    "experience": [
+      { "title": "Mobile Intern", "company": "AppCo", "date": "2022 - 2023" }
+    ],
+    "education": [
+      {
+        "school": "UBC Okanagan",
+        "program": "Mobile Computing",
+        "date": "2019 - 2022"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "jobTitle": "DevOps Engineer",
+    "applicationNo": "1234#011",
+    "applicant": "Sophia Zhang",
+    "headline": "CI/CD | Docker | Kubernetes",
+    "location": "Toronto, Ontario, Canada",
+    "appliedAgo": "Applied 1 day ago",
+    "experience": [
+      {
+        "title": "DevOps Intern",
+        "company": "Pipeline Ltd.",
+        "date": "2023 - 2024"
+      }
+    ],
+    "education": [
+      {
+        "school": "UofT",
+        "program": "Computer Engineering",
+        "date": "2019 - 2023"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "jobTitle": "AI Researcher",
+    "applicationNo": "1234#012",
+    "applicant": "Ethan Brown",
+    "headline": "Machine Learning | NLP | Computer Vision",
+    "location": "Montreal, Quebec, Canada",
+    "appliedAgo": "Applied 2 months ago",
+    "experience": [
+      { "title": "Research Intern", "company": "AI Lab", "date": "2022 - 2023" }
+    ],
+    "education": [
+      {
+        "school": "McGill University",
+        "program": "Computer Science (AI)",
+        "date": "2018 - 2022"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "jobTitle": "Cloud Architect",
+    "applicationNo": "1234#013",
+    "applicant": "Mia Thompson",
+    "headline": "AWS | GCP | Infrastructure Design",
+    "location": "Vancouver, BC, Canada",
+    "appliedAgo": "Applied 3 weeks ago",
+    "experience": [
+      {
+        "title": "Cloud Consultant",
+        "company": "CloudWorks",
+        "date": "2020 - 2023"
+      }
+    ],
+    "education": [
+      { "school": "SFU", "program": "Cloud Computing", "date": "2016 - 2020" }
+    ]
+  },
+  {
+    "id": 15,
+    "jobTitle": "Full Stack Developer",
+    "applicationNo": "1234#014",
+    "applicant": "Ava Wilson",
+    "headline": "Node.js | React | MongoDB",
+    "location": "Calgary, Alberta, Canada",
+    "appliedAgo": "Applied 4 days ago",
+    "experience": [
+      {
+        "title": "Junior Full Stack Dev",
+        "company": "StackHub",
+        "date": "2022 - Present"
+      }
+    ],
+    "education": [
+      {
+        "school": "SAIT",
+        "program": "Software Development",
+        "date": "2020 - 2022"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "jobTitle": "Financial Analyst",
+    "applicationNo": "1234#015",
+    "applicant": "William Harris",
+    "headline": "Forecasting | Budgeting | Excel",
+    "location": "Regina, Saskatchewan, Canada",
+    "appliedAgo": "Applied 2 weeks ago",
+    "experience": [
+      {
+        "title": "Finance Intern",
+        "company": "AgriFinance",
+        "date": "2021 - 2022"
+      }
+    ],
+    "education": [
+      { "school": "UofR", "program": "Finance", "date": "2017 - 2021" }
+    ]
+  },
+  {
+    "id": 17,
+    "jobTitle": "Product Manager",
+    "applicationNo": "1234#016",
+    "applicant": "Charlotte White",
+    "headline": "Roadmaps | User Research | Strategy",
+    "location": "Toronto, Ontario, Canada",
+    "appliedAgo": "Applied 1 week ago",
+    "experience": [
+      {
+        "title": "Associate PM",
+        "company": "Productive Inc.",
+        "date": "2020 - 2023"
+      }
+    ],
+    "education": [{ "school": "UofT", "program": "MBA", "date": "2018 - 2020" }]
+  },
+  {
+    "id": 18,
+    "jobTitle": "Content Writer",
+    "applicationNo": "1234#017",
+    "applicant": "Benjamin Carter",
+    "headline": "Copywriting | SEO | Editing",
+    "location": "Calgary, Alberta, Canada",
+    "appliedAgo": "Applied 2 days ago",
+    "experience": [
+      { "title": "Writer", "company": "MediaHouse", "date": "2020 - Present" }
+    ],
+    "education": [
+      {
+        "school": "UofC",
+        "program": "English Literature",
+        "date": "2016 - 2020"
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "jobTitle": "Mechanical Engineer",
+    "applicationNo": "1234#018",
+    "applicant": "Isabella Martinez",
+    "headline": "CAD | SolidWorks | Manufacturing",
+    "location": "Hamilton, Ontario, Canada",
+    "appliedAgo": "Applied 2 weeks ago",
+    "experience": [
+      {
+        "title": "Design Engineer",
+        "company": "AutoFab",
+        "date": "2019 - 2022"
+      }
+    ],
+    "education": [
+      {
+        "school": "McMaster University",
+        "program": "Mechanical Engineering",
+        "date": "2015 - 2019"
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "jobTitle": "Teacher",
+    "applicationNo": "1234#019",
+    "applicant": "James Anderson",
+    "headline": "Curriculum Design | Classroom Management",
+    "location": "Calgary, Alberta, Canada",
+    "appliedAgo": "Applied 3 days ago",
+    "experience": [
+      {
+        "title": "High School Teacher",
+        "company": "CBE",
+        "date": "2018 - Present"
+      }
+    ],
+    "education": [
+      { "school": "UofC", "program": "Education", "date": "2014 - 2018" }
+    ]
+  }
+]

@@ -82,12 +82,20 @@ export default function Navbar() {
       <nav className="hidden lg:block">
         <ul className="flex items-center space-x-6 text-black">
           <li>
+            <Link
+              href="/employerDashboard/message"
+              className="hover:text-orange-500"
+            >
+              (Temp) Employer Dashboard{" "}
+            </Link>
+          </li>
+          <li>
             <Link href="#" className="hover:text-orange-500">
               Register as Advisor
             </Link>
           </li>
           <li>
-            <Link href="#" className="hover:text-orange-500">
+            <Link href="/employerRegister" className="hover:text-orange-500">
               Register as Employer
             </Link>
           </li>

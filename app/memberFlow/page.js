@@ -1,43 +1,22 @@
 "use client";
 
-import Navbar from "./components/NavBar";
+import Navbar from "../components/MemberNavBar";
 import Link from "next/link";
-import { getSession } from "@/lib/supabase_auth";
-import { useUserContext } from "./context/userContext";
+import { useUserContext } from "../context/userContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { getUserByEmail } from "@/lib/user_crud";
 
 function PageContent() {
 
-  const { setUser, setEmail } = useUserContext();
+  const { user, role } = useUserContext();
 
   const router = useRouter();
 
-  const getCurrentSession = async () => {
-    try {
-      const session = await getSession();
-      setEmail(session?.user?.email || '');
-      if (!session) { 
-        router.push('/signIn');
-      } else {
-        const p = await getUserByEmail(session?.user?.email);
-        if (!p) {
-          setError("Signed in, but profile could not be created due to RLS.");
-          return;
-        }
-
-        // reflect on UI
-        setUser(p);
-      }
-    } catch (error) {
-      console.error("Error fetching session:", error);
-      alert("Error", "Failed to fetch session. Please sign in again.");
-    }
-  };
-
   useEffect(() => {
-    getCurrentSession();
+    if (user) {
+      console.log("User's role: ", role);
+    }
+    console.log("User: ", user);
   }, []);
   
   return (
@@ -66,6 +45,6 @@ function PageContent() {
 
 export default function Page() {
   return (
-      <PageContent />
-  );  
+    <PageContent />
+  );
 }
