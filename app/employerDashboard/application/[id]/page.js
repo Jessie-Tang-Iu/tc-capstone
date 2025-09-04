@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import NaNvbar from "../../../components/NavBar";
 import EmployerSidebar from "../../../components/employerDashboard/EmployerSideBar";
 import applications from "../../../data/applications.json";
+import ChatWindow from "@/app/components/ChatWindow";
+import PopupMessage from "@/app/components/ui/PopupMessage";
 
 /* UI bits */
 const Pill = ({ children, variant = "solid", onClick }) => {
@@ -52,6 +54,9 @@ const DocCard = ({ title, children, onDownload, disabled }) => (
 );
 
 export default function ApplicationDetailsPage({ params }) {
+  const [openChat, setOpenChat] = useState(false);
+  const [popup, setPopup] = useState(null);
+
   // Pull the item from applications.json; fallback to first item if missing
   const app = useMemo(
     () =>
@@ -79,8 +84,52 @@ export default function ApplicationDetailsPage({ params }) {
                 {String(app.applicationNo).replace(/\d{3}$/, "###")}
               </div>
               <div className="flex items-center gap-3">
-                <Pill variant="ghost">Reject</Pill>
-                <Pill>Approve</Pill>
+                <Pill
+                  variant="ghost"
+                  onClick={() =>
+                    setPopup({
+                      type: "confirm",
+                      title: "Reject Application",
+                      description:
+                        "Are you sure you want to reject this application?",
+                      buttonText: "Reject",
+                      onConfirm: () => {
+                        console.log("Rejected", app.id);
+                        setPopup({
+                          type: "success",
+                          title: "Application Rejected",
+                          description: "The applicant has been rejected.",
+                          buttonText: "OK",
+                        });
+                      },
+                    })
+                  }
+                >
+                  Reject
+                </Pill>
+
+                <Pill
+                  onClick={() =>
+                    setPopup({
+                      type: "confirm",
+                      title: "Approve Application",
+                      description:
+                        "Are you sure you want to approve this application?",
+                      buttonText: "Approve",
+                      onConfirm: () => {
+                        console.log("Approved", app.id);
+                        setPopup({
+                          type: "success",
+                          title: "Application Approved",
+                          description: "The applicant has been approved.",
+                          buttonText: "OK",
+                        });
+                      },
+                    })
+                  }
+                >
+                  Approve
+                </Pill>
               </div>
             </div>
 
@@ -95,9 +144,7 @@ export default function ApplicationDetailsPage({ params }) {
                 {app.appliedAgo && <div className="mt-1">{app.appliedAgo}</div>}
               </div>
               <div className="flex w-40 shrink-0 flex-col gap-2">
-                <Pill onClick={() => console.log("Message", app.id)}>
-                  Message
-                </Pill>
+                <Pill onClick={() => setOpenChat(true)}>Message</Pill>
                 <Pill onClick={() => console.log("View Profile", app.id)}>
                   View Profile
                 </Pill>
@@ -177,18 +224,42 @@ export default function ApplicationDetailsPage({ params }) {
               </div>
 
               {/* Additional Questions (only render if present in JSON in the future) */}
-              {/* <SectionTitle>Additional Question</SectionTitle>
+              <SectionTitle>Additional Question</SectionTitle>
               <div className="border-t pt-4">
                 {app.additionalQuestions?.map((qa, i) => (
                   <div key={i} className="mb-6">
                     <div className="text-sm text-gray-600">{qa.question}</div>
                     <div className="mt-1 font-semibold">{qa.answer}</div>
                   </div>
-                )) || <div className="text-sm text-gray-700">No questions answered.</div>}
-              </div> */}
+                )) || (
+                  <div className="text-sm text-gray-700">
+                    No questions answered.
+                  </div>
+                )}
+              </div>
             </div>
           </section>
         </div>
+
+        {/* all the pop up  */}
+        {openChat && (
+          <ChatWindow
+            recipient={app.applicant}
+            onClose={() => setOpenChat(false)}
+            onSend={(text) => console.log("send:", text)}
+          />
+        )}
+
+        {popup && (
+          <PopupMessage
+            type={popup.type}
+            title={popup.title}
+            description={popup.description}
+            buttonText={popup.buttonText}
+            onConfirm={popup.onConfirm}
+            onClose={() => setPopup(null)}
+          />
+        )}
       </main>
     </div>
   );
