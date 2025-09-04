@@ -2,11 +2,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-
-
 const UserContext = createContext();
-
-
 
 export const useUsercontext = () => {
     const context = useContext(UserContext);
