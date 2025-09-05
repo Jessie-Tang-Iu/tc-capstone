@@ -27,15 +27,15 @@ export default function JobDetail({ job }) {
                         </p>
                     </div>
                     
-                    <div className="flex flex-col sm:flex-row gap-2 lg:flex-row">
-                        <button className="bg-primary text-white px-4 md:px-6 py-2 rounded-lg text-sm md:text-base font-normal hover:bg-primary/90 transition-colors">
+                    <div className="flex flex-col sm:flex-row gap-2 lg:flex-row lg:items-center">
+                        <button className="bg-[#E55B3C] hover:bg-[#d14f32] p-2 rounded-md transition duration-200 ease-in-out cursor-pointer focus:outline-none active:scale-95 text-white">
                             Apply Now
                         </button>
                         <div className="flex gap-2">
-                            <button className="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors">
+                            <button className="bg-[#E55B3C] hover:bg-[#d14f32] p-2 rounded-md transition duration-200 ease-in-out cursor-pointer focus:outline-none active:scale-95 text-white">
                                 <Bookmark className="w-5 h-5 md:w-6 md:h-6" />
                             </button>
-                            <button className="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors">
+                            <button className="bg-[#E55B3C] hover:bg-[#d14f32] p-2 rounded-md transition duration-200 ease-in-out cursor-pointer focus:outline-none active:scale-95 text-white">
                                 <LinkIcon className="w-5 h-5 md:w-6 md:h-6" />
                             </button>
                         </div>
