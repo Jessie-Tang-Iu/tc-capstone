@@ -56,6 +56,30 @@ export default function Navbar() {
         {isMobileMenuOpen && (
           <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-50">
             <ul className="flex flex-col text-black">
+            <li>
+              <Link
+                href="/advisor"
+                className="block px-4 py-2 hover:text-orange-500"
+              >
+                (Temp) advisor
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/employerDashboard/message"
+                className="block px-4 py-2 hover:text-orange-500"
+              >
+                (Temp) Employer
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/adminDashboard/message"
+                className="block px-4 py-2 hover:text-orange-500"
+              >
+                (Temp) Admin
+              </Link>
+            </li>
               <li>
                 <Link
                   href="#"
@@ -88,6 +112,14 @@ export default function Navbar() {
       {/* Desktop nav (lg+) */}
       <nav className="hidden lg:block">
         <ul className="flex items-center space-x-6 text-black">
+          <li>
+            <Link
+              href="/advisor"
+              className="hover:text-orange-500"
+            >
+              (Temp) advisor
+            </Link>
+          </li>
           <li>
             <Link
               href="/employerDashboard/message"
