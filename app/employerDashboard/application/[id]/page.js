@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import NaNvbar from "../../../components/NavBar";
+import NaNvbar from "../../../components/NavBarBeforeSignIn";
 import EmployerSidebar from "../../../components/employerDashboard/EmployerSideBar";
 import applications from "../../../data/applications.json";
 import ChatWindow from "@/app/components/ChatWindow";
