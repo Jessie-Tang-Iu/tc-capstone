@@ -1,0 +1,84 @@
+{
+  "reports": [
+    {
+      "id": 4001,
+      "category": "Discussion Forum",
+      "reportId": "82345678",
+      "reporter": "Joy Wong",
+      "issue": "Hate speech",
+      "timeAgo": "5 min ago"
+    },
+    {
+      "id": 4002,
+      "category": "Job Board",
+      "reportId": "23456789",
+      "reporter": "Alex Lee",
+      "issue": "Fake Account",
+      "timeAgo": "5 min ago"
+    },
+    {
+      "id": 4003,
+      "category": "Advisory Session",
+      "reportId": "34567890",
+      "reporter": "Chris Chen",
+      "issue": "Booking Fails",
+      "timeAgo": "5 min ago"
+    },
+    {
+      "id": 4004,
+      "category": "Course",
+      "reportId": "45678901",
+      "reporter": "Emily Zhang",
+      "issue": "Access Fails",
+      "timeAgo": "5 min ago"
+    },
+    {
+      "id": 4005,
+      "category": "User Setting",
+      "reportId": "56789012",
+      "reporter": "David Park",
+      "issue": "Change Fails",
+      "timeAgo": "5 min ago"
+    },
+    {
+      "id": 4006,
+      "category": "Job Board",
+      "reportId": "67890123",
+      "reporter": "Sophia Liu",
+      "issue": "Spam",
+      "timeAgo": "10 min ago"
+    },
+    {
+      "id": 4007,
+      "category": "Discussion Forum",
+      "reportId": "78901234",
+      "reporter": "Michael Tan",
+      "issue": "Harassment",
+      "timeAgo": "14 min ago"
+    },
+    {
+      "id": 4008,
+      "category": "Advisory Session",
+      "reportId": "89012345",
+      "reporter": "Olivia Wu",
+      "issue": "Inappropriate Behavior",
+      "timeAgo": "20 min ago"
+    },
+    {
+      "id": 4009,
+      "category": "Course",
+      "reportId": "90123456",
+      "reporter": "James Kim",
+      "issue": "Content Issue",
+      "timeAgo": "25 min ago"
+    },
+    {
+      "id": 4010,
+      "category": "User Setting",
+      "reportId": "01234567",
+      "reporter": "Isabella Nguyen",
+      "issue": "Privacy Concern",
+      "timeAgo": "30 min ago"
+    }
+  ]
+}
