@@ -140,7 +140,7 @@ export default function Navbar() {
                 {isMobileJobOpen && (
                   <div className="pb-2">
                     <Link
-                      href="#"
+                      href="/jobBoard"
                       className="block pl-8 pr-4 py-2 text-sm hover:bg-gray-50"
                     >
                       Job Board
@@ -229,7 +229,7 @@ export default function Navbar() {
             </button>
             <div className={`absolute top-full left-0 mt-2 bg-white border rounded shadow-lg ${isDesktopJobOpen ? 'block' : 'hidden'}`}>
               <Link
-                href="#"
+                href="/jobBoard"
                 className="block px-4 py-2 text-sm hover:bg-gray-50"
               >
                 Job Board

@@ -1,0 +1,78 @@
+{
+  "normal": [
+    {
+      "id": 1,
+      "name": "English White",
+      "subtitle": "Project Manager – 15 Years Experience",
+      "banned": false
+    },
+    {
+      "id": 2,
+      "name": "Marry Black",
+      "subtitle": "Front End Developer – 8 Years Experience",
+      "banned": true
+    },
+    {
+      "id": 5,
+      "name": "Alice Green",
+      "subtitle": "UX Designer – 6 Years Experience",
+      "banned": false
+    },
+    {
+      "id": 6,
+      "name": "Bob Brown",
+      "subtitle": "Data Analyst – 4 Years Experience",
+      "banned": false
+    },
+    {
+      "id": 7,
+      "name": "Charlie Blue",
+      "subtitle": "QA Engineer – 3 Years Experience",
+      "banned": true
+    },
+    {
+      "id": 8,
+      "name": "Diana Red",
+      "subtitle": "DevOps Engineer – 7 Years Experience",
+      "banned": false
+    }
+  ],
+  "employer": [
+    {
+      "id": 3,
+      "name": "English White",
+      "subtitle": "Project Manager – 15 Years Experience",
+      "banned": false
+    },
+    {
+      "id": 4,
+      "name": "Marry Black",
+      "subtitle": "Recruiter – 5 Years Experience",
+      "banned": false
+    },
+    {
+      "id": 9,
+      "name": "Eve Yellow",
+      "subtitle": "HR Manager – 10 Years Experience",
+      "banned": false
+    },
+    {
+      "id": 10,
+      "name": "Frank Purple",
+      "subtitle": "Technical Lead – 12 Years Experience",
+      "banned": true
+    },
+    {
+      "id": 11,
+      "name": "Grace Orange",
+      "subtitle": "Marketing Director – 9 Years Experience",
+      "banned": false
+    },
+    {
+      "id": 12,
+      "name": "Hank Gray",
+      "subtitle": "Sales Manager – 11 Years Experience",
+      "banned": false
+    }
+  ]
+}

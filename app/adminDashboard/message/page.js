@@ -3,8 +3,8 @@
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import NaNvbar from "../../components/NavBarBeforeSignIn";
-import EmployerSidebar from "../../components/employerDashboard/EmployerSideBar";
+import Navbar from "../../components/NavBarBeforeSignIn";
+import AdminSideBar from "../../components/adminDashboard/AdminSideBar";
 import ChatWindow from "@/app/components/ChatWindow";
 
 const MOCK_MESSAGES = [
@@ -143,15 +143,15 @@ const MessagePage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <NaNvbar />
+      <Navbar />
 
       <main className="mx-auto w-full px-6 py-8 bg-white rounded-xl">
         <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
-          Employer DashBoard
+          Admin DashBoard
         </h1>
 
         <div className="flex gap-6">
-          <EmployerSidebar />
+          <AdminSideBar />
 
           <section className="flex-1 rounded-xl bg-white shadow">
             {/* Header row above table */}
