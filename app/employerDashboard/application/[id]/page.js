@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useMemo, useState, use } from "react";
-import NaNvbar from "../../../components/NavBar";
+import React, { useMemo, useState } from "react";
+import NaNvbar from "../../../components/NavBarBeforeSignIn";
 import EmployerSidebar from "../../../components/employerDashboard/EmployerSideBar";
 import applications from "../../../data/applications.json";
 import ChatWindow from "@/app/components/ChatWindow";
@@ -40,12 +40,10 @@ export default function ApplicationDetailsPage({ params }) {
   const [openChat, setOpenChat] = useState(false);
   const [popup, setPopup] = useState(null);
 
-  const { id } = use(params);
-  const appId = Number(id);
-
   const app = useMemo(
-    () => applications.find((a) => a.id === appId) || applications[0],
-    [appId]
+    () =>
+      applications.find((a) => a.id === Number(params.id)) || applications[0],
+    [params.id]
   );
 
   return (

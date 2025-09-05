@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -26,8 +27,14 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 flex justify-between items-center p-4 bg-white border-b border-gray-200 shadow-[0_6px_14px_-6px_rgba(0,0,0,0.18)]">
       {/* Brand: icon always, text ≥ sm */}
-      <Link href="#" className="flex items-center space-x-2">
-        <img src="/logo.jpeg" alt="Logo" className="w-8 h-8 shrink-0" />
+      <Link href="/" className="flex items-center space-x-2">
+        <Image
+          src="/logo.jpeg"
+          alt="Logo"
+          width={32}
+          height={32}
+          className="w-8 h-8 shrink-0"
+        />
         <span className="hidden sm:inline font-bold text-lg text-black whitespace-nowrap">
           Tech Connect Alberta
         </span>
@@ -86,7 +93,15 @@ export default function Navbar() {
               href="/employerDashboard/message"
               className="hover:text-orange-500"
             >
-              (Temp) Employer Dashboard{" "}
+              (Temp) Employer
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/adminDashboard/message"
+              className="hover:text-orange-500"
+            >
+              (Temp) Admin
             </Link>
           </li>
           <li>
