@@ -28,13 +28,13 @@ export const UserProvider = ({ children }) => {
             setRole(user.role);
             switch (user.role) {
             case "admin":
-                router.push("/adminFlow");
+                router.push("/adminDashboard/message");
                 break;
             case "member":
                 router.push("/memberFlow");
                 break;
             case "employer":
-                router.push("/employerFlow");
+                router.push("/employerDashboard/application");
                 break;
             case "advisor":
                 router.push("/advisorFlow");
