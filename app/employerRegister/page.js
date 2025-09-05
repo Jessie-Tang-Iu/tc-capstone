@@ -59,11 +59,7 @@ export default function EmployerRegistration() {
           Register as Employer/Founder
         </h1>
         <p className="text-gray-600 mb-8 justify-center text-center">
-<<<<<<< Updated upstream
-          Connect with Alberta's top tech professionals.
-=======
           Connect with Alberta&rsquo;s top tech professionals.
->>>>>>> Stashed changes
         </p>
 
         {error && (
