@@ -5,6 +5,7 @@ import Navbar from "../components/NavBar";
 import SearchBar from "../components/job/SearchBar";
 import sampleJobs from "../data/jobs.json";
 import JobCard from "../components/job/JobCard";
+import JobDetail from "../components/job/JobDetail";
 
 
 export default function JobBoardPage() {
@@ -13,7 +14,7 @@ export default function JobBoardPage() {
     const [experience, setExperience] = useState("");
     const [type, setType] = useState("");
 
-    const [selectedJobId, setSelectedJobId] = useState(1);
+    const [selectedJobId, setSelectedJobId] = useState();
     const [showJobDetail, setShowJobDetail] = useState(false);
     const selectedJob = sampleJobs.find(job => job.id === selectedJobId);
 
@@ -63,7 +64,27 @@ export default function JobBoardPage() {
                         ))}
                     </div>
                 </div>
+
+                {/* Job Detail Panel */}
+                <div 
+                    className={`flex-1 py-2
+                                ${showJobDetail ? 'block' : 'hidden md:block'}
+                                h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] relative`}
+                >
+                    {/* Mobile Back Button */}
+                    <button
+                        onClick={handleBackToList}
+                        className="md:hidden absolute top-4 left-4 z-10 bg-primary text-black py-2 rounded-lg text-sm font-normal hover:bg-primary/90 transition-colors"
+                    >
+                        ← Back to Jobs
+                    </button>
+                    <div className="mt-12 md:mt-0 h-full">
+                        <JobDetail job={selectedJob} />
+                    </div>
+                </div>
             </div>
+
+            
         </main>
     );
 }
