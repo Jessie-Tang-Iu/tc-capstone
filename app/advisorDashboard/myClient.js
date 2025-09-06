@@ -31,21 +31,22 @@ export default function MyClientPage() {
         <main>
             {/* Header: centered title, search on its own row */}
             <div className="mb-4 rounded-xl bg-white p-6 shadow text-center">
-                <div className="mb-4 text-3xl font-semibold text-[#E55B3C]">
-                    User Management
+                <div className="mb-4 text-4xl font-semibold text-[#E55B3C]">
+                    Client Management
                 </div>
                 <div className="flex justify-center">
                     <SearchBar
                         value={query}
                         onChange={setQuery}
                         onSearch={() => {}}
+                        placeholder="Client Name"
                     />
                 </div>
             </div>
 
             {/* My Client */}
-            <div className="mb-4 rounded-xl bg-white p-6 shadow text-center">
-                <p className="flex items-start border-b px-4 py-3 text-lg font-semibold text-black">Client List</p>
+            <div className="mb-4 rounded-xl bg-white shadow text-center">
+                <p className="flex items-start border-b px-4 py-3 text-2xl font-semibold text-black">Client List</p>
                 <div className="p-4">
                     {filteredClient.length === 0 ? (
                         <PlaceholderCard
@@ -53,7 +54,7 @@ export default function MyClientPage() {
                             description="Try again"
                         />
                     ) : (
-                        <div className="h-80 overflow-y-auto pr-2">
+                        <div className="h-140 overflow-y-auto pr-2">
                             {filteredClient.map((u) => ( 
                                 <ClientRow
                                 key={u.id}

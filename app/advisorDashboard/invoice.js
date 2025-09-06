@@ -61,7 +61,7 @@ export default function Invoice() {
                         value={query}
                         onChange={setQuery}
                         onSearch={() => {}}
-                        placeholder="Invoice No | Client Name"
+                        placeholder="Invoice No | Client Name | Location"
                     />
                 </div>
             </div>
