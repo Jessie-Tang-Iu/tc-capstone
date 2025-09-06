@@ -35,55 +35,55 @@ export default function AdvisorDashboard() {
     ];
 
     return(
-        <div className="min-h-screen bg-white">
+        <main className="w-full min-h-screen bg-white">
             <Navbar />
         
-            <main className="mx-auto w-full px-6 py-8 bg-white rounded-xl">
+            <div className="mx-auto w-full max-w-8xl px-6 py-8">
                 <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
                     Advisor DashBoard
                 </h1>
 
                 <div className="flex flex-row">
-                    <div className="flex gap-6 flex-col items-start">
+                    <div className="ml-0 w-60 h-57 rounded-lg bg-white p-1 flex flex-col shadow">
                         {/*Advisor Side Bar*/}
                         <button
-                            className="text-black disabled:bg-[#E2B596] hover:bg-[#F0E0D5]"
+                            className="w-full text-left rounded-md px-4 py-3 text-sm font-medium transition text-black disabled:bg-[#E2B596] hover:bg-[#F0E0D5]"
                             type="button"
                             value="message"
                             onClick={handleMenuSelection}
                             disabled={menuSelection =="message"}
-                        >Message</button>
+                        >Message <span className="ml-1"></span>{">"}</button>
                         <button
-                            className="text-black disabled:bg-[#E2B596] hover:bg-[#F0E0D5]"
+                            className="w-full text-left rounded-md px-4 py-3 text-sm font-medium transition text-black disabled:bg-[#E2B596] hover:bg-[#F0E0D5]"
                             type="button"
                             value="booking"
                             onClick={handleMenuSelection}
                             disabled={menuSelection =="booking"}
-                        >View My Booking</button>
+                        >View My Booking <span className="ml-1"></span>{">"}</button>
                         <button
-                            className="text-black disabled:bg-[#E2B596] hover:bg-[#F0E0D5]"
+                            className="w-full text-left rounded-md px-4 py-3 text-sm font-medium transition text-black disabled:bg-[#E2B596] hover:bg-[#F0E0D5]"
                             type="button"
                             value="client"
                             onClick={handleMenuSelection}
                             disabled={menuSelection =="client"}
-                        >View My Client</button>
+                        >View My Client <span className="ml-1"></span>{">"}</button>
                         <button
-                            className="text-black disabled:bg-[#E2B596] hover:bg-[#F0E0D5]"
+                            className="w-full text-left rounded-md px-4 py-3 text-sm font-medium transition text-black disabled:bg-[#E2B596] hover:bg-[#F0E0D5]"
                             type="button"
                             value="availability"
                             onClick={handleMenuSelection}
                             disabled={menuSelection =="availability"}
-                        >My Availability</button>
+                        >My Availability <span className="ml-1"></span>{">"}</button>
                         <button
-                            className="text-black disabled:bg-[#E2B596] hover:bg-[#F0E0D5]"
+                            className="w-full text-left rounded-md px-4 py-3 text-sm font-medium transition text-black disabled:bg-[#E2B596] hover:bg-[#F0E0D5]"
                             type="button"
                             value="invoice"
                             onClick={handleMenuSelection}
                             disabled={menuSelection =="invoice"}
-                        >Invoice</button>
+                        >Invoice <span className="ml-1"></span>{">"}</button>
                     </div>
 
-                    <div className="ml-12">
+                    <div className=" w-full ml-6">
                         {menuSelection === "message" && <MessagePage messageList={MOCK_MESSAGES} />}
                         {menuSelection === "booking" && <h1 className="text-black">Booking</h1>}
                         {menuSelection === "client" && <MyClientPage />}
@@ -92,8 +92,8 @@ export default function AdvisorDashboard() {
                     </div>
                 </div>
 
-            </main>
-        </div>
+            </div>
+        </main>
             
     );
 }
