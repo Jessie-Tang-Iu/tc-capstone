@@ -12,7 +12,7 @@ export default function JobBoardPage() {
     const [query, setQuery] = useState("");
     const [location, setLocation] = useState("");
     const [experience, setExperience] = useState("");
-    const [type, setType] = useState("");
+    const [workplace, setWorkplace] = useState("");
 
     const [selectedJobId, setSelectedJobId] = useState();
     const [showJobDetail, setShowJobDetail] = useState(false);
@@ -38,7 +38,7 @@ export default function JobBoardPage() {
                     query={query} onQueryChange={setQuery}
                     location={location} onLocationChange={setLocation}
                     experience={experience} onExperienceChange={setExperience}
-                    type={type} onTypeChange={setType}
+                    workplace={workplace} onWorkplaceChange={setWorkplace}
                 />
             </div>
 

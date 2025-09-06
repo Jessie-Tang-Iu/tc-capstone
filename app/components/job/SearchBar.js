@@ -5,15 +5,15 @@ export default function SearchBar({
     query, onQueryChange,
     location, onLocationChange,
     experience, onExperienceChange,
-    type, onTypeChange,
-    showAdvanced, onToggleAdvanced,
-    onSearch,
+    workplace, onWorkplaceChange,
+    onSearch, onAdvancedSearch
 
 }) {
     return (
         <div className="w-full max-w-6xl mx-auto px-4 py-6">
             {/* Desktop Search Bar */}
-            <div className="hidden md:flex items-center bg-white border border-black rounded-lg h-11 overflow-hidden">
+            <div className="hidden md:flex items-center  h-11 overflow-hidden">
+                <div className="flex items-center flex-1 h-full bg-white border border-black rounded-lg">
                 {/* Keyword Field */}
                 <div className="flex-2 px-4 py-3 min-w-0">
                     <input
@@ -60,29 +60,34 @@ export default function SearchBar({
                 <div className="w-px h-9 bg-gray-200"></div>
 
                 {/* Remote Field */}
-                <div className="flex-1 px-4 py-3 min-w-0">
+                <div className="flex-1.5 px-4 py-3 min-w-0">
                     <select
-                        value={type}
-                        onChange={(e) => onTypeChange(e.target.value)}
+                        value={workplace}
+                        onChange={(e) => onWorkplaceChange(e.target.value)}
                         className="w-full text-sm xl:text-base font-normal text-black border-none outline-none bg-transparent"
                     >
-                        <option value="">All Job Types</option>
+                        <option value="">All Workplace Types</option>
                         <option value="onsite">On-site</option>
                         <option value="remote">Remote</option>
                         <option value="hybrid">Hybrid</option>
                     </select>
                 </div>
 
-                {/* Divider */}
-                <div className="w-px h-9 bg-gray-200"></div>
+                </div>
 
                 {/* Search Button */}
-                <button className="flex mx-2 bg-[#E55B3C] hover:bg-[#d14f32] font-semibold px-6 py-2 rounded-md transition duration-200 ease-in-out cursor-pointer focus:outline-none active:scale-95 text-white">
+                <button 
+                    className="flex mx-2 bg-[#E55B3C] hover:bg-[#d14f32] font-semibold ml-3 px-6 py-2 rounded-md transition duration-200 ease-in-out cursor-pointer focus:outline-none active:scale-95 text-white"
+                    onClick={onSearch}
+                >
                     Search
                 </button>
 
                 {/* Advanced Search Button */}
-                <button className="flex mx-2 bg-[#E55B3C] hover:bg-[#d14f32] font-semibold px-6 py-2 rounded-md transition duration-200 ease-in-out cursor-pointer focus:outline-none active:scale-95 text-white">
+                <button 
+                    className="flex mx-2 bg-[#E55B3C] hover:bg-[#d14f32] font-semibold px-6 py-2 rounded-md transition duration-200 ease-in-out cursor-pointer focus:outline-none active:scale-95 text-white"
+                    onClick={onAdvancedSearch}
+                >
                     Advanced Search
                 </button>
 
@@ -122,11 +127,11 @@ export default function SearchBar({
                 </div>
                 <div className="flex space-x-2">
                     <select
-                        value={type}
-                        onChange={(e) => onTypeChange(e.target.value)}
+                        value={workplace}
+                        onChange={(e) => onWorkplaceChange(e.target.value)}
                         className="flex-1 px-4 py-3 text-base font-normal text-black placeholder-black border border-black rounded-lg outline-none"
                     >
-                        <option value="">All Job Types</option>
+                        <option value="">All Workplace Types</option>
                         <option value="onsite">On-site</option>
                         <option value="remote">Remote</option>
                         <option value="hybrid">Hybrid</option>
@@ -141,7 +146,7 @@ export default function SearchBar({
                     </button>
                     <button 
                         className="flex-1 bg-[#E55B3C] hover:bg-[#d14f32] font-semibold px-6 py-2 rounded-md transition duration-200 ease-in-out cursor-pointer focus:outline-none active:scale-95 text-white" 
-                        onClick={onSearch}
+                        onClick={onAdvancedSearch}
                     >
                         Advanced Search
                     </button>
