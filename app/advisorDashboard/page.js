@@ -8,7 +8,7 @@ import Invoice from "./invoice";
 
 
 
-export default function advisorDashboard() {
+export default function AdvisorDashboard() {
 
     let [menuSelection, setMenuSelection] = useState("message");
 
