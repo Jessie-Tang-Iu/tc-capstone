@@ -1,0 +1,53 @@
+{
+  "invoices": [
+    {
+        "id": 1001,
+        "invoiceId": "82345678",
+        "client": "Joy Wong",
+        "location": "Calgary, Alberta, Canada",
+        "timeAgo": "1 week ago"
+    },
+    {
+        "id": 1002,
+        "invoiceId": "81545612",
+        "client": "Emily Chan",
+        "location": "Edmonton, Alberta, Canada",
+        "timeAgo": "1 week ago"
+    },
+    {
+        "id": 1003,
+        "invoiceId": "12354489",
+        "client": "English White",
+        "location": "Calgary, Alberta, Canada",
+        "timeAgo": "1 week ago"
+    },
+    {
+        "id": 1004,
+        "invoiceId": "98214586",
+        "client": "Diana Red",
+        "location": "Toronto, Ontario, Canada",
+        "timeAgo": "1 week ago"
+    },
+    {
+        "id": 1005,
+        "invoiceId": "45185375",
+        "client": "Bob Brown",
+        "location": "Hate speech",
+        "timeAgo": "1 week ago"
+    },
+    {
+        "id": 1006,
+        "invoiceId": "01354791",
+        "client": "Charlie Blue",
+        "location": "Vancouver, BC, Canada",
+        "timeAgo": "1 week ago"
+    },
+    {
+        "id": 1007,
+        "invoiceId": "60124687",
+        "client": "Emily Chan",
+        "location": "Edmonton, Alberta, Canada",
+        "timeAgo": "1 week ago"
+    }
+    ]
+}

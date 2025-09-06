@@ -58,10 +58,10 @@ export default function Navbar() {
             <ul className="flex flex-col text-black">
             <li>
               <Link
-                href="/advisor"
+                href="/advisorDashboard"
                 className="block px-4 py-2 hover:text-orange-500"
               >
-                (Temp) advisor
+                (Temp) Advisor
               </Link>
             </li>
             <li>
@@ -114,10 +114,10 @@ export default function Navbar() {
         <ul className="flex items-center space-x-6 text-black">
           <li>
             <Link
-              href="/advisor"
+              href="/advisorDashboard"
               className="hover:text-orange-500"
             >
-              (Temp) advisor
+              (Temp) Advisor
             </Link>
           </li>
           <li>
