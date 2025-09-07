@@ -146,7 +146,7 @@ export default function Navbar() {
                       Job Board
                     </Link>
                     <Link
-                      href="#"
+                      href="/memberFlow/Application"
                       className="block pl-8 pr-4 py-2 text-sm hover:bg-gray-50"
                     >
                       Applications
@@ -235,7 +235,7 @@ export default function Navbar() {
                 Job Board
               </Link>
               <Link
-                href="#"
+                href="/memberFlow/Application"
                 className="block px-4 py-2 text-sm hover:bg-gray-50"
               >
                 Applications

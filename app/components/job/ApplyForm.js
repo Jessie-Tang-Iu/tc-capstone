@@ -211,7 +211,7 @@ export default function ApplyForm({ job, onClose }) {
                         type="text"
                         value={formData.lastName}
                         onChange={(e) => handleInputChange('lastName', e.target.value)}
-                        className="w-full max-w-md px-4 py-3 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                        className="w-full px-4 py-3 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
                     />
                 </div>
 
@@ -223,7 +223,7 @@ export default function ApplyForm({ job, onClose }) {
                         type="email"
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
-                        className="w-full max-w-md px-4 py-3 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                        className="w-full px-4 py-3 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
                     />
                 </div>
 
