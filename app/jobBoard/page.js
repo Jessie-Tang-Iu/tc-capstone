@@ -1,14 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import Navbar from "../components/NavBar";
+import Navbar from "../components/MemberNavBar";
 import SearchBar from "../components/job/SearchBar";
 import sampleJobs from "../data/jobs.json";
 import JobCard from "../components/job/JobCard";
 import JobDetail from "../components/job/JobDetail";
-
+import AdvancedSearch from "../components/job/AdvancedSearch";
+import ApplyForm from "../components/job/ApplyForm";
 
 export default function JobBoardPage() {
+
+    const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+    const [showApplyForm, setShowApplyForm] = useState(false);
+
     const [query, setQuery] = useState("");
     const [location, setLocation] = useState("");
     const [experience, setExperience] = useState("");
@@ -39,8 +44,17 @@ export default function JobBoardPage() {
                     location={location} onLocationChange={setLocation}
                     experience={experience} onExperienceChange={setExperience}
                     workplace={workplace} onWorkplaceChange={setWorkplace}
+                    onAdvancedSearch={() => setShowAdvancedSearch(true)}
                 />
             </div>
+
+            {showAdvancedSearch && 
+                <AdvancedSearch onClose={() => setShowAdvancedSearch(false)} />
+            }
+
+            {showApplyForm && 
+                <ApplyForm job={selectedJob} onClose={() => setShowApplyForm(false)} />
+            }
 
             {/* Main Content */}
             <div className="flex flex-col md:flex-row">
@@ -74,12 +88,12 @@ export default function JobBoardPage() {
                     {/* Mobile Back Button */}
                     <button
                         onClick={handleBackToList}
-                        className="md:hidden absolute top-4 left-4 z-10 bg-primary text-black py-2 rounded-lg text-sm font-normal hover:bg-primary/90 transition-colors"
+                        className="md:hidden top-4 ml-5 z-10 text-black rounded-lg text-sm font-normal hover:bg-primary/90 transition-colors"
                     >
                         ← Back to Jobs
                     </button>
-                    <div className="mt-12 md:mt-0 h-full">
-                        <JobDetail job={selectedJob} />
+                    <div className="mt-5 md:mt-0 h-full">
+                        <JobDetail job={selectedJob} onApply={() => setShowApplyForm(true)} />
                     </div>
                 </div>
             </div>

@@ -6,8 +6,8 @@ export default function JobCard({
     return(
         <div
             // className="bg-white rounded-lg shadow px-6 py-4 space-y-2 text-black cursor-pointer hover:opacity-95 transition"
-            className={`w-full bg-white rounded-lg px-6 py-4 mb-5 space-y-2 text-black cursor-pointer transition border-1 border-gray-400 ${
-                isSelected ? 'ring-2 ring-primary bg-primary/5' : 'hover:bg-gray-50'
+            className={`w-full bg-white rounded-lg px-6 py-4 mb-5 space-y-2 text-black cursor-pointer transition ${
+                isSelected ? 'ring-2 ring-[#E55B3C] bg-[#E55B3C]/5' : 'hover:bg-gray-50'
             }`}
             onClick={onClick}
         >
