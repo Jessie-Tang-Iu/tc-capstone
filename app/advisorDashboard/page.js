@@ -5,6 +5,8 @@ import Navbar from "../components/NavBarBeforeSignIn";
 import { useState } from "react";
 import MyClientPage from "./myClient";
 import Invoice from "./invoice";
+import MyBookingPage from "./myBooking";
+import MyAvailability from "./myAvailability";
 
 
 
@@ -85,9 +87,9 @@ export default function AdvisorDashboard() {
 
                     <div className=" w-full ml-6">
                         {menuSelection === "message" && <MessagePage messageList={MOCK_MESSAGES} />}
-                        {menuSelection === "booking" && <h1 className="text-black">Booking</h1>}
+                        {menuSelection === "booking" && <MyBookingPage />}
                         {menuSelection === "client" && <MyClientPage />}
-                        {menuSelection === "availability" && <h1 className="text-black">Availability</h1>}
+                        {menuSelection === "availability" && <MyAvailability />}
                         {menuSelection === "invoice" && <Invoice />}
                     </div>
                 </div>
