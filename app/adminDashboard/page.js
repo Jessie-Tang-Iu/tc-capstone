@@ -8,7 +8,7 @@ import RequestsPanel from "@/app/adminDashboard/Request";
 import ReportsPanel from "@/app/adminDashboard/Report";
 
 export default function AdvisorDashboard() {
-  const [tab, setTab] = useState("users");
+  const [tab, setTab] = useState("message");
 
   const TabBtn = ({ v, children }) => (
     <button
@@ -44,7 +44,7 @@ export default function AdvisorDashboard() {
 
       <div className="mx-auto w-full max-w-8xl px-6 py-8">
         <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
-          Advisor DashBoard
+          Admin DashBoard
         </h1>
 
         <div className="flex flex-row">
