@@ -44,23 +44,28 @@ const TextAreaWithCount = ({
   max = 500,
   rows = 5,
   placeholder,
-}) => (
-  <div className="mb-6">
-    <div className="mb-2 font-semibold text-sm">{label}</div>
-    <div className="rounded-md border border-gray-300">
-      <textarea
-        value={value}
-        onChange={(e) => setValue(e.target.value.slice(0, max))}
-        rows={rows}
-        placeholder={placeholder}
-        className="w-full resize-none rounded-md px-3 py-2 text-sm outline-none"
-      />
-      <div className="flex justify-end px-2 pb-1 text-[11px] text-gray-500">
-        {value.length} / {max}
+}) => {
+  const safeValue = value ?? "";
+  const count = safeValue.length;
+
+  return (
+    <div className="mb-6">
+      <div className="mb-2 font-semibold text-sm">{label}</div>
+      <div className="rounded-md border border-gray-300">
+        <textarea
+          value={safeValue}
+          onChange={(e) => setValue(e.target.value.slice(0, max))}
+          rows={rows}
+          placeholder={placeholder}
+          className="w-full resize-none rounded-md px-3 py-2 text-sm outline-none"
+        />
+        <div className="flex justify-end px-2 pb-1 text-[11px] text-gray-500">
+          {count} / {max}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const HeaderButton = ({ children, kind = "solid", onClick }) => {
   const base = "px-6 py-2 rounded-md text-sm font-semibold transition";
@@ -87,7 +92,7 @@ export default function JobPostDetailsPage() {
   }, [jobId]);
 
   // form state seeded from JSON (uses list + long fields from the same JSON)
-  const [status, setStatus] = useState(data.status);
+  const [status, setStatus] = useState(data.status ?? "Open");
   const [location, setLocation] = useState(data.location);
   const [type, setType] = useState(data.type);
   const [salary, setSalary] = useState(data.salary);
