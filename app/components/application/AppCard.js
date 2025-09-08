@@ -12,20 +12,21 @@ const statusColors = {
 export default function ApplyCard({ app, isSelected = false, onClick }) {
 
     const [editingId, setEditingId] = useState(null);
+    const [status, setStatus] = useState(app.status);
     const statusOptions = Object.keys(statusColors);
 
     return (
         <div
             // className="bg-white rounded-lg shadow px-6 py-4 space-y-2 text-black cursor-pointer hover:opacity-95 transition"
-            className={`w-full bg-white rounded-lg px-6 py-4 mb-5 space-y-2 text-black cursor-pointer transition ${
+            className={`w-full bg-white rounded-lg px-6 py-4 mb-5 space-y-2 text-black transition ${
                 isSelected ? 'ring-2 ring-[#E55B3C] bg-[#E55B3C]/5' : 'hover:bg-gray-50'
             }`}
-            onClick={onClick}
+            // onClick={onClick}
         >
             <div className="flex flex-col gap-3">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <h3 className="flex-3 text-base md:text-lg font-bold text-black leading-tight">{app.jobTitle}</h3>
+                        <h3 onClick={onClick} className="flex-3 text-base md:text-lg font-bold text-black leading-tight cursor-pointer">{app.jobTitle}</h3>
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs md:text-sm border ${statusColors[app.status] || "bg-gray-100 text-gray-800 border-gray-300"}`}>
                             {app.status}
                         </span>
@@ -39,36 +40,36 @@ export default function ApplyCard({ app, isSelected = false, onClick }) {
                         {!editingId && (
                             <button
                                 onClick={() => setEditingId(app.id)}
-                                className="mt-2 px-3 py-1 bg-[#E55B3C] text-white rounded-lg text-xs md:text-sm hover:bg-[#E55B3C]/90"
+                                className="mt-3 px-3 py-2 bg-[#E55B3C] text-white rounded-lg text-xs md:text-sm hover:bg-[#E55B3C]/90"
                                 >
                                 Update status
                             </button>
                         )}
                         
                         {editingId === app.id && (
-                            <div className="flex items-center gap-2">
-                            <select
-                                value={app.status}
-                                onChange={(e) => app.status = e.target.value}
-                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                            >
-                                {statusOptions.map((opt) => (
-                                <option key={opt} value={opt}>{opt}</option>
-                                ))}
-                            </select>
-                            
-                            <button
-                                onClick={() => setEditingId(null)}
-                                className="px-3 py-2 bg-[#E55B3C] text-white rounded-lg text-sm hover:bg-[#E55B3C]/90"
-                            >
-                                Save
-                            </button>
-                            <button
-                                onClick={() => setEditingId(null)}
-                                className="px-3 py-2 bg-gray-200 text-black rounded-lg text-sm hover:bg-gray-300"
-                            >
-                                Cancel
-                            </button>
+                            <div className="flex items-center gap-2 mt-3">
+                                <select
+                                    value={status}
+                                    onChange={(e) => setStatus(e.target.value)}
+                                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                >
+                                    {statusOptions.map((opt) => (
+                                    <option key={opt} value={opt}>{opt}</option>
+                                    ))}
+                                </select>
+                                
+                                <button
+                                    onClick={() => { app.status = status; setEditingId(null); }}
+                                    className="px-3 py-2 bg-[#E55B3C] text-white rounded-lg text-sm hover:bg-[#E55B3C]/90"
+                                >
+                                    Save
+                                </button>
+                                <button
+                                    onClick={() => setEditingId(null)}
+                                    className="px-3 py-2 bg-gray-200 text-black rounded-lg text-sm hover:bg-gray-300"
+                                >
+                                    Cancel
+                                </button>
                             </div>
                         )}
                 </div>
