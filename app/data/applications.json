@@ -8,7 +8,19 @@
     "company": "ABC Company",
     "headline": "Frontend | React | TailwindCSS",
     "location": "Calgary, Alberta, Canada",
-    "appliedAt": "2025-05-01"
+    "appliedAt": "2025-05-01",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 2,
@@ -19,7 +31,19 @@
     "company": "XYZ Finance",
     "headline": "SQL | Python | Power BI",
     "location": "Edmonton, Alberta, Canada",
-    "appliedAt": "2025-07-01"
+    "appliedAt": "2025-07-01",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 3,
@@ -30,7 +54,19 @@
     "company": "Design Co.",
     "headline": "Figma | Prototyping | UI/UX",
     "location": "Vancouver, BC, Canada",
-    "appliedAt": "2025-05-01"
+    "appliedAt": "2025-05-01",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 4,
@@ -41,7 +77,19 @@
     "company": "AgileWorks",
     "headline": "Agile | Scrum | Jira",
     "location": "Toronto, Ontario, Canada",
-    "appliedAt": "2025-05-10"
+    "appliedAt": "2025-05-10",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 5,
@@ -52,7 +100,19 @@
     "company": "MarketPro",
     "headline": "SEO | Google Ads | Social Media",
     "location": "Calgary, Alberta, Canada",
-    "appliedAt": "2025-05-21"
+    "appliedAt": "2025-05-21",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 6,
@@ -63,7 +123,19 @@
     "company": "GovTech",
     "headline": "Cloud | Azure | Linux",
     "location": "Ottawa, Ontario, Canada",
-    "appliedAt": "2025-09-01"
+    "appliedAt": "2025-09-01",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 7,
@@ -74,7 +146,19 @@
     "company": "HealthCo",
     "headline": "Requirements Gathering | Stakeholder Communication",
     "location": "Winnipeg, Manitoba, Canada",
-    "appliedAt": "2025-09-01"
+    "appliedAt": "2025-09-01",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 8,
@@ -85,7 +169,19 @@
     "company": "SoftWorks",
     "headline": "Manual Testing | Selenium | Cypress",
     "location": "Calgary, Alberta, Canada",
-    "appliedAt": "2025-09-01"
+    "appliedAt": "2025-09-01",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 9,
@@ -96,7 +192,19 @@
     "company": "SecureNet",
     "headline": "Network Security | SIEM | Threat Analysis",
     "location": "Halifax, Nova Scotia, Canada",
-    "appliedAt": "2025-09-01"
+    "appliedAt": "2025-09-01",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 10,
@@ -107,7 +215,19 @@
     "company": "PeopleFirst",
     "headline": "Recruitment | Onboarding | Employee Relations",
     "location": "Calgary, Alberta, Canada",
-    "appliedAt": "2025-05-21"
+    "appliedAt": "2025-05-21",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 11,
@@ -118,7 +238,19 @@
     "company": "AppCo",
     "headline": "React Native | iOS | Android",
     "location": "Kelowna, BC, Canada",
-    "appliedAt": "2025-09-01"
+    "appliedAt": "2025-09-01",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 12,
@@ -129,7 +261,19 @@
     "company": "Pipeline Ltd.",
     "headline": "CI/CD | Docker | Kubernetes",
     "location": "Toronto, Ontario, Canada",
-    "appliedAt": "2025-09-01"
+    "appliedAt": "2025-09-01",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 13,
@@ -140,7 +284,19 @@
     "company": "AI Lab",
     "headline": "Machine Learning | NLP | Computer Vision",
     "location": "Montreal, Quebec, Canada",
-    "appliedAt": "2025-07-01"
+    "appliedAt": "2025-07-01",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 14,
@@ -151,7 +307,19 @@
     "company": "CloudWorks",
     "headline": "AWS | GCP | Infrastructure Design",
     "location": "Vancouver, BC, Canada",
-    "appliedAt": "2025-05-01"
+    "appliedAt": "2025-05-01",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 15,
@@ -162,18 +330,42 @@
     "company": "StackHub",
     "headline": "Node.js | React | MongoDB",
     "location": "Calgary, Alberta, Canada",
-    "appliedAt": "2025-05-10"
+    "appliedAt": "2025-05-10",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 16,
     "jobTitle": "Financial Analyst",
     "applicationNo": "1234#015",
-    "status": "Submitted",
+    "status": "Under review",
     "memberId": 7,
     "company": "FinanceCorp",
     "headline": "Forecasting | Budgeting | Excel",
     "location": "Regina, Saskatchewan, Canada",
-    "appliedAt": "2025-05-01"
+    "appliedAt": "2025-05-01",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 17,
@@ -184,7 +376,19 @@
     "company": "Productive Inc.",
     "headline": "Roadmaps | User Research | Strategy",
     "location": "Toronto, Ontario, Canada",
-    "appliedAt": "2025-09-01"
+    "appliedAt": "2025-09-01",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 18,
@@ -195,7 +399,19 @@
     "company": "MediaHouse",
     "headline": "Copywriting | SEO | Editing",
     "location": "Calgary, Alberta, Canada",
-    "appliedAt": "2025-09-01"
+    "appliedAt": "2025-09-01",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 19,
@@ -206,7 +422,19 @@
     "company": "AutoFab",
     "headline": "CAD | SolidWorks | Manufacturing",
     "location": "Hamilton, Ontario, Canada",
-    "appliedAt": "2025-05-01"
+    "appliedAt": "2025-05-01",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   },
   {
     "id": 20,
@@ -217,6 +445,18 @@
     "company": "CBE",
     "headline": "Curriculum Design | Classroom Management",
     "location": "Calgary, Alberta, Canada",
-    "appliedAt": "2025-09-01"
+    "appliedAt": "2025-09-01",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Why do you want to work here?",
+        "answer": "I am passionate about the company's mission and values."
+      },
+      {
+        "id": 2,
+        "question": "Describe a challenging project you worked on.",
+        "answer": "I led a team to develop a complex web application under tight deadlines."
+      }
+    ]
   }
 ]
