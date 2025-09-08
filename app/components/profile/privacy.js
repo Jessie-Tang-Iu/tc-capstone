@@ -18,7 +18,7 @@ export default function Privacy() {
             <section>
                 <h2 className="text-xl md:text-2xl font-bold text-black mb-6">Types of data collected</h2>
                 <p className="text-sm text-black leading-relaxed">
-                    We collect different types of data depending on how you interact with us. This includes, for example, when you're on our site, responding to our promotional materials, and using our services to help you find a job. For example, we may collect your e-mail address and resume information when you create your account. As another example, we may collect information about your activity on our site, such as the searches you conduct and jobs you apply to. For more information on the types of data we collect, check out the <span className="underline">"Data collection and use"</span> section of our Privacy Policy.
+                    We collect different types of data depending on how you interact with us. This includes, for example, when you are on our site, responding to our promotional materials, and using our services to help you find a job. For example, we may collect your e-mail address and resume information when you create your account. As another example, we may collect information about your activity on our site, such as the searches you conduct and jobs you apply to. For more information on the types of data we collect, check out the <span className="underline">&apos;Data collection and use&apos;</span> section of our Privacy Policy.
                 </p>
             </section>
 
@@ -38,7 +38,7 @@ export default function Privacy() {
             <section>
                 <h2 className="text-xl md:text-2xl font-bold text-black mb-6">Hide my data</h2>
                 <p className="text-sm text-black leading-relaxed">
-                    You can also set your Resume and profile to "not searchable" by visiting your <span className="underline">resume privacy settings</span>. For more information on what it means to have a "searchable" or "not searchable" Indeed Resume, please visit the <span className="underline">"Data collection and use"</span> section of our Privacy Policy.
+                    You can also set your Resume and profile to &apos;not searchable&apos; by visiting your <span className="underline">resume privacy settings</span>. For more information on what it means to have a &apos;searchable&apos; or &apos;not searchable&apos; Indeed Resume, please visit the <span className="underline">&apos;Data collection and use&apos;</span> section of our Privacy Policy.
                 </p>
             </section>
         </div>

@@ -112,7 +112,7 @@ export default function ProfileDashboard() {
             <div className="flex flex-col md:flex-row">
                 {/*Advisor Side Bar*/}
                 <div 
-                    className={`w-full px-2 md:w-80 lg:w-[300px] xl:w-[350px]
+                    className={`w-full px-2 md:w-50 lg:w-[250px] xl:w-[300px]
                     ${showDetail ? 'hidden md:block' : 'block'}
                     h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto`}
                 >
