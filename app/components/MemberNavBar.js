@@ -200,7 +200,7 @@ export default function Navbar() {
             </button>
             <div className={`absolute top-full left-0 mt-2 bg-white border rounded shadow-lg ${isDesktopServicesOpen ? 'block' : 'hidden'}`}>
               <Link
-                href="#"
+                href="/courses"
                 className="block px-4 py-2 text-sm hover:bg-gray-50"
               >
                 Courses
@@ -212,7 +212,7 @@ export default function Navbar() {
                 Advisory
               </Link>
               <Link
-                href="#"
+                href="/discussionBoard"
                 className="block px-4 py-2 text-sm hover:bg-gray-50"
               >
                 Discussion
