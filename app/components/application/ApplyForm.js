@@ -1,22 +1,22 @@
 import { useUserContext } from "@/app/context/userContext";
 import { X } from "lucide-react";
-import { useState } from "react";
+import { use, useState } from "react";
 
 export default function ApplyForm({ job, onClose }) {
 
     const { user } = useUserContext();
-    // console.log("User in ApplyForm: ", user);
+    console.log("User in ApplyForm: ", user);
 
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({
         resume: null,
         coverLetter: null,
-        firstName: "",
+        firstName: user.firstName || "",
         middleName: "",
-        lastName: "",
-        email: "",
+        lastName: user.lastName || "",
+        email: user.email || "",
         countryCode: "",
-        phoneNumber: "",
+        phoneNumber: user.phone || "",
         address: "",
         additionalQuestions: ["", "", ""],
         applicationId: null
@@ -118,12 +118,12 @@ export default function ApplyForm({ job, onClose }) {
             <div className="text-[#E55B3C] text-base font-bold mb-3">{title}</div>
             <hr className="border-gray-200 mb-3" />
             <div className="text-center">
-                <div className="text-base font-bold text-black mb-2">Joy Wong</div>
+                <div className="text-base font-bold text-black mb-2">{formData.firstName} {formData.lastName}</div>
                 <div className="text-sm text-gray-500 leading-relaxed h-60">
                     {type === "resume" ? (
                         <>
-                            joywong1228@gmail.com<br />
-                            +1 (519) XXX XXXX<br />
+                            {formData.email}<br />
+                            {formData.phoneNumber}<br />
                             Calgary, AB<br />
                             Project Manager | AAA Company<br />
                             Intern | BBB Limited Company<br />
@@ -159,7 +159,7 @@ export default function ApplyForm({ job, onClose }) {
 
     // Step 1: Upload Resume/Cover Letter
     const Step1 = () => (
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto ">
             <h1 className="text-2xl font-bold text-black mb-8">Upload Resume/ Cover Letter</h1>
 
             <div className="grid md:grid-cols-2 gap-8">
@@ -191,27 +191,27 @@ export default function ApplyForm({ job, onClose }) {
                             type="text"
                             value={formData.firstName}
                             onChange={(e) => handleInputChange('firstName', e.target.value)}
-                            className="w-full px-4 py-3 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                            className="w-full px-4 py-3 text-black bg-white border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
                         />
                     </div>
                     <div>
-                        <label className="block text-base font-normal text-black mb-2">Middle Name:</label>
+                        <label className="block text-base font-normal text-black mb-2">Last Name:</label>
                         <input
                             type="text"
-                            value={formData.middleName}
-                            onChange={(e) => handleInputChange('middleName', e.target.value)}
-                            className="w-full px-4 py-3 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                            value={formData.lastName}
+                            onChange={(e) => handleInputChange('lastName', e.target.value)}
+                            className="w-full px-4 py-3 text-black bg-white border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
                         />
                     </div>
                 </div>
 
                 <div>
-                    <label className="block text-base font-normal text-black mb-2">Last Name:</label>
+                    <label className="block text-base font-normal text-black mb-2">Middle Name:</label>
                     <input
                         type="text"
-                        value={formData.lastName}
-                        onChange={(e) => handleInputChange('lastName', e.target.value)}
-                        className="w-full px-4 py-3 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                        value={formData.middleName}
+                        onChange={(e) => handleInputChange('middleName', e.target.value)}
+                        className="w-full px-4 py-3 text-black bg-white border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
                     />
                 </div>
 
@@ -223,7 +223,7 @@ export default function ApplyForm({ job, onClose }) {
                         type="email"
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
-                        className="w-full px-4 py-3 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                        className="w-full px-4 py-3 text-black bg-white border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
                     />
                 </div>
 
@@ -234,7 +234,7 @@ export default function ApplyForm({ job, onClose }) {
                             type="text"
                             value={formData.countryCode}
                             onChange={(e) => handleInputChange('countryCode', e.target.value)}
-                            className="w-full px-4 py-3 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                            className="w-full px-4 py-3 text-black bg-white border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
                         />
                     </div>
                     <div>
@@ -243,7 +243,7 @@ export default function ApplyForm({ job, onClose }) {
                             type="tel"
                             value={formData.phoneNumber}
                             onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-                            className="w-full px-4 py-3 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                            className="w-full px-4 py-3 text-black bg-white border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
                         />
                     </div>
                 </div>
@@ -254,7 +254,7 @@ export default function ApplyForm({ job, onClose }) {
                         value={formData.address}
                         onChange={(e) => handleInputChange('address', e.target.value)}
                         rows={3}
-                        className="w-full px-4 py-3 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                        className="w-full px-4 py-3 text-black bg-white border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
                     />
                 </div>
             </form>
@@ -276,7 +276,7 @@ export default function ApplyForm({ job, onClose }) {
                             type="text"
                             value={answer}
                             onChange={(e) => handleQuestionChange(index, e.target.value)}
-                            className="w-full px-4 py-3 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                            className="w-full px-4 py-3 text-black bg-white border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
                         />
                     </div>
                 ))}
@@ -302,11 +302,11 @@ export default function ApplyForm({ job, onClose }) {
                     <div className="bg-white p-6 rounded-lg border border-gray-200">
                         <div className="grid md:grid-cols-2 gap-6">
                             <div>
-                                <h3 className="text-lg font-bold text-black mb-4">Joy Wong</h3>
+                                <h3 className="text-lg font-bold text-black mb-4">{formData.firstName} {formData.lastName}</h3>
                                 <div className="space-y-2 text-sm">
                                     <div>
                                         <span className="text-gray-500 font-bold">Email address</span>
-                                        <div className="text-black font-bold">joyw_______@gmail.com</div>
+                                        <div className="text-black font-bold">{formData.email}</div>
                                     </div>
                                     <div>
                                         <span className="text-gray-500 font-bold">Phone country code</span>
@@ -314,7 +314,7 @@ export default function ApplyForm({ job, onClose }) {
                                     </div>
                                     <div>
                                         <span className="text-gray-500 font-bold">Mobile phone number</span>
-                                        <div className="text-black font-bold">(519) XXX-XXXX</div>
+                                        <div className="text-black font-bold">{formData.phoneNumber}</div>
                                     </div>
                                 </div>
                             </div>
@@ -357,7 +357,7 @@ export default function ApplyForm({ job, onClose }) {
                 {/* Additional Questions */}
                 <div>
                     <h2 className="text-lg font-bold text-black mb-4">Additional questions</h2>
-                    <div className="space-y-4">
+                    <div className="space-y-4 bg-white p-6 rounded-lg border border-gray-200">
                         <div>
                             <div className="text-gray-500 font-bold text-sm">How many years of work experience xxxxxxxxxxxxx?</div>
                             <div className="text-black font-bold text-sm">3+ years</div>
@@ -414,7 +414,7 @@ export default function ApplyForm({ job, onClose }) {
 
     return (
         <div className="absolute w-full h-full bg-gray-700/60 flex items-center justify-center z-10 ">
-            <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+            <div className="fixed inset-0 bg-gray-100 z-50 overflow-y-auto">
           
                 <div className="pt-20 pb-8 px-4">
                     {currentStep <= 4 && <JobHeader />}
