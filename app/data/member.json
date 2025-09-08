@@ -1,0 +1,120 @@
+[
+    {
+        "id": 2,
+        "experience": [
+            {
+                "title": "Business Analyst",
+                "company": "XYZ Finance",
+                "date": "2022 - 2024"
+            }
+        ],
+        "education": [
+            { "school": "UofA", "program": "Data Analytics", "date": "2020 - 2022" }
+        ],
+        "skills": ["Excel", "SQL", "Tableau"],
+        "certifications": ["CBAP"],
+        "links": {
+            "linkedin": "https://www.linkedin.com/in/jessietang",
+            "portfolio": "https://www.jessietang.com"
+        }
+    },
+    {
+        "id": 3,
+        "experience": [
+            {
+                "title": "Frontend Intern",
+                "company": "ABC Tech",
+                "date": "2024 - 2025"
+            }
+        ],
+        "education": [
+            {
+                "school": "SAIT",
+                "program": "Software Development",
+                "date": "2023 - 2025"
+            }
+        ],
+        "skills": ["Java", "Python", "React"],
+        "certifications": ["AWS Certified Developer"],
+        "links": {
+            "linkedin": "https://www.linkedin.com/in/joywong",
+            "portfolio": "https://www.joywong.dev"
+        }
+    },
+    {
+        "id": 6,
+        "experience": [
+            { "title": "UX Intern", "company": "Design Co.", "date": "2023 - 2024" }
+        ],
+        "education": [
+            {
+                "school": "BCIT",
+                "program": "Interactive Design",
+                "date": "2021 - 2023"
+            }
+        ],
+        "skills": ["Figma", "User Research", "Prototyping"],
+        "certifications": ["NN/g UX Certification"],
+        "links": {
+            "linkedin": "https://www.linkedin.com/in/bobbrown",
+            "portfolio": "https://www.bobbrownux.com"
+        }
+    },
+    {
+        "id": 7,
+        "experience": [
+            {
+                "title": "Marketing Coordinator",
+                "company": "MarketMakers",
+                "date": "2021 - 2023"
+            }
+        ],
+        "education": [
+            { "school": "UofC", "program": "Marketing", "date": "2019 - 2021" }
+        ],
+        "skills": ["SEO", "Content Creation", "Google Analytics"],
+        "certifications": ["Google Ads Certification"],
+        "links": {
+            "linkedin": "https://www.linkedin.com/in/lamdao",
+            "portfolio": "https://www.lamdao.com"
+        }
+    },
+    {
+        "id": 10,
+        "experience": [
+            {
+                "title": "Product Owner",
+                "company": "Innovatech",
+                "date": "2020 - 2024"
+            }
+        ],
+        "education": [
+            { "school": "UofT", "program": "Business Administration", "date": "2016 - 2020" }
+        ],
+        "skills": ["Agile", "Scrum", "Roadmapping"],
+        "certifications": ["PSPO I"],
+        "links": {
+            "linkedin": "https://www.linkedin.com/in/projecttechcon",
+            "portfolio": "https://www.projecttechcon.com"
+        }
+    },
+    {
+        "id": 11,
+        "experience": [
+            {
+                "title": "Freelance Writer",
+                "company": "Self-Employed",
+                "date": "2018 - Present"
+            }
+        ],
+        "education": [
+            { "school": "UofA", "program": "English Literature", "date": "2014 - 2018" }
+        ],
+        "skills": ["Copywriting", "SEO", "Editing"],
+        "certifications": ["HubSpot Content Marketing"],
+        "links": {
+            "linkedin": "https://www.linkedin.com/in/dionemary",
+            "portfolio": "https://www.dionemarywrites.com"
+        }
+    }
+]
