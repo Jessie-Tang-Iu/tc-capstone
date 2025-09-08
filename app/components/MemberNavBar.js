@@ -114,7 +114,7 @@ export default function Navbar() {
                       Advisory
                     </Link>
                     <Link
-                      href="#"
+                      href="/discussionBoard"
                       className="block pl-8 pr-4 py-2 text-sm hover:bg-gray-50"
                     >
                       Discussion
