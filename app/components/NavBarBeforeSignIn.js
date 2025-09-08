@@ -58,6 +58,30 @@ export default function Navbar() {
             <ul className="flex flex-col text-black">
               <li>
                 <Link
+                  href="/advisorDashboard"
+                  className="block px-4 py-2 hover:text-orange-500"
+                >
+                  (Temp) Advisor
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/employerDashboard/message"
+                  className="block px-4 py-2 hover:text-orange-500"
+                >
+                  (Temp) Employer
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/adminDashboard"
+                  className="block px-4 py-2 hover:text-orange-500"
+                >
+                  (Temp) Admin
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="#"
                   className="block px-4 py-2 hover:text-orange-500"
                 >
@@ -89,6 +113,11 @@ export default function Navbar() {
       <nav className="hidden lg:block">
         <ul className="flex items-center space-x-6 text-black">
           <li>
+            <Link href="/advisorDashboard" className="hover:text-orange-500">
+              (Temp) Advisor
+            </Link>
+          </li>
+          <li>
             <Link
               href="/employerDashboard/message"
               className="hover:text-orange-500"
@@ -97,10 +126,7 @@ export default function Navbar() {
             </Link>
           </li>
           <li>
-            <Link
-              href="/adminDashboard/message"
-              className="hover:text-orange-500"
-            >
+            <Link href="/adminDashboard" className="hover:text-orange-500">
               (Temp) Admin
             </Link>
           </li>
