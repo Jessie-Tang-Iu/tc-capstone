@@ -77,24 +77,24 @@ export default function Applications() {
                     </div>
                 </div>
 
-                    {/* Job Detail Panel */}
-                    <div 
-                        className={`flex-1 py-2
-                                    ${showAppDetail ? 'block' : 'hidden md:block'}
-                                    h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] relative`}
+                {/* Job Detail Panel */}
+                <div 
+                    className={`flex-1 py-2
+                                ${showAppDetail ? 'block' : 'hidden md:block'}
+                                h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] relative`}
+                >
+                    {/* Mobile Back Button */}
+                    <button
+                        onClick={handleBackToList}
+                        className="md:hidden top-4 ml-5 z-10 text-black rounded-lg text-sm font-normal hover:bg-[#E55B3C]/90 transition-colors"
                     >
-                        {/* Mobile Back Button */}
-                        <button
-                            onClick={handleBackToList}
-                            className="md:hidden top-4 ml-5 z-10 text-black rounded-lg text-sm font-normal hover:bg-primary/90 transition-colors"
-                        >
-                            ← Back to Jobs
-                        </button>
-                        <div className="mt-5 md:mt-0 h-full">
-                            <AppDetail contact={user} application={selectedApp} />
-                        </div>
-                    </div> 
-                </div>
+                        ← Back to Jobs
+                    </button>
+                    <div className="mt-5 md:mt-0 h-full">
+                        <AppDetail contact={user} application={selectedApp} />
+                    </div>
+                </div> 
+            </div>
 
                 {/* <div className="space-y-3 md:space-y-4">
                     {sampleApplications.filter((app) => app.memberId === user.id).map((app) => (
