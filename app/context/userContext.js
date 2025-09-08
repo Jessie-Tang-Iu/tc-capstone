@@ -56,7 +56,7 @@ export const UserProvider = ({ children }) => {
             setRole(user.role);
             switch (user.role) {
             case "admin":
-                router.push("/adminDashboard/message");
+                router.push("/adminDashboard");
                 break;
             case "member":
                 router.push("/memberFlow");
@@ -65,7 +65,7 @@ export const UserProvider = ({ children }) => {
                 router.push("/employerDashboard/application");
                 break;
             case "advisor":
-                router.push("/advisorFlow");
+                router.push("/advisorDashboard");
                 break;
             }
         }
