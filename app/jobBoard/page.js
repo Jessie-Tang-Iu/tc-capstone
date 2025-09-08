@@ -7,7 +7,7 @@ import sampleJobs from "../data/jobs.json";
 import JobCard from "../components/job/JobCard";
 import JobDetail from "../components/job/JobDetail";
 import AdvancedSearch from "../components/job/AdvancedSearch";
-import ApplyForm from "../components/job/ApplyForm";
+import ApplyForm from "../components/application/ApplyForm";
 
 export default function JobBoardPage() {
 
@@ -88,7 +88,7 @@ export default function JobBoardPage() {
                     {/* Mobile Back Button */}
                     <button
                         onClick={handleBackToList}
-                        className="md:hidden top-4 ml-5 z-10 text-black rounded-lg text-sm font-normal hover:bg-primary/90 transition-colors"
+                        className="md:hidden top-4 ml-5 z-10 text-black rounded-lg text-sm font-normal hover:bg-[#E55B3C]/90 transition-colors"
                     >
                         ← Back to Jobs
                     </button>
@@ -97,8 +97,6 @@ export default function JobBoardPage() {
                     </div>
                 </div>
             </div>
-
-            
         </main>
     );
 }

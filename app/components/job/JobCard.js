@@ -29,12 +29,12 @@ export default function JobCard({
             {/* Tags */}
             <div className="flex flex-wrap gap-1">
                 {tags.map((tag, index) => (
-                <span
-                    key={index}
-                    className="px-2 py-1 bg-gray-200 rounded text-xs font-normal text-black"
-                >
-                    {tag}
-                </span>
+                    <span
+                        key={index}
+                        className="px-2 py-1 bg-gray-200 rounded text-xs font-normal text-black"
+                    >
+                        {tag}
+                    </span>
                 ))}
             </div>
         </div>
