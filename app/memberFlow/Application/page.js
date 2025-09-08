@@ -53,7 +53,7 @@ export default function Applications() {
 
             <div className="pt-7 mb-3 md:mb-8 mx-5 md:mx-8">
                 <h1 className="text-2xl md:text-3xl font-bold text-black">My Applications</h1>
-                <p className="text-sm md:text-base text-gray-600 mt-1">Track the jobs you've applied for.</p>
+                <p className="text-sm md:text-base text-gray-600 mt-1">Track the jobs you have applied for.</p>
             </div>
 
             {/* Main Content */}
