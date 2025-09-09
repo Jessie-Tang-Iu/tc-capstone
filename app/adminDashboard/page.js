@@ -10,7 +10,7 @@ import ReportsPanel from "@/app/adminDashboard/Report";
 import UserDetailsCard from "../components/adminDashboard/UserDetailsCard";
 
 export default function AdvisorDashboard() {
-  const [tab, setTab] = useState("users");
+  const [tab, setTab] = useState("message");
   // when null -> show UsersPanel; otherwise show UserDetailsCard
   const [details, setDetails] = useState(null); // { user, roleLabel } | null
 
