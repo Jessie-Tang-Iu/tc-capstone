@@ -51,23 +51,10 @@ export const UserProvider = ({ children }) => {
     }, []);
 
     useEffect(() => {
+        setUser(user);
         if (user) {
             setEmail(user.email);
             setRole(user.role);
-            switch (user.role) {
-            case "admin":
-                router.push("/adminDashboard");
-                break;
-            case "member":
-                router.push("/memberFlow");
-                break;
-            case "employer":
-                router.push("/employerDashboard/application");
-                break;
-            case "advisor":
-                router.push("/advisorDashboard");
-                break;
-            }
         }
     }, [user]);
 

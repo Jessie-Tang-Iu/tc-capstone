@@ -1,16 +1,44 @@
 "use client";
 
-import { useState } from "react";
-import Navbar from "../components/MemberNavBar";
+import { useEffect, useState } from "react";
+import Navbar from "../components/NavBar";
+import MemberNavbar from "../components/MemberNavBar";
 import ProfileSection from "../components/profile/profileMember";
 import Security from "../components/profile/security";
 import Privacy from "../components/profile/privacy";
 import Notification from "../components/profile/notification";
 import { useUserContext } from "../context/userContext";
+import { useRouter } from "next/navigation";
 
 export default function ProfileDashboard() {
 
-    const { user } = useUserContext();
+    const { user, role, getCurrentSession } = useUserContext();
+
+    if (!user) {
+        getCurrentSession();
+    }
+
+    useEffect(() => {
+        if (user) {
+            // console.log(user);
+            setFormData(prev => ({ ...prev, 
+                firstName: user?.firstName || "",
+                lastName: user?.lastName || "",
+                email: user?.email || "",
+                phoneNumber: user?.phone || "",
+                emails: [
+                    { email: user?.email || "#######@gmail.com", isPrimary: true },
+                    { email: "#######@gmail.com", isPrimary: false },
+                    { email: "#######@gmail.com", isPrimary: false }
+                ],
+                phones: [
+                    { phone: user?.phone || "US +1 (519) XXX-XXX", isPrimary: true },
+                    { phone: "US +1 (519) XXX-XXX", isPrimary: false },
+                    { phone: "US +1 (519) XXX-XXX", isPrimary: false }
+                ],
+            }));
+        }
+    }, [user])
 
     const [tab, setTab] = useState("message");
     const [showDetail, setShowDetail] = useState(false);
@@ -101,18 +129,19 @@ export default function ProfileDashboard() {
     };
 
     return (
-        <main className="w-full min-h-screen bg-gray-100">
-            <Navbar />
+        <main className="bg-gray-100 min-h-screen w-full">
+            {/* Navigation */}
+            {role == "member" ? <MemberNavbar /> : <Navbar />}
 
             <div className="pt-7 mb-3 md:mb-8 mx-5 md:mx-8">
                 <h1 className="text-2xl md:text-3xl font-bold text-black">Setting</h1>
             </div>
 
             {/* Main Content */}
-            <div className="flex flex-col md:flex-row">
+            <div className="flex flex-col md:flex-row bg-gray-100 min-h-[calc(100vh-80px)]">
                 {/*Advisor Side Bar*/}
                 <div 
-                    className={`w-full px-2 md:w-50 lg:w-[250px] xl:w-[300px]
+                    className={`w-full px-2 md:w-50 lg:w-[250px] xl:w-[300px] bg-gray-100
                     ${showDetail ? 'hidden md:block' : 'block'}
                     h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto`}
                 >
@@ -124,14 +153,14 @@ export default function ProfileDashboard() {
 
                 {/* Detail Panel */}
                 <div 
-                    className={`flex-1 py-2 px-5
+                    className={`flex-1 py-2
                                 ${showDetail ? 'block' : 'hidden md:block'}
                                 h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] relative`}
                 >
                     {/* Mobile Back Button */}
                     <button
                         onClick={handleBackToList}
-                        className="md:hidden top-4 z-10 text-black rounded-lg text-sm font-normal cursor-pointer transition-colors"
+                        className="md:hidden top-4 z-10 pl-5 text-black rounded-lg text-sm font-normal cursor-pointer transition-colors"
                     >
                         ← Back to Setting
                     </button>
