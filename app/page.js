@@ -1,14 +1,13 @@
 "use client";
 
-import Navbar from "./components/NavBar";
+import Navbar from "./components/NavBarBeforeSignIn";
 import Link from "next/link";
 import { useUserContext } from "./context/userContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 function PageContent() {
-
-  const { user, getCurrentSession, } = useUserContext();
+  const { user, getCurrentSession } = useUserContext();
 
   const router = useRouter();
 
@@ -16,7 +15,7 @@ function PageContent() {
     getCurrentSession();
   }, []);
 
-  useEffect (() => {
+  useEffect(() => {
     if (user)
       switch (user.role) {
         case "admin":
@@ -30,10 +29,10 @@ function PageContent() {
           break;
         case "advisor":
           router.push("/advisorDashboard");
-         break;
+          break;
       }
-  }, [user])
-  
+  }, [user]);
+
   return (
     <>
       <Navbar />
@@ -59,7 +58,5 @@ function PageContent() {
 }
 
 export default function Page() {
-  return (
-      <PageContent />
-  );  
+  return <PageContent />;
 }

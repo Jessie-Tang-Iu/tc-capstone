@@ -1,7 +1,6 @@
 "use client";
 
 import MemberNavbar from "../components/MemberNavBar";
-import Navbar from "../components/MemberNavBar";
 import Link from "next/link";
 import { useUserContext } from "../context/userContext";
 import { useRouter } from "next/navigation";
@@ -18,7 +17,7 @@ function PageContent() {
       console.log("User's role: ", role);
     }
     console.log("User: ", user);
-  }, []);
+  }, [user, role]);
 
   const MOCK_MESSAGES = [
     {
@@ -39,7 +38,7 @@ function PageContent() {
   return (
     <>
       {/* Navigation */}
-      {role == "member" ? <MemberNavbar /> : <Navbar />}
+      <MemberNavbar />
 
       {/* Page content */}
       <main className="bg-gray-100 min-h-screen">
@@ -58,8 +57,25 @@ function PageContent() {
           </Link>
         </div> */}
 
-        <div className="p-10">
-          <MessagePage messageList={MOCK_MESSAGES} />
+        <div className="max-w-6xl mx-auto px-6 py-10">
+          {/* Header Section */}
+          <div className="mb-10 text-center">
+            <h1 className="text-3xl font-bold text-[#E55B3C]">
+              Welcome back{user?.name ? `, ${user.name}` : ""}!
+            </h1>
+            <p className="mt-2 text-gray-600 text-lg">
+              This is your personal message box. Stay connected and manage your
+              conversations easily.
+            </p>
+          </div>
+
+          {/* Message Section */}
+          <section className="rounded-xl bg-white shadow-md p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Your Messages
+            </h2>
+            <MessagePage messageList={MOCK_MESSAGES} />
+          </section>
         </div>
       </main>
     </>
