@@ -110,7 +110,7 @@ export default function EventPage() {
       )}
 
       {view === "calendar" && (
-        <section className="m-5">
+        <section className="m-5 flex justify-center items-center">
           <FullCalendar
                 plugins={[dayGridPlugin]}
                 initialView="dayGridMonth"
@@ -151,6 +151,8 @@ export default function EventPage() {
                 font-family: 'Inter', sans-serif;
                 color: black;
                 margin: 0px 50px;
+                height: 750px;
+                width: 1300px;
                 }
 
                 .fc .fc-daygrid-day-frame {
