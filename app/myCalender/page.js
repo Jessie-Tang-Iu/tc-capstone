@@ -6,7 +6,6 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import { DateTime } from "luxon";
 
 import MemberNavbar from "../components/MemberNavBar";
-import Navbar from "../components/NavBar";
 import Button from "../components/ui/Button";
 import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
 import CalendarBigEvent from "../components/myCalender/calenderBig";
@@ -15,7 +14,6 @@ import { supabase } from "@/lib/supabaseClient"; // <-- IMPORTANT
 import { useUserContext } from "../context/userContext";
 
 const MyCalendarPage = () => {
-  
   const { role } = useUserContext();
 
   const calendarRef = useRef(null);

@@ -29,13 +29,13 @@ export default function JobPostsPage() {
 
   const pageSize = 5;
   const [page, setPage] = useState(1);
-  const [selectedId, setSelectedId] = useState(3);
+  const [selectedId, setSelectedId] = useState(0);
 
   const total = jobs.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const start = (page - 1) * pageSize;
   const end = Math.min(start + pageSize, total);
-  const rows = useMemo(() => jobs.slice(start, end), [page]);
+  const rows = useMemo(() => jobs.slice(start, end), [page]); //[page] = dependency array part, 	React will recalculate the memoized value only when page changes.
 
   return (
     <div className="min-h-screen bg-white">
