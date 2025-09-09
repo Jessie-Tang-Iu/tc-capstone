@@ -1,6 +1,7 @@
 "use client";
 
-import Navbar from "../components/MemberNavBar";
+import MemberNavbar from "../components/MemberNavBar";
+import Navbar from "../components/NavBar";
 import Link from "next/link";
 import { useUserContext } from "../context/userContext";
 import { useRouter } from "next/navigation";
@@ -38,7 +39,9 @@ function PageContent() {
   
   return (
     <>
-      <Navbar />
+      {/* Navigation */}
+      {role == "member" ? <MemberNavbar /> : <Navbar />}
+      
       {/* Page content */}
       <main className="bg-gray-100 min-h-screen">
         {/* <div className="container mx-auto px-4 py-8">

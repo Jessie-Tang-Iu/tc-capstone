@@ -3,7 +3,8 @@
 import ApplyCard from "@/app/components/application/AppCard";
 import AppDetail from "@/app/components/application/AppDetail";
 import JobDetail from "@/app/components/job/JobDetail";
-import Navbar from "@/app/components/MemberNavBar";
+import MemberNavBar from "@/app/components/MemberNavBar";
+import Navbar from "@/app/components/NavBar";
 import { useUserContext } from "@/app/context/userContext";
 import sampleApplications from "@/app/data/applications.json";
 import { useRouter } from "next/router";
@@ -18,7 +19,6 @@ export default function Applications() {
     const [showAppDetail, setShowAppDetail] = useState(false);
     const [applications, setApplications] = useState(sampleApplications);
     const selectedApp = sampleApplications.find(app => app.id === selectedAppId);
-
 
     const handleAppSelect = (appId) => {
         setSelectedAppId(appId);
@@ -42,14 +42,16 @@ export default function Applications() {
             console.error("Error fetching session:", error);
             alert("Error", "Failed to fetch session. Please sign in again.");
         }
-        return <div className="min-h-screen flex items-center justify-center">
-            <p className="text-gray-500">Loading...</p>
-        </div>;
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <p className="text-gray-500">Loading...</p>
+            </div>
+        );
     }
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <Navbar />
+            {role == "member" ? <MemberNavBar /> : <Navbar />}
 
             <div className="pt-7 mb-3 md:mb-8 mx-5 md:mx-8">
                 <h1 className="text-2xl md:text-3xl font-bold text-black">My Applications</h1>

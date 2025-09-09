@@ -1,15 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import Navbar from "../components/MemberNavBar";
+import MemberNavbar from "../components/MemberNavBar";
+import Navbar from "../components/NavBar";
 import SearchBar from "../components/job/SearchBar";
 import sampleJobs from "../data/jobs.json";
 import JobCard from "../components/job/JobCard";
 import JobDetail from "../components/job/JobDetail";
 import AdvancedSearch from "../components/job/AdvancedSearch";
 import ApplyForm from "../components/application/ApplyForm";
+import { useUserContext } from "../context/userContext";
 
 export default function JobBoardPage() {
+
+    const { role } = useUserContext();
 
     const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
     const [showApplyForm, setShowApplyForm] = useState(false);
@@ -35,7 +39,7 @@ export default function JobBoardPage() {
     return (
         <main className="bg-gray-100 min-h-screen">
             {/* Navigation */}
-            <Navbar />
+            {role == "member" ? <MemberNavbar /> : <Navbar />}
 
             {/* Search Bar */}
             <div className="py-5">

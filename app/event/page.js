@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { List, Calendar } from "lucide-react";
+import MemberNavbar from "../components/MemberNavBar";
 import Navbar from "../components/NavBar";
 import EventCard from "../components/event/eventCard";
 import TabToggle from "../components/event/TabToggle";
@@ -11,8 +12,13 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
 import { DateTime } from "luxon";
 import CalendarBigEvent from "../components/myCalender/calenderBig";
+import { useUserContext } from "../context/userContext";
+import { useRouter } from "next/navigation";
 
 export default function EventPage() {
+
+  const { role } = useUserContext(); 
+
   const [events, setEvents] = useState([]);
   const [view, setView] = useState("list");
   const [tab, setTab] = useState("upcoming");
@@ -57,8 +63,10 @@ export default function EventPage() {
   }
 
   return (
-    <main className="bg-gray-100 min-h-screen">
-      <Navbar />
+    <main className="bg-gray-100 min-h-screen"> 
+      {/* Navigation */}
+      {role == "member" ? <MemberNavbar /> : <Navbar />}
+
       <section className="bg-white py-6 px-4 border-b">
         <h1 className="text-center text-xl font-semibold text-orange-500">
           Join our events and Connect with Tech Connect Alberta
