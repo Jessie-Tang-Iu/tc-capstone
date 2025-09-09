@@ -122,12 +122,12 @@ export default function Navbar() {
               </li>
 
               <li>
-                <Link href="#" className="block px-4 py-2 hover:bg-gray-50">
+                <Link href="/jobBoard" className="block px-4 py-2 hover:bg-gray-50">
                   Job Board
                 </Link>
               </li>
               <li>
-                <Link href="#" className="block px-4 py-2 hover:bg-gray-50">
+                <Link href="/profile" className="block px-4 py-2 hover:bg-gray-50">
                   Profile
                 </Link>
               </li>
@@ -184,12 +184,12 @@ export default function Navbar() {
           </li>
 
           <li>
-            <Link href="#" className="hover:text-orange-500">
+            <Link href="/jobBoard" className="hover:text-orange-500">
               Job Board
             </Link>
           </li>
           <li>
-            <Link href="#" className="hover:text-orange-500">
+            <Link href="/profile" className="hover:text-orange-500">
               Profile
             </Link>
           </li>

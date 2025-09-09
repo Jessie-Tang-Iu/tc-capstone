@@ -77,7 +77,7 @@ export default function AdvisorDashboard() {
 
       <div className="mx-auto w-full max-w-8xl px-6 py-8">
         <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
-          Advisor DashBoard
+          Admin DashBoard
         </h1>
 
         <div className="flex flex-row gap-6">
@@ -87,6 +87,7 @@ export default function AdvisorDashboard() {
             <TabBtn v="users">Users</TabBtn>
             <TabBtn v="requests">Requests</TabBtn>
             <TabBtn v="reports">Reports</TabBtn>
+            <TabBtn v="events">Events</TabBtn>
           </div>
 
           {/* Main area */}
@@ -94,7 +95,7 @@ export default function AdvisorDashboard() {
             {tab === "message" && <MessagePage messageList={MOCK_MESSAGES} />}
             {tab === "users" && renderUsers()}
             {tab === "requests" && <RequestsPanel />}
-            {tab === "reports" && renderReports()}
+            {tab === "reports" && <ReportsPanel />}
           </div>
         </div>
       </div>

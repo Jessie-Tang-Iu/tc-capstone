@@ -6,7 +6,7 @@ import Link from "next/link";
 import { signOut } from "@/lib/supabase_auth";
 import { useRouter, usePathname } from "next/navigation";
 
-export default function Navbar() {
+export default function MemberNavbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
   const [isMobileJobOpen, setIsMobileJobOpen] = useState(false);
@@ -78,7 +78,7 @@ export default function Navbar() {
               </li>
               <li>
                 <Link
-                  href="/memberFlow/myCalendar"
+                  href="/myCalender"
                   className="block px-4 py-2 hover:bg-gray-50"
                 >
                   My Calendar
@@ -146,7 +146,7 @@ export default function Navbar() {
                       Job Board
                     </Link>
                     <Link
-                      href="#"
+                      href="/memberFlow/Application"
                       className="block pl-8 pr-4 py-2 text-sm hover:bg-gray-50"
                     >
                       Applications
@@ -155,7 +155,7 @@ export default function Navbar() {
                 )}
               </li>
               <li>
-                <Link href="#" className="block px-4 py-2 hover:bg-gray-50">
+                <Link href="/profile" className="block px-4 py-2 hover:bg-gray-50">
                   Profile
                 </Link>
               </li>
@@ -186,7 +186,7 @@ export default function Navbar() {
             </Link>
           </li>
           <li>
-            <Link href="/memberFlow/myCalendar" className="hover:text-orange-500">
+            <Link href="/myCalender" className="hover:text-orange-500">
               My Calendar
             </Link>
           </li>
@@ -235,7 +235,7 @@ export default function Navbar() {
                 Job Board
               </Link>
               <Link
-                href="#"
+                href="/memberFlow/Application"
                 className="block px-4 py-2 text-sm hover:bg-gray-50"
               >
                 Applications
@@ -244,7 +244,7 @@ export default function Navbar() {
           </li>
 
           <li>
-            <Link href="#" className="hover:text-orange-500">
+            <Link href="/profile" className="hover:text-orange-500">
               Profile
             </Link>
           </li>
