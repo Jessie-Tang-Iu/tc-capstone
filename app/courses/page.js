@@ -1,40 +1,51 @@
 "use client";
 
 import Navbar from "../components/MemberNavBar";
-import CourseSection from "../components/courseSection/courseSection";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import CourseCard from "../components/courseCard/courseCard";
+import courses from "../data/courses.json";
 
 export default function PageContent() {
 
 
     return (
-        <div>
+        <div className="bg-gray-100 min-h-screen">
             <Navbar />
-            <main className="bg-gray-100 min-h-screen">
-                <div className="flex justify-center">
-                    <div className="flex items-center border border-black rounded-xl overflow-hidden py-1 pr-2 mt-4">
-                        <input 
-                        type="text" 
-                        placeholder="What to learn?" 
-                        className="px-3 py-2 w-64 focus:outline-none placeholder-black"
-                        />
-                        <button className="bg-[#F26D51] text-white px-3 py-1 rounded-lg">Search</button>
-                        <button className="bg-[#F26D51] text-white px-3 py-1 ml-2 rounded-lg">Advanced Search</button>
-                    </div>
+            <header className="flex justify-center mx-16">
+                <div className="flex justify-between border border-black rounded-xl overflow-hidden p-2 my-4 w-1/4 h-15">
+                    <input
+                        type="text"
+                        placeholder="Search by Course Title or Tags"
+                        className="px-3 py-2 w-64 focus:outline-none placeholder-gray-700"
+                    />
+                    <button className="bg-[#F26D51] text-white px-3 py-1 rounded-lg">Search</button>
                 </div>
+            </header>
+            <main className="flex">
+                <div className="w-1/6 border-r-black border-r-1 min-h-screen text-black my-5 ">
+                    <div className="ml-8 mb-4">
+                        <h2 className="font-bold text-xl">Filter By</h2>
+                        <h3 className="font-medium text-lg mt-2">Course Level</h3>
+                        <input type="checkbox" id="lvlBeg" name="lvlBeg" value="beg"/>
+                        <label for="lvlBeg"> Beginner</label><br/>
 
-                <div>
-                    <h1 className="text-black font-bold text-lg ml-32">Up and Coming</h1>
-                    <div className="flex flex-wrap gap-4 justify-around mt-4 mb-8 px-16">
-                        <CourseSection />
-                        <CourseSection />
-                        <CourseSection />
-                        <CourseSection />
-                        <CourseSection />
+                        <input type="checkbox" id="lvlInter" name="lvlInter" value="inter"/>
+                        <label for="lvlInter"> Intermediate</label><br/>
+
+                        <input type="checkbox" id="lvlAdv" name="lvlAdv" value="adv"/>
+                        <label for="lvlAdv"> Beginner</label><br/>
+                    </div>
+                    <div className="ml-8 mb-4">
+                        <h3 className="font-medium text-lg mt-2">Offers Certificate</h3>
+                    </div>
+                    <div className="ml-8 mb-4">
+                        <h3 className="font-medium text-lg mt-2">Type</h3>
                     </div>
                 </div>
+                <div className="w-5/6 min-h-screen flex flex-wrap content-start">
+                    {courses.map((course) => (
+                        <CourseCard key={course.id} course={course} />
+                    ))}
+                </div>  
             </main>
         </div>
     );
