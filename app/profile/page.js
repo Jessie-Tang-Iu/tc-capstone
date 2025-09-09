@@ -138,12 +138,12 @@ export default function ProfileDashboard() {
             </div>
 
             {/* Main Content */}
-            <div className="flex flex-col md:flex-row bg-gray-100 min-h-[calc(100vh-80px)]">
+            <div className="flex flex-col md:flex-row bg-gray-100 min-h-[calc(100vh-80px)] px-6">
                 {/*Advisor Side Bar*/}
                 <div 
                     className={`w-full px-2 md:w-50 lg:w-[250px] xl:w-[300px] bg-gray-100
                     ${showDetail ? 'hidden md:block' : 'block'}
-                    h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto`}
+                    h-57 rounded-lg bg-white p-1 shadow`}
                 >
                     <TabBtn v="profile">Profile</TabBtn>
                     <TabBtn v="security">Sign & Security</TabBtn>
