@@ -8,6 +8,7 @@ import UsersPanel from "@/app/adminDashboard/User";
 import RequestsPanel from "@/app/adminDashboard/Request";
 import ReportsPanel from "@/app/adminDashboard/Report";
 import UserDetailsCard from "../components/adminDashboard/UserDetailsCard";
+import EventPanel from "@/app/adminDashboard/Event";
 
 export default function AdvisorDashboard() {
   const [tab, setTab] = useState("message");
@@ -96,6 +97,7 @@ export default function AdvisorDashboard() {
             {tab === "users" && renderUsers()}
             {tab === "requests" && <RequestsPanel />}
             {tab === "reports" && <ReportsPanel />}
+            {tab === "events" && <EventPanel />}
           </div>
         </div>
       </div>

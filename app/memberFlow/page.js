@@ -1,7 +1,7 @@
 "use client";
 
 import MemberNavbar from "../components/MemberNavBar";
-import Navbar from "../components/NavBar";
+import Navbar from "../components/MemberNavBar";
 import Link from "next/link";
 import { useUserContext } from "../context/userContext";
 import { useRouter } from "next/navigation";
@@ -9,7 +9,6 @@ import { useEffect } from "react";
 import MessagePage from "../components/MessagePage";
 
 function PageContent() {
-
   const { user, role } = useUserContext();
 
   const router = useRouter();
@@ -23,25 +22,25 @@ function PageContent() {
 
   const MOCK_MESSAGES = [
     {
-        id: 1,
-        name: "John Doe",
-        message: "Sure! You can see my available time on the booking management",
-        date: "Jun 15, 2025",
+      id: 1,
+      name: "John Doe",
+      message: "Sure! You can see my available time on the booking management",
+      date: "Jun 15, 2025",
     },
     // dummy data → total 50 messages
     ...Array.from({ length: 49 }, (_, i) => ({
-        id: i + 2,
-        name: `User Dummy ${i + 1}`,
-        message: "Yes, you are right about the job application, i will have a …",
-        date: "Jun 15, 2025",
+      id: i + 2,
+      name: `User Dummy ${i + 1}`,
+      message: "Yes, you are right about the job application, i will have a …",
+      date: "Jun 15, 2025",
     })),
-    ];
-  
+  ];
+
   return (
     <>
       {/* Navigation */}
       {role == "member" ? <MemberNavbar /> : <Navbar />}
-      
+
       {/* Page content */}
       <main className="bg-gray-100 min-h-screen">
         {/* <div className="container mx-auto px-4 py-8">
@@ -62,14 +61,11 @@ function PageContent() {
         <div className="p-10">
           <MessagePage messageList={MOCK_MESSAGES} />
         </div>
-        
       </main>
     </>
   );
 }
 
 export default function Page() {
-  return (
-    <PageContent />
-  );
+  return <PageContent />;
 }

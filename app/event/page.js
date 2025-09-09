@@ -3,12 +3,11 @@
 import { useEffect, useState } from "react";
 import { List, Calendar } from "lucide-react";
 import MemberNavbar from "../components/MemberNavBar";
-import Navbar from "../components/NavBar";
 import EventCard from "../components/event/eventCard";
 import TabToggle from "../components/event/TabToggle";
 import { getAllEvents, updateEventStatus } from "@/lib/workshop_crud";
 import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from '@fullcalendar/daygrid';
+import dayGridPlugin from "@fullcalendar/daygrid";
 import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
 import { DateTime } from "luxon";
 import CalendarBigEvent from "../components/myCalender/calenderBig";
@@ -16,8 +15,7 @@ import { useUserContext } from "../context/userContext";
 import { useRouter } from "next/navigation";
 
 export default function EventPage() {
-
-  const { role } = useUserContext(); 
+  const { role } = useUserContext();
 
   const [events, setEvents] = useState([]);
   const [view, setView] = useState("list");
@@ -53,17 +51,17 @@ export default function EventPage() {
   );
 
   const handleEventClick = (e) => {
-    console.log("Selected Event: ",e.event);
-    console.log("Selected Event id: ",Number(e.event.id));
+    console.log("Selected Event: ", e.event);
+    console.log("Selected Event id: ", Number(e.event.id));
 
     const workshop = events.find((event) => event.id === Number(e.event.id));
     console.log("Workshop: ", workshop);
     setSelectedEvent(workshop);
     setIsOpen(true);
-  }
+  };
 
   return (
-    <main className="bg-gray-100 min-h-screen"> 
+    <main className="bg-gray-100 min-h-screen">
       {/* Navigation */}
       {role == "member" ? <MemberNavbar /> : <Navbar />}
 
@@ -120,71 +118,73 @@ export default function EventPage() {
       {view === "calendar" && (
         <section className="m-5 flex justify-center items-center">
           <FullCalendar
-                plugins={[dayGridPlugin]}
-                initialView="dayGridMonth"
-                // convert data for Full Calendar use
-                events={events.map(event => ({
-                    ...event,
-                    start: `${event.date}T${event.start_time}`
-                }))}
-                eventClick={handleEventClick}
-                eventContent={( eventInfo ) => {
-                    try {
-                        const startTime = DateTime.fromJSDate(eventInfo.event.start).toFormat("h:mm a");
-                    return (
-                        <CalenderSmallEvent
-                            time={startTime}
-                            title={eventInfo.event.title}
-                        />
-                    );
-                    } catch (error) {
-                        console.log(error);
-                        return <div>{eventInfo.event.title}</div>;
-                    }
-                }}
-            />
+            plugins={[dayGridPlugin]}
+            initialView="dayGridMonth"
+            // convert data for Full Calendar use
+            events={events.map((event) => ({
+              ...event,
+              start: `${event.date}T${event.start_time}`,
+            }))}
+            eventClick={handleEventClick}
+            eventContent={(eventInfo) => {
+              try {
+                const startTime = DateTime.fromJSDate(
+                  eventInfo.event.start
+                ).toFormat("h:mm a");
+                return (
+                  <CalenderSmallEvent
+                    time={startTime}
+                    title={eventInfo.event.title}
+                  />
+                );
+              } catch (error) {
+                console.log(error);
+                return <div>{eventInfo.event.title}</div>;
+              }
+            }}
+          />
 
-            {isOpen &&
+          {isOpen && (
             <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
-              <CalendarBigEvent 
+              <CalendarBigEvent
                 workshop={selectedEvent}
-                onClose={() => setIsOpen(false)} />
+                onClose={() => setIsOpen(false)}
+              />
             </div>
-              
-            }
+          )}
 
-            {/* Calendar Style */}
-            <style jsx global>
-                {`.fc {
-                font-family: 'Inter', sans-serif;
+          {/* Calendar Style */}
+          <style jsx global>
+            {`
+              .fc {
+                font-family: "Inter", sans-serif;
                 color: black;
                 margin: 0px 50px;
                 height: 750px;
                 width: 1300px;
-                }
+              }
 
-                .fc .fc-daygrid-day-frame {
+              .fc .fc-daygrid-day-frame {
                 padding: 8px;
                 min-height: 100px;
                 min-width: 80px;
-                }
-                
-                .fc-daygrid-day:hover {
-                background-color: #f3f4f6; /* Tailwind's gray-100 */
-                }
+              }
 
-                .fc .fc-button {
-                background-color: #E55B3C;
+              .fc-daygrid-day:hover {
+                background-color: #f3f4f6; /* Tailwind's gray-100 */
+              }
+
+              .fc .fc-button {
+                background-color: #e55b3c;
                 color: white;
                 border: none;
-                }
+              }
 
-                .fc-toolbar {
-                color: #E55B3C;
-                }
-
-                `}
-            </style>
+              .fc-toolbar {
+                color: #e55b3c;
+              }
+            `}
+          </style>
         </section>
       )}
     </main>
