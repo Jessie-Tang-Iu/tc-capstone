@@ -1,3 +1,4 @@
+// app/adminDashboard/User.js
 "use client";
 
 import { useMemo, useState } from "react";
@@ -8,12 +9,11 @@ import PlaceholderCard from "@/app/components/adminDashboard/PlaceholderCard";
 import ChatWindow from "@/app/components/ChatWindow";
 import usersDataDefault from "@/app/data/userForAdminPage.json";
 
-export default function UsersPanel({ data = usersDataDefault }) {
+export default function UsersPanel({ data = usersDataDefault, onShowDetails }) {
   const [query, setQuery] = useState("");
   const [openChat, setOpenChat] = useState(false);
   const [chatTo, setChatTo] = useState("");
 
-  // initialize from JSON (or injected data)
   const [normal, setNormal] = useState(data.normal || []);
   const [employer, setEmployer] = useState(data.employer || []);
 
@@ -22,7 +22,6 @@ export default function UsersPanel({ data = usersDataDefault }) {
       normal.filter((u) => u.name.toLowerCase().includes(query.toLowerCase())),
     [normal, query]
   );
-
   const filteredEmployer = useMemo(
     () =>
       employer.filter((u) =>
@@ -42,9 +41,12 @@ export default function UsersPanel({ data = usersDataDefault }) {
     setOpenChat(true);
   };
 
+  const showDetails = (user, roleLabel) => {
+    if (onShowDetails) onShowDetails({ user, roleLabel });
+  };
+
   return (
     <div className="w-full">
-      {/* Header: centered title, search on its own row */}
       <div className="mb-4 rounded-xl bg-white p-6 shadow text-center">
         <div className="mb-4 text-3xl font-semibold text-[#E55B3C]">
           User Management
@@ -54,7 +56,6 @@ export default function UsersPanel({ data = usersDataDefault }) {
         </div>
       </div>
 
-      {/* Normal Users */}
       <Section title="Normal User">
         {filteredNormal.length === 0 ? (
           <PlaceholderCard
@@ -70,7 +71,7 @@ export default function UsersPanel({ data = usersDataDefault }) {
                 subtitle={u.subtitle}
                 isBanned={u.banned}
                 onMessage={() => openMessage(u.name)}
-                onDetails={() => console.log("details", u.id)}
+                onDetails={() => showDetails(u, "Normal User")} // ← HERE
                 onBanToggle={() => toggleBan(setNormal, normal, u.id)}
               />
             ))}
@@ -78,7 +79,6 @@ export default function UsersPanel({ data = usersDataDefault }) {
         )}
       </Section>
 
-      {/* Employers */}
       <Section title="Employer">
         {filteredEmployer.length === 0 ? (
           <PlaceholderCard
@@ -94,7 +94,7 @@ export default function UsersPanel({ data = usersDataDefault }) {
                 subtitle={u.subtitle}
                 isBanned={u.banned}
                 onMessage={() => openMessage(u.name)}
-                onDetails={() => console.log("details", u.id)}
+                onDetails={() => showDetails(u, "Employer")} // ← AND HERE
                 onBanToggle={() => toggleBan(setEmployer, employer, u.id)}
               />
             ))}
