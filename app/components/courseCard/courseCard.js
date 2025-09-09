@@ -1,8 +1,9 @@
 import React from "react";
+import Link from "next/link";
 
 export default function CourseCard ({course}) {
     return (
-        <div className="border border-gray-300 rounded-lg p-4 m-4 w-[30%] bg-white text-black shadow-md">
+        <Link className="border border-gray-300 rounded-lg p-4 m-4 w-[30%] bg-white text-black shadow-md" href={`/courses/${course.courseID}`}>
             <div className="">
                 <p className="text-sm">{course.type}</p>
                 <h2 className="text-lg font-medium">{course.title}</h2>
@@ -16,6 +17,6 @@ export default function CourseCard ({course}) {
                     <p className="ml-2">{course.duration}</p>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Navbar from "../components/MemberNavBar";
 import CourseCard from "../components/courseCard/courseCard";
 import courses from "../data/courses.json";
@@ -26,13 +27,13 @@ export default function PageContent() {
                         <h2 className="font-bold text-xl">Filter By</h2>
                         <h3 className="font-medium text-lg mt-2">Course Level</h3>
                         <input type="checkbox" id="lvlBeg" name="lvlBeg" value="beg"/>
-                        <label for="lvlBeg"> Beginner</label><br/>
+                        <label htmlFor="lvlBeg"> Beginner</label><br/>
 
                         <input type="checkbox" id="lvlInter" name="lvlInter" value="inter"/>
-                        <label for="lvlInter"> Intermediate</label><br/>
+                        <label htmlFor="lvlInter"> Intermediate</label><br/>
 
                         <input type="checkbox" id="lvlAdv" name="lvlAdv" value="adv"/>
-                        <label for="lvlAdv"> Beginner</label><br/>
+                        <label htmlFor="lvlAdv"> Beginner</label><br/>
                     </div>
                     <div className="ml-8 mb-4">
                         <h3 className="font-medium text-lg mt-2">Offers Certificate</h3>
@@ -43,7 +44,7 @@ export default function PageContent() {
                 </div>
                 <div className="w-5/6 min-h-screen flex flex-wrap content-start">
                     {courses.map((course) => (
-                        <CourseCard key={course.id} course={course} />
+                        <CourseCard key={course.courseID} course={course} />
                     ))}
                 </div>  
             </main>
