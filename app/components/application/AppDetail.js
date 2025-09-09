@@ -105,7 +105,7 @@ export default function AppDetail({ contact, application, onWithdraw, onDownload
 
             <div className="mt-3 rounded-md border border-orange-200 bg-orange-50 p-3">
               <div className="text-sm text-[#E55B3C]">
-                We can't load a preview of your resume right now, but it will be submitted as part of your application. Download your resume to make sure everything is correct before you submit your application.
+                {"We can't load a preview of your resume right now, but it will be submitted as part of your application. Download your resume to make sure everything is correct before you submit your application."}
               </div>
               {(application.resume?.url || onDownload) && (
                 <button

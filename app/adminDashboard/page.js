@@ -6,6 +6,7 @@ import { useState } from "react";
 import UsersPanel from "@/app/adminDashboard/User";
 import RequestsPanel from "@/app/adminDashboard/Request";
 import ReportsPanel from "@/app/adminDashboard/Report";
+import EventsPanel from "./Event";
 
 export default function AdvisorDashboard() {
   const [tab, setTab] = useState("message");
@@ -54,6 +55,7 @@ export default function AdvisorDashboard() {
             <TabBtn v="users">Users</TabBtn>
             <TabBtn v="requests">Requests</TabBtn>
             <TabBtn v="reports">Reports</TabBtn>
+            <TabBtn v="events">Events</TabBtn>
           </div>
 
           <div className=" w-full ml-6">
@@ -61,6 +63,7 @@ export default function AdvisorDashboard() {
             {tab === "users" && <UsersPanel />}
             {tab === "requests" && <RequestsPanel />}
             {tab === "reports" && <ReportsPanel />}
+            {tab === "events" && <EventsPanel />}
           </div>
         </div>
       </div>

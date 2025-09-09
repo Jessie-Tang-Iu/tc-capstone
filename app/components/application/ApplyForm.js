@@ -132,12 +132,12 @@ export default function ApplyForm({ job, onClose }) {
                     ) : (
                         <>
                             Dear Hiring Manager,<br /><br />
-                            I'm excited to apply for the Web Development<br />
+                            I am excited to apply for the Web Development<br />
                             Internship at ABC Company. As a student<br />
                             currently pursuing a diploma in Software<br />
-                            Development, I've gained solid experience in<br />
-                            HTML, CSS, JavaScript, and React through<br />
-                            coursework and hands-on projects. I'm .......
+                            Development, I have gained solid experience in<br />
+                            HTML / CSS / JavaScript / React through<br />
+                            coursework and hands-on projects. I am .......
                         </>
                     )}
                 </div>
@@ -393,8 +393,8 @@ export default function ApplyForm({ job, onClose }) {
                         <p><strong>Wage:</strong> $30–$35/hour · Full-time</p>
                     </div>
                     
-                    <p>We've successfully received your application.</p>
-                    <p>Our team will review your submission, and if selected, you'll be contacted by email for the next steps.</p>
+                    <p>We hve successfully received your application.</p>
+                    <p>Our team will review your submission, and if selected, you will be contacted by email for the next steps.</p>
                     
                     <p>For questions, please contact: <strong>support@techconnectalberta.ca</strong></p>
                     <p>Your application ID: <strong>{formData.applicationId}</strong></p>
