@@ -5,6 +5,7 @@ import SearchBar from "@/app/components/ui/SearchBar";
 import ReportRow from "@/app/components/adminDashboard/ReportRow";
 import PlaceholderCard from "@/app/components/adminDashboard/PlaceholderCard";
 import reportsDataDefault from "@/app/data/reportsForAdminPage.json";
+import UserDetailsCard from "@/app/components/adminDashboard/UserDetailsCard";
 
 const IconChevronLeft = () => (
   <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
@@ -23,7 +24,10 @@ const IconChevronRight = () => (
   </svg>
 );
 
-export default function ReportsPanel({ data = reportsDataDefault }) {
+export default function ReportsPanel({
+  data = reportsDataDefault,
+  onShowDetails,
+}) {
   const [query, setQuery] = useState("");
   const reports = data.reports || [];
 
@@ -102,7 +106,12 @@ export default function ReportsPanel({ data = reportsDataDefault }) {
               reporter={r.reporter}
               issue={r.issue}
               timeAgo={r.timeAgo}
-              onDetails={() => console.log("details", r.id)}
+              onDetails={() =>
+                onShowDetails?.({
+                  type: "report",
+                  data: r,
+                })
+              }
             />
           ))}
         </div>

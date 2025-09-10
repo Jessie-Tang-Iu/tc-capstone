@@ -1,0 +1,31 @@
+[
+  {
+    "id": 1,
+    "author": "Joy Wong",
+    "title": "Newest Figma function from May 2025",
+    "content": "Some text about the post Some text about the post Some text about the post...",
+    "comments": [
+      { "id": 1, "author": "Jessie Tang", "time": "2 days", "content": "Comment Comment Comment..." },
+      { "id": 2, "author": "Jessie Tang", "time": "1 day", "content": "Another comment here..." }
+    ]
+  },
+  {
+    "id": 2,
+    "author": "Alex Kim",
+    "title": "React 19 New Features",
+    "content": "React 19 introduces Server Components, Actions, and better Suspense handling...",
+    "comments": [
+      { "id": 1, "author": "Sam Lee", "time": "4 days", "content": "This is a big improvement!" },
+      { "id": 2, "author": "Taylor Ray", "time": "3 days", "content": "Can’t wait to try it out." }
+    ]
+  },
+  {
+    "id": 3,
+    "author": "Maria Lopez",
+    "title": "Tailwind CSS vs. Vanilla CSS",
+    "content": "Comparing Tailwind CSS to Vanilla CSS approaches for rapid prototyping...",
+    "comments": [
+      { "id": 1, "author": "Chris Brown", "time": "6 days", "content": "Tailwind saves me so much time." }
+    ]
+  }
+]

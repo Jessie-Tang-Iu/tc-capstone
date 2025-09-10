@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import Navbar from "@/app/components/NavBar";
+import Navbar from "@/app/components/MemberNavBar";
 import { getEventById } from "@/lib/workshop_crud";
 import SafeImage from "@/app/components/fallback";
 import EventDetailClient from "@/app/components/event/EventDetailClient";

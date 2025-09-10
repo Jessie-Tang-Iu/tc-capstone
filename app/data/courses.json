@@ -1,0 +1,202 @@
+[
+    {
+        "courseID": 1,
+        "title": "Introduction to Python",
+        "description": "Learn the basics of Python programming, including syntax, data types, and control structures.",
+        "type": "Online",
+        "certificate": true,
+        "level": "Beginner",
+        "lessonCount": 12,
+        "duration": "2 weeks"
+    },
+    {
+        "courseID": 2,
+        "title": "Web Development with HTML & CSS",
+        "description": "Build and style web pages using HTML and CSS from scratch.",
+        "type": "Workshop",
+        "certificate": false,
+        "level": "Beginner",
+        "lessonCount": 10,
+        "duration": "2 weeks"
+    },
+    {
+        "courseID": 3,
+        "title": "JavaScript Essentials",
+        "description": "Master the fundamentals of JavaScript for interactive web development.",
+        "type": "Online",
+        "certificate": false,
+        "level": "Beginner",
+        "lessonCount": 14,
+        "duration": "3 weeks"
+    },
+    {
+        "courseID": 4,
+        "title": "Data Analysis with Excel",
+        "description": "Analyze and visualize data using Microsoft Excel tools and functions.",
+        "type": "In Person",
+        "certificate": true,
+        "level": "Beginner",
+        "lessonCount": 8,
+        "duration": "2 weeks"
+    },
+    {
+        "courseID": 5,
+        "title": "Machine Learning Basics",
+        "description": "An introduction to machine learning concepts and algorithms.",
+        "type": "Online",
+        "certificate": true,
+        "level": "Intermediate",
+        "lessonCount": 15,
+        "duration": "3 weeks"
+    },
+    {
+        "courseID": 6,
+        "title": "React for Beginners",
+        "description": "Learn to build dynamic web applications using React.js.",
+        "type": "Workshop",
+        "certificate": true,
+        "level": "Intermediate",
+        "lessonCount": 13,
+        "duration": "3 weeks"
+    },
+    {
+        "courseID": 7,
+        "title": "SQL Fundamentals",
+        "description": "Understand relational databases and learn to write SQL queries.",
+        "type": "Online",
+        "certificate": true,
+        "level": "Beginner",
+        "lessonCount": 9,
+        "duration": "2 weeks"
+    },
+    {
+        "courseID": 8,
+        "title": "Cybersecurity Essentials",
+        "description": "Explore the basics of cybersecurity and how to protect digital assets.",
+        "type": "In Person",
+        "certificate": true,
+        "level": "Beginner",
+        "lessonCount": 11,
+        "duration": "2 weeks"
+    },
+    {
+        "courseID": 9,
+        "title": "Agile Project Management",
+        "description": "Learn Agile methodologies and how to manage software projects effectively.",
+        "type": "Online",
+        "certificate": true,
+        "level": "Intermediate",
+        "lessonCount": 10,
+        "duration": "2 weeks"
+    },
+    {
+        "courseID": 10,
+        "title": "Introduction to Cloud Computing",
+        "description": "Discover cloud computing concepts and popular cloud platforms.",
+        "type": "Online",
+        "certificate": false,
+        "level": "Beginner",
+        "lessonCount": 8,
+        "duration": "2 weeks"
+    },
+    {
+        "courseID": 11,
+        "title": "Advanced Python Programming",
+        "description": "Deep dive into advanced Python topics such as decorators, generators, and OOP.",
+        "type": "Online",
+        "certificate": false,
+        "level": "Advanced",
+        "lessonCount": 16,
+        "duration": "4 weeks"
+    },
+    {
+        "courseID": 12,
+        "title": "Mobile App Development with Flutter",
+        "description": "Create cross-platform mobile apps using Flutter and Dart.",
+        "type": "Workshop",
+        "certificate": false,
+        "level": "Intermediate",
+        "lessonCount": 12,
+        "duration": "3 weeks"
+    },
+    {
+        "courseID": 13,
+        "title": "UI/UX Design Principles",
+        "description": "Learn the fundamentals of user interface and user experience design.",
+        "type": "In Person",
+        "certificate": true,
+        "level": "Beginner",
+        "lessonCount": 10,
+        "duration": "2 weeks"
+    },
+    {
+        "courseID": 14,
+        "title": "DevOps Foundations",
+        "description": "Understand the basics of DevOps culture, tools, and practices.",
+        "type": "Online",
+        "certificate": true,
+        "level": "Intermediate",
+        "lessonCount": 11,
+        "duration": "2 weeks"
+    },
+    {
+        "courseID": 15,
+        "title": "C# Programming Fundamentals",
+        "description": "Get started with C# programming and .NET development.",
+        "type": "Workshop",
+        "certificate": true,
+        "level": "Beginner",
+        "lessonCount": 13,
+        "duration": "3 weeks"
+    },
+    {
+        "courseID": 16,
+        "title": "Data Visualization with Tableau",
+        "description": "Create interactive dashboards and visualizations using Tableau.",
+        "type": "Online",
+        "certificate": false,
+        "level": "Intermediate",
+        "lessonCount": 9,
+        "duration": "2 weeks"
+    },
+    {
+        "courseID": 17,
+        "title": "Linux Command Line Basics",
+        "description": "Learn to navigate and use the Linux command line efficiently.",
+        "type": "In Person",
+        "certificate": true,
+        "level": "Beginner",
+        "lessonCount": 8,
+        "duration": "2 weeks"
+    },
+    {
+        "courseID": 18,
+        "title": "Introduction to Artificial Intelligence",
+        "description": "Explore the core concepts and applications of artificial intelligence.",
+        "type": "Online",
+        "certificate": true,
+        "level": "Beginner",
+        "lessonCount": 10,
+        "duration": "2 weeks"
+    },
+    {
+        "courseID": 19,
+        "title": "Docker for Developers",
+        "description": "Containerize applications and manage environments using Docker.",
+        "type": "Workshop",
+        "certificate": false,
+        "level": "Intermediate",
+        "lessonCount": 12,
+        "duration": "2 weeks"
+    },
+    {
+        "courseID": 20,
+        "title": "Full Stack Web Development",
+        "description": "Become a full stack developer by learning both front-end and back-end technologies.",
+        "type": "Online",
+        "certificate": true,
+        "level": "Advanced",
+        "lessonCount": 18,
+        "duration": "5 weeks"
+    }
+]

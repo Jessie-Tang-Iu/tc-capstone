@@ -7,6 +7,7 @@ import applications from "../../../data/applications.json";
 import ChatWindow from "@/app/components/ChatWindow";
 import PopupMessage from "@/app/components/ui/PopupMessage";
 import SavedDocCard from "@/app/components/employerDashboard/SavedDocCard";
+import { useParams } from "next/navigation";
 
 /* UI bits */
 const Pill = ({ children, variant = "solid", onClick }) => {
@@ -36,15 +37,16 @@ const Panel = ({ label, children }) => (
   </div>
 );
 
-export default function ApplicationDetailsPage({ params }) {
+export default function ApplicationDetailsPage({}) {
+  const { id } = useParams(); // <-- safe in client components
+  const numericId = Number(id); // normalize to a number
+
   const [openChat, setOpenChat] = useState(false);
   const [popup, setPopup] = useState(null);
 
-  const app = useMemo(
-    () =>
-      applications.find((a) => a.id === Number(params.id)) || applications[0],
-    [params.id]
-  );
+  const app = useMemo(() => {
+    return applications.find((a) => a.id === numericId) || applications[0];
+  }, [numericId]);
 
   return (
     <div className="min-h-screen bg-white">
