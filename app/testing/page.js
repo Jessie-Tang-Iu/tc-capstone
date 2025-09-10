@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getUser } from "@/lib/supabase_auth";
 import { ensureProfile } from "@/lib/user_crud";
 import { getBookingsByUser } from "@/lib/workshop_booking_crud";
-import Navbar from "../components/NavBar";
+import Navbar from "../components/MemberNavBar";
 
 export default function Testing() {
   const [bookings, setBookings] = useState([]);

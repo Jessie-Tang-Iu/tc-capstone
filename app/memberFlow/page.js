@@ -1,13 +1,13 @@
 "use client";
 
-import Navbar from "../components/MemberNavBar";
+import MemberNavbar from "../components/MemberNavBar";
 import Link from "next/link";
 import { useUserContext } from "../context/userContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import MessagePage from "../components/MessagePage";
 
 function PageContent() {
-
   const { user, role } = useUserContext();
 
   const router = useRouter();
@@ -17,14 +17,32 @@ function PageContent() {
       console.log("User's role: ", role);
     }
     console.log("User: ", user);
-  }, []);
-  
+  }, [user, role]);
+
+  const MOCK_MESSAGES = [
+    {
+      id: 1,
+      name: "John Doe",
+      message: "Sure! You can see my available time on the booking management",
+      date: "Jun 15, 2025",
+    },
+    // dummy data → total 50 messages
+    ...Array.from({ length: 49 }, (_, i) => ({
+      id: i + 2,
+      name: `User Dummy ${i + 1}`,
+      message: "Yes, you are right about the job application, i will have a …",
+      date: "Jun 15, 2025",
+    })),
+  ];
+
   return (
     <>
-      <Navbar />
+      {/* Navigation */}
+      <MemberNavbar />
+
       {/* Page content */}
       <main className="bg-gray-100 min-h-screen">
-        <div className="container mx-auto px-4 py-8">
+        {/* <div className="container mx-auto px-4 py-8">
           <h1 className="text-2xl font-bold text-center mb-6 text-orange-500">
             Welcome to Tech Connect Alberta
           </h1>
@@ -37,6 +55,27 @@ function PageContent() {
           >
             Go to Testing Page
           </Link>
+        </div> */}
+
+        <div className="max-w-6xl mx-auto px-6 py-10">
+          {/* Header Section */}
+          <div className="mb-10 text-center">
+            <h1 className="text-3xl font-bold text-[#E55B3C]">
+              Welcome back{user?.name ? `, ${user.name}` : ""}!
+            </h1>
+            <p className="mt-2 text-gray-600 text-lg">
+              This is your personal message box. Stay connected and manage your
+              conversations easily.
+            </p>
+          </div>
+
+          {/* Message Section */}
+          <section className="rounded-xl bg-white shadow-md p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Your Messages
+            </h2>
+            <MessagePage messageList={MOCK_MESSAGES} />
+          </section>
         </div>
       </main>
     </>
@@ -44,7 +83,5 @@ function PageContent() {
 }
 
 export default function Page() {
-  return (
-    <PageContent />
-  );
+  return <PageContent />;
 }

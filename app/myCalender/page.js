@@ -5,14 +5,17 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { DateTime } from "luxon";
 
-import Navbar from "../components/NavBar";
+import MemberNavbar from "../components/MemberNavBar";
 import Button from "../components/ui/Button";
 import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
 import CalendarBigEvent from "../components/myCalender/calenderBig";
 import { deleteBookingByWorkshopId } from "@/lib/workshop_booking_crud";
 import { supabase } from "@/lib/supabaseClient"; // <-- IMPORTANT
+import { useUserContext } from "../context/userContext";
 
 const MyCalendarPage = () => {
+  const { role } = useUserContext();
+
   const calendarRef = useRef(null);
   const [events, setEvents] = useState([]);
   const [bookingData, setBookingData] = useState([]);
@@ -128,7 +131,8 @@ const MyCalendarPage = () => {
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      <Navbar />
+      {/* Navigation */}
+      {role == "member" ? <MemberNavbar /> : <Navbar />}
 
       <h1 className="text-3xl font-bold text-center text-[#E55B3C] mt-6 mb-2">
         My Calendar
