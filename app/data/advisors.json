@@ -46,5 +46,165 @@
             "Saturday": null,
             "Sunday": null
         }
+    },
+    {
+        "advisorID": 4,
+        "name": "Diana Patel",
+        "description": "Experienced in insurance and risk management.",
+        "phone": "555-456-7890",
+        "email": "diana.patel@example.com",
+        "availability": {
+            "Monday": { "from": "11:00", "to": "17:00" },
+            "Tuesday": { "from": "11:00", "to": "17:00" },
+            "Wednesday": { "from": "11:00", "to": "17:00" },
+            "Thursday": null,
+            "Friday": { "from": "09:00", "to": "12:00" },
+            "Saturday": null,
+            "Sunday": null
+        }
+    },
+    {
+        "advisorID": 5,
+        "name": "Eric Johnson",
+        "description": "Specialist in small business financial consulting.",
+        "phone": "555-567-8901",
+        "email": "eric.johnson@example.com",
+        "availability": {
+            "Monday": { "from": "08:00", "to": "14:00" },
+            "Tuesday": null,
+            "Wednesday": { "from": "10:00", "to": "16:00" },
+            "Thursday": { "from": "08:00", "to": "14:00" },
+            "Friday": { "from": "08:00", "to": "12:00" },
+            "Saturday": null,
+            "Sunday": null
+        }
+    },
+    {
+        "advisorID": 6,
+        "name": "Fatima Alvi",
+        "description": "Expert in international investments and markets.",
+        "phone": "555-678-9012",
+        "email": "fatima.alvi@example.com",
+        "availability": {
+            "Monday": { "from": "13:00", "to": "18:00" },
+            "Tuesday": { "from": "13:00", "to": "18:00" },
+            "Wednesday": null,
+            "Thursday": { "from": "13:00", "to": "18:00" },
+            "Friday": { "from": "13:00", "to": "17:00" },
+            "Saturday": null,
+            "Sunday": null
+        }
+    },
+    {
+        "advisorID": 7,
+        "name": "George Kim",
+        "description": "Focuses on education savings and college planning.",
+        "phone": "555-789-0123",
+        "email": "george.kim@example.com",
+        "availability": {
+            "Monday": null,
+            "Tuesday": { "from": "09:00", "to": "15:00" },
+            "Wednesday": { "from": "09:00", "to": "15:00" },
+            "Thursday": { "from": "09:00", "to": "15:00" },
+            "Friday": null,
+            "Saturday": null,
+            "Sunday": null
+        }
+    },
+    {
+        "advisorID": 8,
+        "name": "Helen Garcia",
+        "description": "Specializes in tax planning and compliance.",
+        "phone": "555-890-1234",
+        "email": "helen.garcia@example.com",
+        "availability": {
+            "Monday": { "from": "10:00", "to": "16:00" },
+            "Tuesday": { "from": "10:00", "to": "16:00" },
+            "Wednesday": { "from": "10:00", "to": "16:00" },
+            "Thursday": null,
+            "Friday": { "from": "10:00", "to": "14:00" },
+            "Saturday": null,
+            "Sunday": null
+        }
+    },
+    {
+        "advisorID": 9,
+        "name": "Ivan Petrov",
+        "description": "Expert in real estate investments.",
+        "phone": "555-901-2345",
+        "email": "ivan.petrov@example.com",
+        "availability": {
+            "Monday": { "from": "09:00", "to": "13:00" },
+            "Tuesday": null,
+            "Wednesday": { "from": "09:00", "to": "13:00" },
+            "Thursday": { "from": "09:00", "to": "13:00" },
+            "Friday": { "from": "09:00", "to": "13:00" },
+            "Saturday": null,
+            "Sunday": null
+        }
+    },
+    {
+        "advisorID": 10,
+        "name": "Julia Wang",
+        "description": "Focuses on sustainable and ethical investing.",
+        "phone": "555-012-3456",
+        "email": "julia.wang@example.com",
+        "availability": {
+            "Monday": { "from": "12:00", "to": "18:00" },
+            "Tuesday": { "from": "12:00", "to": "18:00" },
+            "Wednesday": null,
+            "Thursday": { "from": "12:00", "to": "18:00" },
+            "Friday": { "from": "12:00", "to": "16:00" },
+            "Saturday": null,
+            "Sunday": null
+        }
+    },
+    {
+        "advisorID": 11,
+        "name": "Kevin Brown",
+        "description": "Specialist in debt management and credit counseling.",
+        "phone": "555-123-6789",
+        "email": "kevin.brown@example.com",
+        "availability": {
+            "Monday": { "from": "08:00", "to": "12:00" },
+            "Tuesday": { "from": "08:00", "to": "12:00" },
+            "Wednesday": { "from": "08:00", "to": "12:00" },
+            "Thursday": null,
+            "Friday": { "from": "08:00", "to": "12:00" },
+            "Saturday": null,
+            "Sunday": null
+        }
+    },
+    {
+        "advisorID": 12,
+        "name": "Linda Nguyen",
+        "description": "Expert in family financial planning.",
+        "phone": "555-234-7890",
+        "email": "linda.nguyen@example.com",
+        "availability": {
+            "Monday": { "from": "14:00", "to": "18:00" },
+            "Tuesday": { "from": "14:00", "to": "18:00" },
+            "Wednesday": null,
+            "Thursday": { "from": "14:00", "to": "18:00" },
+            "Friday": { "from": "14:00", "to": "17:00" },
+            "Saturday": null,
+            "Sunday": null
+        }
+    },
+    {
+        "advisorID": 13,
+        "name": "Maria Rossi",
+        "description": "Specializes in cross-border financial planning.",
+        "phone": "555-345-8901",
+        "email": "maria.rossi@example.com",
+        "availability": {
+            "Monday": null,
+            "Tuesday": { "from": "10:00", "to": "16:00" },
+            "Wednesday": { "from": "10:00", "to": "16:00" },
+            "Thursday": { "from": "10:00", "to": "16:00" },
+            "Friday": null,
+            "Saturday": null,
+            "Sunday": null
+        }
     }
 ]
