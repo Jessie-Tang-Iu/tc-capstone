@@ -8,9 +8,12 @@ export default function advisor() {
     return(
         <main className="bg-gray-100 min-h-screen">
             <Navbar />
-            <div>
-                <h1 className="text-5xl font-bold text-center mt-10 text-black">Advisor Page</h1>
-            </div>
+            <p className="text-black text-center mb-10">This is advisor page</p>
+            <ul>
+                <li className="text-black mb-10">
+                    John Dao <Link href="#">First Message</Link>
+                </li>
+            </ul>
         </main>
     );
 }
