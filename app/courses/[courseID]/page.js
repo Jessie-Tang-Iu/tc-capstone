@@ -16,8 +16,6 @@ export default function CoursePage({ params }) {
 
   const [selectedLesson, setSelectedLesson] = useState(null);
 
-  console.log(content);
-
   if (!course) {
     return <div className="p-6">Course not found</div>;
   }
