@@ -32,12 +32,11 @@ function PageContent() {
             Connect with your community and explore upcoming events.
           </p>
           <Link
-            href="/discussionBoard"
+            href="/testing"
             className="block text-center mt-6 text-blue-600 hover:underline"
           >
             Go to Testing Page
           </Link>
-          <Link href="/discussionBoard">Go to Discussion</Link>
         </div>
       </main>
     </>
