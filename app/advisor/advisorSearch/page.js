@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import Navbar from "../../components/MemberNavBar";
 import advisors from "../../data/advisors.json";
-import userAdvisors from "../../data/usersAdvisors.json";
-import AdvisorCard from "../../components/AdvisorCard";
+import userAdvisors from "../../data/usersAdvisors.json"; // This is here for future implementation of connecting a advisor to a user account
+import AdvisorCard from "../../components/advisorCard";
 
 export default function AdvisorSearchPage() {
 

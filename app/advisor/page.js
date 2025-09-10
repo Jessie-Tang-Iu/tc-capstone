@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Navbar from '../components/MemberNavBar'
 import advisors from '../data/advisors.json'
 import userAdvisors from "../data/usersAdvisors.json";
-import AdvisorCard from '../components/AdvisorCard';
+import AdvisorCard from '../components/advisorCard';
 import { useUserContext } from "../context/userContext";
 
 export default function AdvisorPage() {
