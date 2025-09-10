@@ -206,7 +206,7 @@ export default function Navbar() {
                 Courses
               </Link>
               <Link
-                href="#"
+                href="/advisor"
                 className="block px-4 py-2 text-sm hover:bg-gray-50"
               >
                 Advisory
