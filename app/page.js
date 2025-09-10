@@ -16,6 +16,8 @@ function PageContent() {
   }, []);
 
   useEffect(() => {
+    console.log(user);
+
     if (user)
       switch (user.role) {
         case "admin":
