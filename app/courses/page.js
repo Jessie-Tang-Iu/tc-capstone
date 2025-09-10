@@ -3,7 +3,7 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import Navbar from "../components/MemberNavBar";
-import CourseCard from "../components/courseCard/courseCard";
+import CourseCard from "../components/courseCard/courseCard.js";
 import courses from "../data/courses.json";
 
 export default function PageContent() {
