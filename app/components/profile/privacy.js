@@ -2,7 +2,7 @@
 
 export default function Privacy() {
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 px-5 h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto">
             {/* Download my data */}
             <section>
                 <h2 className="text-xl md:text-2xl font-bold text-black mb-6">Download my data</h2>

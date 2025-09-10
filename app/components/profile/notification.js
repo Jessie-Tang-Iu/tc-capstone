@@ -17,7 +17,7 @@ export default function Notification({ formData, setFormData }) {
     };
 
     const NotificationRow = ({ title, type }) => (
-        <div className="flex items-center justify-between py-2">
+        <div className="flex items-center justify-between py-2 bg-gray-100">
             <span className="text-base md:text-lg font-normal text-black">{title}</span>
             <div className="flex gap-3">
                 <button
@@ -45,7 +45,7 @@ export default function Notification({ formData, setFormData }) {
     );
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 px-5 h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto">
             {/* Message and comment */}
             <section>
                 <h2 className="text-xl md:text-2xl font-bold text-black mb-3">Message and comment</h2>

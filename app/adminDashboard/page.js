@@ -1,36 +1,36 @@
+// app/adminDashboard/page.js
 "use client";
 
-import MessagePage from "../components/MessagePage";
-import Navbar from "../components/NavBarBeforeSignIn";
 import { useState } from "react";
+import Navbar from "../components/NavBarBeforeSignIn";
+import MessagePage from "../components/MessagePage";
 import UsersPanel from "@/app/adminDashboard/User";
 import RequestsPanel from "@/app/adminDashboard/Request";
 import ReportsPanel from "@/app/adminDashboard/Report";
-import EventsPanel from "./Event";
+import UserDetailsCard from "../components/adminDashboard/UserDetailsCard";
+import EventPanel from "@/app/adminDashboard/Event";
 
 export default function AdvisorDashboard() {
   const [tab, setTab] = useState("message");
+  // when null -> show UsersPanel; otherwise show UserDetailsCard
+  const [details, setDetails] = useState(null); // { user, roleLabel } | null
 
   const TabBtn = ({ v, children }) => (
     <button
       value={v}
-      onClick={(e) => setTab(e.currentTarget.value)}
+      onClick={(e) => {
+        setTab(e.currentTarget.value);
+        setDetails(null); // ← reset detail view when switching tabs
+      }}
       className={`w-full text-left rounded-md px-4 py-3 text-sm font-medium transition
         text-black hover:bg-[#F0E0D5] ${tab === v ? "bg-[#E2B596]" : ""}`}
     >
-      {children} <span className="ml-1"></span>
-      {">"}
+      {children} <span className="ml-1">{">"}</span>
     </button>
   );
 
   const MOCK_MESSAGES = [
-    {
-      id: 1,
-      name: "John Doe",
-      message: "Sure! You can see my available time on the booking management",
-      date: "Jun 15, 2025",
-    },
-    // dummy data → total 50 messages
+    { id: 1, name: "John Doe", message: "…", date: "Jun 15, 2025" },
     ...Array.from({ length: 49 }, (_, i) => ({
       id: i + 2,
       name: `Dummy ${i + 1}`,
@@ -38,6 +38,39 @@ export default function AdvisorDashboard() {
       date: "Jun 15, 2025",
     })),
   ];
+
+  const renderUsers = () =>
+    details?.type === "user" ? (
+      <UserDetailsCard
+        user={details.data.user}
+        roleLabel={details.data.roleLabel}
+        onClose={() => setDetails(null)}
+      />
+    ) : (
+      <UsersPanel
+        onShowDetails={({ user, roleLabel }) =>
+          setDetails({ type: "user", data: { user, roleLabel } })
+        }
+      />
+    );
+
+  const renderReports = () =>
+    details?.type === "report" ? (
+      <UserDetailsCard
+        user={{
+          name: details.data.reporter,
+          id: details.data.id,
+          subtitle: details.data.issue,
+          email: "—",
+          location: details.data.category,
+          banned: false,
+        }}
+        roleLabel={`Report #${details.data.reportId}`}
+        onClose={() => setDetails(null)}
+      />
+    ) : (
+      <ReportsPanel onShowDetails={(payload) => setDetails(payload)} />
+    );
 
   return (
     <main className="w-full min-h-screen bg-white">
@@ -48,9 +81,9 @@ export default function AdvisorDashboard() {
           Admin DashBoard
         </h1>
 
-        <div className="flex flex-row">
-          <div className="ml-0 w-60 h-57 rounded-lg bg-white p-1 flex flex-col shadow">
-            {/*Advisor Side Bar*/}
+        <div className="flex flex-row gap-6">
+          {/* Sidebar */}
+          <div className="ml-0 w-60 rounded-lg bg-white p-1 flex flex-col shadow">
             <TabBtn v="message">Message</TabBtn>
             <TabBtn v="users">Users</TabBtn>
             <TabBtn v="requests">Requests</TabBtn>
@@ -58,12 +91,13 @@ export default function AdvisorDashboard() {
             <TabBtn v="events">Events</TabBtn>
           </div>
 
-          <div className=" w-full ml-6">
+          {/* Main area */}
+          <div className="w-full">
             {tab === "message" && <MessagePage messageList={MOCK_MESSAGES} />}
-            {tab === "users" && <UsersPanel />}
+            {tab === "users" && renderUsers()}
             {tab === "requests" && <RequestsPanel />}
             {tab === "reports" && <ReportsPanel />}
-            {tab === "events" && <EventsPanel />}
+            {tab === "events" && <EventPanel />}
           </div>
         </div>
       </div>

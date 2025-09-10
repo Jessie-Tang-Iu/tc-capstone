@@ -1,45 +1,38 @@
 "use client";
 
-import Navbar from "./components/NavBar";
+import Navbar from "./components/NavBarBeforeSignIn";
 import Link from "next/link";
-import { getSession } from "@/lib/supabase_auth";
 import { useUserContext } from "./context/userContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { getUserByEmail } from "@/lib/user_crud";
 
 function PageContent() {
-
-  const { setUser, setEmail } = useUserContext();
+  const { user, getCurrentSession } = useUserContext();
 
   const router = useRouter();
-
-  const getCurrentSession = async () => {
-    try {
-      const session = await getSession();
-      setEmail(session?.user?.email || '');
-      if (!session) { 
-        router.push('/signIn');
-      } else {
-        const p = await getUserByEmail(session?.user?.email);
-        if (!p) {
-          setError("Signed in, but profile could not be created due to RLS.");
-          return;
-        }
-
-        // reflect on UI
-        setUser(p);
-      }
-    } catch (error) {
-      console.error("Error fetching session:", error);
-      alert("Error", "Failed to fetch session. Please sign in again.");
-    }
-  };
 
   useEffect(() => {
     getCurrentSession();
   }, []);
-  
+
+  useEffect(() => {
+    if (user)
+      switch (user.role) {
+        case "admin":
+          router.push("/adminDashboard");
+          break;
+        case "member":
+          router.push("/memberFlow");
+          break;
+        case "employer":
+          router.push("/employerDashboard/application");
+          break;
+        case "advisor":
+          router.push("/advisorDashboard");
+          break;
+      }
+  }, [user]);
+
   return (
     <>
       <Navbar />
@@ -58,6 +51,8 @@ function PageContent() {
           >
             Go to Testing Page
           </Link>
+
+          
         </div>
       </main>
     </>
@@ -65,7 +60,5 @@ function PageContent() {
 }
 
 export default function Page() {
-  return (
-      <PageContent />
-  );  
+  return <PageContent />;
 }
