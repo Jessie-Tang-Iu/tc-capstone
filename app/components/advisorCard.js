@@ -4,7 +4,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import ChatWindow from "./ChatWindow";
 
-export default function advisorCard({ advisor }) {
+export default function AdvisorCard({ advisor }) {
     const [isChatOpen, setIsChatOpen] = useState(false);
 
     return(

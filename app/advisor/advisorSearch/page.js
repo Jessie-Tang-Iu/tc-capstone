@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Navbar from "../../components/MemberNavBar";
 import advisors from "../../data/advisors.json";
 import userAdvisors from "../../data/usersAdvisors.json";
-import AdvisorCard from "../../components/advisorCard";
+import AdvisorCard from "../../components/AdvisorCard";
 
 export default function AdvisorSearchPage() {
 
