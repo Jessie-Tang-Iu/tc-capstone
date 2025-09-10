@@ -63,7 +63,7 @@ export default function EventPage() {
   return (
     <main className="bg-gray-100 min-h-screen">
       {/* Navigation */}
-      {role == "member" ? <MemberNavbar /> : <Navbar />}
+      <MemberNavbar />
 
       <section className="bg-white py-6 px-4 border-b">
         <h1 className="text-center text-xl font-semibold text-orange-500">

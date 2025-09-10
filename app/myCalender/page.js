@@ -132,7 +132,7 @@ const MyCalendarPage = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
       {/* Navigation */}
-      {role == "member" ? <MemberNavbar /> : <Navbar />}
+      <MemberNavbar />
 
       <h1 className="text-3xl font-bold text-center text-[#E55B3C] mt-6 mb-2">
         My Calendar

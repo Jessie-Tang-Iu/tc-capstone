@@ -135,8 +135,7 @@ export default function ProfileDashboard() {
   return (
     <main className="bg-gray-100 min-h-screen w-full">
       {/* Navigation */}
-      {role == "member" ? <MemberNavbar /> : <Navbar />}
-
+      <MemberNavbar />
       <div className="pt-7 mb-3 md:mb-8 mx-5 md:mx-8">
         <h1 className="text-2xl md:text-3xl font-bold text-black">Setting</h1>
       </div>
