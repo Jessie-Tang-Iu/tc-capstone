@@ -42,22 +42,31 @@ export default function PageContent() {
             .filter(([key, value]) => value && ["beginner", "intermediate", "advanced"].includes(key))
             .map(([key]) => key);
 
+        console.log("ActiveLevels: ", activeLevels);
+
         // Does the same as the above function but for course types (Online, In Person, Workshop)
         const activeTypes = Object.entries(filters)
             .filter(([key, value]) => value && ["online", "inPerson", "workshop"].includes(key))
             .map(([key]) => key.toLowerCase());
+        
+        console.log("ActiveTypes: ", activeTypes);
 
         results = results.filter((course) => {
+            console.log("Course: ", course.title);
             // This compares the courses level to the active filters, if one matches its added to the matchesLevel variable, if none are checked then it returns all courses.
             const matchesLevel =
                 activeLevels.length === 0 || activeLevels.includes(course.level); 
 
-            // This checks if the certifacte filter is applied, if both are checked or unchecked it returns all courses
+            console.log("MatchesLevel: ", matchesLevel);
+
+            // This checks if the certificate filter is applied, if both are checked or unchecked it returns all courses
             // If one of the checks is tricked to true it compares the course certificate value to the filter value
             const matchesCertificate =
                 (!filters.certificateYes && !filters.certificateNo) || // no cert filter applied
                 (filters.certificateYes && course.certificate === true) ||
                 (filters.certificateNo && course.certificate === false);
+
+            console.log("MatchesCertificate: ", matchesCertificate);
 
             // filters by course type, if the course type is Online and the filter for Online is true it is returned, it doesnt this for all 3.
             const matchesType =
@@ -66,15 +75,17 @@ export default function PageContent() {
                 (filters.inPerson && course.type === "In Person") ||
                 (filters.workshop && course.type === "Workshop");
 
+            console.log("MatchesType: ", matchesType);
+
             // Returns the filtered courses
             return matchesLevel && matchesCertificate && matchesType;
         });
 
         // Checks the filtered courses against the search query
         if (searchQuery.trim() !== "") {
-        results = results.filter((course) =>
-            course.title.toLowerCase().includes(searchQuery)
-        );
+            results = results.filter((course) =>
+                course.title.toLowerCase().includes(searchQuery)
+            );
         }
 
         setFilteredCourses(results);
