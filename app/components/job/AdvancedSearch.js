@@ -1,19 +1,59 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { X } from "lucide-react";
 import jobFilters from "../../data/filterForJob.json";
 
 export default function AdvancedSearch({ filters, setFilters, onClose }) {
+    const formRef = useRef(null);
 
-    const handleFilterChange = (field, value) => {
-        if (field == "sortBy" || field == "datePosted") {
-            setFilters(prev => ({ ...prev, [field]: value }));
-        } else {
-            setFilters(prev => ({ ...prev, field: append(value)}))
-        }
-        console.log(filters);
+    const clearAll = () => {
+        const form = formRef.current;
+        if (!form) return;
+        form.reset();
+        form.querySelectorAll("input").forEach((el) => {
+            switch (el.type) {
+                case "checkbox":
+                case "radio":
+                    el.checked = false;
+                    break;
+                default:
+                    break;
+            }
+        });
+        setFilters({
+            sortBy: "",
+            datePosted: "",
+            location: [],
+            experience: [],
+            workplace: [],
+            type: [],
+            industry: [],
+            salary: "",
+        })
+    }
+
+    const handleSave = () => {
+        const form = formRef.current;
+        if (!form) return;
+        const data = new FormData(form);
+        const getAll = (name) => data.getAll(name);
+        setFilters ({
+            sortBy: data.get("sortBy") || "",
+            datePosted: data.get("datePosted") || "",
+            location: getAll("location"),
+            experience: getAll("experience"),
+            workplace: getAll("workplace"),
+            type: getAll("type"),
+            industry: getAll("industry"),
+            salary: data.get("salary"),
+        });
+        onClose();
     };
+
+    useEffect(() => {
+        console.log(filters);
+    }, [filters])
 
     return (
         <div className="absolute w-full h-full bg-gray-700/60 flex items-center justify-center z-10 ">
@@ -31,7 +71,7 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                     </div>
 
                     {/* Form Content */}
-                    <div className="p-4 space-y-6">
+                    <form ref={formRef} className="p-4 space-y-6" onSubmit={(e) => e.preventDefault()}>
 
                         {/* Sort by */}
                         <section>
@@ -42,6 +82,7 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                                     type="radio"
                                     name="sortBy"
                                     value="recent"
+                                    defaultChecked={filters.sortBy === "recent"}
                                     className="w-4 h-4 text-black border-black focus:ring-black"
                                 />
                                 <span className="text-sm font-normal text-black">Most recent</span>
@@ -51,7 +92,7 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                                     type="radio"
                                     name="sortBy"
                                     value="relevant"
-                                    
+                                    defaultChecked={filters.sortBy === "relevant"}
                                     className="w-4 h-4 text-black border-black focus:ring-black"
                                 />
                                 <span className="text-sm font-normal text-black">Most relevant</span>
@@ -71,6 +112,7 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                                 type="radio"
                                 name="datePosted"
                                 value="anytime"
+                                defaultChecked={filters.datePosted === "anytime"}
                                 className="w-4 h-4 text-black border-black focus:ring-black"
                                 />
                                 <span className="text-sm font-normal text-black">Any time</span>
@@ -80,6 +122,7 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                                 type="radio"
                                 name="datePosted"
                                 value="pastWeek"
+                                defaultChecked={filters.datePosted === "pastWeek"}
                                 className="w-4 h-4 text-black border-black focus:ring-black"
                                 />
                                 <span className="text-sm font-normal text-black">Past week</span>
@@ -89,6 +132,7 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                                 type="radio"
                                 name="datePosted"
                                 value="pastMonth"
+                                defaultChecked={filters.datePosted === "pastMonth"}
                                 className="w-4 h-4 text-black border-black focus:ring-black"
                                 />
                                 <span className="text-sm font-normal text-black">Past month</span>
@@ -98,6 +142,7 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                                 type="radio"
                                 name="datePosted"
                                 value="past24Hours"
+                                defaultChecked={filters.datePosted === "past24Hours"}
                                 className="w-4 h-4 text-black border-black focus:ring-black"
                                 />
                                 <span className="text-sm font-normal text-black">Past 24 hours</span>
@@ -116,8 +161,9 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                                     <label key={experience.id} className="flex items-center space-x-3">
                                         <input
                                             type="checkbox"
-                                            name="type"
+                                            name="experience"
                                             value={experience.name}
+                                            defaultChecked={filters.experience.includes(experience.name)}
                                             className="w-4 h-4 text-black border-black rounded focus:ring-black"
                                         />
                                         <span className="text-sm font-normal text-black">{`${experience.name}`}</span>
@@ -139,6 +185,7 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                                             type="checkbox"
                                             name="type"
                                             value={type.name}
+                                            defaultChecked={filters.type.includes(type.name)}
                                             className="w-4 h-4 text-black border-black rounded focus:ring-black"
                                         />
                                         <span className="text-sm font-normal text-black">{`${type.name}`}</span>
@@ -158,8 +205,9 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                                     <label key={workplace.id} className="flex items-center space-x-3">
                                         <input
                                             type="checkbox"
-                                            name="location"
+                                            name="workplace"
                                             value={workplace.name}
+                                            defaultChecked={filters.workplace.includes(workplace.name)}
                                             className="w-4 h-4 text-black border-black rounded focus:ring-black"
                                         />
                                         <span className="text-sm font-normal text-black">{`${workplace.name}`}</span>
@@ -180,7 +228,8 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                                         <input
                                             type="checkbox"
                                             name="location"
-                                            value={location.city}
+                                            value={`${location.city}, ${location.province}`}
+                                            defaultChecked={filters.location.includes(location.city)}
                                             className="w-4 h-4 text-black border-black rounded focus:ring-black"
                                         />
                                         <span className="text-sm font-normal text-black">{`${location.city}, ${location.province}`}</span>
@@ -202,6 +251,7 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                                         type="checkbox"
                                         name="industry"
                                         value={industry.name}
+                                        defaultChecked={filters.industry.includes(industry.name)}
                                         className="w-4 h-4 text-black border-black rounded focus:ring-black"
                                     />
                                     <span className="text-sm font-normal text-black">{industry.name}</span>
@@ -222,7 +272,8 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                                         <input
                                             type="radio"
                                             name="salary"
-                                            value={(index-1) * 5 + 15}
+                                            value={(index) * 5 + 15}
+                                            defaultChecked={filters.salary == ((index) * 5 + 15)}
                                             className="w-4 h-4 text-black border-black focus:ring-black"
                                         />
                                         <span className="text-sm font-normal text-black">
@@ -256,20 +307,20 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                             {sectionIndex < 2 && <hr className="border-gray-200 mt-6" />}
                         </section>
                         ))} */}
-                    </div>
+                    </form>
 
                     {/* Footer with action buttons */}
                     <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4 flex gap-3">
                         <button
                             type="button"
-                            onClick={onClose}
+                            onClick={clearAll}
                             className="flex-1 bg-gray-200 text-black px-4 py-2 rounded-lg text-sm font-normal hover:bg-gray-300 transition-colors"
                         >
                             Clear All
                         </button>
                         <button
                             type="submit"
-                            onClick={onClose}
+                            onClick={handleSave}
                             className="flex-1 bg-[#E55B3C] text-white px-4 py-2 rounded-lg text-sm font-normal hover:bg-[#d14f32] transition-colors"
                         >
                             Apply Filters

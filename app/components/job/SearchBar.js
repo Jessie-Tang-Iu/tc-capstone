@@ -4,8 +4,6 @@ import Button from "../ui/Button";
 export default function SearchBar({
     query, onQueryChange,
     location, onLocationChange,
-    experience, onExperienceChange,
-    workplace, onWorkplaceChange,
     onSearch, onAdvancedSearch
 }) {
     return (
@@ -18,7 +16,7 @@ export default function SearchBar({
                     <input
                         type="text"
                         value ={query}
-                        onChange={(e) => onQueryChange(e.target.value)}
+                        onChange={(e) => onQueryChange(e.target.value.toLowerCase())}
                         placeholder="Search by title or company"
                         className="w-full text-sm xl:text-base font-normal text-black placeholder-black border-none outline-none bg-transparent"
                     />
@@ -32,7 +30,7 @@ export default function SearchBar({
                     <input
                         type="text"
                         value={location}
-                        onChange={(e) => onLocationChange(e.target.value)}
+                        onChange={(e) => onLocationChange(e.target.value.toLowerCase())}
                         placeholder="Location"
                         className="w-full text-sm xl:text-base font-normal text-black placeholder-black border-none outline-none bg-transparent"
                     />
