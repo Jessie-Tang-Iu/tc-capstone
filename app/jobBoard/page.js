@@ -18,8 +18,17 @@ export default function JobBoardPage() {
 
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("");
-  const [experience, setExperience] = useState("");
-  const [workplace, setWorkplace] = useState("");
+
+  const [filters, setFilters] = useState({
+    sortBy: "",
+    datePosted: "",
+    locations: [],
+    experience: [],
+    workplace: [],
+    type: [],
+    industry: [],
+    salary: [],
+  });
 
   const [selectedJobId, setSelectedJobId] = useState();
   const [showJobDetail, setShowJobDetail] = useState(false);
@@ -46,10 +55,6 @@ export default function JobBoardPage() {
           onQueryChange={setQuery}
           location={location}
           onLocationChange={setLocation}
-          experience={experience}
-          onExperienceChange={setExperience}
-          workplace={workplace}
-          onWorkplaceChange={setWorkplace}
           onAdvancedSearch={() => setShowAdvancedSearch(true)}
         />
       </div>

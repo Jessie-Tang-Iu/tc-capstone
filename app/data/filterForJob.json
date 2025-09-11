@@ -1,0 +1,208 @@
+{
+    "locations": [
+        { 
+            "id": 1, 
+            "province": "ON", 
+            "city": "Toronto" 
+        },
+        { 
+            "id": 2, 
+            "province": "ON", 
+            "city": "Ottawa" 
+        },
+        { 
+            "id": 3, 
+            "province": "ON", 
+            "city": "Mississauga" 
+        },
+        { 
+            "id": 4, 
+            "province": "ON", 
+            "city": "Hamilton" 
+        },
+        { 
+            "id": 5, 
+            "province": "QC", 
+            "city": "Montreal" 
+        },
+        { 
+            "id": 6, 
+            "province": "QC", 
+            "city": "Quebec City" 
+        },
+        { 
+            "id": 7, 
+            "province": "BC", 
+            "city": "Vancouver" 
+        },
+        { 
+            "id": 8, 
+            "province": "BC", 
+            "city": "Victoria" 
+        },
+        { 
+            "id": 9, 
+            "province": "AB", 
+            "city": "Calgary" 
+        },
+        { 
+            "id": 10, 
+            "province": "AB", 
+            "city": "Edmonton" 
+        },
+        { 
+            "id": 11, 
+            "province": "MB", 
+            "city": "Winnipeg" 
+        },
+        { 
+            "id": 12, 
+            "province": "SK", 
+            "city": "Saskatoon" 
+        },
+        { 
+            "id": 13, 
+            "province": "NS", 
+            "city": "Halifax" 
+        },
+        { 
+            "id": 13, 
+            "province": "NL", 
+            "city": "St. John's" 
+        },
+        { 
+            "id": 14, 
+            "province": "NB", 
+            "city": "Moncton" 
+        },
+        { 
+            "id": 15, 
+            "province": "PE", 
+            "city": "Charlottetown" 
+        },
+        { 
+            "id": 16, 
+            "province": "YT", 
+            "city": "Whitehorse" 
+        },
+        { 
+            "id": 17, 
+            "province": "NT", 
+            "city": "Yellowknife" 
+        },
+        { 
+            "id": 18, 
+            "province": "NU", 
+            "city": "Iqaluit" 
+        },
+        { 
+            "id": 19, 
+            "province": "ON", 
+            "city": "Brampton" 
+        },
+        { 
+            "id": 20, 
+            "province": "QC", 
+            "city": "Laval" 
+        },
+        { 
+            "id": 21, 
+            "province": "BC", 
+            "city": "Surrey" 
+        },
+        { 
+            "id": 22, 
+            "province": "AB", 
+            "city": "Red Deer" 
+        },
+        { 
+            "id": 23, 
+            "province": "MB", 
+            "city": "Brandon" 
+        },
+        { 
+            "id": 24, 
+            "province": "SK", 
+            "city": "Regina" 
+        },
+        { 
+            "id": 25, 
+            "province": "NB", 
+            "city": "Saint John" 
+        },
+        { 
+            "id": 26, 
+            "province": "NL", 
+            "city": "Corner Brook" 
+        },
+        { 
+            "id": 27, 
+            "province": "NS", 
+            "city": "Sydney" 
+        },
+        { 
+            "id": 28, 
+            "province": "PE", 
+            "city": "Summerside" 
+        },
+        { 
+            "id": 29, 
+            "province": "YT", 
+            "city": "Dawson City" 
+        },
+        { 
+            "id": 30, 
+            "province": "NT", 
+            "city": "Inuvik" 
+        },
+        { 
+            "id": 31, 
+            "province": "NU", 
+            "city": "Rankin Inlet" 
+        }
+    ],
+    "industries": [
+        { "id": 1, "name": "IT" },
+        { "id": 2, "name": "Banking" },
+        { "id": 3, "name": "Insurance" },
+        { "id": 4, "name": "Financial" },
+        { "id": 5, "name": "Healthcare" },
+        { "id": 6, "name": "Education" },
+        { "id": 7, "name": "Manufacturing" },
+        { "id": 8, "name": "Retail" },
+        { "id": 9, "name": "Hospitality" },
+        { "id": 10, "name": "Construction" },
+        { "id": 11, "name": "Transportation" },
+        { "id": 12, "name": "Telecommunications" },
+        { "id": 13, "name": "Energy" },
+        { "id": 14, "name": "Real Estate" },
+        { "id": 15, "name": "Legal" },
+        { "id": 16, "name": "Marketing" },
+        { "id": 17, "name": "Government" },
+        { "id": 18, "name": "Agriculture" },
+        { "id": 19, "name": "Media" },
+        { "id": 20, "name": "Pharmaceutical" }
+    ],
+    "type": [
+        { "id": 1, "name": "Full-time" },
+        { "id": 2, "name": "Part-time" },
+        { "id": 3, "name": "Temporary" },
+        { "id": 4, "name": "Contract" },
+        { "id": 5, "name": "Internship" },
+        { "id": 6, "name": "Co-op" },
+        { "id": 7, "name": "Volunteer" },
+        { "id": 8, "name": "Other" }
+    ],
+    "experience": [
+        { "id": 1, "name": "Entry Level" },
+        { "id": 2, "name": "Senior" },
+        { "id": 3, "name": "Mid-Senior" },
+        { "id": 4, "name": "Junior" },
+        { "id": 5, "name": "Associate" }
+    ],
+    "workplace": [
+        { "id": 1, "name": "Hybrid" },
+        { "id": 2, "name": "On-site" },
+        { "id": 3, "name": "Remote" }
+    ]
+}
