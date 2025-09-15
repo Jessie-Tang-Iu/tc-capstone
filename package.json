@@ -9,11 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@fullcalendar/common": "^5.11.5",
-    "@fullcalendar/daygrid": "^6.1.18",
+    "@fullcalendar/core": "^6.1.19",
+    "@fullcalendar/daygrid": "^6.1.19",
     "@fullcalendar/interaction": "^6.1.19",
     "@fullcalendar/list": "^6.1.19",
-    "@fullcalendar/react": "^6.1.18",
+    "@fullcalendar/react": "^6.1.19",
     "@fullcalendar/timegrid": "^6.1.19",
     "@supabase/supabase-js": "^2.55.0",
     "dotenv": "^17.2.2",

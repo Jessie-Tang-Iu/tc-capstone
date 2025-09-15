@@ -1,15 +1,15 @@
 // app/event/[id]/page.js
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import Navbar from "@/app/components/MemberNavBar";
 import SafeImage from "@/app/components/fallback";
 import EventDetailClient from "@/app/components/event/EventDetailClient";
+import BackToOrigin from "@/app/components/event/BackToOrigin.js";
 
 // import from your server DB helper
 import { getEventById } from "../../../backend/database/workshop_crud.js";
 
 export default async function EventDetailPage({ params }) {
-  const { id } = await props.params;
+  const { id } = params;
   const numericId = Number(id);
   let event;
   try {
@@ -36,18 +36,13 @@ export default async function EventDetailPage({ params }) {
     <main className="bg-gray-100 min-h-screen text-black flex flex-col">
       <Navbar />
 
-      <Link
-        href="/event"
-        className="mt-6 ml-8 text-sm text-gray-600 hover:underline inline-block mb-4"
-      >
-        &lt; Back to All Events
-      </Link>
+      <BackToOrigin />
 
       <div className="max-w-5xl mx-auto px-4 pt-8 pb-40 flex-grow">
         <div className="rounded-md mt-4 mb-6 flex justify-center">
           <SafeImage
             srcBase={`https://mvxperspoentcqazciyx.supabase.co/storage/v1/object/public/eventbanner/${event.id}`}
-            fallbackSrc="https://via.placeholder.com/600x400?text=No+Image"
+            fallbackSrc="/fallback.png"
             alt={event.title}
             width={600}
             height={400}

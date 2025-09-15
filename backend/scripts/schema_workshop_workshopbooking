@@ -53,3 +53,8 @@ CREATE INDEX idx_workshop_date ON workshop (date, start_time);
 CREATE INDEX idx_booking_user ON workshop_booking ("userID");
 CREATE INDEX idx_booking_ws ON workshop_booking ("workshopID");
 COMMIT;
+--fix bug on 15/9/2025: missing attribute in workshop table
+ALTER TABLE workshop
+ADD COLUMN end_time TIME,
+    ADD COLUMN highlight TEXT,
+    ADD COLUMN price NUMERIC;
