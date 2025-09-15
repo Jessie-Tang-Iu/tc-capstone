@@ -10,7 +10,9 @@ import ReportsPanel from "@/app/adminDashboard/Report";
 import UserDetailsCard from "../components/adminDashboard/UserDetailsCard";
 import EventPanel from "@/app/adminDashboard/Event";
 
-export default function AdvisorDashboard() {
+const ME = "11111111-1111-1111-1111-111111111111";
+
+export default function AdminDashboard() {
   const [tab, setTab] = useState("message");
   // when null -> show UsersPanel; otherwise show UserDetailsCard
   const [details, setDetails] = useState(null); // { user, roleLabel } | null
@@ -93,7 +95,7 @@ export default function AdvisorDashboard() {
 
           {/* Main area */}
           <div className="w-full">
-            {tab === "message" && <MessagePage messageList={MOCK_MESSAGES} />}
+            {tab === "message" && <MessagePage currentUserId={ME} />}
             {tab === "users" && renderUsers()}
             {tab === "requests" && <RequestsPanel />}
             {tab === "reports" && renderReports()}
