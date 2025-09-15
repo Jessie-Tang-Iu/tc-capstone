@@ -1,7 +1,7 @@
+// app/adminDashboard/Event.js (aka EventsPanel)
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAllEvents, updateEventStatus } from "@/lib/workshop_crud";
 import EventCard from "../components/event/eventCard";
 import Button from "../components/ui/Button";
 import { RxCross2 } from "react-icons/rx";
@@ -11,9 +11,9 @@ export default function EventsPanel() {
   const [isOpen, setIsOpen] = useState(false);
 
   const [title, setTitle] = useState("");
-  const [date, setDate] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [date, setDate] = useState(""); // yyyy-mm-dd
+  const [startTime, setStartTime] = useState(""); // HH:mm (optional)
+  const [endTime, setEndTime] = useState(""); // HH:mm (optional)
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [highlight, setHighlight] = useState("");
@@ -24,117 +24,126 @@ export default function EventsPanel() {
   const [endTimeErrorMessage, setEndTimeErrorMessage] = useState("");
   const [isDisabled, setIsDisabled] = useState(false);
 
-  // Fetch + auto-mark past events
-  useEffect(() => {
-    async function fetchAndUpdateEvents() {
-      const data = await getAllEvents();
-      const now = new Date();
-
-      const updates = await Promise.all(
-        data.map(async (event) => {
-          const eventDate = new Date(event.date);
-          if (event.status === "active" && eventDate < now) {
-            await updateEventStatus(event.id, "completed");
-            return { ...event, status: "completed" };
-          }
-          return event;
-        })
-      );
-
-      setEvents(updates);
-    }
-
-    fetchAndUpdateEvents();
-  }, []);
-
-  const handleAddEventButton = () => {
-    setIsOpen(true);
-  };
-
-  // Get local datetime (with offset)
+  // ---- helpers ----
   const getLocalDateTime = (offsetMs = 0) => {
     const now = new Date();
-    const offset = now.getTimezoneOffset();
-    const localDate = new Date(now.getTime() - offset * 60 * 1000 + offsetMs);
-    return localDate.toISOString().slice(0, 16); // yyyy-mm-ddTHH:mm
+    const tzOffset = now.getTimezoneOffset();
+    const local = new Date(now.getTime() - tzOffset * 60 * 1000 + offsetMs);
+    return local.toISOString().slice(0, 16); // "yyyy-mm-ddTHH:mm"
   };
 
-  // Prefill defaults (today + now, endTime = 2hr later)
-  useEffect(() => {
-    const localDateTime = getLocalDateTime();
-    const localEndTime = getLocalDateTime(2 * 60 * 60 * 1000);
-
-    setDate(localDateTime.split("T")[0]);
-    setStartTime(localDateTime.split("T")[1]);
-    setEndTime(localEndTime.split("T")[1]);
-  }, []);
-
-  // Validation
-  const validationDateTimeCheck = (d, st, et) => {
+  const validate = (d, st, et) => {
     setDateErrorMessage("");
     setStartTimeErrorMessage("");
     setEndTimeErrorMessage("");
     setIsDisabled(false);
 
-    const localNow = getLocalDateTime();
-    const checkStart = `${d}T${st}`;
-    const checkEnd = `${d}T${et}`;
+    const nowLocal = getLocalDateTime();
+    const today = nowLocal.split("T")[0];
 
-    if (d < localNow.split("T")[0]) {
+    if (d && d < today) {
       setDateErrorMessage("Invalid date");
       setIsDisabled(true);
     }
-
-    if (st && checkStart < localNow) {
+    if (st && `${d}T${st}` < nowLocal) {
       setStartTimeErrorMessage("Invalid start time");
       setIsDisabled(true);
     }
-
-    if (et && st && checkEnd <= checkStart) {
+    if (st && et && `${d}T${et}` <= `${d}T${st}`) {
       setEndTimeErrorMessage("Invalid end time");
       setIsDisabled(true);
     }
   };
 
-  // Handlers
+  // ---- defaults on mount ----
+  useEffect(() => {
+    const start = getLocalDateTime();
+    const end = getLocalDateTime(2 * 60 * 60 * 1000);
+    setDate(start.split("T")[0]);
+    setStartTime(start.split("T")[1]);
+    setEndTime(end.split("T")[1]);
+  }, []);
+
+  // ---- load events from API ----
+  useEffect(() => {
+    (async () => {
+      const res = await fetch("/api/events", { cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        setEvents(data);
+      }
+    })();
+  }, []);
+
+  const handleAddEventButton = () => setIsOpen(true);
+
+  // ---- input handlers (run validation) ----
   const handleDateChange = (e) => {
-    const newDate = e.target.value;
-    setDate(newDate);
-    validationDateTimeCheck(newDate, startTime, endTime);
+    const v = e.target.value;
+    setDate(v);
+    validate(v, startTime, endTime);
   };
-
   const handleStartTimeChange = (e) => {
-    const newStartTime = e.target.value;
-    setStartTime(newStartTime);
-    validationDateTimeCheck(date, newStartTime, endTime);
+    const v = e.target.value;
+    setStartTime(v);
+    validate(date, v, endTime);
   };
-
   const handleEndTimeChange = (e) => {
-    const newEndTime = e.target.value;
-    setEndTime(newEndTime);
-    validationDateTimeCheck(date, startTime, newEndTime);
+    const v = e.target.value;
+    setEndTime(v);
+    validate(date, startTime, v);
   };
 
+  // ---- submit -> POST /api/events ----
   const handleSubmit = async (e) => {
     e.preventDefault();
+    validate(date, startTime, endTime);
     if (isDisabled) return;
 
-    const eventData = {
-      id: events.length ? Math.max(...events.map((event) => event.id)) + 1 : 1,
+    const payload = {
       title,
-      date,
-      startTime,
-      endTime,
+      date, // required by DB
+      startTime: startTime || null, // null is safe for TIME
+      endTime: endTime || null, // null is safe for TIME
       location,
       description,
       highlight,
-      price,
-      status: "active",
+      price: Number.isFinite(+price) ? +price : 0,
     };
 
-    setEvents((prevEvents) => [eventData, ...prevEvents]);
-    console.log("Submitting event:", eventData);
-    setIsOpen(false);
+    try {
+      const res = await fetch("/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Failed to create event");
+      const newEvent = await res.json();
+
+      // refresh list at top (or re-fetch GET /api/events if you prefer)
+      setEvents((prev) => [newEvent, ...prev]);
+
+      // reset + close
+      setIsOpen(false);
+      setTitle("");
+      setLocation("");
+      setDescription("");
+      setHighlight("");
+      setPrice(0);
+      const start = getLocalDateTime();
+      const end = getLocalDateTime(2 * 60 * 60 * 1000);
+      setDate(start.split("T")[0]);
+      setStartTime(start.split("T")[1]);
+      setEndTime(end.split("T")[1]);
+      setDateErrorMessage("");
+      setStartTimeErrorMessage("");
+      setEndTimeErrorMessage("");
+      setIsDisabled(false);
+    } catch (err) {
+      console.error(err);
+      // surface a simple UI error if you want:
+      setDateErrorMessage("Create failed. Check fields and try again.");
+    }
   };
 
   return (
@@ -165,6 +174,7 @@ export default function EventsPanel() {
                   size={20}
                 />
               </button>
+
               <h1 className="text-2xl font-bold text-center text-[#E55B3C] mb-2">
                 Add Event
               </h1>
@@ -188,6 +198,7 @@ export default function EventsPanel() {
                   className="border rounded px-1"
                   value={date}
                   onChange={handleDateChange}
+                  required
                 />
                 <p className="text-red-400 mb-3">{dateErrorMessage}</p>
 

@@ -1,75 +1,106 @@
+// app/messages/ChatWindow.jsx (client)
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 export default function ChatWindow({
-  recipient = "John Doe",
-  initialMessages,
+  me, // current user id (string)
+  recipient, // peer user id (string)
   onClose,
-  onSend,
+  onSent, // callback after a successful send
   className = "",
 }) {
-  const FAKE_MESSAGES = useMemo(
-    () => [
-      {
-        id: 1,
-        from: "me",
-        text: "Thank you for your advice! I will try it in the future",
-        ts: "2025-06-25T12:20:00",
-      },
-      {
-        id: 2,
-        from: "them",
-        text: "You are welcome! Hope that would help you",
-        ts: "2025-06-25T12:24:00",
-      },
-      {
-        id: 3,
-        from: "me",
-        text: "I would like to book for another advisory session.",
-        ts: "2025-06-25T13:30:00",
-      },
-      {
-        id: 4,
-        from: "them",
-        text: "Sure! You can see my available time on the booking management",
-        ts: "2025-06-25T14:00:00",
-      },
-    ],
-    []
-  );
-
-  const [messages, setMessages] = useState(initialMessages || FAKE_MESSAGES);
+  const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const scrollRef = useRef(null);
   const panelRef = useRef(null);
 
-  // Close on ESC
+  // Load conversation
+  useEffect(() => {
+    if (!me || !recipient) return;
+    (async () => {
+      // after fetch of GET conversation
+      const res = await fetch(
+        `/api/messages/conversation?userA=${encodeURIComponent(
+          me
+        )}&userB=${encodeURIComponent(recipient)}`
+      );
+      if (!res.ok) {
+        console.error("Failed to load conversation:", await res.text());
+        return;
+      }
+      const rows = await res.json();
+      const mapped = rows.map((m) => ({
+        id: m.id,
+        from: m.sent_user_id === me ? "me" : "them",
+        text: m.content,
+        ts: m.sent_at,
+      }));
+      setMessages(mapped);
+      // Optionally mark read
+      fetch(`/api/messages/conversation`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fromUser: recipient, toUser: me }),
+      }).catch(() => {});
+    })();
+  }, [me, recipient]);
+
+  // ESC to close
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose?.();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  // Auto-scroll to bottom
+  // Auto-scroll
   useEffect(() => {
-    const el = scrollRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
+    scrollRef.current &&
+      (scrollRef.current.scrollTop = scrollRef.current.scrollHeight);
   }, [messages]);
 
-  // Send message
-  const send = () => {
+  const send = async () => {
     const value = text.trim();
-    if (!value) return;
-    const msg = {
-      id: Date.now(),
+    if (!value || !me || !recipient) return;
+
+    // optimistic add
+    const temp = {
+      id: `temp-${Date.now()}`,
       from: "me",
       text: value,
       ts: new Date().toISOString(),
     };
-    setMessages((m) => [...m, msg]);
+    setMessages((m) => [...m, temp]);
     setText("");
-    onSend?.(value);
+
+    try {
+      const res = await fetch(`/api/messages`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sent_user_id: me,
+          receive_user_id: recipient,
+          content: value,
+        }),
+      });
+      if (res.ok) {
+        const saved = await res.json();
+        // replace temp with saved
+        setMessages((m) =>
+          m.map((x) =>
+            x.id === temp.id
+              ? {
+                  id: saved.id,
+                  from: "me",
+                  text: saved.content,
+                  ts: saved.sent_at,
+                }
+              : x
+          )
+        );
+        onSent?.();
+      }
+    } catch {}
   };
 
   const keyHandler = (e) => {
@@ -79,7 +110,7 @@ export default function ChatWindow({
     }
   };
 
-  // Group by date for separators like "Jun 25, 2025"
+  // Group by date for headers
   const groups = useMemo(() => {
     const fmt = (d) =>
       new Date(d).toLocaleDateString(undefined, {
@@ -94,28 +125,21 @@ export default function ChatWindow({
     }, {});
   }, [messages]);
 
-  // Close when clicking the backdrop (outside the panel)
   const handleBackdropClick = (e) => {
     if (!panelRef.current) return;
     if (!panelRef.current.contains(e.target)) onClose?.();
   };
 
   return (
-    // Backdrop layer
     <div
       className="fixed inset-0 z-50 bg-black/40 flex items-end justify-end p-6"
       onMouseDown={handleBackdropClick}
     >
-      {/* Chat panel */}
       <div
         ref={panelRef}
-        className={
-          `rounded-xl border border-gray-300 bg-white shadow-lg text-black ` +
-          `w-[360px] h-[460px] flex flex-col overflow-hidden ${className}`
-        }
-        onMouseDown={(e) => e.stopPropagation()} // prevent bubbling to backdrop
+        className={`rounded-xl border border-gray-300 bg-white shadow-lg text-black w-[360px] h-[460px] flex flex-col overflow-hidden ${className}`}
+        onMouseDown={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="flex items-center justify-between border-b px-3 py-2">
           <div className="text-sm font-semibold">To: {recipient}</div>
           <button
@@ -127,7 +151,6 @@ export default function ChatWindow({
           </button>
         </div>
 
-        {/* Messages */}
         <div
           ref={scrollRef}
           className="flex-1 overflow-y-auto px-3 py-2 space-y-4"
@@ -165,7 +188,6 @@ export default function ChatWindow({
           ))}
         </div>
 
-        {/* Composer */}
         <div className="border-t p-2">
           <div className="flex items-center gap-2">
             <input
