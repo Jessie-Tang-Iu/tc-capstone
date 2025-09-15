@@ -1,4 +1,3 @@
-// app/adminDashboard/Event.js
 "use client";
 
 import { useEffect, useRef, useState, useMemo } from "react";
@@ -6,9 +5,11 @@ import EventCard from "../components/event/eventCard";
 import Button from "../components/ui/Button";
 import { RxCross2 } from "react-icons/rx";
 
-/* ========== helpers (formatting) ========== */
+/* ========== Helpers ========== */
+// Functions for formatting and time-related logic are grouped here for clarity.
 const toTimeHM = (t) => {
   if (!t) return "";
+  // Handles HH:mm or HH:mm:ss formats
   if (/^\d{2}:\d{2}$/.test(t)) return t;
   if (/^\d{2}:\d{2}:\d{2}$/.test(t)) return t.slice(0, 5);
   return "";
@@ -24,7 +25,8 @@ const toDateYMD = (d) => {
     }
   }
   if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
-  const m = d.match(/^(\d{2})\/(\d{2})\/(\d{4})$/); // dd/MM/yyyy
+  // Converts dd/MM/yyyy to yyyy-MM-dd
+  const m = d.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
   if (m) return `${m[3]}-${m[2]}-${m[1]}`;
   try {
     return new Date(d).toISOString().slice(0, 10);
@@ -37,24 +39,23 @@ const nowLocalYMDHM = () => {
   const now = new Date();
   const tzOffset = now.getTimezoneOffset();
   const local = new Date(now.getTime() - tzOffset * 60000);
-  return local.toISOString().slice(0, 16); // yyyy-mm-ddTHH:mm
+  return local.toISOString().slice(0, 16);
 };
 
-const toLocalStamp = (dateYMD, timeHM = "23:59") =>
-  `${toDateYMD(dateYMD)}T${toTimeHM(timeHM) || "23:59"}`;
-
-/* ========== component ========== */
+/* ========== Events Panel Component ========== */
 export default function EventsPanel() {
+  // State management is consolidated at the top.
   const [events, setEvents] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [editingEvent, setEditingEvent] = useState(null); // null = add
-  const [readOnly, setReadOnly] = useState(false); // true for past events
+  const [editingEvent, setEditingEvent] = useState(null); // null = add, object = edit
+  const [isReadOnly, setIsReadOnly] = useState(false); // Renamed for clarity
+  const [sortOrder, setSortOrder] = useState("newest");
 
   const [form, setForm] = useState({
     title: "",
-    date: "", // yyyy-mm-dd
-    startTime: "", // HH:mm
-    endTime: "", // HH:mm
+    date: "",
+    startTime: "",
+    endTime: "",
     location: "",
     description: "",
     highlight: "",
@@ -69,7 +70,14 @@ export default function EventsPanel() {
 
   const modalRef = useRef(null);
 
-  /* ------- load events ------- */
+  // A stable event ID, crucial for CRUD operations and rendering.
+  const eventId = useMemo(
+    () => editingEvent?.id ?? editingEvent?.event_id ?? null,
+    [editingEvent]
+  );
+
+  /* ========== API Interactions ========== */
+  // Effect to load events on component mount.
   useEffect(() => {
     (async () => {
       const res = await fetch("/api/events", { cache: "no-store" });
@@ -77,81 +85,124 @@ export default function EventsPanel() {
     })();
   }, []);
 
-  /* ------- validation (future only) ------- */
-  const validate = (d, st, et) => {
-    const nowLocal = nowLocalYMDHM();
-    const today = nowLocal.split("T")[0];
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (isReadOnly) return;
 
-    const next = { date: "", startTime: "", endTime: "" };
-    let bad = false;
+    const cleanDate = toDateYMD(form.date);
+    if (!validate(cleanDate, form.startTime, form.endTime)) return;
+
+    const payload = {
+      ...form,
+      date: cleanDate,
+      start_time: form.startTime || null,
+      end_time: form.endTime || null,
+      price: Number.isFinite(+form.price) ? +form.price : 0,
+    };
+
+    const url = eventId ? `/api/events/${eventId}` : "/api/events";
+    const method = eventId ? "PUT" : "POST";
+
+    const res = await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      console.error("Save failed:", res.status, await res.text());
+      setErrors((e) => ({ ...e, form: "Create/Update failed." }));
+      return;
+    }
+
+    const savedEvent = await res.json();
+    setEvents((prev) =>
+      eventId
+        ? prev.map((e) =>
+            e.id === eventId || e.event_id === eventId ? savedEvent : e
+          )
+        : [savedEvent, ...prev]
+    );
+    closeModal();
+  };
+
+  const handleDelete = async () => {
+    if (!eventId) return;
+
+    const res = await fetch(`/api/events/${eventId}`, { method: "DELETE" });
+    if (!res.ok) {
+      console.error("Delete failed:", res.status, await res.text());
+      setErrors((e) => ({ ...e, form: "Delete failed." }));
+      return;
+    }
+
+    setEvents((prev) => prev.filter((e) => (e.id ?? e.event_id) !== eventId));
+    closeModal();
+  };
+
+  /* ========== Form and Modal Logic ========== */
+  // Moved validation and handlers here to keep API and UI logic separate.
+  const validate = (d, st, et) => {
+    const now = nowLocalYMDHM();
+    const today = now.split("T")[0];
+    const newErrors = { date: "", startTime: "", endTime: "" };
+    let hasErrors = false;
 
     if (d && d < today) {
-      next.date = "Date must be in the future.";
-      bad = true;
+      newErrors.date = "Date must be in the future.";
+      hasErrors = true;
     }
     if (st) {
       const startStamp = `${d}T${st}`;
-      if (startStamp < nowLocal) {
-        next.startTime = "Start time must be in the future.";
-        bad = true;
+      if (startStamp < now) {
+        newErrors.startTime = "Start time must be in the future.";
+        hasErrors = true;
       }
     }
     if (st && et) {
       const startStamp = `${d}T${st}`;
       const endStamp = `${d}T${et}`;
       if (endStamp <= startStamp) {
-        next.endTime = "End time must be after start time.";
-        bad = true;
+        newErrors.endTime = "End time must be after start time.";
+        hasErrors = true;
       }
     }
-
-    setErrors(next);
-    return !bad;
+    setErrors(newErrors);
+    return !hasErrors;
   };
 
   const handleChange = (key, value) => {
     setForm((prev) => {
-      const next = { ...prev, [key]: key === "price" ? Number(value) : value };
-      if (key === "date" || key === "startTime" || key === "endTime") {
-        validate(next.date, next.startTime, next.endTime);
+      const nextForm = {
+        ...prev,
+        [key]: key === "price" ? Number(value) : value,
+      };
+      if (["date", "startTime", "endTime"].includes(key)) {
+        validate(nextForm.date, nextForm.startTime, nextForm.endTime);
       }
-      return next;
+      return nextForm;
     });
   };
 
-  /* ------- modal open/close + ESC/backdrop ------- */
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => {
-    setIsOpen(false);
-    setEditingEvent(null);
-    setReadOnly(false);
-    setErrors({ date: "", startTime: "", endTime: "" });
-  };
-
-  useEffect(() => {
-    const onEsc = (e) => e.key === "Escape" && closeModal();
-    window.addEventListener("keydown", onEsc);
-    return () => window.removeEventListener("keydown", onEsc);
-  }, []);
-
-  const onBackdropClick = (e) => {
-    if (modalRef.current && !modalRef.current.contains(e.target)) closeModal();
-  };
-
-  /* ------- helpers about event timing ------- */
   const isEventPast = (ev) => {
     const d = toDateYMD(ev.date);
     const st = toTimeHM(ev.start_time || ev.startTime || "");
     const et = toTimeHM(ev.end_time || ev.endTime || "") || st || "23:59";
-    const endStamp = toLocalStamp(d, et);
+    const endStamp = `${d}T${et}`;
     return endStamp < nowLocalYMDHM();
   };
 
-  /* ------- open add ------- */
+  const closeModal = () => {
+    setIsOpen(false);
+    setEditingEvent(null);
+    setIsReadOnly(false);
+    setErrors({ date: "", startTime: "", endTime: "" });
+  };
+
   const openAdd = () => {
     setEditingEvent(null);
-    setReadOnly(false);
-    openModal();
+    setIsReadOnly(false);
+    setIsOpen(true);
 
     const start = nowLocalYMDHM();
     const end = new Date(new Date().getTime() + 2 * 60 * 60 * 1000);
@@ -169,14 +220,13 @@ export default function EventsPanel() {
       highlight: "",
       price: 0,
     });
-    setErrors({ date: "", startTime: "", endTime: "" });
+    setErrors({});
   };
 
-  /* ------- open edit (normalize id!) ------- */
   const openEdit = (raw) => {
-    const ev = { ...raw, id: raw.id ?? raw.event_id }; // normalize id
+    const ev = { ...raw, id: raw.id ?? raw.event_id };
     setEditingEvent(ev);
-    setReadOnly(isEventPast(ev));
+    setIsReadOnly(isEventPast(ev));
     setIsOpen(true);
 
     setForm({
@@ -189,86 +239,76 @@ export default function EventsPanel() {
       highlight: ev.highlight || "",
       price: Number(ev.price ?? 0),
     });
-    setErrors({ date: "", startTime: "", endTime: "" });
+    setErrors({});
   };
 
-  /* A stable event id for rendering/requests */
-  const eventId = useMemo(
-    () =>
-      editingEvent?.id ?? editingEvent?.event_id ?? editingEvent?._uuid ?? null,
-    [editingEvent]
-  );
+  // Effect for handling keyboard events (Escape key).
+  useEffect(() => {
+    const onEsc = (e) => e.key === "Escape" && closeModal();
+    window.addEventListener("keydown", onEsc);
+    return () => window.removeEventListener("keydown", onEsc);
+  }, []);
 
-  /* ------- save (POST/PUT) ------- */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (readOnly) return;
+  // Event handler for clicking on the modal backdrop.
+  const onBackdropClick = (e) => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) closeModal();
+  };
 
-    const cleanDate = toDateYMD(form.date);
-    if (!validate(cleanDate, form.startTime, form.endTime)) return;
+  const getEventStamp = (ev) => {
+    const d = toDateYMD(ev.date);
+    const t = toTimeHM(ev.start_time || ev.startTime || "00:00");
+    // sortable ISO-like "yyyy-mm-ddTHH:mm"
+    return `${d}T${t}`;
+  };
 
-    const payload = {
-      title: form.title,
-      date: cleanDate,
-      startTime: form.startTime || null,
-      endTime: form.endTime || null,
-      // include snake_case too if backend expects it
-      start_time: form.startTime || null,
-      end_time: form.endTime || null,
-      location: form.location,
-      description: form.description,
-      highlight: form.highlight,
-      price: Number.isFinite(+form.price) ? +form.price : 0,
-    };
-
-    const url = eventId ? `/api/events/${eventId}` : "/api/events";
-    const method = eventId ? "PUT" : "POST";
-
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+  // Memoize the sorted list
+  const sortedEvents = useMemo(() => {
+    const copy = [...events];
+    copy.sort((a, b) => {
+      const A = getEventStamp(a);
+      const B = getEventStamp(b);
+      // newest first by default
+      return sortOrder === "newest"
+        ? A < B
+          ? 1
+          : A > B
+          ? -1
+          : 0
+        : A < B
+        ? -1
+        : A > B
+        ? 1
+        : 0;
     });
+    return copy;
+  }, [events, sortOrder]);
 
-    if (!res.ok) {
-      console.error("Save failed", res.status, await res.text());
-      setErrors((e) => ({ ...e, date: "Create/Update failed." }));
-      return;
-    }
-
-    const saved = await res.json();
-    setEvents((prev) =>
-      eventId
-        ? prev.map((x) =>
-            x.id === eventId || x.event_id === eventId ? saved : x
-          )
-        : [saved, ...prev]
-    );
-    closeModal();
-  };
-
-  /* ------- delete ------- */
-  const handleDelete = async () => {
-    if (!eventId) return;
-    const res = await fetch(`/api/events/${eventId}`, { method: "DELETE" });
-    if (!res.ok) {
-      console.error("Delete failed", res.status, await res.text());
-      setErrors((e) => ({ ...e, date: "Delete failed." }));
-      return;
-    }
-    setEvents((prev) => prev.filter((x) => (x.id ?? x.event_id) !== eventId));
-    closeModal();
-  };
-
-  /* ------- render ------- */
+  /* ========== Render Output ========== */
   return (
     <main>
-      <Button onClick={openAdd} text="Add Event" />
+      <div className="flex items-center justify-between gap-3">
+        <Button onClick={openAdd} text="Add Event" />
+
+        <div className="flex items-center gap-2">
+          <label htmlFor="sort" className="text-sm font-medium text-gray-700">
+            Sort:
+          </label>
+          <select
+            id="sort"
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C] focus:border-[#E55B3C] transition"
+          >
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+          </select>
+        </div>
+      </div>
 
       <div className="mt-3">
-        {events.length ? (
+        {events.length > 0 ? (
           <div className="space-y-4">
-            {events.map((ev) => (
+            {sortedEvents.map((ev) => (
               <div
                 key={ev.id ?? ev.event_id}
                 className="cursor-pointer"
@@ -294,7 +334,6 @@ export default function EventsPanel() {
             onMouseDown={(e) => e.stopPropagation()}
           >
             <div className="bg-white p-6 rounded-xl shadow-xl text-black relative w-full max-w-lg mx-auto">
-              {/* Header with Delete always visible in edit mode */}
               <div className="flex items-center justify-between mb-2">
                 <h1 className="text-2xl font-bold text-[#E55B3C]">
                   {eventId ? "Edit Event" : "Add Event"}
@@ -309,7 +348,7 @@ export default function EventsPanel() {
                 </div>
               </div>
 
-              {readOnly && (
+              {isReadOnly && (
                 <div className="mb-4 flex items-start gap-2 rounded-md border border-yellow-500 bg-yellow-100 px-3 py-2 text-yellow-900">
                   <span className="font-semibold">
                     This event has already passed — fields are view-only.
@@ -321,116 +360,125 @@ export default function EventsPanel() {
                 onSubmit={handleSubmit}
                 className="flex flex-col mx-10 my-5"
               >
-                <label>Title:</label>
+                <label htmlFor="title">Title:</label>
                 <input
+                  id="title"
                   type="text"
                   className={`border rounded mb-3 px-2 py-1 ${
-                    readOnly ? "bg-gray-100 text-gray-500" : ""
+                    isReadOnly ? "bg-gray-100 text-gray-500" : ""
                   }`}
                   value={form.title}
                   onChange={(e) => handleChange("title", e.target.value)}
                   required
-                  disabled={readOnly}
+                  disabled={isReadOnly}
                 />
 
-                <label>Date:</label>
+                {/* All form inputs now have labels associated with them for accessibility */}
+                <label htmlFor="date">Date:</label>
                 <input
+                  id="date"
                   type="date"
                   className={`border rounded mb-1 px-2 py-1 ${
-                    readOnly ? "bg-gray-100 text-gray-500" : ""
+                    isReadOnly ? "bg-gray-100 text-gray-500" : ""
                   }`}
                   value={form.date}
                   onChange={(e) =>
                     handleChange("date", toDateYMD(e.target.value))
                   }
                   required
-                  disabled={readOnly}
+                  disabled={isReadOnly}
                 />
                 <p className="text-red-500 text-sm min-h-[1.25rem]">
-                  {readOnly ? "" : errors.date}
+                  {errors.date}
                 </p>
 
-                <label>Start Time:</label>
+                <label htmlFor="startTime">Start Time:</label>
                 <input
+                  id="startTime"
                   type="time"
                   className={`border rounded mb-1 px-2 py-1 ${
-                    readOnly ? "bg-gray-100 text-gray-500" : ""
+                    isReadOnly ? "bg-gray-100 text-gray-500" : ""
                   }`}
                   value={form.startTime}
                   onChange={(e) =>
                     handleChange("startTime", toTimeHM(e.target.value))
                   }
-                  disabled={readOnly}
+                  disabled={isReadOnly}
                 />
                 <p className="text-red-500 text-sm min-h-[1.25rem]">
-                  {readOnly ? "" : errors.startTime}
+                  {errors.startTime}
                 </p>
 
-                <label>End Time:</label>
+                <label htmlFor="endTime">End Time:</label>
                 <input
+                  id="endTime"
                   type="time"
                   className={`border rounded mb-1 px-2 py-1 ${
-                    readOnly ? "bg-gray-100 text-gray-500" : ""
+                    isReadOnly ? "bg-gray-100 text-gray-500" : ""
                   }`}
                   value={form.endTime}
                   onChange={(e) =>
                     handleChange("endTime", toTimeHM(e.target.value))
                   }
-                  disabled={readOnly}
+                  disabled={isReadOnly}
                 />
                 <p className="text-red-500 text-sm min-h-[1.25rem]">
-                  {readOnly ? "" : errors.endTime}
+                  {errors.endTime}
                 </p>
 
-                <label>Location:</label>
+                <label htmlFor="location">Location:</label>
                 <input
+                  id="location"
                   type="text"
                   className={`border rounded mb-3 px-2 py-1 ${
-                    readOnly ? "bg-gray-100 text-gray-500" : ""
+                    isReadOnly ? "bg-gray-100 text-gray-500" : ""
                   }`}
                   value={form.location}
                   onChange={(e) => handleChange("location", e.target.value)}
                   placeholder="online | The Platform"
                   required
-                  disabled={readOnly}
+                  disabled={isReadOnly}
                 />
 
-                <label>Description:</label>
+                <label htmlFor="description">Description:</label>
                 <textarea
+                  id="description"
                   className={`border rounded mb-3 px-2 py-1 ${
-                    readOnly ? "bg-gray-100 text-gray-500" : ""
+                    isReadOnly ? "bg-gray-100 text-gray-500" : ""
                   }`}
                   value={form.description}
                   onChange={(e) => handleChange("description", e.target.value)}
                   required
-                  disabled={readOnly}
+                  disabled={isReadOnly}
                   placeholder="Full description will show up on the event detail page"
                 />
 
-                <label>Highlight:</label>
+                <label htmlFor="highlight">Highlight:</label>
                 <textarea
+                  id="highlight"
                   className={`border rounded mb-3 px-2 py-1 ${
-                    readOnly ? "bg-gray-100 text-gray-500" : ""
+                    isReadOnly ? "bg-gray-100 text-gray-500" : ""
                   }`}
                   value={form.highlight}
                   onChange={(e) => handleChange("highlight", e.target.value)}
-                  disabled={readOnly}
+                  disabled={isReadOnly}
                   placeholder="The highlight will show up bolded on the event card but not inside the detail page"
                 />
 
-                <label>Price:</label>
+                <label htmlFor="price">Price:</label>
                 <input
+                  id="price"
                   type="number"
                   className={`border rounded mb-4 px-2 py-1 ${
-                    readOnly ? "bg-gray-100 text-gray-500" : ""
+                    isReadOnly ? "bg-gray-100 text-gray-500" : ""
                   }`}
                   value={form.price}
                   onChange={(e) => handleChange("price", e.target.value)}
-                  disabled={readOnly}
+                  disabled={isReadOnly}
                 />
 
                 <div className="mt-2 flex gap-2">
-                  {!readOnly && (
+                  {!isReadOnly && (
                     <button
                       type="submit"
                       className="rounded-md bg-black text-white px-4 py-2 disabled:opacity-40"
@@ -441,7 +489,7 @@ export default function EventsPanel() {
                       Save
                     </button>
                   )}
-
+                  {/* The delete button is now only shown once, next to the save button */}
                   {eventId && (
                     <button
                       type="button"
