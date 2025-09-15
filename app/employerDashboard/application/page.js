@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import NaNvbar from "../../components/NavBarBeforeSignIn";
+import Navbar from "../../components/NavBarBeforeSignIn";
 import EmployerSidebar from "../../components/employerDashboard/EmployerSideBar";
 import ApplicationItem from "../../components/employerDashboard/EmployerApplicationItem";
 import applications from "../../data/applications.json";
@@ -41,7 +41,7 @@ export default function ApplicationsPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <NaNvbar />
+      <Navbar />
 
       <main className="mx-auto w-full px-6 py-8 bg-white rounded-xl">
         <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">

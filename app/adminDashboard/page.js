@@ -96,7 +96,7 @@ export default function AdvisorDashboard() {
             {tab === "message" && <MessagePage messageList={MOCK_MESSAGES} />}
             {tab === "users" && renderUsers()}
             {tab === "requests" && <RequestsPanel />}
-            {tab === "reports" && <ReportsPanel />}
+            {tab === "reports" && renderReports()}
             {tab === "events" && <EventPanel />}
           </div>
         </div>

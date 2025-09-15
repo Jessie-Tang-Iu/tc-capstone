@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import NaNvbar from "../../../components/NavBarBeforeSignIn";
+import Navbar from "../../../components/NavBarBeforeSignIn";
 import EmployerSidebar from "../../../components/employerDashboard/EmployerSideBar";
 import PopupMessage from "@/app/components/ui/PopupMessage";
 import jobs from "../../../data/jobs.json";
@@ -132,7 +132,7 @@ export default function JobPostDetailsPage() {
 
   return (
     <div className="min-h-screen bg-white text-black">
-      <NaNvbar />
+      <Navbar />
 
       <main className="mx-auto w-full px-6 py-8">
         <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">

@@ -1,4 +1,4 @@
-// components/booking/CalendarBigEvent.tsx
+// components/booking/CalendarBigEvent.js
 "use client";
 
 import { IoTrashOutline } from "react-icons/io5";
