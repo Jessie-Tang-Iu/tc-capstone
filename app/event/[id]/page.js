@@ -4,22 +4,22 @@ import Navbar from "@/app/components/MemberNavBar";
 import SafeImage from "@/app/components/fallback";
 import EventDetailClient from "@/app/components/event/EventDetailClient";
 import BackToOrigin from "@/app/components/event/BackToOrigin.js";
+import { headers } from "next/headers";
 
-// import from your server DB helper
-import { getEventById } from "../../../backend/database/workshop_crud.js";
+export default async function EventDetailPage(props) {
+  // ✅ Next 15: await both params and headers()
+  const { id } = await props.params;
+  const hdrs = await headers();
+  const proto = hdrs.get("x-forwarded-proto") ?? "http";
+  const host = hdrs.get("x-forwarded-host") ?? hdrs.get("host");
+  const base = `${proto}://${host}`;
 
-export default async function EventDetailPage({ params }) {
-  const { id } = params;
-  const numericId = Number(id);
-  let event;
-  try {
-    event = await getEventById(numericId);
-  } catch (err) {
-    console.error("Event not found:", err);
-    return notFound();
-  }
+  // Fetch via your API
+  const res = await fetch(`${base}/api/events/${id}`, { cache: "no-store" });
+  if (!res.ok) return notFound();
+  const event = await res.json();
 
-  function convertNewlinesAndLinks(text = "") {
+  const convertNewlinesAndLinks = (text = "") => {
     const safe = text
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
@@ -30,14 +30,12 @@ export default async function EventDetailPage({ params }) {
         `<a href="${m}" class="text-blue-600 underline" target="_blank" rel="noopener noreferrer">${m}</a>`
     );
     return withLinks.replace(/\n/g, "<br />");
-  }
+  };
 
   return (
     <main className="bg-gray-100 min-h-screen text-black flex flex-col">
       <Navbar />
-
       <BackToOrigin />
-
       <div className="max-w-5xl mx-auto px-4 pt-8 pb-40 flex-grow">
         <div className="rounded-md mt-4 mb-6 flex justify-center">
           <SafeImage
