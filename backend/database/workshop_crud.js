@@ -21,3 +21,28 @@ export async function updateEventStatus(id, status) {
     Number(id),
   ]);
 }
+
+export async function createEvent(event) {
+  const query = `
+    INSERT INTO workshop
+      (title, date, start_time, end_time, location, description, highlight, price, status)
+    VALUES
+      ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    RETURNING *;
+  `;
+
+  const values = [
+    event.title,
+    event.date,
+    event.startTime,
+    event.endTime,
+    event.location,
+    event.description,
+    event.highlight,
+    event.price,
+    "active",
+  ];
+
+  const { rows } = await pool.query(query, values);
+  return rows[0];
+}

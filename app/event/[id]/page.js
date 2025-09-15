@@ -42,7 +42,7 @@ export default async function EventDetailPage({ params }) {
         <div className="rounded-md mt-4 mb-6 flex justify-center">
           <SafeImage
             srcBase={`https://mvxperspoentcqazciyx.supabase.co/storage/v1/object/public/eventbanner/${event.id}`}
-            fallbackSrc="https://via.placeholder.com/600x400?text=No+Image"
+            fallbackSrc="/fallback.png"
             alt={event.title}
             width={600}
             height={400}
