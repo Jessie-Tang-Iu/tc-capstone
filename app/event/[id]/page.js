@@ -9,8 +9,8 @@ import EventDetailClient from "@/app/components/event/EventDetailClient";
 import { getEventById } from "../../../backend/database/workshop_crud.js";
 
 export default async function EventDetailPage({ params }) {
-  const numericId = Number(params.id);
-
+  const { id } = await props.params;
+  const numericId = Number(id);
   let event;
   try {
     event = await getEventById(numericId);

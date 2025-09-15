@@ -53,6 +53,20 @@ export default function EventClient({ initialEvents = [] }) {
     setIsOpen(!!w);
   };
 
+  const normalizeDate = (d) => {
+    if (!d) return null;
+    // handle 'YYYY-MM-DD' or 'YYYY-MM-DDTHH:mm:ss.sssZ'
+    return d.split("T")[0];
+  };
+
+  const normalizeTime = (t) => {
+    if (!t) return null;
+    // accept 'HH:mm' or 'HH:mm:ss'
+    if (/^\d{2}:\d{2}$/.test(t)) return `${t}:00`;
+    if (/^\d{2}:\d{2}:\d{2}$/.test(t)) return t;
+    return "00:00:00";
+  };
+
   return (
     <>
       {/* Header / view toggle */}
