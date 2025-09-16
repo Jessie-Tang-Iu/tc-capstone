@@ -22,7 +22,7 @@ export async function GET() {
       events = await getAllEvents(); // refresh after updates
     }
 
-    return NextResponse.json(events);
+    return NextResponse.json(events); // “Postgres → Server → HTTP (JSON) → Browser → React”.
   } catch (err) {
     console.error("GET /api/events failed:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });

@@ -19,7 +19,7 @@ const toDateYMD = (d) => {
   if (!d) return "";
   if (typeof d !== "string") {
     try {
-      return new Date(d).toISOString().slice(0, 10);
+      return new Date(d).toISOString().slice(0, 10); //toISOString returns yyyy-MM-ddTHH:mm:ss.sssZ like 2024-06-15T00:00:00.000Z
     } catch {
       return "";
     }
@@ -44,11 +44,10 @@ const nowLocalYMDHM = () => {
 
 /* ========== Events Panel Component ========== */
 export default function EventsPanel() {
-  // State management is consolidated at the top.
   const [events, setEvents] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null); // null = add, object = edit
-  const [isReadOnly, setIsReadOnly] = useState(false); // Renamed for clarity
+  const [isReadOnly, setIsReadOnly] = useState(false);
   const [sortOrder, setSortOrder] = useState("newest");
 
   const [form, setForm] = useState({
@@ -68,16 +67,14 @@ export default function EventsPanel() {
     endTime: "",
   });
 
-  const modalRef = useRef(null);
+  const modalRef = useRef(null); //to detect outside click for the pop up window
 
-  // A stable event ID, crucial for CRUD operations and rendering.
   const eventId = useMemo(
     () => editingEvent?.id ?? editingEvent?.event_id ?? null,
     [editingEvent]
   );
 
   /* ========== API Interactions ========== */
-  // Effect to load events on component mount.
   useEffect(() => {
     (async () => {
       const res = await fetch("/api/events", { cache: "no-store" });
@@ -86,7 +83,7 @@ export default function EventsPanel() {
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); //Prevents the browser from navigating/reloading when the form submits.
     if (isReadOnly) return;
 
     const cleanDate = toDateYMD(form.date);
@@ -105,7 +102,7 @@ export default function EventsPanel() {
 
     const res = await fetch(url, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" }, //application/json is a MIME type (Multipurpose Internet Mail Extensions type). It tells the server what format of data is being sent in the HTTP request body.
       body: JSON.stringify(payload),
     });
 
@@ -116,10 +113,12 @@ export default function EventsPanel() {
     }
 
     const savedEvent = await res.json();
+
     setEvents((prev) =>
       eventId
-        ? prev.map((e) =>
-            e.id === eventId || e.event_id === eventId ? savedEvent : e
+        ? prev.map(
+            (e) => (e.id === eventId || e.event_id === eventId ? savedEvent : e)
+            //e = one of the old events already in memory.
           )
         : [savedEvent, ...prev]
     );
@@ -232,7 +231,7 @@ export default function EventsPanel() {
     setForm({
       title: ev.title || "",
       date: toDateYMD(ev.date),
-      startTime: toTimeHM(ev.start_time || ev.startTime || ""),
+      startTime: toTimeHM(ev.start_time || ev.startTime || ""), // frontend and backend have different style conventions.
       endTime: toTimeHM(ev.end_time || ev.endTime || ""),
       location: ev.location || "",
       description: ev.description || "",
@@ -329,7 +328,7 @@ export default function EventsPanel() {
           onMouseDown={onBackdropClick}
         >
           <div
-            ref={modalRef}
+            ref={modalRef} //to detect outside click
             className="w-full max-w-lg"
             onMouseDown={(e) => e.stopPropagation()}
           >
