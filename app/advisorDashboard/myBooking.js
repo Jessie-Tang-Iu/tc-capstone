@@ -2,16 +2,17 @@
 
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
 import { DateTime } from "luxon";
 import CalendarBigEvent from "../components/myCalender/calenderBig";
 
 
 
-export default function MyBookingPage() {
+export default function MyBookingPage({advisorId}) {
 
     const [isOpen, setIsOpen] = useState(false);
+    const [events, setEvents] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState(null);
 
     //dummy data
@@ -38,6 +39,35 @@ export default function MyBookingPage() {
         },
     ]
 
+    useEffect(() => {
+        if (!advisorId) return;
+
+        (async () => {
+            try {
+                const res = await fetch(
+                    "/api/advisory_bookings", { cache: "no-store" }
+                );
+                if (!res.ok) {console.error("Failed to fetch events"); return;}
+          
+                const data = await res.json();
+
+                const mappedEvents = data.map(event => ({
+                    id: event.booking_id,
+                    title: `Advisory Session`,
+                    date: event.date,
+                    start_time: event.starttime,
+                    end_time: event.endtime,
+                    description: event.description,
+                }));
+
+                setEvents(mappedEvents);
+                console.log(mappedEvents);
+            } catch (error) {
+                console.error("Fetch error: ", error);
+            }
+        })();
+      }, [advisorId]);
+
     const handleEventClick = (e) => {
         setSelectedEvent(e);
         setIsOpen(true);
@@ -53,10 +83,14 @@ export default function MyBookingPage() {
                 plugins={[dayGridPlugin]}
                 initialView="dayGridMonth"
                 // convert data for Full Calendar use
-                events={dummyEvents.map(event => ({
-                    ...event,
-                    start: `${event.date}T${event.start_time}`
-                }))}
+                events={events.map(event => {
+                    const dateOnly = event.date.split("T")[0];
+                    return {
+                        ...event,
+                        start: `${dateOnly}T${event.start_time}`,
+                        end: `${dateOnly}T${event.end_time}`
+                    };
+                })}
                 eventClick={handleEventClick}
                 eventContent={( eventInfo ) => {
                     try {
