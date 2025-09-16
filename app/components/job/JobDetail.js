@@ -23,7 +23,7 @@ export default function JobDetail({ job, onApply }) {
                         </div>
                         
                         <p className="text-sm md:text-base font-normal text-black">
-                            {job.location} · {job.salary} · {job.type} · {job.workplace} · {job.datePosted}
+                            {job.location} · {job.salary_per_hour} · {job.type} · {job.workplace} · {job.posted_at}
                         </p>
                     </div>
 
@@ -60,7 +60,7 @@ export default function JobDetail({ job, onApply }) {
                 <section>
                     <h2 className="text-lg md:text-xl font-bold text-black mb-3 md:mb-4">About the job</h2>
                     <p className="text-sm md:text-sm font-normal text-black leading-relaxed">
-                        {job.aboutJob}
+                        {job.description}
                     </p>
                 </section>
 
@@ -84,7 +84,7 @@ export default function JobDetail({ job, onApply }) {
                 <section>
                     <h2 className="text-lg md:text-xl font-bold text-black mb-3 md:mb-4">More details</h2>
                     <div className="text-sm md:text-sm font-normal text-black leading-relaxed whitespace-pre-line">
-                        {job.moreDetails}
+                        {job.details}
                     </div>
                 </section>
 
