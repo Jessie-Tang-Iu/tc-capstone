@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import {
   getAllJobPosts,
   createJobPost,
-} from "@/backend/database/job_crud.js";
+} from "@/backend/database/scripts/job_crud.js";
 
 // GET /api/jobs → return all jobs and auto-mark past "A" as "I"
 export async function GET() {
