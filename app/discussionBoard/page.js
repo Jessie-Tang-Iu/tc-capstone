@@ -20,17 +20,23 @@ export default function DiscussionBoard() {
   const [newComment, setNewComment] = useState({ author: "", content: "" });
 
   // Loads all posts into the frontend on page load
-  useEffect(() => {
-    fetch("/api/posts") // Defaults to a GET request
-      .then((res) => res.json())
-      .then((data) => {
-        setPosts(data);
-        if (data.length > 0) { // Sets the first post as selected by default so it displays something on load
-          setSelectedPost(data[0]);
-        }
-      })
-      .catch((err) => console.error("Failed to fetch posts:", err));
-  }, []);
+    useEffect(() => {
+    fetch("/api/posts")
+        .then((res) => {
+            if (!res.ok) {
+                // Throw an error so it goes to .catch()
+                return res.json().then((err) => {
+                throw new Error(err.error || "Unknown server error");
+                });
+            }
+            return res.json();
+            })
+            .then((data) => {
+            setPosts(data);
+            if (data.length > 0) setSelectedPost(data[0]);
+            })
+        .catch((err) => console.error("Failed to fetch posts:", err.message));
+    }, []);
 
   // Load comments when selectedPost changes
   useEffect(() => {
