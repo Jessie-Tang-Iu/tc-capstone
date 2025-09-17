@@ -1,65 +1,54 @@
 // app/api/events/[id]/route.js
 import { NextResponse } from "next/server";
 import {
-  getEventById,
-  updateEventById,
-  deleteEventById,
-} from "@/backend/database/workshop_crud";
+  getEventByIdController,
+  updateEventController,
+  deleteEventController,
+} from "@/backend/controllers/eventsController";
 
 // GET /api/events/:id  -> works for public event page & admin
 export async function GET(_req, { params }) {
-  const { id } = await params;
+  const { id } = params;
   try {
-    const event = await getEventById(Number(id));
+    const event = await getEventByIdController(Number(id));
     if (!event) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
-    return NextResponse.json(event);
+    return NextResponse.json(event, { status: 200 });
   } catch (err) {
     console.error("GET /api/events/[id] failed:", err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    const status = err.message.includes("required") ? 400 : 500;
+    return NextResponse.json({ error: err.message }, { status });
   }
 }
 
 // PUT /api/events/:id  -> admin edits
 export async function PUT(req, { params }) {
-  const { id } = await params;
+  const { id } = params;
   try {
     const body = await req.json();
+    const updated = await updateEventController(Number(id), body);
 
-    // accept both camelCase and snake_case from the client
-    const payload = {
-      title: body.title,
-      date: body.date, // "yyyy-mm-dd"
-      start_time: body.start_time ?? body.startTime ?? null,
-      end_time: body.end_time ?? body.endTime ?? null,
-      location: body.location,
-      description: body.description,
-      highlight: body.highlight ?? "",
-      price: Number(body.price ?? 0),
-      // Optional: allow status updates too (e.g., "active" | "completed" | "cancelled")
-      status: body.status ?? undefined,
-    };
-
-    const updated = await updateEventById(Number(id), payload);
     if (!updated) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
-    return NextResponse.json(updated);
+    return NextResponse.json(updated, { status: 200 });
   } catch (err) {
     console.error("PUT /api/events/[id] failed:", err);
-    return NextResponse.json({ error: "Update failed" }, { status: 500 });
+    const status = err.message.includes("required") ? 400 : 500;
+    return NextResponse.json({ error: err.message }, { status });
   }
 }
 
 // DELETE /api/events/:id -> admin deletes
 export async function DELETE(_req, { params }) {
-  const { id } = await params;
+  const { id } = params;
   try {
-    await deleteEventById(Number(id));
-    return NextResponse.json({ ok: true });
+    await deleteEventController(Number(id));
+    return NextResponse.json({ ok: true }, { status: 200 });
   } catch (err) {
     console.error("DELETE /api/events/[id] failed:", err);
-    return NextResponse.json({ error: "Delete failed" }, { status: 500 });
+    const status = err.message.includes("required") ? 400 : 500;
+    return NextResponse.json({ error: err.message }, { status });
   }
 }

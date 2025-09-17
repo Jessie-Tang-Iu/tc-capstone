@@ -116,9 +116,8 @@ export default function EventsPanel() {
 
     setEvents((prev) =>
       eventId
-        ? prev.map(
-            (e) => (e.id === eventId || e.event_id === eventId ? savedEvent : e)
-            //e = one of the old events already in memory.
+        ? prev.map((e) =>
+            e.id === eventId || e.event_id === eventId ? savedEvent : e
           )
         : [savedEvent, ...prev]
     );
@@ -372,7 +371,6 @@ export default function EventsPanel() {
                   disabled={isReadOnly}
                 />
 
-                {/* All form inputs now have labels associated with them for accessibility */}
                 <label htmlFor="date">Date:</label>
                 <input
                   id="date"

@@ -64,7 +64,7 @@ export default function ApplicationDetailsPage({}) {
             {/* Top header */}
             <div className="flex items-center justify-between border-b px-4 py-3">
               <div className="text-sm font-semibold text-black">
-                Application #:{" "}
+                Application:{" "}
                 {String(app.applicationNo).replace(/\d{3}$/, "###")}
               </div>
               <div className="flex items-center gap-3">
