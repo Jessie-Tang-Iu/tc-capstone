@@ -1,5 +1,5 @@
 // backend/database/workshop_crud.js
-import { query } from "../database/db.js";
+import { query } from "../../database/db.js";
 
 /** Get all events (ordered by date ascending) */
 export async function getAllEvents() {
