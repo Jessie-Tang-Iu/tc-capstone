@@ -46,17 +46,17 @@ export default function DiscussionBoard() {
     try {
       const res = await fetch("/api/posts", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newPost),
+        headers: { "Content-Type": "application/json" }, // Tells the backend the sent data is JSON data
+        body: JSON.stringify(newPost), // Converts the new post to a JSON object
       });
       if (!res.ok) throw new Error("Failed to create post");
-      const createdPost = await res.json();
-      setPosts([createdPost, ...posts]);
-      setSelectedPost(createdPost);
-      setNewPost({ author: "", title: "", content: "" });
-      setShowNewPostModal(false);
+        const createdPost = await res.json(); // Turns the response containing the new post into a json object and stores it
+        setPosts([createdPost, ...posts]); // Adds the new post to the top of the posts array
+        setSelectedPost(createdPost); // Sets the newly created post as the selected post
+        setNewPost({ author: "", title: "", content: "" }); // Resets the new post form
+        setShowNewPostModal(false); // Closes the new post modal
     } catch (err) {
-      console.error(err);
+      console.error(err); // Console logs the errors for now, will be changed to display on the frontend later when styling the frontend
     }
   };
 
@@ -65,16 +65,16 @@ export default function DiscussionBoard() {
     try {
       const res = await fetch("/api/comments", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...newComment, post_id: selectedPost.id }),
+        headers: { "Content-Type": "application/json" }, // Tells the backend the sent data is JSON data
+        body: JSON.stringify({ ...newComment, post_id: selectedPost.id }), // Converts new comment and post id to a JSON object
       });
       if (!res.ok) throw new Error("Failed to add comment");
-      const createdComment = await res.json();
-      setComments([...comments, createdComment]);
-      setNewComment({ author: "", content: "" });
-      setShowCommentModal(false);
+        const createdComment = await res.json();
+        setComments([...comments, createdComment]); // Adds the new comment to the end of the comments array to match the way its sorted. Oldest first.
+        setNewComment({ author: "", content: "" }); // Resets the new comment form
+        setShowCommentModal(false); // Closes the new comment modal
     } catch (err) {
-      console.error(err);
+      console.error(err); // Console logs the errors for now, will be changed to display on the frontend later when styling the frontend
     }
   };
 
