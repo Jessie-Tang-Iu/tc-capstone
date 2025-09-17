@@ -91,7 +91,7 @@ export default function AdvisorDashboard() {
                         {menuSelection === "message" && <MessagePage currentUserId={ME} />}
                         {menuSelection === "booking" && <MyBookingPage advisorId={ME} />}
                         {menuSelection === "client" && <MyClientPage />}
-                        {menuSelection === "availability" && <MyAvailability />}
+                        {menuSelection === "availability" && <MyAvailability advisorId={ME} />}
                         {menuSelection === "invoice" && <Invoice />}
                     </div>
                 </div>

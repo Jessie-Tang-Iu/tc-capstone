@@ -1,4 +1,4 @@
-// backend/database/message_crud.js
+// backend/database/advisory_bookings_crud.js
 import { Pool } from "pg";
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
@@ -7,39 +7,45 @@ export async function getAllBookings() {
   return rows;
 }
 
-export async function getBookingById(id) {
-  const { rows } = await pool.query(`SELECT * FROM advisory_bookings WHERE id = $1`, [
+export async function getBookingsByAdvisorId(id) {
+  const { rows } = await pool.query(`SELECT * FROM advisory_bookings WHERE advisor_id = $1`, 
+    [id]
+  );
+  if (!rows.length) throw new Error("Not found");
+  return rows;
+}
+
+export async function getBookingByBookingId(id) {
+  const { rows } = await pool.query(`SELECT * FROM advisory_bookings WHERE booking_id = $1`, [
     Number(id),
   ]);
   if (!rows.length) throw new Error("Not found");
   return rows[0];
 }
 
-export async function updateBookingStatus(id, status) {
-  await pool.query(`UPDATE advisory_bookings SET status = $1 WHERE id = $2`, [
-    status,
-    Number(id),
-  ]);
-}
-
-export async function createBooking(booking) {
+export async function addAvailability(booking) {
   const query = `
     INSERT INTO advisory_bookings
-      (advisor_id, client_id, date, startTime, description, endTime)
+      (advisor_id, date, startTime, endTime, status)
     VALUES
-      ($1, $2, $3, $4, $5, $6)
+      ($1, $2, $3, $4, $5)
     RETURNING *;
   `;
 
   const values = [
     booking.advisorId,
-    booking.clientId,
     booking.date,
     booking.start_time,
-    booking.description,
     booking.end_time,
+    booking.status,
   ];
 
   const { rows } = await pool.query(query, values);
   return rows[0];
+}
+
+export async function deleteAvailability(id) {
+  await pool.query(`DELETE FROM advisory_bookings WHERE booking_id = $1`, [
+      Number(id),
+    ]);
 }
