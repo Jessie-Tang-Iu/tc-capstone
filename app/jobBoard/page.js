@@ -4,7 +4,7 @@ import JobClient from "./JobClient";
 export default async function JobBoardPage() {
 
   // Builder absolute URL for this request (works in dev, prod, Vercel, proxies)
-  const headersList = headers();
+  const headersList = await headers();
   const protocol = headersList.get("x-forwarded-proto") ?? "http";
   const host = headersList.get("x-forwarded-host") ?? headersList.get("host");
   const baseUrl = `${protocol}://${host}`;

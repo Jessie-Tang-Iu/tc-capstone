@@ -26,14 +26,15 @@ CREATE TABLE job_workplace (
 -- Main job table
 CREATE TABLE job (
     id                  BIGSERIAL PRIMARY KEY,
-    -- employer_id      TEXT NOT NULL,
+    -- employer_id      UUID NOT NULL,
     title               TEXT NOT NULL,
     company             TEXT NOT NULL,
+    company_info        TEXT,
     location            TEXT NOT NULL,
-    industry_id         INT REFERENCES job_industry(id),
-    workplace_id        INT REFERENCES job_workplace(id),
-    type_id             INT REFERENCES job_type(id),
-    experience_id       INT REFERENCES job_experience(id),
+    industry_id         INT,
+    workplace_id        INT,
+    type_id             INT,
+    experience_id       INT,
     status              CHAR(1) NOT NULL DEFAULT 'A', -- A: Active, I: Inactive
     salary_per_hour     NUMERIC(5, 2),
     link                TEXT,
@@ -42,8 +43,14 @@ CREATE TABLE job (
     requirements        TEXT,
     details             TEXT,
     benefits            TEXT,
-    posted_at           TIMESTAMP NOT NULL DEFAULT now()
-    CONSTRAINT chk_status CHECK (status IN ('A', 'I'))
+    questions           TEXT[],
+    posted_at           TIMESTAMP NOT NULL DEFAULT now(),
+    CONSTRAINT chk_status CHECK (status IN ('A', 'I')),
+    CONSTRAINT chk_salary CHECK (salary_per_hour >= 0),
+    CONSTRAINT fk_industry FOREIGN KEY (industry_id) REFERENCES job_industry(id),
+    CONSTRAINT fk_workplace FOREIGN KEY (workplace_id) REFERENCES job_workplace(id),
+    CONSTRAINT fk_type FOREIGN KEY (type_id) REFERENCES job_type(id),
+    CONSTRAINT fk_experience FOREIGN KEY (experience_id) REFERENCES job_experience(id)
 );
 
 -- Insert data into job tables
@@ -101,9 +108,18 @@ INSERT INTO job_workplace (name) VALUES
 ('Hybrid'),
 ('Other');
 
-INSERT INTO job (title, company, location, posted_at, industry_id, workplace_id, type_id, experience_id, salary_per_hour, link, description, responsibilities, requirements, details, benefits) VALUES
-('Software Engineer', 'TechCorp', 'Vancouver, BC', '2025-09-10', 1, 3, 1, 3, 32.35, 'https://techcorp.com/jobs/123', 'Develop and maintain software applications.', 'Design, code, test software.', 'Bachelors degree in Computer Science.', 'Full job details here.', 'Health insurance, 401k'),
-('Data Analyst', 'DataSolutions', 'Montreal, QC', '2025-09-05', 1, 2, 1, 2, 27.45, 'https://datasolutions.com/careers/456', 'Analyze data to support business decisions.', 'Collect and analyze data sets.', 'Experience with SQL and Python.', 'Full job details here.', 'Flexible hours'),
-('Marketing Manager', 'MarketMakers', 'Calgary, AB', '2025-08-15', 10, 1, 1, 4, 38.35, 'https://marketmakers.com/jobs/789', 'Lead marketing campaigns and strategies.', 'Plan and execute marketing initiatives.', '5+ years in marketing roles.', 'Full job details here.', 'Bonuses and commissions'),
-('Sales Associate', 'RetailWorld', 'Edmonton, AB', '2025-08-21', 19, 1, 2, 1, 24.15, 'https://retailworld.com/careers/101', 'Assist customers and drive sales.', 'Customer service and sales.', 'High school diploma.', 'Full job details here.', 'Employee discounts'),
-('Project Manager', 'BuildIt', 'Toronto, ON', '2025-08-10', 8, 1, 1, 3, 35.95, 'https://buildit.com/jobs/202', 'Manage construction projects from start to finish.', 'Oversee project timelines and budgets.', 'PMP certification preferred.', 'Full job details here.', 'Health benefits');
+INSERT INTO job (title, company, company_info, location, posted_at, industry_id, workplace_id, type_id, experience_id, salary_per_hour, link, description, responsibilities, requirements, details, benefits) VALUES
+('Software Engineer', 'TechCorp', 'TechCorp is a leading technology solutions provider specializing in cloud computing and AI-driven products.', 'Vancouver, BC', '2025-09-10', 1, 3, 1, 3, 32.35, 'https://techcorp.com/jobs/123', 'Develop and maintain software applications.', 'Design, code, test software.', 'Bachelors degree in Computer Science.', 'Full job details here.', 'Health insurance, 401k'),
+('Nurse Practitioner', 'HealthFirst', 'HealthFirst operates a network of clinics focused on patient-centered care and innovative health solutions.', 'Calgary, AB', '2025-09-12', 4, 1, 1, 2, 45.00, 'https://healthfirst.com/careers/np', 'Provide primary and specialty healthcare services.', 'Diagnose and treat patients.', 'Registered Nurse with NP license.', 'Full job details here.', 'Comprehensive health benefits'),
+('Financial Analyst', 'BankTrust', 'BankTrust is a major Canadian bank offering a wide range of financial services to individuals and businesses.', 'Toronto, ON', '2025-09-08', 2, 2, 1, 3, 29.75, 'https://banktrust.com/jobs/finanalyst', 'Analyze financial data and trends.', 'Prepare reports and forecasts.', 'Degree in Finance or related field.', 'Full job details here.', 'Retirement plan, bonuses'),
+('Civil Engineer', 'InfraBuild', 'InfraBuild specializes in large-scale infrastructure projects, including bridges, highways, and public works.', 'Edmonton, AB', '2025-09-11', 8, 1, 1, 3, 36.50, 'https://infrabuild.com/careers/civileng', 'Design and oversee construction projects.', 'Project management and site supervision.', 'P.Eng. designation required.', 'Full job details here.', 'Vehicle allowance, health benefits'),
+('Teacher', 'BrightMinds Academy', 'BrightMinds Academy is a private K-12 school dedicated to innovative teaching and student success.', 'Winnipeg, MB', '2025-09-09', 17, 1, 1, 1, 28.00, 'https://brightminds.ca/jobs/teacher', 'Teach and mentor students in assigned subjects.', 'Lesson planning and classroom management.', 'Teaching certificate required.', 'Full job details here.', 'Professional development, pension');
+
+-- Questions field can include questions like:
+UPDATE job
+   SET questions = ARRAY[
+    'Why are you interested in this position?',
+    'Describe a challenging situation you faced at work and how you handled it.',
+    'What are your salary expectations?',
+    'When can you start?']
+ WHERE id IN (1, 2, 3, 4, 5);

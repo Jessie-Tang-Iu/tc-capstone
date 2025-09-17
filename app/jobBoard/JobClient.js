@@ -36,6 +36,8 @@ export default function JobClient({ jobs = []}) {
   const handleJobSelect = (jobId) => {
     setSelectedJobId(jobId);
     setShowJobDetail(true);
+    let job = jobs.find((job) => job.id === jobId);
+    console.log("Selected Job:", job);
   };
 
   const handleBackToList = () => {
@@ -50,7 +52,7 @@ export default function JobClient({ jobs = []}) {
 
       // Filter date
       let now = new Date();
-      let posted = new Date(job.datePosted);
+      let posted = new Date(job.posted_at);
       let diffInMilliseconds = now.getTime() - posted.getTime();
       let diffInDays = diffInMilliseconds / (1000 * 60 * 60 * 24);
       const matchesDate = 
@@ -84,7 +86,7 @@ export default function JobClient({ jobs = []}) {
       // Filter salary
       let minSalary = Number(filters.salary);
       const matchesSalary = 
-        !minSalary || ((minSalary <= job.salary) && (job.salary <= (minSalary+5)));
+        !minSalary || ((minSalary <= job.salary_per_hour) && (job.salary_per_hour <= (minSalary+5)));
 
       return matchesDate && matchesLocation && matchesExperience && matchesWorkplace && matchesType && matchesIndustry && matchesSalary;
     })

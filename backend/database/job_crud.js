@@ -4,12 +4,40 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 export async function getAllJobPosts() {
   const { rows } = await pool.query(`
-    SELECT jb.id AS id, title, company, location, status, salary_per_hour, posted_at, ji.name AS industry, je.name AS experience, jt.name AS type, jw.name AS workplace, link, description, responsibilities, requirements, details, benefits
-      FROM job jb   JOIN job_experience je ON jb.experience_id = je.id
-                    JOIN job_industry ji ON jb.industry_id = ji.id
-                    JOIN job_type jt ON jb.type_id = jt.id
-                    JOIN job_workplace jw ON jb.workplace_id = jw.id
+    SELECT  jb.id AS id, 
+            title, company, 
+            company_info, 
+            location, 
+            status, 
+            salary_per_hour, 
+            posted_at, 
+            ji.name AS industry, 
+            je.name AS experience, 
+            jt.name AS type, 
+            jw.name AS workplace, 
+            link, 
+            description, 
+            responsibilities, 
+            requirements, 
+            details, 
+            benefits
+     FROM job jb  JOIN job_experience je ON jb.experience_id = je.id
+                  JOIN job_industry ji ON jb.industry_id = ji.id
+                  JOIN job_type jt ON jb.type_id = jt.id
+                  JOIN job_workplace jw ON jb.workplace_id = jw.id
      ORDER BY posted_at ASC`);
+  return rows;
+}
+
+export async function getJobPostByEmployerId(id) {
+  const { rows } = await pool.query(`
+    SELECT jb.id AS id, title, company, company_info, location, status, salary_per_hour, posted_at, ji.name AS industry, je.name AS experience, jt.name AS type, jw.name AS workplace, link, description, responsibilities, requirements, details, benefits
+     FROM job jb  JOIN job_experience je ON jb.experience_id = je.id
+                  JOIN job_industry ji ON jb.industry_id = ji.id
+                  JOIN job_type jt ON jb.type_id = jt.id
+                  JOIN job_workplace jw ON jb.workplace_id = jw.id
+     WHERE jb.employer_id = $1
+     ORDER BY posted_at ASC`, [id]);
   return rows;
 }
 
