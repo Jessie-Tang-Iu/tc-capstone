@@ -9,6 +9,17 @@ export default function JobDetail({ job, onApply }) {
         );
     }
 
+    // Normalize date to YYYY-MM-DD format
+    const normalizeDate = (d) => {
+        if (!d) return null;
+        if (typeof d === "string") return d.includes("T") ? d.split("T")[0] : d;
+        if (d instanceof Date && !isNaN(d.getTime()))
+            return d.toISOString().slice(0, 10);
+        if (typeof d === "object" && typeof d.date === "string")
+            return d.date.includes("T") ? d.date.split("T")[0] : d.date;
+        return null;
+    };
+
     return (
         <div className="bg-white h-full overflow-y-auto">
             {/* Job Header */}
@@ -23,7 +34,7 @@ export default function JobDetail({ job, onApply }) {
                         </div>
                         
                         <p className="text-sm md:text-base font-normal text-black">
-                            {job.location} · {job.salary} · {job.type} · {job.workplace} · {job.datePosted}
+                            {job.location} · {job.salary_per_hour} · {job.type} · {job.workplace} · {normalizeDate(job.posted_at)}
                         </p>
                     </div>
 
@@ -38,9 +49,9 @@ export default function JobDetail({ job, onApply }) {
                             <button className="bg-[#E55B3C] text-white p-2 rounded-lg hover:bg-[#E55B3C]/90 transition-colors">
                                 <Bookmark className="w-5 h-5 md:w-6 md:h-6" />
                             </button>
-                            <button className="bg-[#E55B3C] text-white p-2 rounded-lg hover:bg-[#E55B3C]/90 transition-colors">
+                            <a href={job.link} className="bg-[#E55B3C] text-white p-2 rounded-lg hover:bg-[#E55B3C]/90 transition-colors">
                                 <LinkIcon className="w-5 h-5 md:w-6 md:h-6" />
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -52,7 +63,7 @@ export default function JobDetail({ job, onApply }) {
                 <section>
                     <h2 className="text-lg md:text-xl font-bold text-black mb-3 md:mb-4">About the company</h2>
                     <p className="text-sm md:text-sm font-normal text-black leading-relaxed">
-                        {job.aboutCompany}
+                        {job.company_info}
                     </p>
                 </section>
 
@@ -60,7 +71,7 @@ export default function JobDetail({ job, onApply }) {
                 <section>
                     <h2 className="text-lg md:text-xl font-bold text-black mb-3 md:mb-4">About the job</h2>
                     <p className="text-sm md:text-sm font-normal text-black leading-relaxed">
-                        {job.aboutJob}
+                        {job.description}
                     </p>
                 </section>
 
@@ -84,7 +95,7 @@ export default function JobDetail({ job, onApply }) {
                 <section>
                     <h2 className="text-lg md:text-xl font-bold text-black mb-3 md:mb-4">More details</h2>
                     <div className="text-sm md:text-sm font-normal text-black leading-relaxed whitespace-pre-line">
-                        {job.moreDetails}
+                        {job.details}
                     </div>
                 </section>
 

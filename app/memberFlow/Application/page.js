@@ -2,23 +2,48 @@
 
 import ApplyCard from "@/app/components/application/AppCard";
 import AppDetail from "@/app/components/application/AppDetail";
-import JobDetail from "@/app/components/job/JobDetail";
 import MemberNavBar from "@/app/components/MemberNavBar";
 import { useUserContext } from "@/app/context/userContext";
-import sampleApplications from "@/app/data/applications.json";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Applications() {
-  const { user, role, getCurrentSession } = useUserContext();
+  const { user, getCurrentSession } = useUserContext();
+  const userId = 22222;
 
+  const [selectedApp, setSelectedApp] = useState();
   const [selectedAppId, setSelectedAppId] = useState();
   const [status, setStatus] = useState("");
   const [showAppDetail, setShowAppDetail] = useState(false);
-  const [applications, setApplications] = useState(sampleApplications);
-  const selectedApp = sampleApplications.find(
-    (app) => app.id === selectedAppId
-  );
+  const [applications, setApplications] = useState([]);
+
+  useEffect(() => {
+    console.log(`/api/application/user/${userId}`)
+    fetch(`/api/application/user/${userId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setApplications(data)
+        console.log("Fetched applications:", data);})
+      .catch((error) => {
+        console.error("Error fetching applications:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (selectedAppId) {
+        console.log("Selected App ID changed:", selectedAppId);
+        console.log(`/api/application/${selectedAppId}`)
+        fetch(`/api/application/${selectedAppId}`)
+            .then((res) => res.json())
+            .then((data) => {
+                setSelectedApp(data)
+                console.log("Fetched application detail:", selectedApp);
+            })
+            .catch((error) => {
+                console.error("Error fetching application detail:", error);
+            });
+    }
+  }, [selectedAppId]);
 
   const handleAppSelect = (appId) => {
     setSelectedAppId(appId);
@@ -74,7 +99,6 @@ export default function Applications() {
         >
           <div className="px-2 md:px-4 py-2">
             {applications
-              .filter((app) => app.memberId === user.id)
               .map((app) => (
                 <ApplyCard
                   key={app.id}
@@ -101,7 +125,7 @@ export default function Applications() {
             ← Back to Jobs
           </button>
           <div className="mt-5 md:mt-0 h-full">
-            <AppDetail contact={user} application={selectedApp} />
+            <AppDetail application={selectedApp} />
           </div>
         </div>
       </div>
