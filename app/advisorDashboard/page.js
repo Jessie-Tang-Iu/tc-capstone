@@ -20,6 +20,8 @@ export default function AdvisorDashboard() {
         console.log("Selected menu:", selected);
     };
 
+    const ME = "99999999-9999-9999-9999-999999999999";
+
     const MOCK_MESSAGES = [
     {
         id: 1,
@@ -86,10 +88,10 @@ export default function AdvisorDashboard() {
                     </div>
 
                     <div className=" w-full ml-6">
-                        {menuSelection === "message" && <MessagePage messageList={MOCK_MESSAGES} />}
-                        {menuSelection === "booking" && <MyBookingPage />}
+                        {menuSelection === "message" && <MessagePage currentUserId={ME} />}
+                        {menuSelection === "booking" && <MyBookingPage advisorId={ME} />}
                         {menuSelection === "client" && <MyClientPage />}
-                        {menuSelection === "availability" && <MyAvailability />}
+                        {menuSelection === "availability" && <MyAvailability advisorId={ME} />}
                         {menuSelection === "invoice" && <Invoice />}
                     </div>
                 </div>

@@ -1,51 +1,33 @@
-import { NextResponse } from "next/server";
 import {
-  getAllEvents,
-  createEvent,
-  updateEventStatus,
-} from "@/backend/database/workshop_crud.js";
+  getEventsController,
+  createEventController,
+} from "@/backend/controllers/eventsController"; // Import controller functions
 
-// GET /api/events → return all events and auto-mark past "active" as "completed"
+// The GET function calls getEventsController (acts as middleman).
+// It retrieves all events, and controller handles validation/logic.
+// If successful, returns events with 200 status. If error, return 400.
 export async function GET() {
   try {
-    let events = await getAllEvents();
-    const now = new Date();
-
-    const expired = events.filter(
-      (e) => e.status === "active" && new Date(e.date) < now
-    );
-
-    if (expired.length) {
-      await Promise.all(
-        expired.map((e) => updateEventStatus(e.id, "completed"))
-      );
-      events = await getAllEvents(); // refresh after updates
-    }
-
-    return NextResponse.json(events);
+    const events = await getEventsController();
+    return new Response(JSON.stringify(events), { status: 200 });
   } catch (err) {
-    console.error("GET /api/events failed:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 400,
+    });
   }
 }
 
-// POST /api/events → create new event
+// The POST function takes body (title, date, start_time, etc.)
+// It calls createEventController to validate and save to DB.
+// If successful, returns new event with 201 status. If error, return 400.
 export async function POST(req) {
   try {
     const body = await req.json();
-
-    // guard against empty strings for TIME/NUMERIC fields
-    const payload = {
-      ...body,
-      startTime: body.startTime || null,
-      endTime: body.endTime || null,
-      price: body.price ?? 0,
-    };
-
-    const newEvent = await createEvent(payload);
-    return NextResponse.json(newEvent, { status: 201 });
+    const newEvent = await createEventController(body);
+    return new Response(JSON.stringify(newEvent), { status: 201 });
   } catch (err) {
-    console.error("POST /api/events failed:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 400,
+    });
   }
 }

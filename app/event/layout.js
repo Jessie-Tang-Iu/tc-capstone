@@ -7,3 +7,5 @@ export const runtime = "nodejs";
 export default function EventLayout({ children }) {
   return children;
 }
+
+//bug fix for headers() should be awaited before using its value

@@ -1,4 +1,12 @@
 // app/adminDashboard/page.js
+/*
+data need to change to postgres db
+- users
+- reports
+- events (DONE)
+- requests
+- messages (DONE)
+*/
 "use client";
 
 import { useState } from "react";
@@ -30,16 +38,6 @@ export default function AdminDashboard() {
       {children} <span className="ml-1">{">"}</span>
     </button>
   );
-
-  const MOCK_MESSAGES = [
-    { id: 1, name: "John Doe", message: "…", date: "Jun 15, 2025" },
-    ...Array.from({ length: 49 }, (_, i) => ({
-      id: i + 2,
-      name: `Dummy ${i + 1}`,
-      message: "Yes, you are right about the job application, i will have a …",
-      date: "Jun 15, 2025",
-    })),
-  ];
 
   const renderUsers = () =>
     details?.type === "user" ? (

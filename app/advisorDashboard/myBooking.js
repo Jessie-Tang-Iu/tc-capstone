@@ -2,41 +2,50 @@
 
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
 import { DateTime } from "luxon";
 import CalendarBigEvent from "../components/myCalender/calenderBig";
 
 
 
-export default function MyBookingPage() {
+export default function MyBookingPage({advisorId}) {
 
     const [isOpen, setIsOpen] = useState(false);
+    const [events, setEvents] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState(null);
 
-    //dummy data
-    const dummyEvents = [
-        {
-            id: 1,
-            title: 'Advisory Session with John Doe',
-            client: 'John Doe',
-            advisor: 'Jordan Smith',
-            date: "2025-09-16",
-            start_time: "18:00:00",
-            description: 'I need some advise on my front-end project',
-            end_time: "20:00:00",
-        },
-        {
-            id: 2,
-            title: 'Advisory Session with May Chan',
-            client: 'May Chan',
-            advisor: 'Jordan Smith',
-            date: "2025-09-22",
-            start_time: "12:00:00",
-            description: 'I need some advise on my front-end project',
-            end_time: "14:00:00",
-        },
-    ]
+    useEffect(() => {
+        if (!advisorId) return;
+
+        (async () => {
+            try {
+                const res = await fetch(
+                    `/api/advisory_bookings/advisor?advisorId=${encodeURIComponent(advisorId)}`
+                );
+                if (!res.ok) {console.error("Failed to fetch events"); return;}
+          
+                const data = await res.json();
+
+                // Filter data to only include booked events
+                const bookedEvents = data.filter(event => event.status === "booked");
+
+                const mappedEvents = bookedEvents.map(event => ({
+                    id: event.booking_id,
+                    title: `Advisory Session`,
+                    date: event.date,
+                    start_time: event.starttime,
+                    end_time: event.endtime,
+                    description: event.description,
+                }));
+
+                setEvents(mappedEvents);
+                console.log(mappedEvents);
+            } catch (error) {
+                console.error("Fetch error: ", error);
+            }
+        })();
+      }, [advisorId]);
 
     const handleEventClick = (e) => {
         setSelectedEvent(e);
@@ -53,10 +62,14 @@ export default function MyBookingPage() {
                 plugins={[dayGridPlugin]}
                 initialView="dayGridMonth"
                 // convert data for Full Calendar use
-                events={dummyEvents.map(event => ({
-                    ...event,
-                    start: `${event.date}T${event.start_time}`
-                }))}
+                events={events.map(event => {
+                    const dateOnly = event.date.split("T")[0];
+                    return {
+                        ...event,
+                        start: `${dateOnly}T${event.start_time}`,
+                        end: `${dateOnly}T${event.end_time}`
+                    };
+                })}
                 eventClick={handleEventClick}
                 eventContent={( eventInfo ) => {
                     try {

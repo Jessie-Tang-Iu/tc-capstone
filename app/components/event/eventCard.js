@@ -1,3 +1,4 @@
+// app/components/event/eventCard.jsx
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -12,17 +13,25 @@ export default function EventCard({
   description,
   tab,
   currentTab,
+  /** NEW: if provided, clicking the card will call this instead of navigating */
+  onSelect,
+  /** OPTIONAL: if true, suppress navigation even if onSelect is not provided */
+  disableNav = false,
 }) {
   const router = useRouter();
-
   const activeTab = tab ?? currentTab ?? "upcoming";
 
-  const handleClick = () => {
+  const navigate = () => {
     if (id === undefined || id === null) return;
     const target = `/event/${encodeURIComponent(
       String(id)
     )}?from=list&tab=${encodeURIComponent(activeTab)}`;
     router.push(target);
+  };
+
+  const handleClick = () => {
+    if (onSelect) return onSelect(); // ← admin usage
+    if (!disableNav) return navigate(); // ← default/public usage
   };
 
   const handleKeyDown = (e) => {
@@ -37,14 +46,17 @@ export default function EventCard({
       ? formatDateToFullDisplay(date)
       : date || "Invalid date";
 
+  const isInteractive = !!onSelect || !disableNav;
+
   return (
     <div
-      role="button"
-      tabIndex={0}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      className="bg-white rounded-lg shadow px-6 py-4 space-y-2 text-black cursor-pointer hover:opacity-95 transition"
-      aria-label={`Open event ${title}`}
+      role={isInteractive ? "button" : "group"}
+      tabIndex={isInteractive ? 0 : -1}
+      onClick={isInteractive ? handleClick : undefined}
+      onKeyDown={isInteractive ? handleKeyDown : undefined}
+      className={`bg-white rounded-lg shadow px-6 py-4 space-y-2 text-black
+        ${isInteractive ? "cursor-pointer hover:opacity-95 transition" : ""}`}
+      aria-label={isInteractive ? `Open event ${title}` : undefined}
     >
       {/* Date */}
       <div className="text-[13px] text-gray-700 uppercase tracking-wide font-medium">
@@ -58,10 +70,9 @@ export default function EventCard({
       {location && <div className="text-sm text-gray-400">{location}</div>}
 
       {/* Description */}
-      {(highlight || description) && (
+      {highlight && (
         <div className="pt-2 text-sm">
           {highlight && <p className="font-semibold text-black">{highlight}</p>}
-          {description && <p className="line-clamp-1">{description}</p>}
         </div>
       )}
     </div>
