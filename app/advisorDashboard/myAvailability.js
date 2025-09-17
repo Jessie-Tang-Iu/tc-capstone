@@ -216,16 +216,47 @@ export default function MyAvailability({advisorId}) {
         }
     }
 
-    const handleChangeTimeSlot = () => {
+    const handleChangeTimeSlot = async () => {
         if (!startTimeErrorMessage && !endTimeErrorMessage) {
-            setEvents((prevEvents) => 
-                prevEvents.map((event) => 
-                    event.id === Number(selectedEvent.id)
-                        ? {...event, start: startTime, end: endTime}
-                        : event));
 
-            setIsOpen(false);
-            setSelectedEvent(null);
+            try {
+
+                const newDate = startTime.split("T")[0];
+                const newStart = startTime.split("T")[1];
+                const newEnd = endTime.split("T")[1];
+
+                // changing data
+                const newEvent = {
+                    bookingId: selectedEvent.id,
+                    date: newDate,
+                    start: newStart,
+                    end: newEnd
+                };
+                const res = await fetch('/api/advisory_bookings', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newEvent)
+                });
+
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    console.error("Error changing availability:", errorData.error);
+                    return;
+                }
+
+                setEvents((prevEvents) => 
+                    prevEvents.map((event) => 
+                        event.id === Number(selectedEvent.id)
+                            ? {...event, start: startTime, end: endTime}
+                            : event));
+
+                setIsOpen(false);
+                setSelectedEvent(null);
+            } catch (error) {
+                console.error("Failed to change availability:", error);
+            }
         }
     }
     
