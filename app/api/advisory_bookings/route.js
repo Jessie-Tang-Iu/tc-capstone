@@ -1,18 +1,5 @@
-import { addAvailability, deleteAvailability, getAllBookings, updateAvailability } from "@/backend/database/advisory_bookings_crud";
+import { createAvailabilityController, deleteAvailabilityController, updateAvailabilityController } from "@/backend/controllers/advisoryServiceController";
 import { NextResponse } from "next/server";
-
-
-
-export async function GET() {
-    try{
-        let bookings = await getAllBookings();
-
-        return NextResponse.json(bookings);
-    } catch (error) {
-        console.error("GET /api/advisory_bookings failed:", err);
-        return NextResponse.json({ error: err.message }, { status: 500 });
-    }
-}
 
 export async function POST(request) {
     try {
@@ -30,12 +17,12 @@ export async function POST(request) {
             status: "open",
         }
 
-        const inserted = await addAvailability(newAvailability);
+        const inserted = await createAvailabilityController(newAvailability);
 
         return NextResponse.json(inserted, { status: 201 });
     } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: "Failed to add availability" }, { status: 500 });
+        console.error("Error adding availability:",error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
 
@@ -47,10 +34,10 @@ export async function DELETE(req) {
             return NextResponse.json({ error: "Missing Booking ID" }, { status: 400 });
         }
 
-        await deleteAvailability(bookingId);
+        await deleteAvailabilityController(bookingId);
         return NextResponse.json({ message: "Deleted successfully" }, { status: 200 });
     } catch (error) {
-        console.error("DELETE /api/advisory_bookings failed:", err);
+        console.error("DELETE /api/advisory_bookings failed:", error);
         return NextResponse.json({ error: err.message }, { status: 500 });
     }
 }
@@ -70,11 +57,11 @@ export async function PUT(request) {
             end_time: body.end,
         }
 
-        const updated = await updateAvailability(newAvailability);
+        const updated = await updateAvailabilityController(newAvailability);
 
         return NextResponse.json(updated, { status: 201 });
     } catch (error) {
-        console.error(error);
+        console.error("Error in PUT /api/advisory_bookings:", error);
         return NextResponse.json({ error: "Failed to change availability" }, { status: 500 });
     }
 }
