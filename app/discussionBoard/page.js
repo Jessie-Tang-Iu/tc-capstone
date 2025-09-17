@@ -19,13 +19,13 @@ export default function DiscussionBoard() {
   const [newPost, setNewPost] = useState({ author: "", title: "", content: "" });
   const [newComment, setNewComment] = useState({ author: "", content: "" });
 
-  // Loads post on page load
+  // Loads all posts into the frontend on page load
   useEffect(() => {
-    fetch("/api/posts")
+    fetch("/api/posts") // Defaults to a GET request
       .then((res) => res.json())
       .then((data) => {
         setPosts(data);
-        if (data.length > 0) {
+        if (data.length > 0) { // Sets the first post as selected by default so it displays something on load
           setSelectedPost(data[0]);
         }
       })
@@ -35,7 +35,7 @@ export default function DiscussionBoard() {
   // Load comments when selectedPost changes
   useEffect(() => {
     if (!selectedPost) return;
-    fetch(`/api/comments?post_id=${selectedPost.id}`)
+    fetch(`/api/comments?post_id=${selectedPost.id}`) // Defaults to a GET request
       .then((res) => res.json())
       .then((data) => setComments(data))
       .catch((err) => console.error("Failed to fetch comments:", err));
