@@ -7,14 +7,6 @@ export async function getAllEvents() {
   return rows;
 }
 
-export async function getEventById(id) {
-  const { rows } = await pool.query(`SELECT * FROM workshop WHERE id = $1`, [
-    Number(id),
-  ]);
-  if (!rows.length) throw new Error("Not found");
-  return rows[0];
-}
-
 export async function updateEventStatus(id, status) {
   await pool.query(`UPDATE workshop SET status = $1 WHERE id = $2`, [
     status,
@@ -45,4 +37,49 @@ export async function createEvent(event) {
 
   const { rows } = await pool.query(query, values);
   return rows[0];
+}
+
+export async function getEventById(id) {
+  const { rows } = await pool.query(
+    `SELECT id, title, date, start_time, end_time, location, description, highlight, price, status
+     FROM workshop
+     WHERE id = $1`,
+    [id]
+  );
+  return rows[0];
+}
+
+export async function updateEventById(id, e) {
+  // Build update list (status is optional)
+  const { rows } = await pool.query(
+    `UPDATE workshop
+        SET title=$1,
+            date=$2,
+            start_time=$3,
+            end_time=$4,
+            location=$5,
+            description=$6,
+            highlight=$7,
+            price=$8,
+            status=COALESCE($9, status)
+      WHERE id=$10
+      RETURNING id, title, date, start_time, end_time, location, description, highlight, price, status`,
+    [
+      e.title,
+      e.date,
+      e.start_time ?? null,
+      e.end_time ?? null,
+      e.location,
+      e.description,
+      e.highlight ?? "",
+      Number(e.price ?? 0),
+      e.status ?? null, // if undefined, keep existing
+      id,
+    ]
+  );
+  return rows[0];
+}
+
+export async function deleteEventById(id) {
+  await pool.query(`DELETE FROM workshop WHERE id = $1`, [id]);
 }
