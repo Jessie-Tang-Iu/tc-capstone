@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 
 export default async function EventPage() {
   // Build absolute URL for this request (works in dev, prod, Vercel, proxies)
-  const hdrs = headers();
+  const hdrs = await headers();
   const proto = hdrs.get("x-forwarded-proto") ?? "http";
   const host = hdrs.get("x-forwarded-host") ?? hdrs.get("host");
   const baseUrl = `${proto}://${host}`;

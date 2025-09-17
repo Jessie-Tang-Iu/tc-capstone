@@ -64,9 +64,9 @@ export default function MessagePage({ currentUserId }) {
         const peer =
           m.sent_user_id === currentUserId ? m.receive_user_id : m.sent_user_id;
         return {
-          id: m.conversation_id, // <-- stable id per thread
-          name: peer, // display peer id or resolve to name if you have users table
-          message: m.content, // latest message
+          id: m.conversation_id,
+          name: peer,
+          message: m.content,
           date: new Date(m.sent_at).toLocaleString(),
           raw: m,
         };
@@ -94,10 +94,23 @@ export default function MessagePage({ currentUserId }) {
     setSelected(next);
   };
 
-  const removeSelected = () => {
+  const removeSelected = async () => {
     if (selected.size === 0) return;
-    setRows((prev) => prev.filter((r) => !selected.has(r.id)));
-    setSelected(new Set());
+
+    try {
+      await Promise.all(
+        Array.from(selected).map((conversationId) =>
+          fetch(`/api/messages/conversation/${conversationId}`, {
+            method: "DELETE",
+          })
+        )
+      );
+
+      setRows((prev) => prev.filter((r) => !selected.has(r.id)));
+      setSelected(new Set());
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
   };
 
   const refresh = async () => {
