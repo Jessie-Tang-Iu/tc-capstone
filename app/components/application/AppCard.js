@@ -2,18 +2,28 @@
 import { useState } from "react";
 
 const statusColors = {
-    "Submitted": "bg-gray-100 text-gray-800 border-gray-300",
-    "Under review": "bg-blue-100 text-blue-800 border-blue-300",
-    "Interview scheduled": "bg-green-100 text-green-800 border-green-300",
-    "Rejected": "bg-red-100 text-red-800 border-red-300",
-    "Offer": "bg-emerald-100 text-emerald-800 border-emerald-300",
+    "S": "bg-gray-100 text-gray-800 border-gray-300",
+    "U": "bg-blue-100 text-blue-800 border-blue-300",
+    "I": "bg-green-100 text-green-800 border-green-300",
+    "R": "bg-red-100 text-red-800 border-red-300",
+    "O": "bg-emerald-100 text-emerald-800 border-emerald-300",
+    "D": "bg-yellow-100 text-yellow-800 border-yellow-300",
+};
+
+const statusOptions = {
+    "S": "Submitted",
+    "U": "Under review",
+    "I": "Interview scheduled",
+    "R": "Rejected",
+    "O": "Offer",
+    "D": "Withdrawn",
 };
 
 export default function ApplyCard({ app, isSelected = false, onClick }) {
 
     const [editingId, setEditingId] = useState(null);
     const [status, setStatus] = useState(app.status);
-    const statusOptions = Object.keys(statusColors);
+    // const statusOptions = Object.keys(statusColors);
 
     return (
         <div
@@ -26,9 +36,9 @@ export default function ApplyCard({ app, isSelected = false, onClick }) {
             <div className="flex flex-col gap-3">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <h3 onClick={onClick} className="flex-3 text-base md:text-lg font-bold text-black leading-tight cursor-pointer">{app.jobTitle}</h3>
+                        <h3 onClick={onClick} className="flex-3 text-base md:text-lg font-bold text-black leading-tight cursor-pointer">{app.title}</h3>
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs md:text-sm border ${statusColors[app.status] || "bg-gray-100 text-gray-800 border-gray-300"}`}>
-                            {app.status}
+                            {statusOptions[app.status]}
                         </span>
                     </div>
                     <div className="text-sm md:text-base text-gray-600">
@@ -53,8 +63,8 @@ export default function ApplyCard({ app, isSelected = false, onClick }) {
                                     onChange={(e) => setStatus(e.target.value)}
                                     className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
                                 >
-                                    {statusOptions.map((opt) => (
-                                    <option key={opt} value={opt}>{opt}</option>
+                                    {statusOptions.map((key, value) => (
+                                    <option key={key} value={key}>{value}</option>
                                     ))}
                                 </select>
                                 

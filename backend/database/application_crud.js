@@ -4,7 +4,7 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 export async function getApplicationsByUser(id) {
   const { rows } = await pool.query(`
-    SELECT jb.id, jb.title, jb.company, jb.location, ap.status, ap.applied_at AS "appliedAt"
+    SELECT ap.id, jb.title, jb.company, jb.location, ap.status, ap.applied_at AS "appliedAt"
       FROM application ap JOIN job jb ON ap.job_id = jb.id
      WHERE user_id = $1 ORDER BY applied_at DESC`, [id]);
   return rows;
@@ -12,8 +12,11 @@ export async function getApplicationsByUser(id) {
 
 export async function getApplicationById(id) {
   const { rows } = await pool.query(`
-    SELECT ap.id, jb.title AS "jobTitle", jb.company, jb.location, ap.status, ap.applied_at AS "appliedAt", ap.resume, ap.cover_letter AS "coverLetter", ap.first_name AS "firstName", ap.last_name AS "lastName", ap.email, ap.phone, jb,questions, ap.answers
+    SELECT  u.id AS userID, u.firstname AS userFN, u.lastname AS userLN, u.email AS userE, 
+		        ap.id, ap.resume, ap.cover_letter, ap.status, ap.applied_at, ap.relative_first_name AS relativeFN, ap.relative_last_name AS relativeLN, ap.relative_email AS relativeE, ap.relative_phone AS relativeP, ap.answers,
+		        jb.title, jb.company, jb.location, jb.questions
       FROM application ap JOIN job jb ON ap.job_id = jb.id
+                          JOIN public."user" u ON u.id = ap.user_id
      WHERE ap.id = $1`, [id]);
   return rows[0];
 }
