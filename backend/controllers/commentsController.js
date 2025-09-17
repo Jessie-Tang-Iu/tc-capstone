@@ -4,7 +4,7 @@
  * This also allows us to check data in a safe environment before sending it to the database, ESPECIALLY IMPORTANT if files are being uploaded.
 */
 
-import * as comments from "../scripts/comments.js"; // Imports all scripts from the comments.js file
+import * as comments from "../database/scripts/comments.js"; // Imports all scripts from the comments.js file
 
 // Receives the postId from the frontend and calls the database to get the comments for that post. (Throws error if no postId is provided)
 export async function getCommentsController(postId) {
