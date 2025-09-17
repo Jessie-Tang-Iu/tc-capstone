@@ -4,26 +4,15 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import Button from "../components/ui/Button";
 import { DateTime } from "luxon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RxCross2 } from "react-icons/rx";
 
 
 
 
-export default function MyAvailability() {
+export default function MyAvailability({advisorId}) {
 
-    // dummy data
-    const dummyData = [
-        {id:1, title: 'Open', start: '2025-09-06T10:00:00', end: '2025-09-06T12:00:00', type: 'Open'},
-        {id:2, title: 'Open', start: '2025-09-07T11:00:00', end: '2025-09-07T13:00:00', type: 'Open'},
-        {id:3, title: 'Booked', start: '2025-09-07T20:00:00', end: '2025-09-07T22:00:00', type: 'Booked'},
-        {id:4, title: 'Open', start: '2025-09-09T10:00:00', end: '2025-09-09T12:00:00', type: 'Open'},
-        {id:5, title: 'Booked', start: '2025-09-10T10:00:00', end: '2025-09-10T11:00:00', type: 'Booked'},
-        {id:6, title: 'Open', start: '2025-09-10T11:00:00', end: '2025-09-10T13:00:00', type: 'Open'},
-        {id:7, title: 'Booked', start: '2025-09-12T11:00:00', end: '2025-09-12T13:00:00', type: 'Booked'}
-    ]
-
-    const [events, setEvents] = useState(dummyData);
+    const [events, setEvents] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const [startTime, setStartTime] = useState();
     const [endTime, setEndTime] = useState();
@@ -33,7 +22,35 @@ export default function MyAvailability() {
     const [windowTitle, setWindowTitle] = useState("");
     const [selectedEvent, setSelectedEvent] = useState(null);
 
+    useEffect(() => {
+            if (!advisorId) return;
     
+            (async () => {
+                try {
+                    const res = await fetch(
+                        `/api/advisory_bookings/advisor?advisorId=${encodeURIComponent(advisorId)}`
+                    );
+                    if (!res.ok) {console.error("Failed to fetch events"); return;}
+              
+                    const data = await res.json();
+    
+                    const mappedEvents = data.map(event => ({
+                        id: event.booking_id,
+                        title: event.status,
+                        date: event.date,
+                        start_time: event.starttime,
+                        end_time: event.endtime,
+                        description: event.description,
+                        type: event.status,
+                    }));
+    
+                    setEvents(mappedEvents);
+                    console.log(mappedEvents);
+                } catch (error) {
+                    console.error("Fetch error: ", error);
+                }
+            })();
+          }, [advisorId]);
 
     // get the local date time with correct time zone
     const getLocalDateTime = (offsetMs = 0) => {
@@ -43,11 +60,21 @@ export default function MyAvailability() {
         return localDate.toISOString().slice(0, 16);
     }
 
+    // default the start time and end time
+    useEffect(() => {
+        if (!startTime || !endTime) {
+            setStartTime(getLocalDateTime());
+            setEndTime(getLocalDateTime(2 * 60 * 60 * 1000)); // default as two hours later
+        }
+    }, [startTime, endTime]);
+
     const handleAddAvailability = () => {
         setStartTime(getLocalDateTime());
         setEndTime(getLocalDateTime(2 * 60 * 60 * 1000)); // default as two hours later
         setIsOpen(true);
-        setWindowTitle("Add Availability")
+        setWindowTitle("Add Availability");
+        console.log("Start Time: ", startTime);
+        console.log("End Time: ", endTime);
     }
 
     const handleCloseWindow = () => {
@@ -83,24 +110,60 @@ export default function MyAvailability() {
         setEndTime(newEndTime);
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
 
         if (!startTimeErrorMessage && !endTimeErrorMessage) {
 
-            const nextId = Math.max(...events.map(event => event.id)) +1;
-            console.log(nextId);
+            const newDate = startTime.split("T")[0];
+            const newStart = startTime.split("T")[1];
+            const newEnd = endTime.split("T")[1];
 
             // Add to the list
             const newEvent = {
-                id: nextId,
-                title: 'Open',
-                start: startTime,
-                end: endTime,
-                type: 'Open'
+                advisorId: advisorId,
+                date: newDate,
+                start: newStart,
+                end: newEnd,
+                status: 'open' 
             };
-            setEvents((prevEvents) => [...prevEvents, newEvent]);
+            
+            try {
+                const res = await fetch('/api/advisory_bookings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newEvent)
+                });
 
-            setIsOpen(false);
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    console.error("Error adding availability:", errorData.error);
+                    return;
+                }
+
+                const createdEvent = await res.json();
+
+                // Update local events state so the calendar reflects new availability immediately
+                setEvents(prev => [
+                    ...prev,
+                    {
+                    id: createdEvent.booking_id,
+                    title: createdEvent.status,
+                    date: createdEvent.date,
+                    start_time: createdEvent.starttime,
+                    end_time: createdEvent.endtime,
+                    description: createdEvent.description,
+                    type: createdEvent.status,
+                    }
+                ]);
+
+                console.log(createdEvent);
+
+                setIsOpen(false);
+            } catch (error) {
+                console.error("Failed to add availability:", error);
+            }
         }
     }
 
@@ -117,10 +180,10 @@ export default function MyAvailability() {
         setSelectedEvent(e.event);
     }
 
-    const handleDeleteEvent = () => {
+    const handleDeleteEvent = async () => {
         console.log(selectedEvent.title);
         // Prevent Delete By Mistake
-        if (selectedEvent.title === "Booked") {
+        if (selectedEvent.title === "booked") {
             const confirmDelete = window.confirm(
                 "This timeslot is booked. Are you sure you want to delete it?"+
                 "\nPlease confirm with your client before proceeding!"+
@@ -131,12 +194,26 @@ export default function MyAvailability() {
                 return; 
             }
         }
-        
-        setEvents((prevEvents) => 
-            prevEvents.filter((event) => event.id !== Number(selectedEvent.id)));
 
-        setIsOpen(false);
-        setSelectedEvent(null);
+        try {
+            const res = await fetch(`/api/advisory_bookings?bookingId=${selectedEvent.id}`, {
+                method: "DELETE"
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                console.error("Failed to delete availability:", err.error);
+                return;
+            }
+
+            setEvents((prevEvents) => 
+                prevEvents.filter((event) => event.id !== Number(selectedEvent.id)));
+
+            setIsOpen(false);
+            setSelectedEvent(null);
+        } catch (error) {
+            console.error("Error deleting availability:", error);
+        }
     }
 
     const handleChangeTimeSlot = () => {
@@ -238,12 +315,19 @@ export default function MyAvailability() {
             <FullCalendar
                 plugins={[dayGridPlugin]}
                 initialView="dayGridWeek"
-                events={events}
+                events={events.map(event => {
+                    const dateOnly = event.date.split("T")[0];
+                    return {
+                        ...event,
+                        start: `${dateOnly}T${event.start_time}`,
+                        end: `${dateOnly}T${event.end_time}`
+                    };
+                })}
                 eventClick={handleEventClick}
                 eventContent={(eventInfo) => {
                     const type = eventInfo.event.extendedProps.type;
                     const colorClass =
-                        type === 'Open' ? '#B4DDFF' : '#64D991';
+                        type === 'open' ? '#B4DDFF' : '#64D991';
 
                     const startTime = DateTime.fromJSDate(eventInfo.event.start).toFormat("h:mm a");
                     return (

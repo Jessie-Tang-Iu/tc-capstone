@@ -15,43 +15,22 @@ export default function MyBookingPage({advisorId}) {
     const [events, setEvents] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState(null);
 
-    //dummy data
-    const dummyEvents = [
-        {
-            id: 1,
-            title: 'Advisory Session with John Doe',
-            client: 'John Doe',
-            advisor: 'Jordan Smith',
-            date: "2025-09-16",
-            start_time: "18:00:00",
-            description: 'I need some advise on my front-end project',
-            end_time: "20:00:00",
-        },
-        {
-            id: 2,
-            title: 'Advisory Session with May Chan',
-            client: 'May Chan',
-            advisor: 'Jordan Smith',
-            date: "2025-09-22",
-            start_time: "12:00:00",
-            description: 'I need some advise on my front-end project',
-            end_time: "14:00:00",
-        },
-    ]
-
     useEffect(() => {
         if (!advisorId) return;
 
         (async () => {
             try {
                 const res = await fetch(
-                    "/api/advisory_bookings", { cache: "no-store" }
+                    `/api/advisory_bookings/advisor?advisorId=${encodeURIComponent(advisorId)}`
                 );
                 if (!res.ok) {console.error("Failed to fetch events"); return;}
           
                 const data = await res.json();
 
-                const mappedEvents = data.map(event => ({
+                // Filter data to only include booked events
+                const bookedEvents = data.filter(event => event.status === "booked");
+
+                const mappedEvents = bookedEvents.map(event => ({
                     id: event.booking_id,
                     title: `Advisory Session`,
                     date: event.date,
