@@ -49,3 +49,26 @@ export async function deleteAvailability(id) {
       Number(id),
     ]);
 }
+
+export async function updateAvailability(booking) {
+  const query = `
+  UPDATE advisory_bookings
+    SET date=$2,
+        startTime=$3,
+        endTime=$4
+    WHERE booking_id = $1
+    RETURNING booking_id, date, startTime, endTime`;
+
+  const values = [
+    booking.id,
+    booking.date,
+    booking.start_time,
+    booking.end_time,
+  ];
+
+  const { rows } = await pool.query(query, values);
+  if (rows.length === 0) {
+    throw new Error("Update failed: booking not found");
+  }
+  return rows[0];
+}

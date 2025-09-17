@@ -1,4 +1,4 @@
-import { addAvailability, deleteAvailability, getAllBookings } from "@/backend/database/advisory_bookings_crud";
+import { addAvailability, deleteAvailability, getAllBookings, updateAvailability } from "@/backend/database/advisory_bookings_crud";
 import { NextResponse } from "next/server";
 
 
@@ -52,5 +52,29 @@ export async function DELETE(req) {
     } catch (error) {
         console.error("DELETE /api/advisory_bookings failed:", err);
         return NextResponse.json({ error: err.message }, { status: 500 });
+    }
+}
+
+export async function PUT(request) {
+    try {
+        const body = await request.json();
+
+        if (!body.bookingId || !body.date || !body.start || !body.end) {
+            return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+        }
+
+        const newAvailability = {
+            bookingId: body.bookingId,
+            date: body.date,
+            start_time: body.start,
+            end_time: body.end,
+        }
+
+        const updated = await updateAvailability(newAvailability);
+
+        return NextResponse.json(updated, { status: 201 });
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: "Failed to change availability" }, { status: 500 });
     }
 }
