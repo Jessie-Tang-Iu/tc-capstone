@@ -1,4 +1,4 @@
-import { query } from "../database/db.js";
+import { query } from "../../database/db.js";
 
 // Gets all bookings ordered by date
 export async function getAllBookings() {
