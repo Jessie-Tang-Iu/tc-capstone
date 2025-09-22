@@ -82,7 +82,7 @@ export default function Navbar() {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/advisorRegister"
                   className="block px-4 py-2 hover:text-orange-500"
                 >
                   Register as Advisor
@@ -90,7 +90,7 @@ export default function Navbar() {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/employerRegister"
                   className="block px-4 py-2 hover:text-orange-500"
                 >
                   Register as Employer
@@ -131,7 +131,7 @@ export default function Navbar() {
             </Link>
           </li>
           <li>
-            <Link href="#" className="hover:text-orange-500">
+            <Link href="/advisorRegister" className="hover:text-orange-500">
               Register as Advisor
             </Link>
           </li>
