@@ -1,4 +1,4 @@
-import { query } from "../database/db.js";
+import { query } from "../db.js";
 
 // Gets the comments for a specific post by the postId, ordered by the oldest first
 export async function getCommentsByPost(postId) {

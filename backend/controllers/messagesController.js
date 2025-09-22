@@ -1,5 +1,5 @@
 // backend/controllers/messagesController.js
-import * as messages from "../scripts/messages.js";
+import * as messages from "../database/scripts/messages.js";
 
 /** Get inbox (latest message per conversation for a user) */
 export async function getInboxController(userId, opts = {}) {
