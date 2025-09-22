@@ -5,7 +5,7 @@ import Navbar from "../components/NavBarBeforeSignIn";
 
 
 
-export default function advisorRegister() {
+export default function AdvisorRegister() {
 
     // form
     const [firstName, setFirstName] = useState("");
