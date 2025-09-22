@@ -1,11 +1,22 @@
 import { ExternalLink, Download } from "lucide-react";
+import { useState } from "react";
 
 const statusColors = {
-  "Submitted": "bg-gray-100 text-gray-800 border-gray-300",
-  "Under review": "bg-blue-100 text-blue-800 border-blue-300",
-  "Interview scheduled": "bg-green-100 text-green-800 border-green-300",
-  "Rejected": "bg-red-100 text-red-800 border-red-300",
-  "Offer": "bg-emerald-100 text-emerald-800 border-emerald-300",
+    "S": "bg-gray-100 text-gray-800 border-gray-300",
+    "U": "bg-blue-100 text-blue-800 border-blue-300",
+    "I": "bg-green-100 text-green-800 border-green-300",
+    "R": "bg-red-100 text-red-800 border-red-300",
+    "O": "bg-emerald-100 text-emerald-800 border-emerald-300",
+    "D": "bg-yellow-100 text-yellow-800 border-yellow-300",
+};
+
+const statusOptions = {
+    "S": "Submitted",
+    "U": "Under review",
+    "I": "Interview scheduled",
+    "R": "Rejected",
+    "O": "Offer",
+    "D": "Withdrawn",
 };
 
 const LabelValue = ({ label, value }) => (
@@ -22,7 +33,22 @@ const QAItem = ({ q, a }) => (
   </div>
 );
 
-export default function AppDetail({ contact, application, onWithdraw, onDownload }) {
+export default function AppDetail(application, onDownload) {
+  const [app, setApp] = useState(application.application || null);
+  if (!app) {
+    return (
+      <div className="flex items-center justify-center h-full bg-white">
+        <p className="text-gray-600 text-lg">Select a application to view details</p>
+      </div>
+    );
+  } else {
+    // const app = application.application;
+    console.log("Application prop:", app)
+  };
+
+  // if (!application.resume) {
+  //   fetch(`/api/resume/user/${application.userid}`)
+  // }
 
   if (!application) {
     return (
@@ -33,19 +59,29 @@ export default function AppDetail({ contact, application, onWithdraw, onDownload
   }
 
   const appliedDate = application.appliedAt
-    ? new Date(application.appliedAt).toLocaleDateString()
+    ? new Date(application.applied_at).toLocaleDateString()
     : null;
 
-  const questions = Array.isArray(application.questions) ? application.questions : [];
+  // const qs = [];
+  // for (let i = 0; i < application.questions.length; i++) {
+  //   let questionObj = {};
+  //   questionObj.id = i+1;
+  //   questionObj.question = application.questions[i];
+  //   questionObj.answer = application.answers[i] || "No answer provided";
+  //   qs.push(questionObj);
+  // }
+  // // setQuestions(qs);
+  // console.log("Questions and answers:", qs);
+
 
   return (
     <div className="bg-white h-full overflow-y-auto">
       {/* Header */}
       <div className="border-b border-gray-300 p-4 md:p-6">
         <div className="flex items-center gap-2 mb-2">
-            <h1 className="flex-3 text-lg md:text-xl font-bold text-black leading-tight">{application.jobTitle}</h1>
+            <h1 className="flex-3 text-lg md:text-xl font-bold text-black leading-tight">{application.title}</h1>
             <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs md:text-sm border ${statusColors[application.status] || "bg-gray-100 text-gray-800 border-gray-300"}`}>
-                {application.status}
+                {statusOptions[application.status]}
             </span>
         </div>
         {/* <h1 className="text-lg md:text-xl font-bold text-black leading-tight">{application.jobTitle}</h1> */}
@@ -70,11 +106,21 @@ export default function AppDetail({ contact, application, onWithdraw, onDownload
           <div className="border border-gray-200 rounded-lg bg-white">
             <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">Contact Information</div>
             <div className="p-4 grid md:grid-cols-2 gap-3">
-              <LabelValue label="First Name" value={contact.firstName} />
-              <LabelValue label="Last Name" value={contact.lastName} />
-              <LabelValue label="Full name" value={contact.fullName || `${contact.firstName || ""} ${contact.lastName || ""}`.trim()} />
-              <LabelValue label="Email address" value={contact.email} />
-              <LabelValue label="Phone Number" value={contact.phone} />
+              <LabelValue label="First Name" value={application.userFN} />
+              <LabelValue label="Last Name" value={application.userLN} />
+              <LabelValue label="Email address" value={application.userE} />
+              <LabelValue label="Phone Number" value={application.userP || ""} />
+            </div>
+          </div>
+
+          {/* Relative Information */}
+          <div className="border border-gray-200 rounded-lg bg-white">
+            <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">Relative Information</div>
+            <div className="p-4 grid md:grid-cols-2 gap-3">
+              <LabelValue label="First Name" value={application.relativeFN} />
+              <LabelValue label="Last Name" value={application.relativeLN} />
+              <LabelValue label="Email address" value={application.relativeE} />
+              <LabelValue label="Phone Number" value={application.relativeP} />
             </div>
           </div>
         </section>
@@ -83,7 +129,7 @@ export default function AppDetail({ contact, application, onWithdraw, onDownload
         <section className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-base md:text-lg font-bold text-black">Resume</h2>
-            {(application.resume?.url || onDownload) && (
+            {(application?.resume || onDownload) && (
               <button
                 onClick={onDownload}
                 className="text-sm text-[#E55B3C] hover:underline"
@@ -120,7 +166,7 @@ export default function AppDetail({ contact, application, onWithdraw, onDownload
         </section>
 
         {/* Employer questions */}
-        <section className="space-y-3">
+        {/* <section className="space-y-3">
           <h2 className="text-base md:text-lg font-bold text-black">Employer questions</h2>
           <div className="border border-gray-200 rounded-lg bg-white">
             <div className="p-4">
@@ -133,7 +179,7 @@ export default function AppDetail({ contact, application, onWithdraw, onDownload
               )}
             </div>
           </div>
-        </section>
+        </section> */}
       </div>
     </div>
   );

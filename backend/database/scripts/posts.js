@@ -1,4 +1,4 @@
-import { query } from "../database/db.js";
+import { query } from "../db.js";
 
 // Gets all posts ordered by most recently creates
 export async function getAllPosts() {

@@ -37,8 +37,6 @@ export default function ApplicationsPage() {
 
   const rows = useMemo(() => applications.slice(start, end), [page]);
 
-  const goManage = (id) => router.push(`/employerDashboard/application/${id}`);
-
   return (
     <div className="min-h-screen bg-white">
       <Navbar />

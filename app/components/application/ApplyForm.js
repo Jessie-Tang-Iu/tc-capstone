@@ -205,19 +205,9 @@ export default function ApplyForm({ job, onClose }) {
                     </div>
                 </div>
 
-                <div>
-                    <label className="block text-base font-normal text-black mb-2">Middle Name:</label>
-                    <input
-                        type="text"
-                        value={formData.middleName}
-                        onChange={(e) => handleInputChange('middleName', e.target.value)}
-                        className="w-full px-4 py-3 text-black bg-white border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
-                    />
-                </div>
-
                 <hr className="border-gray-300" />
 
-                <div>
+                {/* <div>
                     <label className="block text-base font-normal text-black mb-2">Email:</label>
                     <input
                         type="email"
@@ -225,15 +215,15 @@ export default function ApplyForm({ job, onClose }) {
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         className="w-full px-4 py-3 text-black bg-white border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
                     />
-                </div>
+                </div> */}
 
                 <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-base font-normal text-black mb-2">Country Code:</label>
+                        <label className="block text-base font-normal text-black mb-2">Email:</label>
                         <input
-                            type="text"
-                            value={formData.countryCode}
-                            onChange={(e) => handleInputChange('countryCode', e.target.value)}
+                            type="email"
+                            value={formData.email}
+                            onChange={(e) => handleInputChange('email', e.target.value)}
                             className="w-full px-4 py-3 text-black bg-white border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
                         />
                     </div>

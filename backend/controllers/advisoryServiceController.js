@@ -4,7 +4,7 @@
  * This also allows us to check data in a safe environment before sending it to the database, ESPECIALLY IMPORTANT if files are being uploaded.
 */
 
-import * as advisoryService from "../scripts/advisoryService.js"; // Imports all scripts from the advisoryService.js file
+import * as advisoryService from "../database/scripts/advisoryService.js"; // Imports all scripts from the advisoryService.js file
 
 // Receives the advisoryId from the frontend and calls the database to get the availability for the calendar. (Throws error if no postId is provided)
 export async function getBookingsController(advisorId) {
