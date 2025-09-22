@@ -6,18 +6,16 @@ import { useUserContext } from "../context/userContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import MessagePage from "../components/MessagePage";
+import { useUser } from "@clerk/nextjs";
 
 function PageContent() {
-  const { user, role } = useUserContext();
+  const { isLoaded, isSignedIn, user } = useUser();
 
   const router = useRouter();
 
   useEffect(() => {
-    if (user) {
-      console.log("User's role: ", role);
-    }
     console.log("User: ", user);
-  }, [user, role]);
+  }, [user]);
 
   const MOCK_MESSAGES = [
     {
@@ -34,6 +32,12 @@ function PageContent() {
       date: "Jun 15, 2025",
     })),
   ];
+
+  if (!isLoaded) return <p>Loading...</p>;
+
+  if (!isSignedIn) {
+    router.push("/signIn"); 
+  }
 
   return (
     <>
