@@ -72,7 +72,7 @@ export default function EmployerRegistration() {
           <div className=" rounded-lg shadow-md p-8 bg-[#F3E1D5]">
             <form onSubmit={handleSubmit}>
               <div className="mb-6">
-                <h2 className="text-3xl font-semibold text-[#DD5B45] font-bold mb-4">
+                <h2 className="text-3xl text-[#DD5B45] font-bold mb-4">
                   Required Information
                 </h2>
 
