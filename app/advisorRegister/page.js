@@ -1,4 +1,4 @@
-"use client";
+"Use client";
 
 import { useState } from "react";
 import Navbar from "../components/NavBarBeforeSignIn";
