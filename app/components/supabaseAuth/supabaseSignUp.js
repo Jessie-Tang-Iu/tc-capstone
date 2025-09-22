@@ -29,15 +29,13 @@ export default function ClerkSignUp() {
       const result = await signUp.create({
         emailAddress: email,
         password,
-        firstName,
-        lastName,
         username,
       });
 
-      // 2) If requires verification (email), handle that
+      // 2) Handle verification
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/"); // or your dashboard
+        router.push("/"); // or dashboard
       } else {
         setError("Check your email to verify your account.");
       }
@@ -58,6 +56,7 @@ export default function ClerkSignUp() {
           {error && <p className="text-red-600 font-bold">{error}</p>}
 
           <div className="text-black">
+            {/* Email + Password */}
             <div className="flex flex-row justify-between">
               <div className="flex flex-col">
                 <label>Email Address</label>
@@ -82,6 +81,7 @@ export default function ClerkSignUp() {
               </div>
             </div>
 
+            {/* Name fields */}
             <div className="flex flex-row justify-between">
               <div className="flex flex-col">
                 <label>First Name</label>
@@ -106,17 +106,22 @@ export default function ClerkSignUp() {
               </div>
             </div>
 
+            {/* Username */}
             <div className="flex flex-col">
               <label>Username</label>
               <input
                 required
                 type="text"
-                className="px-2 py-1 mb-3 w-72 mr-5 rounded bg-[#E2B596] focus:bg-orange-100"
+                className="px-2 py-1 mb-3 w-72 rounded bg-[#E2B596] focus:bg-orange-100"
                 onChange={(e) => setUsername(e.target.value)}
                 value={username}
               />
             </div>
 
+            {/* 👇 Clerk CAPTCHA placeholder */}
+            <div id="clerk-captcha" className="my-4"></div>
+
+            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
@@ -125,6 +130,7 @@ export default function ClerkSignUp() {
               {loading ? "Creating..." : "Sign Up"}
             </button>
 
+            {/* Redirect link */}
             <p className="text-black text-sm mt-4 text-center">
               Already have an account?{" "}
               <Link href="/signIn" className="underline hover:text-blue-400">

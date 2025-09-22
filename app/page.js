@@ -1,25 +1,24 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
+
 import Navbar from "./components/NavBarBeforeSignIn";
 import Link from "next/link";
-import { useUserContext } from "./context/userContext";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 function PageContent() {
-  const { user, getCurrentSession } = useUserContext();
-
+  const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    getCurrentSession();
-  }, []);
+    if (!isLoaded) return; // wait for Clerk to load
 
-  useEffect(() => {
-    console.log(user);
+    if (isSignedIn) {
+      // Clerk doesn't have "role" built-in → you'll store it in user.publicMetadata
+      const role = user.publicMetadata?.role;
 
-    if (user)
-      switch (user.role) {
+      switch (role) {
         case "admin":
           router.push("/adminDashboard");
           break;
@@ -32,8 +31,13 @@ function PageContent() {
         case "advisor":
           router.push("/advisorDashboard");
           break;
+        default:
+          // if no role, maybe send to a generic dashboard
+          router.push("/memberFlow");
+          break;
       }
-  }, [user]);
+    }
+  }, [isLoaded, isSignedIn, user, router]);
 
   return (
     <>
