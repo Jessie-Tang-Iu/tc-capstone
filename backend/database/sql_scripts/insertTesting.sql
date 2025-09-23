@@ -123,53 +123,54 @@ INSERT INTO message (sent_user_id, receive_user_id, content, status) VALUES
 ('33333333-3333-3333-3333-333333333333', '44444444-4444-4444-4444-444444444444', 'This chat is between 3333 and 4444 only.', 'S'),
 ('44444444-4444-4444-4444-444444444444', '33333333-3333-3333-3333-333333333333', 'Reply back to 3333 from 4444.', 'R');
 
+--workshop
 INSERT INTO workshop (title, date, start_time, location, description, highlight)
 VALUES
 ('Ace the Interview: Confidence Meets Strategy',
-'2025-06-27',
-'18:00:00',
-'Online Meeting',
-'Tech Connect Alberta is excited to be part of this engaging career development session.`',
-'Join Us for an Empowering Career Workshop: Ace the Interview - Confidence Meets Strategy!'),
- 
+ '2025-06-27',
+ '18:00:00',
+ 'Online Meeting',
+ 'Tech Connect Alberta is excited to be part of this engaging career development session.`',
+ 'Join Us for an Empowering Career Workshop: Ace the Interview - Confidence Meets Strategy!'),
+
 ('Launch Your Startup: Funding & Pitching Essentials',
-'2025-07-01',
-'12:00:00',
-'Calgary Tech Hub',
-'This workshop will help you refine your pitch, understand funding stages, and build investor confidence.',
-'Get expert guidance on pitching, funding, and launching your own tech startup.'),
- 
+ '2025-07-01',
+ '12:00:00',
+ 'Calgary Tech Hub',
+ 'This workshop will help you refine your pitch, understand funding stages, and build investor confidence.',
+ 'Get expert guidance on pitching, funding, and launching your own tech startup.'),
+
 ('AI Tools for Career Advancement',
-'2025-07-10',
-'15:00:00',
-'Online Webinar',
-'Discover how to use tools like ChatGPT, LinkedIn AI, and job matchers to boost your job hunt.',
-'Explore modern AI tools that can help you level up your career.'),
- 
+ '2025-07-10',
+ '15:00:00',
+ 'Online Webinar',
+ 'Discover how to use tools like ChatGPT, LinkedIn AI, and job matchers to boost your job hunt.',
+ 'Explore modern AI tools that can help you level up your career.'),
+
 ('Building Your Brand as a Developer',
-'2025-08-15',
-'13:00:00',
-'Online Workshop',
-'We''ll explore LinkedIn optimization, GitHub portfolios, and storytelling strategies for tech professionals.',
-'Learn how to craft your personal brand and digital portfolio effectively.'),
- 
+ '2025-08-15',
+ '13:00:00',
+ 'Online Workshop',
+ 'We''ll explore LinkedIn optimization, GitHub portfolios, and storytelling strategies for tech professionals.',
+ 'Learn how to craft your personal brand and digital portfolio effectively.'),
+
 ('Tech Industry Mixer',
-'2025-09-03',
-'17:00:00',
-'SAIT Downtown Campus',
-'An in-person event to connect with key players in Calgary''s tech scene — refreshments provided!',
-'Network with employers, alumni, and industry mentors.'),
- 
+ '2025-09-03',
+ '17:00:00',
+ 'SAIT Downtown Campus',
+ 'An in-person event to connect with key players in Calgary''s tech scene — refreshments provided!',
+ 'Network with employers, alumni, and industry mentors.'),
+
 ('Career Growth with AI: Mastering Tools and Strategies',
-'2025-10-08',
-'14:00:00',
-'Online Webinar',
-'Learn how AI can accelerate your career development with practical hands-on strategies.',
-'Harness AI tools to boost productivity, networking, and career decision-making.'),
- 
+ '2025-10-08',
+ '14:00:00',
+ 'Online Webinar',
+ 'Learn how AI can accelerate your career development with practical hands-on strategies.',
+ 'Harness AI tools to boost productivity, networking, and career decision-making.'),
+
 ('Startup Funding Bootcamp',
-'2025-10-22',
-'10:00:00',
-'Calgary Innovation Centre',
-'A full-day intensive session on pitching, funding rounds, and investor engagement for early-stage startups.',
-'Hands-on workshops to prepare founders for funding success.');
+ '2025-10-22',
+ '10:00:00',
+ 'Calgary Innovation Centre',
+ 'A full-day intensive session on pitching, funding rounds, and investor engagement for early-stage startups.',
+ 'Hands-on workshops to prepare founders for funding success.');
