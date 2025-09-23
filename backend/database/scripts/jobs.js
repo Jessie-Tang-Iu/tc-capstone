@@ -1,4 +1,4 @@
-import { query } from "../database/db.js";
+import { query } from "../../database/db.js";
 
 export async function getAllJobPosts() {
   const { rows } = await query(`

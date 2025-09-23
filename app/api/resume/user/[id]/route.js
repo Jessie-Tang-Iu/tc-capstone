@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getResumeByUser } from "@/backend/scripts/applications.js";
+import { getResumeByUser } from "@/backend/controllers/applicationsController";
 
 export async function GET(req, { params }) {
   const { id } = await params;
