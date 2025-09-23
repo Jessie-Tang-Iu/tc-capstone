@@ -1,4 +1,4 @@
-import * as jobs from "../scripts/jobs.js";
+import * as jobs from "../database/scripts/jobs.js";
 
 // Call the getAllJobPosts function
 export async function getJobsController() {

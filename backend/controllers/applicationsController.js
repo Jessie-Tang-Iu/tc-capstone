@@ -1,4 +1,4 @@
-import * as apps from "../scripts/applications.js";
+import * as apps from "../database/scripts/applications.js";
 
 // Call the getApplicationsByUser function
 export async function getApplicationsByUser(id) {
