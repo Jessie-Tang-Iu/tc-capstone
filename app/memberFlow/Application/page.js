@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 
 export default function Applications() {
   const { user, getCurrentSession } = useUserContext();
-  const userId = user.id;
+  const userId = 7; // Change to user.id when finishing user database
 
   const [selectedApp, setSelectedApp] = useState();
   const [selectedAppId, setSelectedAppId] = useState();
