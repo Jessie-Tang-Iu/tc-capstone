@@ -1,4 +1,4 @@
-import { query } from "../database/db.js";
+import { query } from "../../database/db.js";
 
 // Get function
 
