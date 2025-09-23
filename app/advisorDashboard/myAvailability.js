@@ -219,6 +219,19 @@ export default function MyAvailability({advisorId}) {
     const handleChangeTimeSlot = async () => {
         if (!startTimeErrorMessage && !endTimeErrorMessage) {
 
+            // Prevent Change By Mistake
+            if (selectedEvent.title === "booked") {
+                const confirmDelete = window.confirm(
+                    "This timeslot is booked. Are you sure you want to change it?"+
+                    "\nPlease confirm with your client before proceeding!"+
+                    "\nOK: To Keep Proceeding     Cancel: To Return"
+                );
+                // Cancel deletion
+                if (!confirmDelete) {
+                    return; 
+                }
+            }
+
             try {
 
                 const newDate = startTime.split("T")[0];
@@ -246,11 +259,29 @@ export default function MyAvailability({advisorId}) {
                     return;
                 }
 
-                setEvents((prevEvents) => 
-                    prevEvents.map((event) => 
-                        event.id === Number(selectedEvent.id)
-                            ? {...event, start: startTime, end: endTime}
-                            : event));
+                try {
+                    const res = await fetch(
+                        `/api/advisory_bookings/advisor?advisorId=${encodeURIComponent(advisorId)}`
+                    );
+                    if (!res.ok) {console.error("Failed to fetch events"); return;}
+              
+                    const data = await res.json();
+    
+                    const mappedEvents = data.map(event => ({
+                        id: event.booking_id,
+                        title: event.status,
+                        date: event.date,
+                        start_time: event.starttime,
+                        end_time: event.endtime,
+                        description: event.description,
+                        type: event.status,
+                    }));
+    
+                    setEvents(mappedEvents);
+                    console.log(mappedEvents);
+                } catch (error) {
+                    console.error("Fetch error: ", error);
+                }
 
                 setIsOpen(false);
                 setSelectedEvent(null);
