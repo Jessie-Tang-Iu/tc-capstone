@@ -1,12 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/MemberNavBar";
 import CourseCard from "../components/courseCard/courseCard.js";
 import courses from "../data/courses.json";
+import { useUser } from "@clerk/nextjs";
 
 export default function PageContent() {
+    const { isLoaded, isSignedIn, user } = useUser();
+    const router = useRouter();
+
+
     const [searchQuery, setSearchQuery] = useState("");
     const [filters, setFilters] = useState({
         beginner: false,
@@ -20,6 +25,12 @@ export default function PageContent() {
     });
 
     const [filteredCourses, setFilteredCourses] = useState(courses);
+
+    useEffect(() => {
+        if (isLoaded && !isSignedIn) {
+                router.push("/signIn");
+        }
+    }, [isLoaded, isSignedIn]);
 
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value.toLowerCase());

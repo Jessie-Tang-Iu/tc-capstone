@@ -14,6 +14,7 @@ export default function ClerkSignUp() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
+  const [role, setRole] = useState("member");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -25,14 +26,16 @@ export default function ClerkSignUp() {
       setLoading(true);
       setError("");
 
-      // 1) Create user
+      // Create user
       const result = await signUp.create({
         emailAddress: email,
         password,
         username,
+        firstName,
+        lastName
       });
 
-      // 2) Handle verification
+      // Handle verification
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
         router.push("/"); // or dashboard
@@ -118,7 +121,7 @@ export default function ClerkSignUp() {
               />
             </div>
 
-            {/* 👇 Clerk CAPTCHA placeholder */}
+            {/* Clerk CAPTCHA */}
             <div id="clerk-captcha" className="my-4"></div>
 
             {/* Submit */}

@@ -12,11 +12,10 @@ function PageContent() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoaded) return; // wait for Clerk to load
+    if (!isLoaded) return;
 
     if (isSignedIn) {
-      // Clerk doesn't have "role" built-in → you'll store it in user.publicMetadata
-      const role = user.publicMetadata?.role;
+      const role = "member";
 
       switch (role) {
         case "admin":
@@ -32,7 +31,6 @@ function PageContent() {
           router.push("/advisorDashboard");
           break;
         default:
-          // if no role, maybe send to a generic dashboard
           router.push("/memberFlow");
           break;
       }
@@ -57,8 +55,6 @@ function PageContent() {
           >
             Go to Testing Page
           </Link>
-
-          
         </div>
       </main>
     </>
