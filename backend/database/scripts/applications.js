@@ -23,13 +23,17 @@ export async function getApplicationById(id) {
 
 export async function getResumeByUser(id) {
   const { rows } = await query(`
-    SELECT * FROM resume WHERE user_id = $1`, [id]);
+    SELECT u.id AS user_id, firstname AS first_name, lastname AS last_name, email, summary, education, certifications, experience, skills, additional_info  
+      FROM resume r JOIN public."user" u ON u.id = r.user_id
+     WHERE user_id = $1`, [id]);
   return rows[0];
 }
 
 export async function getCoverLetterByUser(id) {
   const { rows } = await query(`
-    SELECT * FROM cover_letter WHERE user_id = $1`, [id]);
+    SELECT u.id AS user_id, firstname AS first_name, lastname AS last_name, email, content
+      FROM cover_letter cv JOIN public."user" u ON u.id = cv.user_id
+     WHERE user_id = $1`, [id]);
   return rows[0];
 }
 

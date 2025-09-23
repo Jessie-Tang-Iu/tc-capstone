@@ -44,7 +44,6 @@ export default function AppDetail(application, onDownload) {
   } else {
     // const app = application.application;
     app = application.application;
-    console.log("Application prop:", app)
   };
 
   // if (!application.resume) {

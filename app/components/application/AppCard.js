@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const statusColors = {
     "S": "bg-gray-100 text-gray-800 border-gray-300",
@@ -19,11 +19,32 @@ const statusOptions = {
     "D": "Withdrawn",
 };
 
-export default function ApplyCard({ app, isSelected = false, onClick }) {
+export default function ApplyCard({ app, status, setStatus, isSelected = false, onClick, onUpdateStatus }) {
 
     const [editingId, setEditingId] = useState(null);
-    const [status, setStatus] = useState(app.status);
-    // const statusOptions = Object.keys(statusColors);
+
+    const handleChangeStatus = async (newStatus) => {
+        let statusArray = Object.keys(status);
+        if (statusArray.indexOf(newStatus) < statusArray.indexOf(app.status))
+            throw new Error ("Invalid updated status");
+        setEditingId(null);
+        try {
+            const res = await fetch(`/api/application/${app.id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newStatus),
+            });
+            if (!res.ok) throw new Error("Failed to update status");
+            set
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    const handleUpdate = (id) => {
+        onClick();
+        setEditingId(id);   
+    }
 
     return (
         <div
@@ -49,9 +70,9 @@ export default function ApplyCard({ app, isSelected = false, onClick }) {
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 md:gap-3">
                         {!editingId && (
                             <button
-                                onClick={() => setEditingId(app.id)}
+                                onClick={() => { handleUpdate(app.id) }}
                                 className="mt-3 px-3 py-2 bg-[#E55B3C] text-white rounded-lg text-xs md:text-sm hover:bg-[#E55B3C]/90"
-                                >
+                            >
                                 Update status
                             </button>
                         )}
@@ -60,16 +81,16 @@ export default function ApplyCard({ app, isSelected = false, onClick }) {
                             <div className="flex items-center gap-2 mt-3">
                                 <select
                                     value={status}
-                                    onChange={(e) => setStatus(e.target.value)}
+                                    onChange={(e) => {setStatus(e.target.value); }}
                                     className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
                                 >
-                                    {statusOptions.map((key, value) => (
-                                    <option key={key} value={key}>{value}</option>
+                                    {Object.entries(statusOptions).map(([key, value]) => (
+                                        <option key={key} value={key}>{value}</option>
                                     ))}
                                 </select>
                                 
                                 <button
-                                    onClick={() => { app.status = status; setEditingId(null); }}
+                                    onClick={() => { setEditingId(null); onUpdateStatus(status); }}
                                     className="px-3 py-2 bg-[#E55B3C] text-white rounded-lg text-sm hover:bg-[#E55B3C]/90"
                                 >
                                     Save

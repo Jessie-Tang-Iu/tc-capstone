@@ -23,7 +23,8 @@ export default function Applications() {
       .then((res) => res.json())
       .then((data) => {
         setApplications(data)
-        console.log("Fetched applications:", data);})
+        // console.log("Fetched applications:", data);
+      })
       .catch((error) => {
         console.error("Error fetching applications:", error);
       });
@@ -37,7 +38,7 @@ export default function Applications() {
             .then((res) => res.json())
             .then((data) => {
                 setSelectedApp(data)
-                console.log("Fetched application detail:", selectedApp);
+                // console.log("Fetched application detail:", selectedApp);
             })
             .catch((error) => {
                 console.error("Error fetching application detail:", error);
@@ -51,11 +52,28 @@ export default function Applications() {
     setStatus(selectedApp ? selectedApp.status : "");
   };
 
-  const handleUpdateStatus = (status) => {
-    setStatus(status);
-    setApplications((prev) =>
-      prev.map((a) => (a.id === selectedAppId ? { ...a, status: status } : a))
-    );
+  const handleUpdateStatus = async (newStatus) => {
+    let statusArray = ["S", "U", "I", "R", "O", "D"];
+    console.log("newStatus: ", statusArray.indexOf(status), " status: ", statusArray.indexOf(selectedApp.status));
+    if ((statusArray.indexOf(newStatus) < statusArray.indexOf(selectedApp.status)) || (statusArray.indexOf(selectedApp.status) > 2)) {
+      setStatus(selectedApp.status);
+      console.error("Invalid updated status");
+    } else {
+      try {
+        const res = await fetch(`/api/application/${selectedAppId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newStatus),
+        });
+        if (!res.ok) throw new Error("Failed to update status");
+        setApplications((prev) =>
+          prev.map((a) => (a.id === selectedAppId ? { ...a, status: status } : a))
+        );
+        setSelectedApp({ ...selectedApp, status: status });
+      } catch (e) {
+        console.error(e);
+      }
+    }
   };
 
   const handleBackToList = () => {
@@ -103,6 +121,8 @@ export default function Applications() {
                 <ApplyCard
                   key={app.id}
                   app={app}
+                  status={status}
+                  setStatus={setStatus}
                   isSelected={selectedAppId === app.id}
                   onClick={() => handleAppSelect(app.id)}
                   onUpdateStatus={() => handleUpdateStatus(status)}

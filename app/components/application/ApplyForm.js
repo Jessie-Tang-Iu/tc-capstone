@@ -1,17 +1,32 @@
 import { FileInput, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function ApplyForm({ job, formData, setFormData, currentStep, setCurrentStep, onSubmit, onClose }) {
 
   const fileInputRef = useRef(null);
 
+  const [resume, setResume] = useState();
+  const [coverLetter, setCoverLetter] = useState();
+
   useEffect(() => {
-    fetch(`'/api/resume/user/${formData.user_id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Resume: ", data)
-      })
-      .catch((error) => console.error('Error fetching resume:', error));
+      // Fetch resume in database
+      fetch(`/api/resume/user/${formData.user_id}`)
+        .then((res) => res.json())
+        .then((data) => {
+            setResume(data);
+            console.log(" Resume: ", data);
+        })
+        .catch((error) => console.error('Error fetching resume:', error));
+      
+      // Fetch cover letter in database
+      fetch(`/api/cover_letter/user/${formData.user_id}`)
+        .then((res) => res.json())
+        .then((data) => {
+            setCoverLetter(data);
+            console.log(" CV: ", data);
+        })
+        .catch((error) => console.error('Error fetching cover letter: ', error));
+    
     }, []);
 
   const handleNext = () => {
@@ -37,8 +52,9 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
   }
 
   const handleSubmit = () => {
-    onFormChange("applicationId", Math.floor(10000 + Math.random() * 90000));
-    setCurrentStep(5);
+    if (!formData.resume && !resume.error) setFormData({ ...formData, resume: resume });
+    if (!formData.cover_letter && !coverLetter.error) setFormData({ ...formData, cover_letter: coverLetter})
+    onSubmit();
   };
 
   const ProgressBar = () => (
@@ -84,7 +100,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
         </button>
       )}
       <button
-        onClick={currentStep === 4 ? onSubmit : handleNext}
+        onClick={currentStep === 4 ? handleSubmit : handleNext}
         className="px-6 py-3 bg-[#E55B3C] text-white rounded-lg text-base font-normal hover:bg-[#d14f32] transition-colors"
       >
         {currentStep === 4 ? "Submit >" : "Next Step >"}
@@ -92,49 +108,43 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
     </div>
   );
 
-  const ResumeCard = ({ type = "resume", title = "Previous Resume" }) => (
+  const ResumeCard = ({ type = "resume", file }) => (
     <div className="w-full h-100 max-w-sm border border-black rounded-2xl p-4 bg-white">
-      <div className="text-[#E55B3C] text-base font-bold mb-3">{title}</div>
+      <div className="text-[#E55B3C] text-base font-bold mb-3">Previous {type == "resume" ? "Resume" : "Cover Letter"}</div>
       <hr className="border-gray-200 mb-3" />
-      <div className="text-center">
-        <div className="text-base font-bold text-black mb-2">
-          {formData.firstName} {formData.lastName}
+      {file && !file.error ? (
+        <div>
+          <div className="text-center">
+            <div className="text-base font-bold text-black">
+              {file.first_name} {file.last_name}
+            </div>
+            <p className="text-sm text-black mb-2">{file.email}</p>
+          </div>
+          <div className="text-sm text-gray-500 leading-relaxed h-55">
+              {type === "resume" ? (
+                <>
+                  <b>Summary: </b>{file.summary}
+                  <br />
+                  <b>Education: </b>{file.education}
+                  <br />
+                  <b>Certification: </b>{file.certifications}
+                  <br />
+                  <b>Skills: </b>{file.skills}
+                  <br />
+                  <b>Experience: </b>{file.experience}
+                  <br />
+                  <b>Additional information: </b>{file.additional_info}
+                </>
+            ) : (
+              <>
+                {file.content}
+              </>
+            )}
+          </div>
         </div>
-        <div className="text-sm text-gray-500 leading-relaxed h-60">
-          {type === "resume" ? (
-            <>
-              {formData.email}
-              <br />
-              {formData.phoneNumber}
-              <br />
-              Calgary, AB
-              <br />
-              Project Manager | AAA Company
-              <br />
-              Intern | BBB Limited Company
-              <br />
-              XXX | XXXXX
-            </>
-          ) : (
-            <>
-              Dear Hiring Manager,
-              <br />
-              <br />
-              I am excited to apply for the Web Development
-              <br />
-              Internship at ABC Company. As a student
-              <br />
-              currently pursuing a diploma in Software
-              <br />
-              Development, I have gained solid experience in
-              <br />
-              HTML / CSS / JavaScript / React through
-              <br />
-              coursework and hands-on projects. I am .......
-            </>
-          )}
-        </div>
-      </div>
+      ) : (
+        <div className="text-center text-base font-bold text-black h-65">Empty in database</div>
+      )}
       <button className="w-full bg-[#E55B3C] text-white py-2 rounded text-sm font-normal hover:bg-[#E55B3C]/90 transition-colors mt-4">
         {type === "resume" ? "Edit Resume" : "Edit Cover Letter"}
       </button>
@@ -170,30 +180,6 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
     </div>
   );
 
-  // Step 1: Upload Resume/Cover Letter
-  const Step1 = () => (
-    <div className="max-w-4xl mx-auto ">
-      <h1 className="text-2xl font-bold text-black mb-8">
-        Upload Resume/ Cover Letter
-      </h1>
-
-      <div className="grid md:grid-cols-2 gap-8">
-        {/* Resume Section */}
-        <div className="space-y-6">
-          <ResumeCard type="resume" title="Previous Resume" />
-          <UploadArea type="resume" />
-        </div>
-
-        {/* Cover Letter Section */}
-        <div className="space-y-6">
-          <ResumeCard type="coverLetter" title="Previous Cover Letter" />
-          <UploadArea type="coverLetter" />
-        </div>
-      </div>
-    </div>
-  );
-
-
   // Step 5: Submitted
   const Step5 = () => (
     <div className="max-w-2xl mx-auto">
@@ -217,6 +203,8 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
           {currentStep <= 4 && <ProgressBar />}
 
           <div className="container mx-auto">
+
+            {/* Step 1: Resume and Cover Letter */}
             {currentStep === 1 && 
             <div className="max-w-4xl mx-auto ">
               <h1 className="text-2xl font-bold text-black mb-8">
@@ -226,13 +214,13 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
               <div className="grid md:grid-cols-2 gap-8">
                 {/* Resume Section */}
                 <div className="space-y-6">
-                  <ResumeCard type="resume" title="Previous Resume" />
+                  {resume && <ResumeCard type="resume" file={resume} />}
                   <UploadArea type="resume" />
                 </div>
 
                 {/* Cover Letter Section */}
                 <div className="space-y-6">
-                  <ResumeCard type="coverLetter" title="Previous Cover Letter" />
+                  <ResumeCard type="coverLetter" file={coverLetter} />
                   <UploadArea type="coverLetter" />
                 </div>
               </div>
@@ -340,7 +328,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                     <button className="text-[#E55B3C] text-base font-bold hover:underline">Edit</button>
                   </div>
                   <div className="flex justify-center">
-                      <ResumeCard type="resume" title="Saved Resume" />
+                      <ResumeCard type="resume" file={ formData.resume || resume } />
                   </div>
                 </div>
 
@@ -351,7 +339,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                     <button className="text-[#E55B3C] text-base font-bold hover:underline">Edit</button>
                   </div>
                   <div className="flex justify-center">
-                    <ResumeCard type="coverLetter" title="Saved Cover Letter" />
+                    <ResumeCard type="coverLetter" file={ formData.cover_letter || coverLetter} />
                   </div>
                 </div>
 

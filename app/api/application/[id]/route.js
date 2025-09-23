@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getApplicationById } from "@/backend/controllers/applicationsController";
+import { getApplicationById, updateApplicationStatus } from "@/backend/controllers/applicationsController";
 
 export async function GET(_req, { params }) {
   const { id } = await params;
@@ -8,5 +8,22 @@ export async function GET(_req, { params }) {
     return NextResponse.json(apps);
   } catch (e) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+}
+
+// PATCH /api/application/:id -> update the application's status
+export async function PATCH(req, { params }) {
+  const { id } = await params;
+  try {
+    const body = await req.json();
+    const updated = await updateApplicationStatus(Number(id),body);
+    if (!updated) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    return NextResponse.json(updated, { status: 200 });
+  } catch (e) {
+    console.error("PATCH /api/application/[id] failed: ", e);
+    const status = e.message.includes("required") ? 400 : 500;
+    return NextResponse.json({ error: e.message }, { status });
   }
 }

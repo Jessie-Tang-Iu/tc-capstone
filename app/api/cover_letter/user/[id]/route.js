@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
-import { getResumeByUser } from "@/backend/controllers/applicationsController";
+import { getCoverLetterByUser } from "@/backend/controllers/applicationsController";
 
 // GET /api/resume/user/:id
 export async function GET(req, { params }) {
   const { id } = await params;
   try {
-    const rs = await getResumeByUser(Number(id));
-    return NextResponse.json(rs);
+    const cv = await getCoverLetterByUser(Number(id));
+    return NextResponse.json(cv);
   } catch (e) {
-    console.error("GET /api/resume/user/[id] failed: ", e);
+    console.error("GET /api/cover_letter/user/[id] failed: ", e);
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 }
