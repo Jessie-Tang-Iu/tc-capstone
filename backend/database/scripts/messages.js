@@ -1,5 +1,5 @@
 // backend/scripts/messages.js
-import { query } from "../database/db.js";
+import { query } from "../../database/db.js";
 
 // Latest message per conversation for this user (one row per thread).
 export async function getInbox(userId, { limit = 100, offset = 0 } = {}) {

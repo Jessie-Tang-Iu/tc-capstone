@@ -3,7 +3,7 @@
  * It keeps DB logic out of the frontend, allows validation, and makes it easy to add Auth later.
  */
 
-import * as events from "../scripts/events.js"; // Import DB functions
+import * as events from "../database/scripts/events"; // Import DB functions
 
 /** Get all events */
 export async function getEventsController() {
