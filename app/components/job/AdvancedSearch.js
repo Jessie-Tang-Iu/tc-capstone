@@ -7,6 +7,30 @@ import jobFilters from "../../data/filterForJob.json";
 export default function AdvancedSearch({ filters, setFilters, onClose }) {
     const formRef = useRef(null);
 
+    const [experience, setExperience] = useState([]);
+    const [types, setTypes] = useState([]);
+    const [industries, setIndustries] = useState([]);
+    const [workplaces, setWorkplaces] = useState([]);
+
+    useEffect(() => {
+        fetch('api/job/experience')
+            .then((res) => res.json())
+            .then((data) => setExperience(data))
+            .catch((err) => console.log("Failed to fetch job experience: ", err));
+        fetch('api/job/industries')
+            .then((res) => res.json())
+            .then((data) => setIndustries(data))
+            .catch((err) => console.log("Failed to fetch job industries: ", err));
+        fetch('api/job/types')
+            .then((res) => res.json())
+            .then((data) => setTypes(data))
+            .catch((err) => console.log("Failed to fetch job types: ", err));
+        fetch('api/job/workplaces')
+            .then((res) => res.json())
+            .then((data) => setWorkplaces(data))
+            .catch((err) => console.log("Failed to fetch job workplaces: ", err));
+    }, [])
+
     const clearAll = () => {
         const form = formRef.current;
         if (!form) return;
@@ -157,16 +181,16 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                         <section>
                             <h3 className="text-xl font-bold text-black mb-4">Experience level</h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                                {jobFilters.experience.map((experience) => (
-                                    <label key={experience.id} className="flex items-center space-x-3">
+                                {experience.map((exp) => (
+                                    <label key={exp.id} className="flex items-center space-x-3">
                                         <input
                                             type="checkbox"
                                             name="experience"
-                                            value={experience.name}
-                                            defaultChecked={filters.experience.includes(experience.name)}
+                                            value={exp.name}
+                                            defaultChecked={filters.experience.includes(exp.name)}
                                             className="w-4 h-4 text-black border-black rounded focus:ring-black"
                                         />
-                                        <span className="text-sm font-normal text-black">{`${experience.name}`}</span>
+                                        <span className="text-sm font-normal text-black">{`${exp.name}`}</span>
                                     </label>
                                 ))}
                             </div>
@@ -179,7 +203,7 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                         <section>
                             <h3 className="text-xl font-bold text-black mb-4">Job type</h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                                {jobFilters.type.map((type) => (
+                                {types.map((type) => (
                                     <label key={type.id} className="flex items-center space-x-3">
                                         <input
                                             type="checkbox"
@@ -201,7 +225,7 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                         <section>
                             <h3 className="text-xl font-bold text-black mb-4">Workplace</h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                                {jobFilters.workplace.map((workplace) => (
+                                {workplaces.map((workplace) => (
                                     <label key={workplace.id} className="flex items-center space-x-3">
                                         <input
                                             type="checkbox"
@@ -245,7 +269,7 @@ export default function AdvancedSearch({ filters, setFilters, onClose }) {
                         <section>
                             <h3 className="text-xl font-bold text-black mb-4">Industry</h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                                {jobFilters.industries.map((industry) => (
+                                {industries.map((industry) => (
                                     <label key={industry.id} className="flex items-center space-x-3">
                                     <input
                                         type="checkbox"

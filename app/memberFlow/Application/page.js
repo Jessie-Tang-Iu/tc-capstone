@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 
 export default function Applications() {
   const { user, getCurrentSession } = useUserContext();
-  const userId = 22222;
+  const userId = user.id;
 
   const [selectedApp, setSelectedApp] = useState();
   const [selectedAppId, setSelectedAppId] = useState();

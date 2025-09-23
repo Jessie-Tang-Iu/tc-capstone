@@ -1,9 +1,7 @@
-// backend/database/job_crud.js
-import { Pool } from "pg";
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+import { query } from "../database/db.js";
 
 export async function getAllJobPosts() {
-  const { rows } = await pool.query(`
+  const { rows } = await query(`
     SELECT  jb.id AS id, 
             title, company, 
             company_info, 
@@ -20,7 +18,8 @@ export async function getAllJobPosts() {
             responsibilities, 
             requirements, 
             details, 
-            benefits
+            benefits,
+            questions
      FROM job jb  JOIN job_experience je ON jb.experience_id = je.id
                   JOIN job_industry ji ON jb.industry_id = ji.id
                   JOIN job_type jt ON jb.type_id = jt.id
@@ -30,7 +29,7 @@ export async function getAllJobPosts() {
 }
 
 export async function getJobPostByEmployerId(id) {
-  const { rows } = await pool.query(`
+  const { rows } = await query(`
     SELECT jb.id AS id, title, company, company_info, location, status, salary_per_hour, posted_at, ji.name AS industry, je.name AS experience, jt.name AS type, jw.name AS workplace, link, description, responsibilities, requirements, details, benefits
      FROM job jb  JOIN job_experience je ON jb.experience_id = je.id
                   JOIN job_industry ji ON jb.industry_id = ji.id
@@ -42,29 +41,29 @@ export async function getJobPostByEmployerId(id) {
 }
 
 export async function getAllJobExperience() {
-    const { rows } = await pool.query(`SELECT * FROM job_experience ORDER BY id ASC`);
+    const { rows } = await query(`SELECT * FROM job_experience ORDER BY id ASC`);
     return rows;
 }
 
 export async function getAllJobIndustries() {
-    const { rows } = await pool.query(`SELECT * FROM job_industry ORDER BY id ASC`);
+    const { rows } = await query(`SELECT * FROM job_industry ORDER BY id ASC`);
     return rows;
 }
 
 export async function getAllJobTypes() {
-    const { rows } = await pool.query(`SELECT * FROM job_type ORDER BY id ASC`);
+    const { rows } = await query(`SELECT * FROM job_type ORDER BY id ASC`);
     return rows;
 }
 
 export async function getAllJobWorkplaces() {
-    const { rows } = await pool.query(`SELECT * FROM job_workplace ORDER BY id ASC`);
+    const { rows } = await query(`SELECT * FROM job_workplace ORDER BY id ASC`);
     return rows;
 }
 
 export async function createJobPost(post) {
   const query = `
     INSERT INTO job 
-        (title, company, location, posted_at, industry_id, workplace_id, type_id, experience_id, salary_per_hour, link, description, responsibilities, requirements, details, benefits) 
+      (title, company, location, posted_at, industry_id, workplace_id, type_id, experience_id, salary_per_hour, link, description, responsibilities, requirements, details, benefits) 
     VALUES
       ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
     RETURNING *;
@@ -88,6 +87,6 @@ export async function createJobPost(post) {
     post.benefits,
   ];
 
-  const { rows } = await pool.query(query, values);
+  const { rows } = await query(query, values);
   return rows[0];
 }

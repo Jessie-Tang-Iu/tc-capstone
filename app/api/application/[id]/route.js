@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getApplicationById } from "@/backend/database/application_crud.js";
+import { getApplicationById } from "@/backend/scripts/applications.js";
 
 export async function GET(_req, { params }) {
   const { id } = await params;
