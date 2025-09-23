@@ -17,6 +17,8 @@ import RequestsPanel from "@/app/adminDashboard/Request";
 import ReportsPanel from "@/app/adminDashboard/Report";
 import UserDetailsCard from "../components/adminDashboard/UserDetailsCard";
 import EventPanel from "@/app/adminDashboard/Event";
+import RequestDetailsCard from "@/app/components/adminDashboard/RequestDetailsCard";
+import ReportDetailsCard from "@/app/components/adminDashboard/ReportDetailsCard";
 
 const ME = "11111111-1111-1111-1111-111111111111";
 
@@ -54,19 +56,27 @@ export default function AdminDashboard() {
       />
     );
 
+  const renderRequests = () =>
+    details?.type === "request" ? (
+      <RequestDetailsCard
+        request={details.data}
+        onClose={() => setDetails(null)}
+      />
+    ) : (
+      <RequestsPanel
+        onShowDetails={(request) =>
+          setDetails({ type: "request", data: request })
+        }
+      />
+    );
+
   const renderReports = () =>
     details?.type === "report" ? (
-      <UserDetailsCard
-        user={{
-          name: details.data.reporter,
-          id: details.data.id,
-          subtitle: details.data.issue,
-          email: "—",
-          location: details.data.category,
-          banned: false,
-        }}
-        roleLabel={`Report #${details.data.reportId}`}
+      <ReportDetailsCard
+        report={details.data}
         onClose={() => setDetails(null)}
+        onBan={(r) => console.log("Ban user:", r.reporter)}
+        onRemove={(r) => console.log("Remove report:", r.reportId)}
       />
     ) : (
       <ReportsPanel onShowDetails={(payload) => setDetails(payload)} />
@@ -95,7 +105,7 @@ export default function AdminDashboard() {
           <div className="w-full">
             {tab === "message" && <MessagePage currentUserId={ME} />}
             {tab === "users" && renderUsers()}
-            {tab === "requests" && <RequestsPanel />}
+            {tab === "requests" && renderRequests()}
             {tab === "reports" && renderReports()}
             {tab === "events" && <EventPanel />}
           </div>
