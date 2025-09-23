@@ -213,21 +213,19 @@ CREATE INDEX idx_advisory_client_date  ON advisory_bookings (client_id, date);
 -- (authorId kept INT as provided; wired to user for integrity)
 -- =========================================
 CREATE TABLE posts (
-  id         SERIAL PRIMARY KEY,
-  authorId   INT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
-  author     VARCHAR(100) NOT NULL,
-  title      TEXT NOT NULL,
-  content    TEXT NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT now()
+    id SERIAL PRIMARY KEY,
+    author VARCHAR(100) NOT NULL,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
 );
-
+ 
 CREATE TABLE comments (
-  id         SERIAL PRIMARY KEY,
-  authorId   INT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
-  post_id    INT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
-  author     VARCHAR(100) NOT NULL,
-  content    TEXT NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT now()
+    id SERIAL PRIMARY KEY,
+    post_id INT REFERENCES posts(id) ON DELETE CASCADE,
+    author VARCHAR(100) NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE INDEX idx_posts_author     ON posts (authorId, created_at DESC);

@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS posts CASCADE;
 DROP TABLE IF EXISTS comments CASCADE;
-
+ 
 CREATE TABLE posts (
     id SERIAL PRIMARY KEY,
     author VARCHAR(100) NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE posts (
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
-
+ 
 CREATE TABLE comments (
     id SERIAL PRIMARY KEY,
     post_id INT REFERENCES posts(id) ON DELETE CASCADE,
@@ -16,14 +16,14 @@ CREATE TABLE comments (
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
-
+ 
 -- Insert fake posts
 INSERT INTO posts (author, title, content) VALUES
 ('Alice', 'How to learn React?', 'I am new to React and want to know the best resources to get started.'),
 ('Bob', 'Best PostgreSQL tips?', 'Share your favorite tips and tricks for optimizing queries in Postgres.'),
 ('Charlie', 'Next.js vs Express?', 'When would you choose Next.js over a traditional Express backend?'),
 ('Dana', 'Tailwind CSS worth it?', 'I see Tailwind CSS everywhere—what are the pros and cons compared to plain CSS or Bootstrap?');
-
+ 
 -- Insert fake comments (referencing posts by ID)
 INSERT INTO comments (post_id, author, content) VALUES
 (1, 'Eve', 'I recommend the official React docs—they are super well written!'),
