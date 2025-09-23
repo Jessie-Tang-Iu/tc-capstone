@@ -34,8 +34,8 @@ const QAItem = ({ q, a }) => (
 );
 
 export default function AppDetail(application, onDownload) {
-  const [app, setApp] = useState(application.application || null);
-  if (!app) {
+  let app = null;
+  if (!application.application) {
     return (
       <div className="flex items-center justify-center h-full bg-white">
         <p className="text-gray-600 text-lg">Select a application to view details</p>
@@ -43,6 +43,7 @@ export default function AppDetail(application, onDownload) {
     );
   } else {
     // const app = application.application;
+    app = application.application;
     console.log("Application prop:", app)
   };
 
@@ -50,16 +51,8 @@ export default function AppDetail(application, onDownload) {
   //   fetch(`/api/resume/user/${application.userid}`)
   // }
 
-  if (!application) {
-    return (
-      <div className="flex items-center justify-center h-full bg-white">
-        <p className="text-gray-600 text-lg">Select an application to view details</p>
-      </div>
-    );
-  }
-
-  const appliedDate = application.appliedAt
-    ? new Date(application.applied_at).toLocaleDateString()
+  const appliedDate = app.appliedAt
+    ? new Date(app.applied_at).toLocaleDateString()
     : null;
 
   // const qs = [];
@@ -79,18 +72,18 @@ export default function AppDetail(application, onDownload) {
       {/* Header */}
       <div className="border-b border-gray-300 p-4 md:p-6">
         <div className="flex items-center gap-2 mb-2">
-            <h1 className="flex-3 text-lg md:text-xl font-bold text-black leading-tight">{application.title}</h1>
-            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs md:text-sm border ${statusColors[application.status] || "bg-gray-100 text-gray-800 border-gray-300"}`}>
-                {statusOptions[application.status]}
+            <h1 className="flex-3 text-lg md:text-xl font-bold text-black leading-tight">{app.title}</h1>
+            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs md:text-sm border ${statusColors[app.status] || "bg-gray-100 text-gray-800 border-gray-300"}`}>
+                {statusOptions[app.status]}
             </span>
         </div>
         {/* <h1 className="text-lg md:text-xl font-bold text-black leading-tight">{application.jobTitle}</h1> */}
         <div className="flex items-center gap-2 mt-1">
-          <span className="text-sm text-gray-700">{application.company}</span>
+          <span className="text-sm text-gray-700">{app.company}</span>
           <ExternalLink className="w-4 h-4 text-gray-600" />
         </div>
         <div className="text-sm text-black mt-1">
-          {application.location}
+          {app.location}
           {appliedDate ? ` · Applied on ${appliedDate}` : ""}
 
         </div>
@@ -106,10 +99,10 @@ export default function AppDetail(application, onDownload) {
           <div className="border border-gray-200 rounded-lg bg-white">
             <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">Contact Information</div>
             <div className="p-4 grid md:grid-cols-2 gap-3">
-              <LabelValue label="First Name" value={application.userFN} />
-              <LabelValue label="Last Name" value={application.userLN} />
-              <LabelValue label="Email address" value={application.userE} />
-              <LabelValue label="Phone Number" value={application.userP || ""} />
+              <LabelValue label="First Name" value={app.userfn} />
+              <LabelValue label="Last Name" value={app.userln} />
+              <LabelValue label="Email address" value={app.usere} />
+              <LabelValue label="Phone Number" value={app.userp || ""} />
             </div>
           </div>
 
@@ -117,10 +110,10 @@ export default function AppDetail(application, onDownload) {
           <div className="border border-gray-200 rounded-lg bg-white">
             <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">Relative Information</div>
             <div className="p-4 grid md:grid-cols-2 gap-3">
-              <LabelValue label="First Name" value={application.relativeFN} />
-              <LabelValue label="Last Name" value={application.relativeLN} />
-              <LabelValue label="Email address" value={application.relativeE} />
-              <LabelValue label="Phone Number" value={application.relativeP} />
+              <LabelValue label="First Name" value={app.relativefn} />
+              <LabelValue label="Last Name" value={app.relativeln} />
+              <LabelValue label="Email address" value={app.relativee} />
+              <LabelValue label="Phone Number" value={app.relativep} />
             </div>
           </div>
         </section>
@@ -129,7 +122,7 @@ export default function AppDetail(application, onDownload) {
         <section className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-base md:text-lg font-bold text-black">Resume</h2>
-            {(application?.resume || onDownload) && (
+            {(app?.resume || onDownload) && (
               <button
                 onClick={onDownload}
                 className="text-sm text-[#E55B3C] hover:underline"
@@ -140,10 +133,10 @@ export default function AppDetail(application, onDownload) {
           </div>
 
           <div className="border border-gray-200 rounded-lg p-4 bg-white">
-            {application.resume?.name ? (
+            {app.resume?.name ? (
               <div className="flex items-center gap-2 text-sm text-black">
                 <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-orange-100 text-[#E55B3C] text-xs font-bold">PDF</span>
-                <span className="font-bold truncate">{application.resume.name}</span>
+                <span className="font-bold truncate">{app.resume.name}</span>
               </div>
             ) : (
               <div className="text-sm text-gray-600">No resume attached</div>
@@ -153,7 +146,7 @@ export default function AppDetail(application, onDownload) {
               <div className="text-sm text-[#E55B3C]">
                 {"We can't load a preview of your resume right now, but it will be submitted as part of your application. Download your resume to make sure everything is correct before you submit your application."}
               </div>
-              {(application.resume?.url || onDownload) && (
+              {(app.resume?.url || onDownload) && (
                 <button
                   onClick={onDownload}
                   className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded bg-[#E55B3C]/80 text-white text-xs font-bold hover:bg-[#E55B3C]/90 transition-colors"

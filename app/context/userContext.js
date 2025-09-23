@@ -33,8 +33,8 @@ export const UserProvider = ({ children }) => {
             } else {
                 const p = await getUserByEmail(session?.user?.email);
                 if (!p) {
-                setError("Signed in, but profile could not be created due to RLS.");
-                return;
+                    setError("Signed in, but profile could not be created due to RLS.");
+                    return;
                 }
         
                 // reflect on UI
@@ -50,13 +50,13 @@ export const UserProvider = ({ children }) => {
         getCurrentSession();
     }, []);
 
-    useEffect(() => {
-        setUser(user);
-        if (user) {
-            setEmail(user.email);
-            setRole(user.role);
-        }
-    }, [user]);
+    // useEffect(() => {
+    //     setUser(user);
+    //     if (user) {
+    //         setEmail(user.email);
+    //         setRole(user.role);
+    //     }
+    // }, [user]);
 
     return (
         <UserContext.Provider value={{ user, email, role, setUser, setEmail, setRole, getCurrentSession }}>
