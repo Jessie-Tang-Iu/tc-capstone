@@ -9,39 +9,67 @@ import { useEffect, useState } from "react";
 
 export default function Applications() {
   const { user, getCurrentSession } = useUserContext();
+
   const userId = 7; // Change to user.id when finishing user database
+  const [resume, setResume] = useState();
+  const [coverLetter, setCoverLetter] = useState();
 
   const [selectedApp, setSelectedApp] = useState();
   const [selectedAppId, setSelectedAppId] = useState();
-  const [status, setStatus] = useState("");
   const [showAppDetail, setShowAppDetail] = useState(false);
+  
   const [applications, setApplications] = useState([]);
+  const [status, setStatus] = useState("");
 
   useEffect(() => {
-    console.log(`/api/application/user/${userId}`)
+    // Fetch applications by user_id
     fetch(`/api/application/user/${userId}`)
       .then((res) => res.json())
       .then((data) => {
         setApplications(data)
-        console.log("Fetched applications:", data);})
+        // console.log("Fetched applications:", data);
+      })
       .catch((error) => {
         console.error("Error fetching applications:", error);
-      });
+      }
+    );
+
+    // Fetch resume by user_id
+    fetch(`/api/resume/user/${userId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setResume(data);
+        // console.log("Resume: ", data);
+      })
+      .catch((error) => console.error('Error fetching resume:', error)
+    );
+
+    // Fetch cover letter by user_id
+    fetch(`/api/cover_letter/user/${userId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setCoverLetter(data);
+        // console.log("CV: ", data);
+      })
+      .catch((error) => console.error('Error fetching cover letter: ', error)
+    );
   }, []);
 
+  // Fetch the information of selected application
   useEffect(() => {
     if (selectedAppId) {
-        console.log("Selected App ID changed:", selectedAppId);
-        console.log(`/api/application/${selectedAppId}`)
-        fetch(`/api/application/${selectedAppId}`)
-            .then((res) => res.json())
-            .then((data) => {
-                setSelectedApp(data)
-                console.log("Fetched application detail:", selectedApp);
-            })
-            .catch((error) => {
-                console.error("Error fetching application detail:", error);
-            });
+      console.log("Selected App ID changed:", selectedAppId);
+      console.log(`/api/application/${selectedAppId}`)
+      fetch(`/api/application/${selectedAppId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setSelectedApp(data)
+          // console.log("Fetched application detail:", selectedApp);
+        })
+        .catch((error) => {
+          console.error("Error fetching application detail:", error);
+        }
+      );
     }
   }, [selectedAppId]);
 
@@ -49,13 +77,32 @@ export default function Applications() {
     setSelectedAppId(appId);
     setShowAppDetail(true);
     setStatus(selectedApp ? selectedApp.status : "");
+    // console.log("resume: ", resume);
+    // console.log('cover letter: ', coverLetter);
   };
 
-  const handleUpdateStatus = (status) => {
-    setStatus(status);
-    setApplications((prev) =>
-      prev.map((a) => (a.id === selectedAppId ? { ...a, status: status } : a))
-    );
+  const handleUpdateStatus = async (newStatus) => {
+    let statusArray = ["S", "U", "I", "R", "O", "D"];
+    console.log("newStatus: ", statusArray.indexOf(status), " status: ", statusArray.indexOf(selectedApp.status));
+    if ((statusArray.indexOf(newStatus) < statusArray.indexOf(selectedApp.status)) || (statusArray.indexOf(selectedApp.status) > 2)) {
+      setStatus(selectedApp.status);
+      console.error("Invalid updated status");
+    } else {
+      try {
+        const res = await fetch(`/api/application/${selectedAppId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newStatus),
+        });
+        if (!res.ok) throw new Error("Failed to update status");
+        setApplications((prev) =>
+          prev.map((a) => (a.id === selectedAppId ? { ...a, status: status } : a))
+        );
+        setSelectedApp({ ...selectedApp, status: status });
+      } catch (e) {
+        console.error(e);
+      }
+    }
   };
 
   const handleBackToList = () => {
@@ -103,6 +150,8 @@ export default function Applications() {
                 <ApplyCard
                   key={app.id}
                   app={app}
+                  status={status}
+                  setStatus={setStatus}
                   isSelected={selectedAppId === app.id}
                   onClick={() => handleAppSelect(app.id)}
                   onUpdateStatus={() => handleUpdateStatus(status)}
@@ -125,32 +174,15 @@ export default function Applications() {
             ← Back to Jobs
           </button>
           <div className="mt-5 md:mt-0 h-full">
-            <AppDetail application={selectedApp} />
+            <AppDetail 
+              app={selectedApp} 
+              resume={resume}
+              coverLetter={coverLetter}
+              // onDownload={() => {}}
+            />
           </div>
         </div>
       </div>
-
-      {/* <div className="space-y-3 md:space-y-4">
-                    {sampleApplications.filter((app) => app.memberId === user.id).map((app) => (
-                        <div key={app.id} className="w-full border border-gray-200 rounded-xl p-4 md:p-5 bg-white">
-                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                                <div>
-                                    <h3 className="text-base md:text-lg font-bold text-black leading-tight">{app.jobTitle}</h3>
-                                    <div className="text-sm md:text-base text-gray-600">
-                                        {app.company} • {app.location}
-                                    </div>
-                                    <div className="text-xs md:text-sm text-gray-500 mt-1">Applied on {new Date(app.appliedAt).toLocaleDateString()}</div>
-                                </div>
-                                <div className="flex items-center gap-2 md:gap-3">
-                                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs md:text-sm border ${statusColors[app.status] || "bg-gray-100 text-gray-800 border-gray-300"}`}>
-                                        {app.status}
-                                    </span>
-                                    <span className="text-xs md:text-sm text-gray-400">{app.id}</span>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div> */}
     </div>
   );
 }

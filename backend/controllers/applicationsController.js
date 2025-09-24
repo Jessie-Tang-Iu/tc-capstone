@@ -43,8 +43,7 @@ export async function createCoverLetter(coverLetter) {
 }
 
 // Call the updateApplicationStatus function 
-export async function updateApplicationStatus(body) {
-    const { id, status } = body;
+export async function updateApplicationStatus(id, status) {
     if (!id || !status) throw new Error("Missing required information");
     return await apps.updateApplicationStatus(id, status);
 }

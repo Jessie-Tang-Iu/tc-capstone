@@ -28,6 +28,11 @@ export async function getAllJobPosts() {
   return rows;
 }
 
+export async function getJobPostById(id) {
+  const { rows } = await query(`SELECT * FROM job WHERE id = $1`, [id]);
+  return rows[0];
+}
+
 export async function getJobPostByEmployerId(id) {
   const { rows } = await query(`
     SELECT jb.id AS id, title, company, company_info, location, status, salary_per_hour, posted_at, ji.name AS industry, je.name AS experience, jt.name AS type, jw.name AS workplace, link, description, responsibilities, requirements, details, benefits
