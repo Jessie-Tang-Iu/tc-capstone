@@ -1,13 +1,10 @@
 import { NextResponse } from "next/server";
-import {
-  getAllJobPosts,
-  createJobPost,
-} from "@/backend/database/scripts/job_crud.js";
+import { getJobsController, createJobPost } from "@/backend/controllers/jobsController.js";
 
-// GET /api/jobs → return all jobs and auto-mark past "A" as "I"
+// GET /api/job → return all jobs and auto-mark past "A" as "I"
 export async function GET() {
     try {
-        let jobs = await getAllJobPosts();
+        let jobs = await getJobsController();
         const expired = jobs.filter(
             (e) => e.status === "A" && new Date(e.posted_at) > new Date()
         );
@@ -19,26 +16,17 @@ export async function GET() {
         }
         return NextResponse.json(jobs);
     } catch (err) {
-        console.error("GET /api/job failed:", err);
-        return NextResponse.json({ error: err.message }, { status: 500 });
+        return NextResponse({ error: err.message }, { status: 500 });
     }
 }
 
-// POST /api/jobs → create new job
+// POST /api/job → create new job
 export async function POST(req) {
     try {
         const body = await req.json();
-
-        // guard against empty strings for TIME/NUMERIC fields
-        // const payload = {
-        //     ...body,
-        //     status: body.salaryPerHour || null,
-        // };
-
         const newJob = await createJobPost(body);
         return NextResponse.json(newJob, { status: 201 });
     } catch (err) {
-        console.error("POST /api/job failed:", err);
-        return NextResponse.json({ error: err.message }, { status: 500 });
+        return NextResponse.json({ error: err.message}, { status: 400 }); 
     }
 }
