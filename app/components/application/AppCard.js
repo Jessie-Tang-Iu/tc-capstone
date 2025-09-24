@@ -23,29 +23,6 @@ export default function ApplyCard({ app, status, setStatus, isSelected = false, 
 
     const [editingId, setEditingId] = useState(null);
 
-    const handleChangeStatus = async (newStatus) => {
-        let statusArray = Object.keys(status);
-        if (statusArray.indexOf(newStatus) < statusArray.indexOf(app.status))
-            throw new Error ("Invalid updated status");
-        setEditingId(null);
-        try {
-            const res = await fetch(`/api/application/${app.id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newStatus),
-            });
-            if (!res.ok) throw new Error("Failed to update status");
-            set
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    const handleUpdate = (id) => {
-        onClick();
-        setEditingId(id);   
-    }
-
     return (
         <div
             // className="bg-white rounded-lg shadow px-6 py-4 space-y-2 text-black cursor-pointer hover:opacity-95 transition"
@@ -70,7 +47,7 @@ export default function ApplyCard({ app, status, setStatus, isSelected = false, 
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 md:gap-3">
                         {!editingId && (
                             <button
-                                onClick={() => { handleUpdate(app.id) }}
+                                onClick={() => setEditingId(app.id) }
                                 className="mt-3 px-3 py-2 bg-[#E55B3C] text-white rounded-lg text-xs md:text-sm hover:bg-[#E55B3C]/90"
                             >
                                 Update status
