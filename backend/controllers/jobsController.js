@@ -5,6 +5,11 @@ export async function getJobsController() {
     return await jobs.getAllJobPosts();
 }
 
+// Call ther getJobPostById function
+export async function getJobPostById(id) {
+    return await jobs.getJobPostById(id);
+}
+
 // Call the getJobPostsByEmployerId function
 export async function getJobsByEmployerId(id) {
     return await jobs.getJobPostByEmployerId(id);

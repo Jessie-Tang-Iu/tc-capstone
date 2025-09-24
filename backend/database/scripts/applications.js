@@ -12,8 +12,8 @@ export async function getApplicationsByUser(id) {
 
 export async function getApplicationById(id) {
   const { rows } = await query(`
-    SELECT  u.id AS userID, u.firstname AS userFN, u.lastname AS userLN, u.email AS userE, 
-		        ap.id, ap.resume, ap.cover_letter, ap.status, ap.applied_at, ap.relative_first_name AS relativeFN, ap.relative_last_name AS relativeLN, ap.relative_email AS relativeE, ap.relative_phone AS relativeP, ap.answers,
+    SELECT  u.id AS user_id, u.firstname AS user_first_name, u.lastname AS user_last_name, u.email AS user_email, 
+		        ap.id, ap.resume, ap.cover_letter, ap.status, ap.applied_at, ap.relative_first_name, ap.relative_last_name, ap.relative_email, ap.relative_phone, ap.answers,
 		        jb.title, jb.company, jb.location, jb.questions
       FROM application ap JOIN job jb ON ap.job_id = jb.id
                           JOIN public."user" u ON u.id = ap.user_id
@@ -23,13 +23,17 @@ export async function getApplicationById(id) {
 
 export async function getResumeByUser(id) {
   const { rows } = await query(`
-    SELECT * FROM resume WHERE user_id = $1`, [id]);
+    SELECT u.id AS user_id, firstname AS first_name, lastname AS last_name, email, summary, education, certifications, experience, skills, additional_info  
+      FROM resume r JOIN public."user" u ON u.id = r.user_id
+     WHERE user_id = $1`, [id]);
   return rows[0];
 }
 
 export async function getCoverLetterByUser(id) {
   const { rows } = await query(`
-    SELECT * FROM cover_letter WHERE user_id = $1`, [id]);
+    SELECT u.id AS user_id, firstname AS first_name, lastname AS last_name, email, content
+      FROM cover_letter cv JOIN public."user" u ON u.id = cv.user_id
+     WHERE user_id = $1`, [id]);
   return rows[0];
 }
 
