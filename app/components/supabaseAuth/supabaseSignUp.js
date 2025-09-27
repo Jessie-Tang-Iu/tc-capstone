@@ -26,21 +26,33 @@ export default function ClerkSignUp() {
       setLoading(true);
       setError("");
 
-      // Create user
       const result = await signUp.create({
         emailAddress: email,
         password,
         username,
         firstName,
-        lastName
+        lastName,
       });
 
-      // Handle verification
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/"); // or dashboard
+
+        await fetch("/api/users/metadata", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${result.createdSessionId}`,
+          },
+          body: JSON.stringify({
+            userId: result.user.id,
+            role: "member",
+          }),
+        });
+
+        
+        router.push("/memberFlow");
       } else {
-        setError("Check your email to verify your account.");
+        setError("Something went Wrong, Please try again.");
       }
     } catch (err) {
       setError(err.errors ? err.errors[0].message : err.message);
