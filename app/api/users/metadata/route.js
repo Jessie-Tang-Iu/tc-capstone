@@ -1,22 +1,14 @@
-import { auth } from "@clerk/nextjs/server";
-
 export async function POST(req) {
   try {
-    const { userId } = auth(); // Clerk verifies session automatically
-    if (!userId) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
-    }
-
     const body = await req.json();
 
-    // Forward to your backend controller
     const res = await fetch(`${process.env.BACKEND_URL}/users/metadata`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${req.headers.get("authorization")}`, // Clerk session token
+        "Authorization": req.headers.get("authorization"), // forward raw token
       },
-      body: JSON.stringify({ ...body, userId }),
+      body: JSON.stringify(body),
     });
 
     const data = await res.json();
@@ -26,3 +18,4 @@ export async function POST(req) {
     return new Response(JSON.stringify({ error: "Failed to update metadata" }), { status: 500 });
   }
 }
+

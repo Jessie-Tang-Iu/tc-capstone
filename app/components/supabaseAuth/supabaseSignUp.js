@@ -1,6 +1,7 @@
 "use client";
 
 import { useSignUp } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs"
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
@@ -8,6 +9,7 @@ import Link from "next/link";
 export default function ClerkSignUp() {
   const { isLoaded, signUp, setActive } = useSignUp();
   const router = useRouter();
+  const { getToken } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,6 +28,7 @@ export default function ClerkSignUp() {
       setLoading(true);
       setError("");
 
+      // Create user
       const result = await signUp.create({
         emailAddress: email,
         password,
@@ -35,31 +38,34 @@ export default function ClerkSignUp() {
       });
 
       if (result.status === "complete") {
-        await setActive({ session: result.createdSessionId });
+        // Activate the session first
+        if (result.createdSessionId) {
+          await setActive({ session: result.createdSessionId });
+        }
+
+        const token = await getToken({ template: "backend" }); 
 
         await fetch("/api/users/metadata", {
           method: "POST",
-          headers: {
+          headers: { 
             "Content-Type": "application/json",
-            Authorization: `Bearer ${result.createdSessionId}`,
-          },
-          body: JSON.stringify({
-            userId: result.user.id,
-            role: "member",
-          }),
+            "Authorization": `Bearer ${token}`,
+           },
+          body: JSON.stringify({ role: "member" }),
         });
 
-        
-        router.push("/memberFlow");
+        router.push("/"); // redirect after everything is done
       } else {
-        setError("Something went Wrong, Please try again.");
+        setError("Unexpected signup state: " + result.status);
       }
     } catch (err) {
+      console.error("Signup error:", err);
       setError(err.errors ? err.errors[0].message : err.message);
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="flex justify-center items-center">
