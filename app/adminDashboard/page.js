@@ -9,23 +9,52 @@ data need to change to postgres db
 */
 "use client";
 
-import { useState } from "react";
-import Navbar from "../components/NavBarBeforeSignIn";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import MessagePage from "../components/MessagePage";
 import UsersPanel from "@/app/adminDashboard/User";
 import RequestsPanel from "@/app/adminDashboard/Request";
 import ReportsPanel from "@/app/adminDashboard/Report";
 import UserDetailsCard from "../components/adminDashboard/UserDetailsCard";
 import EventPanel from "@/app/adminDashboard/Event";
-import RequestDetailsCard from "@/app/components/adminDashboard/RequestDetailsCard";
-import ReportDetailsCard from "@/app/components/adminDashboard/ReportDetailsCard";
+import Navbar from "../components/NavBarBeforeSignIn";
 
 const ME = "11111111-1111-1111-1111-111111111111";
 
 export default function AdminDashboard() {
-  const [tab, setTab] = useState("message");
-  // when null -> show UsersPanel; otherwise show UserDetailsCard
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [tab, setTab] = useState(() => searchParams.get("tab") || "message");
   const [details, setDetails] = useState(null); // { user, roleLabel } | null
+
+  useEffect(() => {
+    // push a new entry only when user initiated a tab change
+    const params = new URLSearchParams(window.location.search);
+    const current = params.get("tab");
+    if (tab !== current) {
+      params.set("tab", tab);
+      const href = window.location.pathname + "?" + params.toString();
+      // push (not replace) so back-swipe walks tabs, not prior page
+      router.push(href, { scroll: false });
+    }
+    // do NOT depend on router, to avoid re-running due to router object identity
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab]);
+
+  useEffect(() => {
+    // initialize from URL and react to back/forward
+    const syncFromUrl = () => {
+      const p = new URLSearchParams(window.location.search);
+      const t = p.get("tab") || "message";
+      // only set state; never push/replace here
+      setTab((prev) => (prev !== t ? t : prev));
+      setDetails(null);
+    };
+    syncFromUrl(); // run on mount
+    window.addEventListener("popstate", syncFromUrl);
+    return () => window.removeEventListener("popstate", syncFromUrl);
+  }, []);
 
   const TabBtn = ({ v, children }) => (
     <button
