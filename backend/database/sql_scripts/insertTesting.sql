@@ -1,19 +1,19 @@
 -- Insert fake posts
 INSERT INTO posts (author, title, content) VALUES
-('Alice', '1', 'How to learn React?', 'I am new to React and want to know the best resources to get started.'),
-('Bob', '2', 'Best PostgreSQL tips?', 'Share your favorite tips and tricks for optimizing queries in Postgres.'),
-('Charlie', '3', 'Next.js vs Express?', 'When would you choose Next.js over a traditional Express backend?'),
-('Dana', '4', 'Tailwind CSS worth it?', 'I see Tailwind CSS everywhere—what are the pros and cons compared to plain CSS or Bootstrap?');
-
+('Alice', 'How to learn React?', 'I am new to React and want to know the best resources to get started.'),
+('Bob', 'Best PostgreSQL tips?', 'Share your favorite tips and tricks for optimizing queries in Postgres.'),
+('Charlie', 'Next.js vs Express?', 'When would you choose Next.js over a traditional Express backend?'),
+('Dana', 'Tailwind CSS worth it?', 'I see Tailwind CSS everywhere—what are the pros and cons compared to plain CSS or Bootstrap?');
+ 
 -- Insert fake comments (referencing posts by ID)
 INSERT INTO comments (post_id, author, content) VALUES
-(1, 'Eve', '5', 'I recommend the official React docs—they are super well written!'),
-(1, 'Frank', '6', 'Try Scrimba or Frontend Mentor, very interactive.'),
-(2, 'Grace', '7', 'Use EXPLAIN ANALYZE to understand query performance.'),
-(2, 'Heidi', '8', 'Don’t forget to index frequently used columns.'),
-(3, 'Ivan', '9', 'Next.js is great if you need SSR, otherwise Express is simpler.'),
-(4, 'Judy', '10', 'Tailwind is amazing once you get used to utility classes.'),
-(4, 'Karl', '11', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
+(1, 'Eve', 'I recommend the official React docs—they are super well written!'),
+(1, 'Frank', 'Try Scrimba or Frontend Mentor, very interactive.'),
+(2, 'Grace', 'Use EXPLAIN ANALYZE to understand query performance.'),
+(2, 'Heidi', 'Don’t forget to index frequently used columns.'),
+(3, 'Ivan', 'Next.js is great if you need SSR, otherwise Express is simpler.'),
+(4, 'Judy', 'Tailwind is amazing once you get used to utility classes.'),
+(4, 'Karl', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
 
 -- test data
 INSERT INTO advisory_bookings (advisor_id, client_id, date, startTime, description, endTime, status) VALUES 
@@ -123,6 +123,7 @@ INSERT INTO message (sent_user_id, receive_user_id, content, status) VALUES
 ('33333333-3333-3333-3333-333333333333', '44444444-4444-4444-4444-444444444444', 'This chat is between 3333 and 4444 only.', 'S'),
 ('44444444-4444-4444-4444-444444444444', '33333333-3333-3333-3333-333333333333', 'Reply back to 3333 from 4444.', 'R');
 
+
 -- =========================================
 -- reports
 INSERT INTO reports (source_page, followup_id, reported_user_id, reason, is_removed, is_banned, public_code)
@@ -139,3 +140,56 @@ VALUES
 ('profile/edit', 'fup-1010', '550e8400-e29b-41d4-a716-446655440009', 'fake_account', FALSE, TRUE, '10000010'),
 ('post/longtext', NULL, '550e8400-e29b-41d4-a716-446655440010', 'harassment', TRUE, FALSE, '10000011'),
 ('profile/pic', 'fup-1012', '550e8400-e29b-41d4-a716-446655440011', 'spam', FALSE, FALSE, '10000012');
+
+
+--workshop
+INSERT INTO workshop (title, date, start_time, location, description, highlight)
+VALUES
+('Ace the Interview: Confidence Meets Strategy',
+ '2025-06-27',
+ '18:00:00',
+ 'Online Meeting',
+ 'Tech Connect Alberta is excited to be part of this engaging career development session.`',
+ 'Join Us for an Empowering Career Workshop: Ace the Interview - Confidence Meets Strategy!'),
+
+('Launch Your Startup: Funding & Pitching Essentials',
+ '2025-07-01',
+ '12:00:00',
+ 'Calgary Tech Hub',
+ 'This workshop will help you refine your pitch, understand funding stages, and build investor confidence.',
+ 'Get expert guidance on pitching, funding, and launching your own tech startup.'),
+
+('AI Tools for Career Advancement',
+ '2025-07-10',
+ '15:00:00',
+ 'Online Webinar',
+ 'Discover how to use tools like ChatGPT, LinkedIn AI, and job matchers to boost your job hunt.',
+ 'Explore modern AI tools that can help you level up your career.'),
+
+('Building Your Brand as a Developer',
+ '2025-08-15',
+ '13:00:00',
+ 'Online Workshop',
+ 'We''ll explore LinkedIn optimization, GitHub portfolios, and storytelling strategies for tech professionals.',
+ 'Learn how to craft your personal brand and digital portfolio effectively.'),
+
+('Tech Industry Mixer',
+ '2025-09-03',
+ '17:00:00',
+ 'SAIT Downtown Campus',
+ 'An in-person event to connect with key players in Calgary''s tech scene — refreshments provided!',
+ 'Network with employers, alumni, and industry mentors.'),
+
+('Career Growth with AI: Mastering Tools and Strategies',
+ '2025-10-08',
+ '14:00:00',
+ 'Online Webinar',
+ 'Learn how AI can accelerate your career development with practical hands-on strategies.',
+ 'Harness AI tools to boost productivity, networking, and career decision-making.'),
+
+('Startup Funding Bootcamp',
+ '2025-10-22',
+ '10:00:00',
+ 'Calgary Innovation Centre',
+ 'A full-day intensive session on pitching, funding rounds, and investor engagement for early-stage startups.',
+ 'Hands-on workshops to prepare founders for funding success.');

@@ -219,6 +219,19 @@ export default function MyAvailability({advisorId}) {
     const handleChangeTimeSlot = async () => {
         if (!startTimeErrorMessage && !endTimeErrorMessage) {
 
+            // Prevent Change By Mistake
+            if (selectedEvent.title === "booked") {
+                const confirmDelete = window.confirm(
+                    "This timeslot is booked. Are you sure you want to change it?"+
+                    "\nPlease confirm with your client before proceeding!"+
+                    "\nOK: To Keep Proceeding     Cancel: To Return"
+                );
+                // Cancel deletion
+                if (!confirmDelete) {
+                    return; 
+                }
+            }
+
             try {
 
                 const newDate = startTime.split("T")[0];
