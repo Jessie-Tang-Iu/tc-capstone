@@ -4,6 +4,7 @@ BEGIN;
 -- DROP (FK-safe order)
 -- =========================================
 DROP TABLE IF EXISTS
+  reports,
   comments,
   posts,
   advisory_bookings,
@@ -234,4 +235,56 @@ CREATE INDEX idx_posts_author     ON posts (authorId, created_at DESC);
 CREATE INDEX idx_comments_post    ON comments (post_id, created_at);
 CREATE INDEX idx_comments_author  ON comments (authorId, created_at DESC);
 
+CREATE TABLE reports (
+  report_id           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,   -- internal PK
+  source_page         TEXT NOT NULL,                                     -- e.g. "profile", "post", or URL slug
+  followup_id         TEXT,                                              -- external tracking id if needed
+  reported_user_id    UUID NOT NULL,                                     -- or BIGINT if numeric user ids
+  reason              TEXT NOT NULL,                                     -- e.g. 'hate_speech', 'fake_account'
+  created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  is_removed          BOOLEAN NOT NULL DEFAULT FALSE,
+  is_banned           BOOLEAN NOT NULL DEFAULT FALSE,
+  updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Optional: constrain reason to a known set (text enum via CHECK)
+ALTER TABLE reports
+ADD CONSTRAINT reports_reason_chk
+CHECK (reason IN ('hate_speech','fake_account','spam','harassment','other'));
+
+-- Optional: “8-digit id” visible to users (separate human-friendly code)
+-- Store as CHAR(8) or TEXT with a CHECK; make it unique.
+ALTER TABLE reports
+ADD COLUMN public_code CHAR(8);
+
+ALTER TABLE reports
+ADD CONSTRAINT reports_public_code_chk
+CHECK (public_code ~ '^[0-9]{8}$');
+
+ALTER TABLE reports
+ADD CONSTRAINT reports_public_code_uk UNIQUE (public_code);
+
+-- Updated-at trigger to auto-maintain timestamps
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at := NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER reports_set_updated_at
+BEFORE UPDATE ON reports
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();
+
+-- Helpful indexes
+CREATE INDEX idx_reports_reported_user_id ON reports (reported_user_id);
+CREATE INDEX idx_reports_created_at ON reports (created_at);
+CREATE INDEX idx_reports_reason ON reports (reason);
+CREATE INDEX idx_reports_is_removed ON reports (is_removed);
+CREATE INDEX idx_reports_is_banned ON reports (is_banned);
+
+
 COMMIT;
+
