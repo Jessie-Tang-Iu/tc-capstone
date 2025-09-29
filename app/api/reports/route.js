@@ -1,44 +1,56 @@
-import { NextResponse } from "next/server";
 import {
-  getAllReportsController,
-  createReportController,
+  getReportsController,
+  createReportController as createReport,
 } from "@/backend/controllers/reportsController.js";
 
-/**
- * GET /api/reports
- * - Return all reports (newest first)
- * - Supports ?limit=&offset= for pagination
- */
-export async function GET(req) {
+export async function GET() {
   try {
-    const { searchParams } = new URL(req.url);
-    const limit = searchParams.get("limit");
-    const offset = searchParams.get("offset");
+    const reports = await getReportsController();
 
-    const rows = await getAllReportsController({
-      limit: limit != null ? Number(limit) : undefined,
-      offset: offset != null ? Number(offset) : undefined,
+    const normalized = reports.map((r) => ({
+      reportId: r.report_id,
+      category: r.source_page,
+      reporter: r.reported_user_id,
+      issue: r.reason,
+      timeAgo: new Date(r.created_at).toLocaleString(),
+      isRemoved: r.is_removed,
+      isBanned: r.is_banned,
+      publicCode: r.public_code,
+    }));
+
+    return new Response(JSON.stringify(normalized), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
     });
-
-    return NextResponse.json(rows);
   } catch (err) {
-    console.error("GET /api/reports failed:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
 
-/**
- * POST /api/reports
- * - Create a new report
- * - Body: { source_page, reported_user_id, reason, followup_id?, is_removed?, is_banned?, public_code? }
- */
 export async function POST(req) {
   try {
     const body = await req.json();
-    const created = await createReportController(body);
-    return NextResponse.json(created, { status: 201 });
+    const newReport = await createReport(body);
+
+    const normalized = {
+      reportId: newReport.report_id,
+      category: newReport.source_page,
+      reporter: newReport.reported_user_id,
+      issue: newReport.reason,
+      timeAgo: new Date(newReport.created_at).toLocaleString(),
+      isRemoved: newReport.is_removed,
+      isBanned: newReport.is_banned,
+      publicCode: newReport.public_code,
+    };
+
+    return new Response(JSON.stringify(normalized), { status: 201 });
   } catch (err) {
-    console.error("POST /api/reports failed:", err);
-    return NextResponse.json({ error: err.message }, { status: 400 });
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
