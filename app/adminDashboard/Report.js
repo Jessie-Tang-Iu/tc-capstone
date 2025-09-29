@@ -14,6 +14,7 @@ const IconChevronLeft = () => (
     />
   </svg>
 );
+
 const IconChevronRight = () => (
   <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
     <path
@@ -28,10 +29,12 @@ export default function ReportsPanel({
   onShowDetails,
 }) {
   const [query, setQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState("newest"); // NEW state
 
   // 1) Fetch from API on mount; fall back to provided data on error
   const [fetchedReports, setFetchedReports] = useState(null);
   const [loadError, setLoadError] = useState(null);
+
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
@@ -58,7 +61,7 @@ export default function ReportsPanel({
   // 2) Source of truth for the list (API if available, else prop JSON)
   const reportsArray = (fetchedReports ?? data.reports) || [];
 
-  // Existing logic unchanged
+  // 3) Filter by query
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
     if (!q) return reportsArray;
@@ -69,13 +72,24 @@ export default function ReportsPanel({
     );
   }, [reportsArray, query]);
 
-  // pagination
+  // 4) Sort by created_at/timeAgo
+  const sorted = useMemo(() => {
+    const arr = [...filtered];
+    arr.sort((a, b) => {
+      const idA = Number(a.reportId ?? a.id ?? 0);
+      const idB = Number(b.reportId ?? b.id ?? 0);
+      return sortOrder === "newest" ? idB - idA : idA - idB;
+    });
+    return arr;
+  }, [filtered, sortOrder]);
+
+  // 5) Pagination
   const pageSize = 5;
   const [page, setPage] = useState(1);
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
   const start = (page - 1) * pageSize;
-  const end = Math.min(start + pageSize, filtered.length);
-  const pageRows = filtered.slice(start, end);
+  const end = Math.min(start + pageSize, sorted.length);
+  const pageRows = sorted.slice(start, end);
 
   return (
     <div className="w-full">
@@ -84,13 +98,21 @@ export default function ReportsPanel({
         <div className="mb-4 text-3xl font-semibold text-[#E55B3C]">
           Report Management
         </div>
-        <div className="flex justify-center">
+        <div className="flex items-center justify-center gap-4">
           <SearchBar
             value={query}
             onChange={setQuery}
             onSearch={() => {}}
             placeholder="Report ID | Issue Type"
           />
+          <button
+            onClick={() =>
+              setSortOrder((prev) => (prev === "newest" ? "oldest" : "newest"))
+            }
+            className="text-sm text-blue-600 underline"
+          >
+            Sort: {sortOrder === "newest" ? "Newest ID" : "Oldest ID"}
+          </button>
         </div>
         {/* Optional: tiny inline load state */}
         {fetchedReports === null && !loadError && (
@@ -105,10 +127,10 @@ export default function ReportsPanel({
 
       {/* Pager */}
       <div className="mb-2 flex items-center justify-between text-sm text-black">
-        <div>Total Report: {filtered.length}</div>
+        <div>Total Report: {sorted.length}</div>
         <div className="flex items-center gap-2">
-          <span>{filtered.length === 0 ? "0" : `${start + 1}-${end}`}</span>
-          <span>/ {filtered.length}</span>
+          <span>{sorted.length === 0 ? "0" : `${start + 1}-${end}`}</span>
+          <span>/ {sorted.length}</span>
           <button
             className="rounded-md p-1 hover:bg-gray-100 disabled:opacity-40"
             disabled={page === 1}
@@ -136,7 +158,6 @@ export default function ReportsPanel({
         <div className="rounded-xl bg-white p-3">
           {pageRows.map((r, idx) => (
             <ReportRow
-              // Prefer the most unique, stable key available:
               key={
                 r.reportId ??
                 r.public_code ??
@@ -152,7 +173,7 @@ export default function ReportsPanel({
               onDetails={() =>
                 onShowDetails?.({
                   type: "report",
-                  data: r, // revert to the original shape the parent expects
+                  data: r,
                 })
               }
             />
