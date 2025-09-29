@@ -1,11 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SearchBar from "@/app/components/ui/SearchBar";
 import ReportRow from "@/app/components/adminDashboard/ReportRow";
 import PlaceholderCard from "@/app/components/adminDashboard/PlaceholderCard";
 import reportsDataDefault from "@/app/data/reportsForAdminPage.json";
-import UserDetailsCard from "@/app/components/adminDashboard/UserDetailsCard";
 
 const IconChevronLeft = () => (
   <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
@@ -29,18 +28,46 @@ export default function ReportsPanel({
   onShowDetails,
 }) {
   const [query, setQuery] = useState("");
-  const reports = data.reports || [];
 
-  // filter by id/category/issue/reporter/reportId
+  // 1) Fetch from API on mount; fall back to provided data on error
+  const [fetchedReports, setFetchedReports] = useState(null);
+  const [loadError, setLoadError] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const res = await fetch("/api/reports", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        // Expect either { reports: [...] } or an array; adapt gently
+        const reports = Array.isArray(json) ? json : json?.reports;
+        if (!cancelled) setFetchedReports(reports ?? []);
+      } catch (err) {
+        if (!cancelled) {
+          setLoadError(err.message);
+          // leave fetchedReports as null so we fall back to prop data below
+        }
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // 2) Source of truth for the list (API if available, else prop JSON)
+  const reportsArray = (fetchedReports ?? data.reports) || [];
+
+  // Existing logic unchanged
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
-    if (!q) return reports;
-    return reports.filter((r) =>
+    if (!q) return reportsArray;
+    return reportsArray.filter((r) =>
       [String(r.id), r.category, r.issue, r.reporter, r.reportId].some((v) =>
         (v || "").toLowerCase().includes(q)
       )
     );
-  }, [reports, query]);
+  }, [reportsArray, query]);
 
   // pagination
   const pageSize = 5;
@@ -65,6 +92,15 @@ export default function ReportsPanel({
             placeholder="Report ID | Issue Type"
           />
         </div>
+        {/* Optional: tiny inline load state */}
+        {fetchedReports === null && !loadError && (
+          <div className="mt-2 text-xs text-gray-500">Loading reports…</div>
+        )}
+        {loadError && (
+          <div className="mt-2 text-xs text-red-500">
+            Failed to load from API, showing local data.
+          </div>
+        )}
       </div>
 
       {/* Pager */}
@@ -98,9 +134,14 @@ export default function ReportsPanel({
         />
       ) : (
         <div className="rounded-xl bg-white p-3">
-          {pageRows.map((r) => (
+          {pageRows.map((r, idx) => (
             <ReportRow
-              key={r.id}
+              // Prefer the most unique, stable key available:
+              key={
+                r.reportId ??
+                r.public_code ??
+                `${r.id}-${r.category}-${r.issue}-${start + idx}`
+              }
               category={r.category}
               reportId={r.reportId}
               reporter={r.reporter}
@@ -109,7 +150,7 @@ export default function ReportsPanel({
               onDetails={() =>
                 onShowDetails?.({
                   type: "report",
-                  data: r,
+                  data: r, // revert to the original shape the parent expects
                 })
               }
             />
