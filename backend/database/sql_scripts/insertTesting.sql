@@ -123,6 +123,25 @@ INSERT INTO message (sent_user_id, receive_user_id, content, status) VALUES
 ('33333333-3333-3333-3333-333333333333', '44444444-4444-4444-4444-444444444444', 'This chat is between 3333 and 4444 only.', 'S'),
 ('44444444-4444-4444-4444-444444444444', '33333333-3333-3333-3333-333333333333', 'Reply back to 3333 from 4444.', 'R');
 
+
+-- =========================================
+-- reports
+INSERT INTO reports (source_page, followup_id, reported_user_id, reason, is_removed, is_banned, public_code)
+VALUES
+('profile', 'fup-1001', '550e8400-e29b-41d4-a716-446655440000', 'hate_speech', FALSE, FALSE, '10000001'),
+('post', 'fup-1002', '550e8400-e29b-41d4-a716-446655440001', 'spam', TRUE, FALSE, '10000002'),
+('comment', 'fup-1003', '550e8400-e29b-41d4-a716-446655440002', 'harassment', FALSE, TRUE, '10000003'),
+('post/abc123', NULL, '550e8400-e29b-41d4-a716-446655440003', 'fake_account', FALSE, FALSE, '10000004'),
+('profile', 'fup-1005', '550e8400-e29b-41d4-a716-446655440004', 'other', FALSE, FALSE, '10000005'),
+('post', NULL, '550e8400-e29b-41d4-a716-446655440005', 'spam', TRUE, TRUE, '10000006'),
+('profile/settings', 'fup-1007', '550e8400-e29b-41d4-a716-446655440006', 'harassment', FALSE, FALSE, '10000007'),
+('post/xyz789', NULL, '550e8400-e29b-41d4-a716-446655440007', 'hate_speech', TRUE, TRUE, '10000008'),
+('comment/555', 'fup-1009', '550e8400-e29b-41d4-a716-446655440008', 'other', FALSE, FALSE, '10000009'),
+('profile/edit', 'fup-1010', '550e8400-e29b-41d4-a716-446655440009', 'fake_account', FALSE, TRUE, '10000010'),
+('post/longtext', NULL, '550e8400-e29b-41d4-a716-446655440010', 'harassment', TRUE, FALSE, '10000011'),
+('profile/pic', 'fup-1012', '550e8400-e29b-41d4-a716-446655440011', 'spam', FALSE, FALSE, '10000012');
+
+
 --workshop
 INSERT INTO workshop (title, date, start_time, location, description, highlight)
 VALUES
