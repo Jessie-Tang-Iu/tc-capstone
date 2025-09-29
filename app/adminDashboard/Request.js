@@ -1,13 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
+
 import SearchBar from "@/app/components/ui/SearchBar";
 import Section from "@/app/components/adminDashboard/Section";
 import PlaceholderCard from "@/app/components/adminDashboard/PlaceholderCard";
 import RequestRow from "@/app/components/adminDashboard/RequestRow";
 import requestsDataDefault from "@/app/data/requestsForAdminPage.json";
 
-export default function RequestsPanel({ data = requestsDataDefault }) {
+export default function RequestsPanel({
+  data = requestsDataDefault,
+  onShowDetails,
+}) {
   const [query, setQuery] = useState("");
   const [normal, setNormal] = useState(data.normal || []);
   const [employer, setEmployer] = useState(data.employer || []);
@@ -56,7 +60,7 @@ export default function RequestsPanel({ data = requestsDataDefault }) {
                 key={r.id}
                 name={r.name}
                 subtitle={r.subtitle}
-                onDetails={() => console.log("details", r.id)}
+                onDetails={() => onShowDetails?.(r)}
                 onAccept={() => acceptFrom(normal, setNormal, r.id)}
                 onRefuse={() => refuseFrom(normal, setNormal, r.id)}
               />
@@ -79,7 +83,7 @@ export default function RequestsPanel({ data = requestsDataDefault }) {
                 key={r.id}
                 name={r.name}
                 subtitle={r.subtitle}
-                onDetails={() => console.log("details", r.id)}
+                onDetails={() => onShowDetails?.(r)}
                 onAccept={() => acceptFrom(employer, setEmployer, r.id)}
                 onRefuse={() => refuseFrom(employer, setEmployer, r.id)}
               />
