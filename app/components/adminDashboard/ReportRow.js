@@ -9,6 +9,8 @@ export default function ReportRow({
   reporter,
   issue,
   timeAgo,
+  isRemoved,
+  isBanned,
   onDetails,
 }) {
   return (
@@ -25,6 +27,24 @@ export default function ReportRow({
         <div className="font-semibold">{reporter}</div>
         {issue && <div className="mt-1">{issue}</div>}
         {timeAgo && <div className="mt-1 text-gray-500">{timeAgo}</div>}
+
+        {/* Status flags */}
+        <div className="mt-2 flex gap-3 text-xs">
+          <span
+            className={`px-2 py-1 rounded ${
+              isRemoved
+                ? "bg-green-100 text-green-700"
+                : "bg-gray-100 text-gray-500"
+            }`}
+          >
+            {isRemoved ? "Completed" : "Active"}
+          </span>
+          {isBanned && (
+            <span className="px-2 py-1 rounded bg-red-100 text-red-700">
+              Banned
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Right action */}

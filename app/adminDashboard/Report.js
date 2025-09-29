@@ -147,6 +147,8 @@ export default function ReportsPanel({
               reporter={r.reporter}
               issue={r.issue}
               timeAgo={r.timeAgo}
+              isRemoved={r.isRemoved}
+              isBanned={r.isBanned}
               onDetails={() =>
                 onShowDetails?.({
                   type: "report",
