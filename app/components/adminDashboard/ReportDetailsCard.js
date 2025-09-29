@@ -1,29 +1,49 @@
 "use client";
 
+import { useState } from "react";
 import Button from "../ui/Button";
+
+// helper to map snake_case -> camelCase
+function normalizeReport(r) {
+  if (!r) return null;
+  return {
+    reportId: r.report_id,
+    publicCode: r.public_code,
+    category: r.source_page,
+    issue: r.reason,
+    reporter: r.reporter,
+    timeAgo: new Date(r.created_at).toLocaleString(),
+    isRemoved: r.is_removed,
+    isBanned: r.is_banned,
+  };
+}
 
 export default function ReportDetailsCard({
   report,
   onClose,
-  onBan,
+  onBanToggle,
   onRemove,
 }) {
   if (!report) return null;
 
+  const [localReport, setLocalReport] = useState(report);
+
   const handleBan = async () => {
-    if (window.confirm("Are you sure you want to ban this user?")) {
+    const newStatus = !localReport.isBanned;
+    const action = newStatus ? "ban" : "unban";
+    if (window.confirm(`Are you sure you want to ${action} this user?`)) {
       try {
-        // Call API
-        const res = await fetch(`/api/reports/${report.reportId}`, {
+        const res = await fetch(`/api/reports/${localReport.reportId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ is_banned: true }),
+          body: JSON.stringify({ is_banned: newStatus }),
         });
-        if (!res.ok) throw new Error("Failed to ban user");
-        const updated = await res.json();
-        onBan?.(updated);
+        if (!res.ok) throw new Error(`Failed to ${action} user`);
+        const updated = normalizeReport(await res.json());
+        setLocalReport(updated);
+        onBanToggle?.(updated);
       } catch (err) {
-        alert(`Ban failed: ${err.message}`);
+        alert(`${action} failed: ${err.message}`);
       }
     }
   };
@@ -31,13 +51,14 @@ export default function ReportDetailsCard({
   const handleRemove = async () => {
     if (window.confirm("Are you sure you want to remove this report?")) {
       try {
-        const res = await fetch(`/api/reports/${report.reportId}`, {
+        const res = await fetch(`/api/reports/${localReport.reportId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ is_removed: true }),
         });
         if (!res.ok) throw new Error("Failed to remove report");
-        const updated = await res.json();
+        const updated = normalizeReport(await res.json());
+        setLocalReport(updated);
         onRemove?.(updated);
       } catch (err) {
         alert(`Remove failed: ${err.message}`);
@@ -47,7 +68,6 @@ export default function ReportDetailsCard({
 
   return (
     <div className="rounded-xl bg-white p-6 shadow-lg text-black">
-      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold text-[#E55B3C]">Report Details</h2>
         <button
@@ -58,52 +78,49 @@ export default function ReportDetailsCard({
         </button>
       </div>
 
-      {/* Report info */}
       <div className="mb-6 space-y-2 text-sm">
         <div>
-          <span className="font-medium">Report ID:</span> {report.reportId}
+          <span className="font-medium">Report ID:</span> {localReport.reportId}
         </div>
         <div>
           <span className="font-medium">Public Code:</span>{" "}
-          {report.publicCode || "—"}
+          {localReport.publicCode || "—"}
         </div>
         <div>
-          <span className="font-medium">Category:</span> {report.category}
+          <span className="font-medium">Category:</span> {localReport.category}
         </div>
         <div>
-          <span className="font-medium">Issue:</span> {report.issue}
+          <span className="font-medium">Issue:</span> {localReport.issue}
         </div>
         <div>
-          <span className="font-medium">Reporter:</span> {report.reporter}
+          <span className="font-medium">Reporter:</span> {localReport.reporter}
         </div>
         <div>
           <span className="font-medium">Reported User:</span>{" "}
-          {report.reportedUserId}
+          {localReport.reportedUserId}
         </div>
         <div>
-          <span className="font-medium">Created At:</span> {report.timeAgo}
+          <span className="font-medium">Created At:</span> {localReport.timeAgo}
         </div>
         <div>
           <span className="font-medium">Removed:</span>{" "}
-          {report.isRemoved ? "Yes" : "No"}
+          {localReport.isRemoved ? "Yes" : "No"}
         </div>
         <div>
           <span className="font-medium">Banned:</span>{" "}
-          {report.isBanned ? "Yes" : "No"}
+          {localReport.isBanned ? "Yes" : "No"}
         </div>
       </div>
 
-      {/* Actions */}
       <div className="flex gap-3">
         <Button
-          text="Ban User"
+          text={localReport.isBanned ? "Unban User" : "Ban User"}
           onClick={handleBan}
-          disabled={report.isBanned}
         />
         <Button
           text="Remove Report"
           onClick={handleRemove}
-          disabled={report.isRemoved}
+          disabled={localReport.isRemoved}
         />
       </div>
     </div>
