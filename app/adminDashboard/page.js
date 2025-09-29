@@ -18,7 +18,8 @@ import ReportsPanel from "@/app/adminDashboard/Report";
 import UserDetailsCard from "../components/adminDashboard/UserDetailsCard";
 import EventPanel from "@/app/adminDashboard/Event";
 import Navbar from "../components/NavBarBeforeSignIn";
-
+import RequestDetailsCard from "../components/adminDashboard/RequestDetailsCard";
+import ReportDetailsCard from "../components/adminDashboard/ReportDetailsCard";
 const ME = "11111111-1111-1111-1111-111111111111";
 
 export default function AdminDashboard() {
