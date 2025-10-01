@@ -2,7 +2,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { formatDateToFullDisplay } from "@/app/components/ui/formatDate";
 
 export default function EventCard({
   id,
@@ -10,12 +9,9 @@ export default function EventCard({
   title,
   location,
   highlight,
-  description,
   tab,
   currentTab,
-  /** NEW: if provided, clicking the card will call this instead of navigating */
   onSelect,
-  /** OPTIONAL: if true, suppress navigation even if onSelect is not provided */
   disableNav = false,
 }) {
   const router = useRouter();
@@ -30,8 +26,8 @@ export default function EventCard({
   };
 
   const handleClick = () => {
-    if (onSelect) return onSelect(); // ← admin usage
-    if (!disableNav) return navigate(); // ← default/public usage
+    if (onSelect) return onSelect();
+    if (!disableNav) return navigate();
   };
 
   const handleKeyDown = (e) => {
@@ -41,10 +37,19 @@ export default function EventCard({
     }
   };
 
-  const dateText =
-    date && !Number.isNaN(Date.parse(date))
-      ? formatDateToFullDisplay(date)
-      : date || "Invalid date";
+  // Inline formatting logic here
+  let dateText = date || "Invalid date";
+  if (date && !Number.isNaN(Date.parse(date))) {
+    const d = new Date(date);
+    const datePart = d.toLocaleDateString("en-GB"); // DD/MM/YYYY
+    const timePart = d.toLocaleTimeString([], {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+    const weekday = d.toLocaleDateString("en-US", { weekday: "long" });
+    dateText = `${datePart}, ${timePart} (${weekday})`;
+  }
 
   const isInteractive = !!onSelect || !disableNav;
 
@@ -72,7 +77,7 @@ export default function EventCard({
       {/* Description */}
       {highlight && (
         <div className="pt-2 text-sm">
-          {highlight && <p className="font-semibold text-black">{highlight}</p>}
+          <p className="font-semibold text-black">{highlight}</p>
         </div>
       )}
     </div>

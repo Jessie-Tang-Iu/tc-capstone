@@ -1,113 +1,46 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSignIn } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "@/lib/supabase_auth";
-import { ensureProfile } from "@/lib/user_crud";
-import { useUserContext } from "@/app/context/userContext";
 
-export default function SupabaseAuth() {
-  const { user, setUser, email, setEmail, setRole } = useUserContext();
+export default function ClerkSignIn() {
+  const { isLoaded, signIn, setActive } = useSignIn();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
-  // read from query params once
-  const qpEmail = searchParams.get("email") || "";
-  const qpPassword = searchParams.get("password") || "";
-
-  // controlled inputs (editable)
-  // const [email, setEmail] = useState(qpEmail);
-  const [password, setPassword] = useState(qpPassword);
-
-  // local profile state
-  const [username, setUsername] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [status, setStatus] = useState("");
-  // const [role, setRole] = useState("");
-
-  // ui
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // const [profile, setProfile] = useState(null);
-
-  // if query params change (rare), sync once
-  useEffect(() => {
-    setEmail(qpEmail);
-    setPassword(qpPassword);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [qpEmail, qpPassword]);
-
   const handleAuth = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError("Email and password are required");
-      return;
-    }
-
-    setError("");
-    setLoading(true);
+    if (!isLoaded) return;
 
     try {
-      // 1) authenticate (creates session)
-      console.log("Logging in with:", { email, password });
-      await signIn(email, password);
+      setLoading(true);
+      setError("");
 
-      // 2) ensure there is a profile (creates minimal one if missing)
-      const p = await ensureProfile({
-        username: (email || "").trim().toLowerCase().split("@")[0] || "",
-        status: "active",
+      // 1) Attempt sign in
+      const result = await signIn.create({
+        identifier: email,
+        password,
       });
 
-      if (!p) {
-        setError("Signed in, but profile could not be created due to RLS.");
-        return;
+      // 2) If successful, set active session
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        router.push("/memberFlow"); 
+      } else {
+        setError("Additional steps required (e.g. MFA).");
       }
-
-      // 3) reflect on UI
-      setUser(p);
-      setUsername(p.username || "");
-      setFirstName(p.firstName || "");
-      setLastName(p.lastName || "");
-      setStatus(p.status || "");
-      setRole(p.role || "member");
-
-      // 4) redirect
-      switch (p.role) {
-        case "admin":
-          router.push("/adminFlow");
-          break;
-        case "member":
-          router.push("/memberFlow");
-          break;
-        case "employer":
-          router.push("/employerFlow");
-          break;
-        case "advisor":
-          router.push("/advisorFlow");
-          break;
-      }
-      console.log(p);
     } catch (err) {
-      console.error("Login error:", err);
-      setError(err?.message || String(err));
+      setError(err.errors ? err.errors[0].message : err.message);
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (user) {
-      setUsername(user.username || "");
-      setFirstName(user.firstName || "");
-      setLastName(user.lastName || "");
-      setStatus(user.status || "");
-      setRole(user.role || "member");
-    }
-    console.log("Current user:", user);
-  }, [user]);
 
   return (
     <div className="flex justify-center items-center">
@@ -141,7 +74,7 @@ export default function SupabaseAuth() {
             </p>
             <p className="text-black text-sm mb-2">It is FREE!</p>
 
-            {error ? <p className="text-red-600 font-bold">{error}</p> : null}
+            {error && <p className="text-red-600 font-bold">{error}</p>}
 
             <div className="flex flex-col">
               <label className="text-black">Email Address</label>
@@ -176,7 +109,6 @@ export default function SupabaseAuth() {
 
             <p className="text-gray-600 text-sm mt-2 text-center">
               Forget Password?{" "}
-
               <Link href="/forgetPassword" className="underline hover:text-blue-400">
                 Click Here
               </Link>
