@@ -14,7 +14,6 @@ export default function SignIn() {
                     <SupabaseAuth />
                 </Suspense>
             </div>
-            
         </main>
     )
 }

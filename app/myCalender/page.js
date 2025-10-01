@@ -11,10 +11,29 @@ import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
 import CalendarBigEvent from "../components/myCalender/calenderBig";
 import { deleteBookingByWorkshopId } from "@/lib/workshop_booking_crud";
 import { supabase } from "@/lib/supabaseClient"; // <-- IMPORTANT
-import { useUserContext } from "../context/userContext";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 const MyCalendarPage = () => {
-  const { role } = useUserContext();
+  // Code Below checks if user is logged in before running ANYTHING else
+  const { isLoaded, isSignedIn, user } = useUser();
+  const router = useRouter();
+
+  // Redirect if not signed in
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push("/signIn");
+    }
+  }, [isLoaded, isSignedIn, router]);
+
+  if (!isLoaded) {
+    return <p>Loading...</p>;
+  }
+
+  if (!isSignedIn) {
+    // Don’t render anything while redirecting
+    return null;
+  }
 
   const calendarRef = useRef(null);
   const [events, setEvents] = useState([]);
