@@ -63,11 +63,17 @@ export default function MessagePage({ currentUserId }) {
       const mapped = rows.map((m) => {
         const peer =
           m.sent_user_id === currentUserId ? m.receive_user_id : m.sent_user_id;
+        const sentDate = new Date(m.sent_at);
         return {
           id: m.conversation_id,
           name: peer,
           message: m.content,
-          date: new Date(m.sent_at).toLocaleString(),
+          date: sentDate.toLocaleDateString(),
+          time: sentDate.toLocaleTimeString([], {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          }),
           raw: m,
         };
       });
@@ -246,7 +252,8 @@ export default function MessagePage({ currentUserId }) {
                       <span className="line-clamp-1">{row.message}</span>
                     </td>
                     <td className="px-4 py-3 text-right text-black">
-                      {row.date}
+                      <div>{row.date}</div>
+                      <div className="text-gray-500 text-xs">{row.time}</div>
                     </td>
                   </tr>
                 );
