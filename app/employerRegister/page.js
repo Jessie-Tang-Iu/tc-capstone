@@ -66,16 +66,28 @@ export default function EmployerRegistration() {
 
         // Save employer role metadata
         const token = await getToken({ template: "backend" });
+        console.log("Submitting employer registration:", formData);
+
         await fetch("/api/users/metadata", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            "Authorization": `Bearer ${token}`,
           },
-          body: JSON.stringify({ role: "employer" }),
+          body: JSON.stringify({
+            role: "employer",
+            username: formData.username,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            phone: formData.phoneNumber,
+            companyName: formData.organizationName,
+            companyRole: formData.role,
+            companyId: null, // Implement company linking later if needed
+          }),
         });
 
-        router.push("/employerDashboard");
+        router.push("/employerDashboard/message");
       } else {
         setError("Unexpected signup state: " + result.status);
       }
