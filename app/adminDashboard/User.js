@@ -50,10 +50,29 @@ export default function UsersPanel({ onShowDetails }) {
         .includes(query.toLowerCase())
     );
 
-  const toggleBan = (id) => {
-    setUsers((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, banned: !u.banned } : u))
-    );
+  async function updateUserStatus(id, newStatus) {
+    try {
+      const res = await fetch(`/api/users/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!res.ok) throw new Error("Failed to update user status");
+      const updated = await res.json();
+
+      // update source of truth
+      setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
+
+      return updated;
+    } catch (err) {
+      console.error("Update status error:", err);
+      return null;
+    }
+  }
+
+  const handleBanToggle = async (user) => {
+    const newStatus = user.status === "banned" ? "active" : "banned";
+    await updateUserStatus(user.id, newStatus);
   };
 
   const openMessage = (name) => {
@@ -89,12 +108,17 @@ export default function UsersPanel({ onShowDetails }) {
             {filterByQuery(admin).map((u) => (
               <UserRow
                 key={u.id}
+                id={u.id}
                 name={`${u.first_name} ${u.last_name}`}
                 subtitle={u.email}
-                isBanned={u.banned}
-                onMessage={() => openMessage(`${u.first_name} ${u.last_name}`)}
-                onDetails={() => showDetails(u, "Admin")}
-                onBanToggle={() => toggleBan(u.id)}
+                status={u.status} // <-- pass status directly
+                onMessage={() => openMessage(u.email)}
+                onDetails={() => showDetails(u, u.role)}
+                onStatusChange={(updated) => {
+                  setUsers((prev) =>
+                    prev.map((x) => (x.id === updated.id ? updated : x))
+                  );
+                }}
               />
             ))}
           </div>

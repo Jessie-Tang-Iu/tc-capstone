@@ -3,21 +3,19 @@
 export default function UserDetailsCard({ user, roleLabel, onClose }) {
   if (!user) return null;
 
-  // Proper display name
   const displayName =
     user.first_name && user.last_name
       ? `${user.first_name} ${user.last_name}`
       : user.name ?? "N/A";
 
-  // Map roles → titles
   const roleTitles = {
-    Admin: "Admin Details",
-    Employer: "Employer Details",
-    Advisor: "Advisor Details",
-    Member: "Member Details",
+    admin: "Admin Details",
+    employer: "Employer Details",
+    advisor: "Advisor Details",
+    member: "Member Details",
   };
 
-  const title = roleTitles[roleLabel] ?? "User Details";
+  const title = roleTitles[roleLabel?.toLowerCase()] ?? "User Details";
 
   return (
     <section className="flex-1 rounded-xl bg-white shadow p-6 text-black">
@@ -40,7 +38,6 @@ export default function UserDetailsCard({ user, roleLabel, onClose }) {
           <strong>Phone:</strong> {user.phone ?? "N/A"}
         </div>
 
-        {/* Employer-only fields */}
         {roleLabel === "Employer" && (
           <>
             <div>
@@ -52,7 +49,6 @@ export default function UserDetailsCard({ user, roleLabel, onClose }) {
           </>
         )}
 
-        {/* Advisor-only fields */}
         {roleLabel === "Advisor" && (
           <>
             <div>
@@ -65,7 +61,7 @@ export default function UserDetailsCard({ user, roleLabel, onClose }) {
         )}
 
         <div>
-          <strong>Status:</strong> {user.banned ? "Banned" : "Active"}
+          <strong>Status:</strong> {user.status}
         </div>
       </div>
 
