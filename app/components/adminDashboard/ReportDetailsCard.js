@@ -118,9 +118,10 @@ export default function ReportDetailsCard({
           onClick={handleBan}
         />
         <Button
-          text="Remove Report"
+          text="Mark as finished"
           onClick={handleRemove}
           disabled={localReport.isRemoved}
+          className={localReport.isRemoved ? "cursor-default opacity-50" : ""}
         />
       </div>
     </div>

@@ -39,18 +39,34 @@ export default function EventCard({
 
   // Inline formatting logic here
   let dateText = date || "Invalid date";
-  if (date && !Number.isNaN(Date.parse(date))) {
-    const d = new Date(date);
-    const datePart = d.toLocaleDateString("en-GB"); // DD/MM/YYYY
-    const timePart = d.toLocaleTimeString([], {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
-    const weekday = d.toLocaleDateString("en-US", { weekday: "long" });
-    dateText = `${datePart}, ${timePart} (${weekday})`;
-  }
+  if (date) {
+    let d;
 
+    // Case 1: pure date string "YYYY-MM-DD"
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      const [y, m, day] = date.split("-").map(Number);
+      d = new Date(y, m - 1, day); // Local, no UTC shift
+    } else {
+      // Case 2: datetime string (e.g. ISO 8601)
+      d = new Date(date);
+    }
+
+    if (!isNaN(d.getTime())) {
+      const datePart = d.toLocaleDateString("en-GB"); // DD/MM/YYYY
+      const timePart = date.includes("T") // only show time if datetime provided
+        ? d.toLocaleTimeString([], {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          })
+        : "";
+      const weekday = d.toLocaleDateString("en-US", { weekday: "long" });
+
+      dateText = timePart
+        ? `${datePart}, ${timePart} (${weekday})`
+        : `${datePart} (${weekday})`;
+    }
+  }
   const isInteractive = !!onSelect || !disableNav;
 
   return (
