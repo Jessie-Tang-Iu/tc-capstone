@@ -1,12 +1,14 @@
 "use client";
 
-import { useSignIn } from "@clerk/nextjs";
+import { useSignIn, useSession } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
+import { jwtDecode } from "jwt-decode"; // Helps Decode the Clerk JWT for the user's role
 
 export default function ClerkSignIn() {
   const { isLoaded, signIn, setActive } = useSignIn();
+  const { session } = useSession();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -22,16 +24,14 @@ export default function ClerkSignIn() {
       setLoading(true);
       setError("");
 
-      // 1) Attempt sign in
       const result = await signIn.create({
         identifier: email,
         password,
       });
 
-      // 2) If successful, set active session
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/memberFlow"); 
+        router.push("/post-login");
       } else {
         setError("Additional steps required (e.g. MFA).");
       }
