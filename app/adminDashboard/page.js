@@ -71,45 +71,79 @@ export default function AdminDashboard() {
     </button>
   );
 
+  // Helper to push updated query params
+  const pushParams = (mutator) => {
+    const params = new URLSearchParams(window.location.search);
+    mutator(params);
+    router.push(window.location.pathname + "?" + params.toString(), {
+      scroll: false,
+    }); // push history entry [web:55][web:117]
+  };
+
+  // Open detail helpers
+  const openUserDetails = ({ user }) => {
+    pushParams((p) => {
+      p.set("tab", "users");
+      p.set("userId", user.id);
+    });
+    setDetails({ type: "user", user }); // keep {  ... } shape [web:110][web:43]
+  };
+
+  const openRequestDetails = (request) => {
+    pushParams((p) => {
+      p.set("tab", "requests");
+      p.set("requestId", request.id);
+    });
+    setDetails({ type: "request", request });
+  };
+
+  const openReportDetails = (report) => {
+    const rid = report.reportId ?? report.id;
+    pushParams((p) => {
+      p.set("tab", "reports");
+      p.set("reportId", String(rid));
+    });
+    setDetails({ type: "report", data: report });
+  };
+
+  // Close any detail
+  const closeDetails = () => {
+    pushParams((p) => {
+      p.delete("userId");
+      p.delete("requestId");
+      p.delete("reportId");
+    });
+    setDetails(null);
+  };
+
   const renderUsers = () =>
     details?.type === "user" ? (
       <UserDetailsCard
         user={details.data.user}
         roleLabel={details.data.roleLabel}
-        onClose={() => setDetails(null)}
+        onClose={closeDetails}
       />
     ) : (
-      <UsersPanel
-        onShowDetails={({ user, roleLabel }) =>
-          setDetails({ type: "user", data: { user, roleLabel } })
-        }
-      />
+      <UsersPanel onShowDetails={openUserDetails} />
     );
 
   const renderRequests = () =>
     details?.type === "request" ? (
-      <RequestDetailsCard
-        request={details.data}
-        onClose={() => setDetails(null)}
-      />
+      <RequestDetailsCard request={details.data} onClose={closeDetails} />
     ) : (
-      <RequestsPanel
-        onShowDetails={(request) =>
-          setDetails({ type: "request", data: request })
-        }
-      />
+      <RequestsPanel onShowDetails={openRequestDetails} />
     );
 
   const renderReports = () =>
     details?.type === "report" ? (
       <ReportDetailsCard
         report={details.data}
-        onClose={() => setDetails(null)}
+        onClose={closeDetails}
         onBan={(r) => console.log("Ban user:", r.reporter)}
         onRemove={(r) => console.log("Remove report:", r.reportId)}
       />
     ) : (
-      <ReportsPanel onShowDetails={(payload) => setDetails(payload)} />
+      <ReportsPanel onShowDetails={openReportDetails} />
     );
 
   return (
