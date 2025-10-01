@@ -15,6 +15,15 @@ export default function UserDetailsCard({ user, roleLabel, onClose }) {
     member: "Member Details",
   };
 
+  const statusText =
+    user.status === "active"
+      ? "Active"
+      : user.status === "banned"
+      ? "Banned"
+      : user.status === "underreview"
+      ? "Under Review"
+      : "N/A";
+
   const title = roleTitles[roleLabel?.toLowerCase()] ?? "User Details";
 
   return (
@@ -61,7 +70,7 @@ export default function UserDetailsCard({ user, roleLabel, onClose }) {
         )}
 
         <div>
-          <strong>Status:</strong> {user.status}
+          <strong>Status:</strong> {statusText}
         </div>
       </div>
 
