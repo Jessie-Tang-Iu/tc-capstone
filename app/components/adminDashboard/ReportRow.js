@@ -3,6 +3,34 @@
 import React from "react";
 import Button from "../ui/Button";
 
+function formatDate(dateString) {
+  const d = new Date(dateString);
+  if (isNaN(d.getTime())) return dateString;
+
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  const isToday = d >= today;
+  const isYesterday = d >= yesterday && d < today;
+
+  const timePart = d.toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  if (isToday) {
+    return `Today, ${timePart}`;
+  } else if (isYesterday) {
+    return `Yesterday, ${timePart}`;
+  } else {
+    const datePart = d.toLocaleDateString("en-GB"); // 15/09/2025
+    return `${datePart}, ${timePart}`;
+  }
+}
+
 export default function ReportRow({
   category,
   reportId,
@@ -26,7 +54,9 @@ export default function ReportRow({
       <div className="flex-1 text-sm text-black">
         <div className="font-semibold">{reporter}</div>
         {issue && <div className="mt-1">{issue}</div>}
-        {timeAgo && <div className="mt-1 text-gray-500">{timeAgo}</div>}
+        {timeAgo && (
+          <div className="mt-1 text-gray-500">{formatDate(timeAgo)}</div>
+        )}
 
         {/* Status flags */}
         <div className="mt-2 flex gap-3 text-xs">
