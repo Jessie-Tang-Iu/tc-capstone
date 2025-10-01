@@ -16,7 +16,16 @@ export default function CalendarBigEvent({
   const dateStr = DateTime.fromISO(workshop.date).toFormat(
     "dd LLLL, yyyy (cccc)"
   );
-  const timeStr = `${workshop.start_time} – ${workshop.end_time} MDT`;
+  // Format time range in AM/PM format
+  const formatTime = (time) => {
+    if (!time) return "";
+    return DateTime.fromFormat(time, "HH:mm:ss").toFormat("h:mm a");
+  };
+
+  const timeStr = `${formatTime(workshop.start_time)} – ${formatTime(
+    workshop.end_time
+  )}`;
+
   const location =
     workshop.location || "Online (Please use the link to enter our meeting)";
   const advisor = workshop.advisor || "N/A";
