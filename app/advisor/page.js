@@ -7,10 +7,13 @@ import advisors from '../data/advisors.json'
 import userAdvisors from "../data/usersAdvisors.json";
 import AdvisorCard from '../components/advisorCard';
 import { useUser } from '@clerk/nextjs';
+import Button from '../components/ui/Button';
+import { useRouter } from "next/navigation";
 
 export default function AdvisorPage() {
   const userContext = useUser();
   const userID = userContext?.user?.id;
+  const router = useRouter();
 
   // find advisorIDs for this user
   const contactedIDs = userAdvisors
@@ -22,23 +25,35 @@ export default function AdvisorPage() {
     contactedIDs.includes(advisor.advisorID)
   );
 
+  // navigate to search advisor page
+  const handleNewAdvisor = () => {
+    router.push('/advisor/advisorSearch');
+  }
+
   return (
-    <div className="bg-gray-100 min-h-screen text-black">
-        <Navbar />
-        <h1 className="text-3xl text-center font-bold mt-8">Your Advisor Page</h1>
-        <Link href="/advisor/advisorSearch" className="block text-center mt-6 text-blue-600 hover:underline">
-          Search for Advisors
-        </Link>
+    <main className='bg-gray-100 min-h-screen'>
+      <Navbar />
+      <div className="max-w-6xl mx-auto px-6 py-10">
+        {/* header */}
+        <div className='mb-10 text-center'>
+          <h1 className="text-3xl font-bold text-[#E55B3C]">Your Advisor Page</h1>
+        </div>
+        
+        <div className='flex justify-end'>
+          <Button onClick={handleNewAdvisor} text="Register New Advisor" />
+        </div>
+        
         <div className="mx-12">
           {contactedAdvisors.length > 0 ? (
             contactedAdvisors.map((advisor) => (
               <AdvisorCard key={advisor.advisorID} advisor={advisor} />
             ))
           ) : (
-            <p className="text-center mt-8">You haven’t contacted any advisors yet.</p>
+            <p className="text-center mt-8 text-black">You haven’t contacted any advisors yet.</p>
           )}            
         </div>
-
-    </div>
+      </div>
+    </main>
+    
   );
 }
