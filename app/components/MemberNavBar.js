@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
 import Link from "next/link";
-import { signOut } from "@/lib/supabase_auth";
+import { useClerk } from "@clerk/nextjs";
 import { useRouter, usePathname } from "next/navigation";
 
 export default function MemberNavbar() {
@@ -13,14 +13,15 @@ export default function MemberNavbar() {
   const [isDesktopServicesOpen, setIsDesktopServicesOpen] = useState(false);
   const [isDesktopJobOpen, setIsDesktopJobOpen] = useState(false);
   const router = useRouter();
+  const { signOut } = useClerk();
   const pathname = usePathname();
   const popRef = useRef(null);
 
   // handle Log out function for user
   const handleLogout = async () => {
     try {
-      await signOut();
-      router.push("/signIn");
+      await signOut(); // Awaits Clerk Sign Out Function
+      router.push("/signIn"); // redirect to sign-in after
     } catch (error) {
       console.error("Logout error:", error.message);
     }
@@ -108,7 +109,7 @@ export default function MemberNavbar() {
                       Courses
                     </Link>
                     <Link
-                      href="#"
+                      href="/advisor"
                       className="block pl-8 pr-4 py-2 text-sm hover:bg-gray-50"
                     >
                       Advisory

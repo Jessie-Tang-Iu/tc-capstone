@@ -5,30 +5,45 @@ import { IoTrashOutline } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 import { DateTime } from "luxon";
 
-export default function CalendarBigEvent({ workshop, onDelete, onClose }) {
+export default function CalendarBigEvent({
+  workshop,
+  onDelete,
+  onClose,
+  onView,
+}) {
   if (!workshop) return null;
 
   const dateStr = DateTime.fromISO(workshop.date).toFormat(
     "dd LLLL, yyyy (cccc)"
   );
-  const timeStr = `${workshop.start_time} – ${workshop.end_time} MDT`;
+  // Format time range in AM/PM format
+  const formatTime = (time) => {
+    if (!time) return "";
+    return DateTime.fromFormat(time, "HH:mm:ss").toFormat("h:mm a");
+  };
+
+  const timeStr = `${formatTime(workshop.start_time)} – ${formatTime(
+    workshop.end_time
+  )}`;
+
   const location =
     workshop.location || "Online (Please use the link to enter our meeting)";
   const advisor = workshop.advisor || "N/A";
   const registerLink = workshop.register_link || "";
   const organizer = workshop.organizer || "Tech Connect Alberta";
+  const description = workshop.description || "No description available.";
 
   return (
-    <div className="bg-[#FDF1EC] p-6 rounded-xl shadow-xl text-black relative w-full max-w-lg mx-auto">
-      {/* Top right icons */}
-      <div className="flex justify-between items-start mb-3">
-        <h2 className="text-lg font-semibold mr-4">{workshop.title}</h2>
+    <div className="bg-[#FDF1EC] p-6 rounded-xl shadow-xl text-black relative w-full max-w-2xl mx-auto flex flex-col">
+      {/* Header */}
+      <div className="flex justify-between items-start mb-4">
+        <h2 className="text-xl font-bold text-gray-900">{workshop.title}</h2>
         <div className="flex items-center gap-2">
           {onDelete && (
             <button onClick={onDelete} title="Delete">
               <IoTrashOutline
                 className="cursor-pointer text-gray-600 hover:text-red-500"
-                size={20}
+                size={22}
               />
             </button>
           )}
@@ -36,7 +51,7 @@ export default function CalendarBigEvent({ workshop, onDelete, onClose }) {
             <button onClick={onClose} title="Close">
               <RxCross2
                 className="cursor-pointer text-gray-600 hover:text-black"
-                size={20}
+                size={22}
               />
             </button>
           )}
@@ -55,33 +70,44 @@ export default function CalendarBigEvent({ workshop, onDelete, onClose }) {
         {location}
       </div>
 
-      {/* Advisor */}
+      {/* Speaker */}
       <div className="text-sm mb-2">
         <span className="font-medium">Speaker: </span>
         {advisor}
       </div>
 
-      <hr className="my-3" />
+      {/* Organizer */}
+      <div className="text-sm mb-4">
+        <span className="font-medium">Organizer: </span>
+        {organizer}
+      </div>
 
-      {/* Register link */}
-      {registerLink && (
-        <div className="text-sm mb-2 break-words">
-          <span className="font-medium">Register Link: </span>
+      {/* Description */}
+      <div className="bg-white rounded-lg p-4 shadow-inner mb-4 max-h-48 overflow-y-auto">
+        <p className="text-sm leading-relaxed text-gray-800 whitespace-pre-line">
+          {description}
+        </p>
+      </div>
+
+      {/* CTA */}
+      <div className="mt-auto flex justify-center">
+        {registerLink ? (
           <a
             href={registerLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 underline break-all"
+            className="px-6 py-3 bg-[#E55B3C] hover:bg-[#d44f32] text-white font-semibold rounded-lg transition"
           >
-            {registerLink}
+            View / Register
           </a>
-        </div>
-      )}
-
-      {/* Organizer */}
-      <div className="text-sm">
-        <span className="font-medium">Organizer: </span>
-        {organizer}
+        ) : onView ? (
+          <button
+            onClick={onView}
+            className="px-6 py-3 bg-[#E55B3C] hover:bg-[#d44f32] text-white font-semibold rounded-lg transition"
+          >
+            View Event Page
+          </button>
+        ) : null}
       </div>
     </div>
   );
