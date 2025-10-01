@@ -20,6 +20,7 @@ import EventPanel from "@/app/adminDashboard/Event";
 import Navbar from "../components/NavBarBeforeSignIn";
 import RequestDetailsCard from "../components/adminDashboard/RequestDetailsCard";
 import ReportDetailsCard from "../components/adminDashboard/ReportDetailsCard";
+
 const ME = "11111111-1111-1111-1111-111111111111";
 
 export default function AdminDashboard() {
@@ -86,7 +87,7 @@ export default function AdminDashboard() {
       p.set("tab", "requests");
       p.set("requestId", request.id);
     });
-    setDetails({ type: "request", request });
+    setDetails({ type: "request", data: request });
   };
 
   const openReportDetails = (report) => {

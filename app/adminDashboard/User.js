@@ -20,7 +20,7 @@ export default function UsersPanel({ onShowDetails }) {
         const res = await fetch("/api/users", { cache: "no-store" });
         if (!res.ok) throw new Error("Failed to fetch users");
         const data = await res.json();
-        setUsers(data);
+        setUsers(data.filter((u) => u.status !== "underreview"));
       } catch (err) {
         console.error("Error loading users:", err);
       }
