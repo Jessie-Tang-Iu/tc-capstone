@@ -24,9 +24,9 @@ export default function ReportDetailsCard({
   onBanToggle,
   onRemove,
 }) {
-  if (!report) return null;
-
   const [localReport, setLocalReport] = useState(report);
+
+  if (!report) return null;
 
   const handleBan = async () => {
     const newStatus = !localReport.isBanned;
