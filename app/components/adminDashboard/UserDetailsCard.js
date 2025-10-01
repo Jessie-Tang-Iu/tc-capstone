@@ -3,13 +3,29 @@
 export default function UserDetailsCard({ user, roleLabel, onClose }) {
   if (!user) return null;
 
+  // Proper display name
+  const displayName =
+    user.first_name && user.last_name
+      ? `${user.first_name} ${user.last_name}`
+      : user.name ?? "N/A";
+
+  // Map roles → titles
+  const roleTitles = {
+    Admin: "Admin Details",
+    Employer: "Employer Details",
+    Advisor: "Advisor Details",
+    Member: "Member Details",
+  };
+
+  const title = roleTitles[roleLabel] ?? "User Details";
+
   return (
     <section className="flex-1 rounded-xl bg-white shadow p-6 text-black">
-      <h2 className="text-xl font-semibold mb-4">User Details</h2>
+      <h2 className="text-xl font-semibold mb-4">{title}</h2>
 
       <div className="space-y-3 text-sm text-black">
         <div>
-          <strong>Name:</strong> {user.name}
+          <strong>Name:</strong> {displayName}
         </div>
         <div>
           <strong>ID:</strong> {user.id}
@@ -18,14 +34,36 @@ export default function UserDetailsCard({ user, roleLabel, onClose }) {
           <strong>Role:</strong> {roleLabel}
         </div>
         <div>
-          <strong>Subtitle:</strong> {user.subtitle ?? "—"}
+          <strong>Email:</strong> {user.email ?? "N/A"}
         </div>
         <div>
-          <strong>Email:</strong> {user.email ?? "—"}
+          <strong>Phone:</strong> {user.phone ?? "N/A"}
         </div>
-        <div>
-          <strong>Location:</strong> {user.location ?? "—"}
-        </div>
+
+        {/* Employer-only fields */}
+        {roleLabel === "Employer" && (
+          <>
+            <div>
+              <strong>Company Name:</strong> {user.company_name ?? "N/A"}
+            </div>
+            <div>
+              <strong>Company Role:</strong> {user.company_role ?? "N/A"}
+            </div>
+          </>
+        )}
+
+        {/* Advisor-only fields */}
+        {roleLabel === "Advisor" && (
+          <>
+            <div>
+              <strong>Advisor Title:</strong> {user.advisor_title ?? "N/A"}
+            </div>
+            <div>
+              <strong>Company Name:</strong> {user.company_name ?? "N/A"}
+            </div>
+          </>
+        )}
+
         <div>
           <strong>Status:</strong> {user.banned ? "Banned" : "Active"}
         </div>

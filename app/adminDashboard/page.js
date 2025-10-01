@@ -1,7 +1,7 @@
 // app/adminDashboard/page.js
 /*
 data need to change to postgres db
-- users
+- users (Half done with dummy data)
 - reports
 - events (DONE)
 - requests
@@ -27,32 +27,26 @@ export default function AdminDashboard() {
   const searchParams = useSearchParams();
 
   const [tab, setTab] = useState(() => searchParams.get("tab") || "message");
-  const [details, setDetails] = useState(null); // { user, roleLabel } | null
+  const [details, setDetails] = useState(null);
 
   useEffect(() => {
-    // push a new entry only when user initiated a tab change
     const params = new URLSearchParams(window.location.search);
     const current = params.get("tab");
     if (tab !== current) {
       params.set("tab", tab);
       const href = window.location.pathname + "?" + params.toString();
-      // push (not replace) so back-swipe walks tabs, not prior page
       router.push(href, { scroll: false });
     }
-    // do NOT depend on router, to avoid re-running due to router object identity
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab]);
 
   useEffect(() => {
-    // initialize from URL and react to back/forward
     const syncFromUrl = () => {
       const p = new URLSearchParams(window.location.search);
       const t = p.get("tab") || "message";
-      // only set state; never push/replace here
       setTab((prev) => (prev !== t ? t : prev));
       setDetails(null);
     };
-    syncFromUrl(); // run on mount
+    syncFromUrl();
     window.addEventListener("popstate", syncFromUrl);
     return () => window.removeEventListener("popstate", syncFromUrl);
   }, []);
@@ -62,7 +56,7 @@ export default function AdminDashboard() {
       value={v}
       onClick={(e) => {
         setTab(e.currentTarget.value);
-        setDetails(null); // ← reset detail view when switching tabs
+        setDetails(null);
       }}
       className={`w-full text-left rounded-md px-4 py-3 text-sm font-medium transition
         text-black hover:bg-[#F0E0D5] ${tab === v ? "bg-[#E2B596]" : ""}`}
@@ -71,22 +65,20 @@ export default function AdminDashboard() {
     </button>
   );
 
-  // Helper to push updated query params
   const pushParams = (mutator) => {
     const params = new URLSearchParams(window.location.search);
     mutator(params);
     router.push(window.location.pathname + "?" + params.toString(), {
       scroll: false,
-    }); // push history entry [web:55][web:117]
+    });
   };
 
-  // Open detail helpers
-  const openUserDetails = ({ user }) => {
+  const openUserDetails = ({ user, roleLabel }) => {
     pushParams((p) => {
       p.set("tab", "users");
       p.set("userId", user.id);
     });
-    setDetails({ type: "user", user }); // keep {  ... } shape [web:110][web:43]
+    setDetails({ type: "user", user, roleLabel });
   };
 
   const openRequestDetails = (request) => {
@@ -119,8 +111,8 @@ export default function AdminDashboard() {
   const renderUsers = () =>
     details?.type === "user" ? (
       <UserDetailsCard
-        user={details.data.user}
-        roleLabel={details.data.roleLabel}
+        user={details.user}
+        roleLabel={details.roleLabel}
         onClose={closeDetails}
       />
     ) : (
