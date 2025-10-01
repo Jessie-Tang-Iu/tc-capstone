@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Navbar from "../components/NavBarBeforeSignIn";
-import SupabaseAuth from "../components/supabaseAuth/supabaseSignIn";
+import SignIn from "../components/auth/SignIn";
 
 
 
@@ -11,7 +11,7 @@ export default function SignIn() {
             <Navbar />
             <div className="container mx-auto px-4 py-8">
                 <Suspense fallback={<div>Loading...</div>}>
-                    <SupabaseAuth />
+                    <SignIn />
                 </Suspense>
             </div>
         </main>
