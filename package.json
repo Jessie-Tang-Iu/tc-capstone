@@ -18,6 +18,7 @@
     "@fullcalendar/timegrid": "^6.1.19",
     "@supabase/supabase-js": "^2.55.0",
     "dotenv": "^17.2.2",
+    "lightningcss": "^1.30.2",
     "lucide-react": "^0.536.0",
     "luxon": "^3.7.1",
     "next": "15.4.5",

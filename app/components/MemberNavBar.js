@@ -109,7 +109,7 @@ export default function MemberNavbar() {
                       Courses
                     </Link>
                     <Link
-                      href="#"
+                      href="/advisor"
                       className="block pl-8 pr-4 py-2 text-sm hover:bg-gray-50"
                     >
                       Advisory
