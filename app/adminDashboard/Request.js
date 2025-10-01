@@ -47,7 +47,7 @@ export default function RequestsPanel({
       </div>
 
       {/* Normal User requests */}
-      <Section title="Normal User">
+      <Section title="Advisor">
         {filteredNormal.length === 0 ? (
           <PlaceholderCard
             title="No requests"
