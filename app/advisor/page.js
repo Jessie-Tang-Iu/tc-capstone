@@ -6,10 +6,10 @@ import Navbar from '../components/MemberNavBar'
 import advisors from '../data/advisors.json'
 import userAdvisors from "../data/usersAdvisors.json";
 import AdvisorCard from '../components/advisorCard';
-import { useUserContext } from "../context/userContext";
+import { useUser } from '@clerk/nextjs';
 
 export default function AdvisorPage() {
-  const userContext = useUserContext();
+  const userContext = useUser();
   const userID = userContext?.user?.id;
 
   // find advisorIDs for this user
