@@ -1,12 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/MemberNavBar";
 import CourseCard from "../components/courseCard/courseCard.js";
 import courses from "../data/courses.json";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 export default function PageContent() {
+    const { isLoaded, isSignedIn, user } = useUser();
+    const router = useRouter();
+
+    // Redirect if not signed in
+    useEffect(() => {
+        if (isLoaded && !isSignedIn) {
+        router.push("/signIn");
+        }
+    }, [isLoaded, isSignedIn, router]);
+
+    if (!isLoaded) {
+        return <p>Loading...</p>;
+    }
+
+    if (!isSignedIn) {
+        // Don’t render anything while redirecting
+        return null;
+    }
+
     const [searchQuery, setSearchQuery] = useState("");
     const [filters, setFilters] = useState({
         beginner: false,
