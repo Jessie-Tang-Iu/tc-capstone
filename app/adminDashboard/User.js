@@ -13,7 +13,6 @@ export default function UsersPanel({ onShowDetails }) {
   const [chatTo, setChatTo] = useState("");
   const [users, setUsers] = useState([]);
 
-  // fetch from API
   useEffect(() => {
     (async () => {
       try {
@@ -27,7 +26,6 @@ export default function UsersPanel({ onShowDetails }) {
     })();
   }, []);
 
-  // group by role
   const normal = useMemo(
     () => users.filter((u) => u.role === "member"),
     [users]
@@ -42,13 +40,14 @@ export default function UsersPanel({ onShowDetails }) {
   );
   const admin = useMemo(() => users.filter((u) => u.role === "admin"), [users]);
 
-  // filter by search query
   const filterByQuery = (list) =>
-    list.filter((u) =>
-      `${u.first_name} ${u.last_name}`
-        .toLowerCase()
-        .includes(query.toLowerCase())
-    );
+    list.filter((u) => {
+      const fullName = `${u.first_name} ${u.last_name}`.toLowerCase();
+      const email = (u.email ?? "").toLowerCase();
+      const username = (u.username ?? "").toLowerCase();
+      const q = query.toLowerCase();
+      return fullName.includes(q) || email.includes(q) || username.includes(q);
+    });
 
   async function updateUserStatus(id, newStatus) {
     try {
@@ -59,10 +58,7 @@ export default function UsersPanel({ onShowDetails }) {
       });
       if (!res.ok) throw new Error("Failed to update user status");
       const updated = await res.json();
-
-      // update source of truth
       setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
-
       return updated;
     } catch (err) {
       console.error("Update status error:", err);
@@ -81,121 +77,59 @@ export default function UsersPanel({ onShowDetails }) {
   };
 
   const showDetails = (user, roleLabel) => {
-    if (onShowDetails) onShowDetails({ user, roleLabel });
+    onShowDetails?.({ user, roleLabel });
   };
+
+  const renderUserSection = (title, list, roleLabel) => (
+    <Section title={title}>
+      {filterByQuery(list).length === 0 ? (
+        <PlaceholderCard
+          title={`No ${title.toLowerCase()} found`}
+          description="Try another search."
+        />
+      ) : (
+        <div className="h-80 overflow-y-auto pr-2">
+          {filterByQuery(list).map((u) => (
+            <UserRow
+              key={u.id}
+              id={u.id}
+              name={`${u.first_name} ${u.last_name}`}
+              subtitle={`${u.username ?? ""} | ${u.email ?? ""}`}
+              status={u.status}
+              onMessage={() => openMessage(u.email)}
+              onDetails={() => showDetails(u, roleLabel)}
+              onStatusChange={(updated) =>
+                setUsers((prev) =>
+                  prev.map((x) => (x.id === updated.id ? updated : x))
+                )
+              }
+            />
+          ))}
+        </div>
+      )}
+    </Section>
+  );
 
   return (
     <div className="w-full">
-      {/* Header */}
       <div className="mb-4 rounded-xl bg-white p-6 shadow text-center">
         <div className="mb-4 text-3xl font-semibold text-[#E55B3C]">
           User Management
         </div>
         <div className="flex justify-center">
-          <SearchBar value={query} onChange={setQuery} onSearch={() => {}} />
+          <SearchBar
+            placeholder="Username | Email"
+            value={query}
+            onChange={setQuery}
+            onSearch={() => {}}
+          />
         </div>
       </div>
 
-      {/* Admins */}
-      <Section title="Admins">
-        {filterByQuery(admin).length === 0 ? (
-          <PlaceholderCard
-            title="No admins found"
-            description="Try another search."
-          />
-        ) : (
-          <div className="h-80 overflow-y-auto pr-2">
-            {filterByQuery(admin).map((u) => (
-              <UserRow
-                key={u.id}
-                id={u.id}
-                name={`${u.first_name} ${u.last_name}`}
-                subtitle={u.email}
-                status={u.status} // <-- pass status directly
-                onMessage={() => openMessage(u.email)}
-                onDetails={() => showDetails(u, u.role)}
-                onStatusChange={(updated) => {
-                  setUsers((prev) =>
-                    prev.map((x) => (x.id === updated.id ? updated : x))
-                  );
-                }}
-              />
-            ))}
-          </div>
-        )}
-      </Section>
-
-      {/* Employers */}
-      <Section title="Employers">
-        {filterByQuery(employer).length === 0 ? (
-          <PlaceholderCard
-            title="No employers found"
-            description="Try another search."
-          />
-        ) : (
-          <div className="h-80 overflow-y-auto pr-2">
-            {filterByQuery(employer).map((u) => (
-              <UserRow
-                key={u.id}
-                name={`${u.first_name} ${u.last_name}`}
-                subtitle={u.email}
-                isBanned={u.banned}
-                onMessage={() => openMessage(`${u.first_name} ${u.last_name}`)}
-                onDetails={() => showDetails(u, "Employer")}
-                onBanToggle={() => toggleBan(u.id)}
-              />
-            ))}
-          </div>
-        )}
-      </Section>
-
-      {/* Advisors */}
-      <Section title="Advisors">
-        {filterByQuery(advisor).length === 0 ? (
-          <PlaceholderCard
-            title="No advisors found"
-            description="Try another search."
-          />
-        ) : (
-          <div className="h-80 overflow-y-auto pr-2">
-            {filterByQuery(advisor).map((u) => (
-              <UserRow
-                key={u.id}
-                name={`${u.first_name} ${u.last_name}`}
-                subtitle={u.email}
-                isBanned={u.banned}
-                onMessage={() => openMessage(`${u.first_name} ${u.last_name}`)}
-                onDetails={() => showDetails(u, "Advisor")}
-                onBanToggle={() => toggleBan(u.id)}
-              />
-            ))}
-          </div>
-        )}
-      </Section>
-
-      {/* Normal Members */}
-      <Section title="Normal Users">
-        {filterByQuery(normal).length === 0 ? (
-          <PlaceholderCard
-            title="No users found"
-            description="Try another search."
-          />
-        ) : (
-          <div className="h-80 overflow-y-auto pr-2">
-            {filterByQuery(normal).map((u) => (
-              <UserRow
-                key={u.id}
-                name={`${u.first_name} ${u.last_name}`}
-                subtitle={u.email}
-                isBanned={u.banned}
-                onMessage={() => openMessage(`${u.first_name} ${u.last_name}`)}
-                onDetails={() => showDetails(u, "Normal User")}
-                onBanToggle={() => toggleBan(u.id)}
-              />
-            ))}
-          </div>
-        )}
-      </Section>
+      {renderUserSection("Admins", admin, "Admin")}
+      {renderUserSection("Employers", employer, "Employer")}
+      {renderUserSection("Advisors", advisor, "Advisor")}
+      {renderUserSection("Normal Users", normal, "Member")}
 
       {openChat && (
         <ChatWindow
