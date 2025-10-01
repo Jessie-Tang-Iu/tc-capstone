@@ -15,6 +15,16 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 const MyCalendarPage = () => {
+  // Hooks go first
+  const calendarRef = useRef(null);
+  const [events, setEvents] = useState([]);
+  const [bookingData, setBookingData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentTitle, setCurrentTitle] = useState("");
+  const [isTodayDisabled, setIsTodayDisabled] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
   // Code Below checks if user is logged in before running ANYTHING else
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
@@ -34,15 +44,6 @@ const MyCalendarPage = () => {
     // Don’t render anything while redirecting
     return null;
   }
-
-  const calendarRef = useRef(null);
-  const [events, setEvents] = useState([]);
-  const [bookingData, setBookingData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [currentTitle, setCurrentTitle] = useState("");
-  const [isTodayDisabled, setIsTodayDisabled] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [showModal, setShowModal] = useState(false);
 
   // esc closes modal
   useEffect(() => {
