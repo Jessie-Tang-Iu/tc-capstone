@@ -3,22 +3,29 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import ChatWindow from "./ChatWindow";
+import Button from "./ui/Button";
+import { useRouter } from "next/navigation";
 
 export default function AdvisorCard({ advisor }) {
     const [isChatOpen, setIsChatOpen] = useState(false);
+    const router = useRouter();
+
+    // navigate to advisor detail page
+    const handleViewProfile = (advisorID) => {
+        router.push(`/advisor/${advisorID}`)
+    }
 
     return(
-        <div className="bg-white shadow-md rounded-lg p-6 m-4">
-            <h2 className="text-2xl font-bold mb-2">{advisor.name}</h2>
-            <p className="text-gray-700 mb-4">{advisor.description}</p>
-            <Link href={`/advisor/${advisor.advisorID}`}>
-                <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                    View Profile
-                </button>
-            </Link>
-            <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setIsChatOpen(true)}>
-                Open Chat
-            </button>
+        <div className="bg-[#F3E1D5] shadow-md rounded-lg p-6 m-4">
+            <div>
+                <h2 className="text-2xl text-black font-bold mb-2">{advisor.name}</h2>
+                <p className="text-gray-700 mb-4">{advisor.description}</p>
+            </div>
+            <div className='flex flex-row space-x-2'>
+                <Button onClick={() => handleViewProfile(advisor.advisorID)} text="View Profile" />
+                <Button onClick={() => setIsChatOpen(true)} text="Message" />
+            </div>
+            
 
             {isChatOpen && (
                 <div className="fixed bottom-4 right-4 w-80 h-96 z-50">
