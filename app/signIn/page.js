@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Navbar from "../components/NavBarBeforeSignIn";
-import SignIn from "../components/auth/SignIn";
+import SignInTab from "../components/auth/SignIn";
 
 
 
@@ -11,7 +11,7 @@ export default function SignIn() {
             <Navbar />
             <div className="container mx-auto px-4 py-8">
                 <Suspense fallback={<div>Loading...</div>}>
-                    <SignIn />
+                    <SignInTab />
                 </Suspense>
             </div>
         </main>

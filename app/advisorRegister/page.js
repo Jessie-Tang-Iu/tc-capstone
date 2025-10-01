@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useSignUp, useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import Navbar from "../components/NavBarBeforeSignIn";
 
-
-
 export default function AdvisorRegister() {
+    const { isLoaded, signUp, setActive } = useSignUp();
+    const { getToken } = useAuth();
+    const router = useRouter();
 
     // form
     const [firstName, setFirstName] = useState("");
@@ -14,19 +17,61 @@ export default function AdvisorRegister() {
     const [password, setPassword] = useState("");
     const [title, setTitle] = useState("");
     const [companyName, setCompanyName] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [username, setUsername] = useState("");
 
     // ui
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const registerAdvisor = (e) => {
-        e.preventDefault();
 
+    const registerAdvisor = async (e) => {
+        e.preventDefault();
+        if (!isLoaded) return;
+
+        try {
+        setLoading(true);
         setError("");
-        if(error === "") {
-            setLoading(true);
+
+        // Create Clerk account
+        const result = await signUp.create({
+            emailAddress: email,
+            username,
+            password,
+            firstName,
+            lastName,
+        });
+
+        if (result.status === "complete") {
+            // Activate Clerk session
+            if (result.createdSessionId) {
+            await setActive({ session: result.createdSessionId });
+            }
+
+            // Optional: update metadata via API if needed
+            const token = await getToken({ template: "backend" });
+            await fetch("/api/users/metadata", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                role: "advisor",
+            }),
+            });
+
+            router.push("/advisorDashboard"); // redirect after signup
+        } else {
+            setError("Unexpected signup state: " + result.status);
         }
-    }
+        } catch (err) {
+            console.error("Signup error:", err);
+            setError(err.errors ? err.errors[0].message : err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <main className="bg-gray-100 min-h-screen">
@@ -46,59 +91,81 @@ export default function AdvisorRegister() {
                                 <div className="flex flex-col">
                                     <label className="text-black">First Name *</label>
                                     <input
-                                    required
-                                    type="text"
-                                    className="px-2 py-1 mb-3 w-72 mr-5 rounded bg-[#E2B596] focus:bg-orange-100"
-                                    onChange={(e) => setFirstName(e.target.value)}
-                                    value={firstName}
+                                        required
+                                        type="text"
+                                        className="px-2 py-1 mb-3 w-72 mr-5 rounded bg-[#E2B596] focus:bg-orange-100"
+                                        onChange={(e) => setFirstName(e.target.value)}
+                                        value={firstName}
                                     />
                                     <label className="text-black">Email Address *</label>
                                     <input
-                                    required
-                                    type="email"
-                                    className="px-2 py-1 mb-3 w-72 mr-5 rounded bg-[#E2B596] focus:bg-orange-100"
-                                    placeholder="Email Address"
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    value={email}
+                                        required
+                                        type="email"
+                                        className="px-2 py-1 mb-3 w-72 mr-5 rounded bg-[#E2B596] focus:bg-orange-100"
+                                        placeholder="Email Address"
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        value={email}
                                     />
                                     <label className="text-black">Organization/ Company Name</label>
                                     <input
-                                    type="text"
-                                    className="px-2 py-1 mb-3 w-72 mr-5 rounded bg-[#E2B596] focus:bg-orange-100"
-                                    placeholder="Tech Connect Alberta"
-                                    onChange={(e) => setCompanyName(e.target.value)}
-                                    value={companyName}
+                                        type="text"
+                                        className="px-2 py-1 mb-3 w-72 mr-5 rounded bg-[#E2B596] focus:bg-orange-100"
+                                        placeholder="Tech Connect Alberta"
+                                        onChange={(e) => setCompanyName(e.target.value)}
+                                        value={companyName}
+                                    />
+                                    <label className="text-black">Username</label>
+                                    <input
+                                        required
+                                        type="text"
+                                        className="px-2 py-1 mb-3 w-72 mr-5 rounded bg-[#E2B596] focus:bg-orange-100"
+                                        placeholder="Ex. JohnDoe123"
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        value={username}
                                     />
                                 </div>
 
                                 <div className="flex flex-col">
                                     <label className="text-black">Last Name *</label>
                                     <input
-                                    required
-                                    type="text"
-                                    className="px-2 py-1 mb-3 w-72 mr-5 rounded bg-[#E2B596] focus:bg-orange-100"
-                                    onChange={(e) => setLastName(e.target.value)}
-                                    value={lastName}
+                                        required
+                                        type="text"
+                                        className="px-2 py-1 mb-3 w-72 mr-5 rounded bg-[#E2B596] focus:bg-orange-100"
+                                        onChange={(e) => setLastName(e.target.value)}
+                                        value={lastName}
                                     />
                                     <label className="text-black">Password *</label>
                                     <input
-                                    required
-                                    type="password"
-                                    className="px-2 py-1 mb-3 w-72 mr-5 rounded bg-[#E2B596] focus:bg-orange-100"
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    value={password}
+                                        required
+                                        type="password"
+                                        className="px-2 py-1 mb-3 w-72 mr-5 rounded bg-[#E2B596] focus:bg-orange-100"
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        value={password}
                                     />
                                     <label className="text-black">Your Title *</label>
                                     <input
-                                    required
-                                    type="text"
-                                    className="px-2 py-1 mb-3 w-72 mr-5 rounded bg-[#E2B596] focus:bg-orange-100"
-                                    placeholder="Front-end Developer"
-                                    onChange={(e) => setTitle(e.target.value)}
-                                    value={title}
+                                        required
+                                        type="text"
+                                        className="px-2 py-1 mb-3 w-72 mr-5 rounded bg-[#E2B596] focus:bg-orange-100"
+                                        placeholder="Ex. Front-end Developer"
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        value={title}
+                                    />
+                                    <label className="text-black">Phone Number</label>
+                                    <input
+                                        required
+                                        type="text"
+                                        className="px-2 py-1 mb-3 w-72 mr-5 rounded bg-[#E2B596] focus:bg-orange-100"
+                                        placeholder="Ex. 1112223333"
+                                        onChange={(e) => setPhoneNumber(e.target.value)}
+                                        value={phoneNumber}
                                     />
                                 </div>
                             </div>
+
+                            {/* Clerk CAPTCHA */}
+                            <div id="clerk-captcha" className="my-4"></div>
+
                             <button
                                 type="submit"
                                 disabled={loading}

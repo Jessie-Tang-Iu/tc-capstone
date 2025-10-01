@@ -1,11 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { useSignUp, useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import NavBarBeforeSignIn from "../components/NavBarBeforeSignIn";
 import Button from "../components/ui/Button";
 
 export default function EmployerRegistration() {
+  const { isLoaded, signUp, setActive } = useSignUp();
+  const { getToken } = useAuth();
+  const router = useRouter();
+
   // Form state
   const [formData, setFormData] = useState({
     username: "",
@@ -22,6 +27,7 @@ export default function EmployerRegistration() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -30,23 +36,55 @@ export default function EmployerRegistration() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    if (!isLoaded) return;
 
-    // Frontend validation
+    setLoading(true);
+    setError("");
+
     if (!formData.email || !formData.password) {
       setError("Email and password are required");
       setLoading(false);
       return;
     }
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Form submitted:", formData);
+    try {
+      // Create Clerk user
+      const result = await signUp.create({
+        emailAddress: formData.email,
+        password: formData.password,
+        username: formData.username,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+      });
+
+      if (result.status === "complete") {
+        if (result.createdSessionId) {
+          await setActive({ session: result.createdSessionId });
+        }
+
+        // Save employer role metadata
+        const token = await getToken({ template: "backend" });
+        await fetch("/api/users/metadata", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ role: "employer" }),
+        });
+
+        router.push("/employerDashboard");
+      } else {
+        setError("Unexpected signup state: " + result.status);
+      }
+    } catch (err) {
+      console.error("Signup error:", err);
+      setError(err.errors ? err.errors[0].message : err.message);
+    } finally {
       setLoading(false);
-      // Here you would typically redirect or show success message
-    }, 1000);
+    }
   };
 
   return (
@@ -68,28 +106,24 @@ export default function EmployerRegistration() {
           </div>
         )}
 
-        <div className="container mx-auto px-4 max-w-4xl mt-5">
+        <div className="container mx-auto px-4 max-w-4xl mt-5 text-gray-800">
           <div className=" rounded-lg shadow-md p-8 bg-[#F3E1D5]">
             <form onSubmit={handleSubmit}>
               <div className="mb-6">
                 <h2 className="text-3xl text-[#DD5B45] font-bold mb-4">
                   Required Information
                 </h2>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label
-                      htmlFor="username"
-                      className="block text-gray-700 mb-2"
-                    >
-                      Username
+                    <label htmlFor="email" className="block text-gray-700 mb-2">
+                      Email Address
                     </label>
                     <input
-                      type="text"
-                      id="username"
-                      name="username"
+                      type="email"
+                      id="email"
+                      name="email"
                       required
-                      value={formData.username}
+                      value={formData.email}
                       onChange={handleChange}
                       className="w-full px-4 py-2 border bg-[#E2B596] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -184,15 +218,18 @@ export default function EmployerRegistration() {
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-gray-700 mb-2">
-                      Email Address
+                    <label
+                      htmlFor="username"
+                      className="block text-gray-700 mb-2"
+                    >
+                      Username
                     </label>
                     <input
-                      type="email"
-                      id="email"
-                      name="email"
+                      type="text"
+                      id="username"
+                      name="username"
                       required
-                      value={formData.email}
+                      value={formData.username}
                       onChange={handleChange}
                       className="w-full px-4 py-2 border bg-[#E2B596] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -221,6 +258,9 @@ export default function EmployerRegistration() {
               <p className="text-gray-600 mb-6 italic justify-center text-center">
                 The rest of the information can be updated in the profile page
               </p>
+
+              {/* Clerk CAPTCHA */}
+              <div id="clerk-captcha" className="my-4"></div>
 
               <div className="flex justify-center">
                 <Button text="Register" />

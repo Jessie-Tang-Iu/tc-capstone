@@ -4,7 +4,6 @@ import SignUp from "../components/auth/memberSignUp";
 
 
 export default function SignUp() {
-
     return(
         <main className="bg-gray-100 min-h-screen">
             <Navbar />
@@ -13,7 +12,6 @@ export default function SignUp() {
                 <p className="text-black text-center mb-10">Connect with Alberta top tech professionals.</p>
                 <SignUp />
             </div>
-            
         </main>
     )
 }
