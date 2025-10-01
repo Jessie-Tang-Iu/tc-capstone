@@ -1,14 +1,20 @@
-export default function Button({ text, onClick, disabled = false }) {
+"use client";
+
+export default function Button({ text, onClick, disabled, className }) {
   return (
     <button
-      onClick={onClick}
+      type="button"
+      onClick={disabled ? undefined : onClick}
       disabled={disabled}
-      className={`font-semibold px-6 py-2 rounded-md transition duration-200 ease-in-out cursor-pointer focus:outline-none active:scale-95
+      className={`
+        px-4 py-2 rounded-md font-semibold
         ${
           disabled
-            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-            : "bg-[#E55B3C] hover:bg-[#d14f32] text-white"
-        }`}
+            ? "bg-gray-300 text-gray-500 cursor-default"
+            : "bg-[#E55B3C] text-white hover:bg-[#d04f32] cursor-pointer"
+        }
+        ${className || ""}
+      `}
     >
       {text}
     </button>
