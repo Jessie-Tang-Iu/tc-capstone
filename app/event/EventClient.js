@@ -56,20 +56,30 @@ export default function EventClient({ initialEvents = [] }) {
   };
 
   // when building filteredEvents for the list:
+  const isFutureEvent = (e) => {
+    const date = normalizeDate(e.date);
+    if (!date) return false;
+
+    const time = normalizeTime(e.start_time);
+    const dateTimeStr = time ? `${date}T${time}` : `${date}T23:59:59`;
+    const eventDateTime = new Date(dateTimeStr);
+    return eventDateTime >= new Date();
+  };
+
   const filteredEvents = useMemo(
     () =>
       events
-        .filter((e) =>
-          tab === "upcoming" ? e.status === "active" : e.status !== "active"
-        )
+        .filter((e) => {
+          const future = isFutureEvent(e);
+          return tab === "upcoming" ? future : !future;
+        })
         .map((e) => ({
           ...e,
-          date: normalizeDate(e.date) ?? e.date, // ensure ISO-like date
-          start_time: normalizeTime(e.start_time) ?? null, // optional
+          date: normalizeDate(e.date) ?? e.date,
+          start_time: normalizeTime(e.start_time) ?? null,
         })),
     [events, tab]
   );
-
   // Build FC-ready events once
   const calendarEvents = useMemo(
     () =>
@@ -197,29 +207,20 @@ export default function EventClient({ initialEvents = [] }) {
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Wrapper is relative so the button can be absolutely placed "inside" the card */}
-                <div className="relative">
-                  <CalendarBigEvent
-                    workshop={selectedEvent}
-                    onClose={() => setIsOpen(false)}
-                  />
-
-                  {/* Button visually inside the card (bottom-right corner) */}
-                  <div className="absolute right-6 bottom-6 mt-3">
-                    <Button
-                      text="View Event Page"
-                      onClick={() => {
-                        const id = selectedEvent?.id;
-                        if (id === undefined || id === null) return;
-                        setIsOpen(false);
-                        router.push(
-                          `/event/${encodeURIComponent(
-                            String(id)
-                          )}?from=calendar&tab=${encodeURIComponent(tab)}`
-                        );
-                      }}
-                    />
-                  </div>
-                </div>
+                <CalendarBigEvent
+                  workshop={selectedEvent}
+                  onClose={() => setIsOpen(false)}
+                  onView={() => {
+                    const id = selectedEvent?.id;
+                    if (id === undefined || id === null) return;
+                    setIsOpen(false);
+                    router.push(
+                      `/event/${encodeURIComponent(
+                        String(id)
+                      )}?from=calendar&tab=${encodeURIComponent(tab)}`
+                    );
+                  }}
+                />
               </div>
             </div>
           )}
