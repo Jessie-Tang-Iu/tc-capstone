@@ -10,7 +10,7 @@ import MessagePage from "../components/MessagePage";
 function PageContent() {
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
-
+  console.log(user.id);
   // Redirect if not signed in
   useEffect(() => {
     if (isLoaded && !isSignedIn) {

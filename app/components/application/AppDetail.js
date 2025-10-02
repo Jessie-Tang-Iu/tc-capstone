@@ -34,9 +34,9 @@ const QAItem = ({ q, a }) => (
 
 export default function AppDetail({app, resume, coverLetter, onDownload}) {
 
-  console.log("Resume: ", resume);
-  console.log("Cover letter: ", coverLetter);
-  console.log("App: ", app);
+  // console.log("Resume: ", resume);
+  // console.log("Cover letter: ", coverLetter);
+  // console.log("App: ", app);
 
   if (!app) {
     return (
@@ -46,7 +46,7 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
     );
   }
 
-  const appliedDate = app.appliedAt
+  const appliedDate = app.applied_at
     ? new Date(app.applied_at).toLocaleDateString()
     : null;
 
@@ -94,10 +94,10 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
           <div className="border border-gray-200 rounded-lg bg-white">
             <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">Contact Information</div>
             <div className="p-4 grid md:grid-cols-2 gap-3">
-              <LabelValue label="First Name" value={app.user_first_name} />
-              <LabelValue label="Last Name" value={app.user_last_name} />
-              <LabelValue label="Email address" value={app.user_email} />
-              <LabelValue label="Phone Number" value={app.user_phone || ""} />
+              <LabelValue label="First Name" value={app.first_name} />
+              <LabelValue label="Last Name" value={app.last_name} />
+              <LabelValue label="Email address" value={app.email} />
+              <LabelValue label="Phone Number" value={app.phone || ""} />
             </div>
           </div>
 

@@ -4,36 +4,37 @@ import { query } from "../../database/db.js";
 
 export async function getApplicationsByUser(id) {
   const { rows } = await query(`
-    SELECT ap.id, jb.title, jb.company, jb.location, ap.status, ap.applied_at AS "appliedAt"
+    SELECT ap.id, jb.title, jb.company, jb.location, ap.status, ap.applied_at AS "appliedAt", clerk_id
       FROM application ap JOIN job jb ON ap.job_id = jb.id
-     WHERE user_id = $1 ORDER BY applied_at DESC`, [id]);
+                          JOIN users u ON ap.user_id = u.id
+     WHERE clerk_id = $1 ORDER BY applied_at DESC`, [id]);
   return rows;
 }
 
 export async function getApplicationById(id) {
   const { rows } = await query(`
-    SELECT  u.id AS user_id, u.firstname AS user_first_name, u.lastname AS user_last_name, u.email AS user_email, 
+    SELECT   u.id AS user_id, u.first_name, u.last_name, u.email, u.phone,
 		        ap.id, ap.resume, ap.cover_letter, ap.status, ap.applied_at, ap.relative_first_name, ap.relative_last_name, ap.relative_email, ap.relative_phone, ap.answers,
 		        jb.title, jb.company, jb.location, jb.questions
       FROM application ap JOIN job jb ON ap.job_id = jb.id
-                          JOIN public."user" u ON u.id = ap.user_id
+                          JOIN users u ON u.id = ap.user_id
      WHERE ap.id = $1`, [id]);
   return rows[0];
 }
 
 export async function getResumeByUser(id) {
   const { rows } = await query(`
-    SELECT u.id AS user_id, firstname AS first_name, lastname AS last_name, email, summary, education, certifications, experience, skills, additional_info  
-      FROM resume r JOIN public."user" u ON u.id = r.user_id
-     WHERE user_id = $1`, [id]);
+    SELECT u.id AS user_id, clerk_id, first_name, last_name, email, summary, education, certifications, experience, skills, additional_info  
+      FROM resume r JOIN users u ON u.id = r.user_id
+     WHERE clerk_id = $1`, [id]);
   return rows[0];
 }
 
 export async function getCoverLetterByUser(id) {
   const { rows } = await query(`
-    SELECT u.id AS user_id, firstname AS first_name, lastname AS last_name, email, content
-      FROM cover_letter cv JOIN public."user" u ON u.id = cv.user_id
-     WHERE user_id = $1`, [id]);
+    SELECT u.id AS user_id, first_name, last_name, email, clerk_id, content
+      FROM cover_letter cv JOIN users u ON u.id = cv.user_id
+     WHERE clerk_id = $1`, [id]);
   return rows[0];
 }
 

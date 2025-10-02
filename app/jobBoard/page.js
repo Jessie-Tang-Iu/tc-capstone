@@ -1,6 +1,6 @@
 "use client";
 
-import { useUserContext } from "@/app/context/userContext";
+import { useUser } from "@clerk/nextjs";
 import React, { useEffect, useState } from "react";
 import MemberNavbar from "../components/MemberNavBar";
 import SearchBar from "../components/job/SearchBar";
@@ -11,7 +11,7 @@ import ApplyForm from "../components/application/ApplyForm";
 
 export default function JobBoardPage() {
 
-    const { user, getCurrentSession } = useUserContext();
+    const { user } = useUser();
 
     const [jobs, setJobs] = useState([]);
     const [selectedJobId, setSelectedJobId] = useState();
