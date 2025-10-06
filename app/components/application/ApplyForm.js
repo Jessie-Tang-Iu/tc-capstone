@@ -1,7 +1,7 @@
 import { FileInput, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-
-export default function ApplyForm({ job, formData, setFormData, currentStep, setCurrentStep, onSubmit, onClose }) {
+import PopupMessage from "@/app/components/ui/PopupMessage";
+export default function ApplyForm({ job, formData, setFormData, currentStep, setCurrentStep, errorMessage, setErrorMessage, onSubmit, onClose }) {
 
   const fileInputRef = useRef(null);
 
@@ -30,7 +30,17 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
     }, []);
 
   const handleNext = () => {
-    if (currentStep < 5) {
+    let error = false;
+    if (currentStep == 3) {
+      formData.answers.forEach(a => {
+        if (a == "") {
+          setErrorMessage("Question is required to answer");
+          error = true;
+          return;
+        }
+      })
+    }
+    if ((currentStep < 5) && !error) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -52,6 +62,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
   }
 
   const handleSubmit = () => {
+
     if (!formData.resume && !resume.error) setFormData({ ...formData, resume: resume });
     if (!formData.cover_letter && !coverLetter.error) setFormData({ ...formData, cover_letter: coverLetter})
     onSubmit();
@@ -196,6 +207,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
   );
 
   return (
+    <>
     <div className="absolute w-full h-full bg-gray-700/60 flex items-center justify-center z-10 ">
       <div className="fixed inset-0 bg-gray-100 z-50 overflow-y-auto">
         <div className="pt-20 pb-8 px-4">
@@ -393,7 +405,6 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
             <div className="max-w-2xl mx-auto">
               <div className="bg-white border border-gray-400 rounded-lg p-8 text-center">
                 <h1 className="text-2xl font-bold text-black mb-4">Application Submitted</h1>
-                <p className="text-sm text-black mb-6">no: {formData.id}</p>
                     
                 <div className="text-left text-sm text-black space-y-4 mb-8">
                   <p>Your application has been submitted!</p>
@@ -409,7 +420,6 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                   <p>Our team will review your submission, and if selected, you will be contacted by email for the next steps.</p>
                   
                   <p>For questions, please contact: <strong>support@techconnectalberta.ca</strong></p>
-                  <p>Your application ID: <strong>{formData.id}</strong></p>
                 </div>
 
                 <div className="flex gap-4 justify-center">
@@ -441,5 +451,18 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
         </div>
       </div>
     </div>
+    {errorMessage &&
+      <PopupMessage
+        type="error"
+        title={
+          errorMessage.includes("answer")
+            ? "Answer Question"
+            : "Apply Job Failed"
+        }
+        description={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
+    }
+    </>
   );
 }
