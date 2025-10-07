@@ -71,8 +71,8 @@ export default function UsersPanel({ onShowDetails }) {
     await updateUserStatus(user.id, newStatus);
   };
 
-  const openMessage = (name) => {
-    setChatTo(name);
+  const openMessage = (userId) => {
+    setChatTo(userId);
     setOpenChat(true);
   };
 
@@ -96,7 +96,7 @@ export default function UsersPanel({ onShowDetails }) {
               name={`${u.first_name} ${u.last_name}`}
               subtitle={`${u.username ?? ""} | ${u.email ?? ""}`}
               status={u.status}
-              onMessage={() => openMessage(u.email)}
+              onMessage={() => openMessage(u.id)}
               onDetails={() => showDetails(u, roleLabel)}
               onStatusChange={(updated) =>
                 setUsers((prev) =>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import ChatWindow from "../ChatWindow";
 
 export default function UserRow({
   id,
@@ -12,6 +13,9 @@ export default function UserRow({
   onStatusChange,
 }) {
   const [loading, setLoading] = useState(false);
+  const [openChat, setOpenChat] = useState(false);
+  const [chatRecipient, setChatRecipient] = useState(null);
+  const ME = "11111111-1111-1111-1111-111111111111"; // same admin ID as main panel
 
   const handleBanToggle = async () => {
     if (loading) return;

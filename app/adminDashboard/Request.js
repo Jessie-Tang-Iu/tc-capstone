@@ -40,6 +40,7 @@ export default function RequestsPanel({ onShowDetails }) {
       `${u.first_name} ${u.last_name}`
         .toLowerCase()
         .includes(query.toLowerCase())
+        
     );
 
   // helper to update user status in DB
