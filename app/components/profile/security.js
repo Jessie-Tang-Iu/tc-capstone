@@ -1,18 +1,35 @@
 import { User, Lock, Shield, Bell, ChevronDown } from "lucide-react";
+import { useState } from "react";
 
 export default function Security({ formData, setFormData }) {
 
-    const passwordRequirements = [
-        { text: "8 characters", met: false },
-        { text: "Uppercase letters (A-Z)", met: false },
-        { text: "Lowercase letters (a-z)", met: true },
-        { text: "Numbers (0-9)", met: true },
-        { text: "Special characters (! @ # $ % ^ & * ( ) - _ + =)", met: false }
-    ];
+    const [passwordRequirements, setPasswordRequirements] = useState([
+        { text: "8 characters", met: false, checks: /^.{8,}$/ },
+        { text: "Uppercase letters (A-Z)", met: false, checks: /[A-Z]/ },
+        { text: "Lowercase letters (a-z)", met: false, checks: /[a-z]/ },
+        { text: "Numbers (0-9)", met: false, checks: /[0-9]/ },
+        { text: "Special characters (! @ # $ % ^ & * ( ) - _ + =)", met: false, checks: /[!@#$%^&*()-_+=]/ }
+    ]);
     
     const handleInputChange = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
+
+    const checkPassword = (password) => {
+        const updatedRequirements = passwordRequirements.map(req => {
+            // 2. Use the regex stored in req.checks to test the new password
+            const isMet = req.checks.test(password);
+
+            // 3. Return a new object with the updated 'met' status
+            return {
+                ...req,
+                met: isMet
+            };
+        });
+
+        // 4. Update the state with the new array
+        setPasswordRequirements(updatedRequirements);
+    } 
 
     return (
         <div className="space-y-8 px-5 h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto">
@@ -98,13 +115,13 @@ export default function Security({ formData, setFormData }) {
                             <input
                                 type="password"
                                 value={formData.currentPassword}
-                                onChange={(e) => handleInputChange('currentPassword', e.target.value)}
-                                placeholder="current password"
-                                className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                                onChange={(e) => { handleInputChange('currentPassword', e.target.value); checkPassword(e.target.value); }}
+                                required
+                                className="w-full px-4 py-2 text-gray-600 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
                             />
-                            <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#E55B3C] text-sm font-bold">
+                            {/* <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#E55B3C] text-sm font-bold">
                                 Show
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                     
@@ -114,40 +131,42 @@ export default function Security({ formData, setFormData }) {
                             <input
                                 type="password"
                                 value={formData.newPassword}
-                                onChange={(e) => handleInputChange('newPassword', e.target.value)}
-                                className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                                onChange={(e) => { handleInputChange('newPassword', e.target.value); checkPassword(e.target.value); }}
+                                required
+                                className="w-full px-4 py-2 text-gray-600 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
                             />
-                            <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#E55B3C] text-sm font-bold">
+                            {/* <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#E55B3C] text-sm font-bold">
                                 Show
-                            </button>
+                            </button> */}
                         </div>
                     </div>
 
-                    <div className="text-sm space-y-1">
-                        {passwordRequirements.map((req, index) => (
-                            <div key={index} className={`${req.met ? 'text-green-600' : 'text-red-600'}`}>
-                                {req.text}
-                            </div>
-                        ))}
-                    </div>
-
                     <div>
-                        <label className="block text-base md:text-lg font-normal text-black mb-2">Retype</label>
+                        <label className="block text-base md:text-lg font-normal text-black mb-2">Confirm new password*</label>
                         <div className="relative">
                             <input
                                 type="password"
                                 value={formData.retypePassword}
-                                onChange={(e) => handleInputChange('retypePassword', e.target.value)}
-                                placeholder="retype"
-                                className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                                onChange={(e) => { handleInputChange('retypePassword', e.target.value); checkPassword(e.target.value); }}
+                                className="w-full px-4 py-2 text-gray-600 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
                             />
-                            <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#E55B3C] text-sm font-bold">
+                            {/* <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#E55B3C] text-sm font-bold">
                                 Show
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </div>
+                {(formData.currentPassword || formData.newPassword || formData.required) && 
+                (<div className="pt-5 text-sm space-y-1">
+                    {passwordRequirements.map((req, index) => (
+                        <div key={index} className={`${req.met ? 'text-green-600' : 'text-red-600'}`}>
+                            {req.text}
+                        </div>
+                    ))}
+                </div>)
+                }
             </section>
+            <button className="px-6 py-2 bg-[#E55B3C] hover:bg-[#d14f32] font-semibold rounded-md transition duration-200 cursor-pointer focus:outline-none active:scale-95 text-white">Save changes</button>
         </div>
     );
 }

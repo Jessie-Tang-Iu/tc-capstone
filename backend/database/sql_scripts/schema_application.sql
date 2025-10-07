@@ -29,8 +29,10 @@ CREATE TABLE application (
     id                  BIGSERIAL PRIMARY KEY,
     job_id              BIGINT NOT NULL,
     user_id             VARCHAR(255) NOT NULL,
-    resume              BYTEA,
-    cover_letter        BYTEA,
+    resume_name         VARCHAR(500),
+    resume_data         BYTEA,
+    cover_letter_name   VARCHAR(500),
+    cover_letter_data   BYTEA,
     status              CHAR(1) NOT NULL DEFAULT 'S', -- S: Submitted, U: Under Reviewed, I: Interview Scheduled, R: Rejected, O: Offer, D: Withdrawn
     applied_at          TIMESTAMP NOT NULL DEFAULT now(),
     relative_first_name  TEXT,
@@ -54,6 +56,6 @@ INSERT INTO resume (user_id, summary, skills, experience, education, certificati
 INSERT INTO cover_letter (user_id, content) VALUES
 ('user_33TygiU42yjY3nfWxD5cEPCACv7', 'Dear Hiring Manager,\n\nI am excited to apply for the Data Analyst position at your organization. With a Master degree in Data Science and 3 years of hands-on experience in data analysis and visualization, I am eager to bring my expertise to your team.\n\nPlease find my resume attached for your consideration. I look forward to the possibility of discussing how I can contribute to your company success.\n\nThank you for your time and consideration.\n\nBest regards,\nJane Smith');
 
-INSERT INTO application (job_id, user_id, resume, cover_letter, status, relative_first_name, relative_last_name, relative_email, relative_phone, answers) VALUES
-(1,'user_33TygiU42yjY3nfWxD5cEPCACv7', NULL, NULL, 'I', 'Jane', 'Doe', 'janeD@sample.com', '555-555-5555', ARRAY['Answer A', 'Answer B', 'Answer C', 'Answer D']),
-(2,'user_33TygiU42yjY3nfWxD5cEPCACv7', NULL, NULL, 'U', 'Bob', 'Smith', 'bobS@sample.com', '987-654-3210', ARRAY['Answer A', 'Answer B', 'Answer C', 'Answer D']);
+INSERT INTO application (job_id, user_id, status, relative_first_name, relative_last_name, relative_email, relative_phone, answers) VALUES
+(1,'user_33TygiU42yjY3nfWxD5cEPCACv7', 'I', 'Jane', 'Doe', 'janeD@sample.com', '555-555-5555', ARRAY['Answer A', 'Answer B', 'Answer C', 'Answer D']),
+(2,'user_33TygiU42yjY3nfWxD5cEPCACv7', 'U', 'Bob', 'Smith', 'bobS@sample.com', '987-654-3210', ARRAY['Answer A', 'Answer B', 'Answer C', 'Answer D']);
