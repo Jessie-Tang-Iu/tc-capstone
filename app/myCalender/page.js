@@ -51,51 +51,42 @@ const MyCalendarPage = () => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [showModal]);
 
-  // fetch "my" bookings (RLS filters rows)
+  // fetch "my" event registrations (via API)
   useEffect(() => {
-    const fetchBookings = async () => {
+    const fetchUserEvents = async () => {
       try {
         setLoading(true);
 
-        // ensure signed-in (optional guard)
         if (!user?.id) throw new Error("Not signed in (Clerk).");
 
-        // embed workshop via FK column name
-        const { data: bookings, error } = await supabase
-          .from("workshop_booking")
-          .select(
-            `
-            id,
-            userID,
-            workshopID,
-            status,
-            workshop:workshopID (
-              id, title, date, start_time
-            )
-          `
-          )
-          .eq("userID", user.id);
+        const res = await fetch(`/api/event_user`);
+        if (!res.ok) throw new Error("Failed to fetch events");
+        const allRegistrations = await res.json();
 
-        if (error) throw error;
+        // filter for this user’s registrations
+        const myEvents = allRegistrations.filter(
+          (r) => String(r.user_id) === String(user.id)
+        );
 
-        const formatted = (bookings ?? [])
-          .filter((b) => b.workshop?.date && b.workshop?.start_time)
-          .map((b) => ({
-            title: b.workshop.title ?? "Workshop",
-            start: `${b.workshop.date}T${b.workshop.start_time}`, // ISO-like
+        // normalize event format for FullCalendar
+        const formatted = myEvents
+          .filter((r) => r.event_date && r.start_time)
+          .map((r) => ({
+            title: r.event_title ?? "Event",
+            start: `${r.event_date}T${r.start_time}`,
           }));
 
         setEvents(formatted);
-        setBookingData(bookings ?? []);
+        setBookingData(myEvents);
       } catch (err) {
-        console.error("Error loading bookings:", err.message || err);
+        console.error("Error loading events:", err.message || err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBookings();
-  }, []);
+    fetchUserEvents();
+  }, [user]);
 
   const updateTitle = () => {
     const api = calendarRef.current?.getApi();
