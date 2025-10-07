@@ -58,16 +58,13 @@ const MyCalendarPage = () => {
         setLoading(true);
 
         // ensure signed-in (optional guard)
-        const {
-          data: { user },
-          error: authErr,
-        } = await supabase.auth.getUser();
-        if (authErr || !user) throw new Error("Not signed in.");
+        if (!user?.id) throw new Error("Not signed in (Clerk).");
 
         // embed workshop via FK column name
-        const { data: bookings, error } = await supabase.from(
-          "workshop_booking"
-        ).select(`
+        const { data: bookings, error } = await supabase
+          .from("workshop_booking")
+          .select(
+            `
             id,
             userID,
             workshopID,
@@ -75,7 +72,9 @@ const MyCalendarPage = () => {
             workshop:workshopID (
               id, title, date, start_time
             )
-          `);
+          `
+          )
+          .eq("userID", user.id);
 
         if (error) throw error;
 
