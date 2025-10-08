@@ -74,7 +74,7 @@ export default function AdvisorPage() {
               <ContactedAdvisorCard key={advisor.advisor_id} advisor={advisor} />
             ))
           ) : (
-            <p className="text-center mt-8 text-black">You haven’t contacted any advisors yet.</p>
+            <p className="text-center mt-8 text-black">You haven&rsquo;t contacted any advisors yet.</p>
           )}            
         </div>
       </div>
