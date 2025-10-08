@@ -4,7 +4,7 @@ import MemberNavbar from "@/app/components/MemberNavBar";
 import Button from "@/app/components/ui/Button";
 import { useRouter } from "next/navigation";
 
-export default function registerAdvisor({ params }) {
+export default function RegisterAdvisor({ params }) {
 
     const { advisorID } = params;
     const router = useRouter();
@@ -21,7 +21,7 @@ export default function registerAdvisor({ params }) {
                 {/* Session 1 */}
                 <div className='my-7 mb-10 text-center'>
                     <h1 className="text-3xl font-bold text-[#E55B3C] mb-6">Register Advisory Session {advisorID}</h1>
-                    <p className="text-gray-700 mb-7">At Tech Connect, we believe technology should amplify your mission—not your expenses. That's why we're offering free or low-cost tech and automation support to nonprofits, based on your organization's size and budget.</p>
+                    <p className="text-gray-700 mb-7">At Tech Connect, we believe technology should amplify your mission—not your expenses. That&apos;s why we&apos;re offering free or low-cost tech and automation support to nonprofits, based on your organization&apos;s size and budget.</p>
                     <hr className='text-black' />
                 </div>
 
