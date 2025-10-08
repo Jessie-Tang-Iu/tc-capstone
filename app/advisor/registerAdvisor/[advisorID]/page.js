@@ -4,8 +4,9 @@ import MemberNavbar from "@/app/components/MemberNavBar";
 import Button from "@/app/components/ui/Button";
 import { useRouter } from "next/navigation";
 
-export default function registerAdvisor({ advisorID }) {
+export default function registerAdvisor({ params }) {
 
+    const { advisorID } = params;
     const router = useRouter();
 
     const handleBackToAdvisorList = () => {

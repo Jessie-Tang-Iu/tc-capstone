@@ -36,13 +36,22 @@ const MyCalendarPage = () => {
     }
   }, [isLoaded, isSignedIn, router]);
 
-  if (!isLoaded) {
-    return <p>Loading...</p>;
-  }
+  // if (!isLoaded) {
+  //   return <p>Loading...</p>;
+  // }
 
-  if (!isSignedIn) {
-    // Don’t render anything while redirecting
-    return null;
+  // if (!isSignedIn) {
+  //   // Don’t render anything while redirecting
+  //   return null;
+  // }
+
+  if (!isLoaded || !isSignedIn) {
+    return (
+      <div className="bg-gray-100 min-h-screen">
+        <MemberNavbar />
+        <p className="text-center mt-10 text-lg text-gray-700">Loading...</p>
+      </div>
+    );
   }
 
   // esc closes modal
