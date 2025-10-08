@@ -15,6 +15,12 @@ export default function AdvisorCard({ advisor }) {
         router.push(`/advisor/${advisorID}`)
     }
 
+    const handleRegister = (advisorID) => {
+        router.push(`/advisor/registerAdvisor/${advisorID}`)
+    }
+
+
+
     return(
         <div className="bg-[#F3E1D5] shadow-md rounded-lg p-6 m-4">
             <div>
@@ -24,6 +30,7 @@ export default function AdvisorCard({ advisor }) {
             <div className='flex flex-row space-x-2'>
                 <Button onClick={() => handleViewProfile(advisor.advisorID)} text="View Profile" />
                 <Button onClick={() => setIsChatOpen(true)} text="Message" />
+                <Button onClick={() => handleRegister(advisor.advisorID)} text="Register" />
             </div>
             
 
