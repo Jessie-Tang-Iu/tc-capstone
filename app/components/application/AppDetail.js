@@ -199,7 +199,7 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
           <div className="border border-gray-200 rounded-lg bg-white">
             <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">TC Alberta Cover Letter</div>
               <p className="p-5 text-sm text-black break-words">
-                {coverLetter.content.split('\\n').map((line, idx) => ( <p key={idx} className="mt-3">{line}{"\n"}</p> ))}
+                {coverLetter.content.split('\\n').map((line, idx) => ( <p key={idx} className="mt-3">{line}</p> ))}
               </p>
           </div>
           ) : (
