@@ -1,6 +1,6 @@
 "use client";
 
-import { useUserContext } from "@/app/context/userContext";
+import { useUser } from "@clerk/nextjs";
 import React, { useEffect, useState } from "react";
 import MemberNavbar from "../components/MemberNavBar";
 import SearchBar from "../components/job/SearchBar";
@@ -11,7 +11,7 @@ import ApplyForm from "../components/application/ApplyForm";
 
 export default function JobBoardPage() {
 
-    const { user, getCurrentSession } = useUserContext();
+    const { user } = useUser();
 
     const [jobs, setJobs] = useState([]);
     const [selectedJobId, setSelectedJobId] = useState();
@@ -48,6 +48,7 @@ export default function JobBoardPage() {
     });
 
     const [currentStep, setCurrentStep] = useState(1); // For multi-step form
+    const [errorMessage, setErrorMessage] = useState("");
   
     useEffect(() => {
       fetch('/api/job')
@@ -82,36 +83,43 @@ export default function JobBoardPage() {
     const handleApply = () => {
       // reset ApplyForm
       setFormData({
-        id: Math.floor(10000 + Math.random() * 90000),
+        id: null,
         job_id: selectedJobId,
         user_id: user.id,
-        resume: null,
-        cover_letter: null,
+        resume_name: "",
+        resume_data: null,
+        cover_letter_name: "",
+        cover_letter_data: null,
         relative_first_name: "",
         relative_last_name: "",
         relative_email: "",
         relative_phone: "",
         answers: Array(selectedJob?.questions?.length || 0).fill(""),
       });
-      console.log("Form Data Reset:", formData);
+      // console.log("Form Data Reset:", formData);
       setShowApplyForm(true);
     }
 
     const handleApplySubmit = async () => {
-      console.log(formData);
+      // console.log(formData);
       try{
         const res = await fetch(`/api/application/user/${user.id}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
         });
-        if (!res.ok) throw new Error("Failed to submit application");
+        if (!res.ok) {
+          if (res.status == 450) throw new Error("Already applied this job");
+          else throw new Error("Failed to submit application");
+        }
         setFormData({
           id: null,
           job_id: null,
           user_id: null,
-          resume: null,
-          cover_letter: null,
+          resume_name: "",
+          resume_data: null,
+          cover_letter_name: "",
+          cover_letter_data: null,
           relative_first_name: "",
           relative_last_name: "",
           relative_email: "",
@@ -119,8 +127,8 @@ export default function JobBoardPage() {
           answers: [],
         });
         setCurrentStep(5);
-      } catch (e) {
-        console.error(e);
+      } catch (error) {
+        setErrorMessage(error.message);
       }
     }
   
@@ -220,13 +228,16 @@ export default function JobBoardPage() {
           k/>
         )}
   
-        {showApplyForm && (user.role == 'member') && (
-          <ApplyForm 
+        {showApplyForm && 
+          // (user.role == 'member') && (
+          (<ApplyForm 
             job={selectedJob} 
             formData={formData}
             setFormData={setFormData}
             currentStep={currentStep}
             setCurrentStep={setCurrentStep}
+            errorMessage={errorMessage}
+            setErrorMessage={setErrorMessage}
             onSubmit={handleApplySubmit}
             onClose={() => {setShowApplyForm(false); setCurrentStep(1);}} 
           />

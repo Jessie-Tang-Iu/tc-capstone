@@ -1,9 +1,12 @@
 import { FileInput, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import PopupMessage from "@/app/components/ui/PopupMessage";
+import { useRouter } from "next/navigation";
 
-export default function ApplyForm({ job, formData, setFormData, currentStep, setCurrentStep, onSubmit, onClose }) {
 
-  const fileInputRef = useRef(null);
+export default function ApplyForm({ job, formData, setFormData, currentStep, setCurrentStep, errorMessage, setErrorMessage, onSubmit, onClose }) {
+
+  const router = useRouter();
 
   const [resume, setResume] = useState();
   const [coverLetter, setCoverLetter] = useState();
@@ -30,7 +33,23 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
     }, []);
 
   const handleNext = () => {
-    if (currentStep < 5) {
+    let error = false;
+
+    // Check answers in step 3
+    if (currentStep == 3) {
+      formData.answers.forEach(a => {
+        if (a == "") {
+          setErrorMessage("Question is required to answer");
+          error = true;
+          return;
+        }
+      })
+    }
+
+    // Display uploaded file after step 1
+    if (currentStep == 1) console.log(formData);
+
+    if ((currentStep < 5) && !error) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -39,22 +58,6 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
-  };
-
-  const handleSkip = () => {
-    if (currentStep < 4) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const handleUploadClick = () => {
-    fileInputRef.current.click();
-  }
-
-  const handleSubmit = () => {
-    if (!formData.resume && !resume.error) setFormData({ ...formData, resume: resume });
-    if (!formData.cover_letter && !coverLetter.error) setFormData({ ...formData, cover_letter: coverLetter})
-    onSubmit();
   };
 
   const ProgressBar = () => (
@@ -100,7 +103,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
         </button>
       )}
       <button
-        onClick={currentStep === 4 ? handleSubmit : handleNext}
+        onClick={currentStep === 4 ? onSubmit : handleNext}
         className="px-6 py-3 bg-[#E55B3C] text-white rounded-lg text-base font-normal hover:bg-[#d14f32] transition-colors"
       >
         {currentStep === 4 ? "Submit >" : "Next Step >"}
@@ -108,8 +111,10 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
     </div>
   );
 
-  const ResumeCard = ({ type = "resume", file }) => (
-    <div className="w-full h-100 max-w-sm border border-black rounded-2xl p-4 bg-white">
+  const ResumeCard = ({ type = "resume", file }) => {
+    if (type == "cover_letter") { const cvContent = file.content.split('\\n'); }
+    return (
+    <div className="w-full h-130 max-w-sm border border-black rounded-2xl p-4 bg-white">
       <div className="text-[#E55B3C] text-base font-bold mb-3">Previous {type == "resume" ? "Resume" : "Cover Letter"}</div>
       <hr className="border-gray-200 mb-3" />
       {file && !file.error ? (
@@ -120,7 +125,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
             </div>
             <p className="text-sm text-black mb-2">{file.email}</p>
           </div>
-          <div className="text-sm text-gray-500 leading-relaxed h-55">
+          <div className="text-sm text-gray-500 leading-relaxed h-85">
               {type === "resume" ? (
                 <>
                   <b>Summary: </b>{file.summary}
@@ -137,7 +142,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                 </>
             ) : (
               <>
-                {file.content}
+                {file.content.split('\\n').map((line, idx) => ( <p key={idx} className="mt-2">{line}</p> ))}
               </>
             )}
           </div>
@@ -145,57 +150,49 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
       ) : (
         <div className="text-center text-base font-bold text-black h-65">Empty in database</div>
       )}
-      <button className="w-full bg-[#E55B3C] text-white py-2 rounded text-sm font-normal hover:bg-[#E55B3C]/90 transition-colors mt-4">
+      <button 
+        className="w-full bg-[#E55B3C] text-white py-2 rounded text-sm font-normal hover:bg-[#E55B3C]/90 transition-colors mt-4"
+        onClick={() => router.push("/profile")}
+      >
         {type === "resume" ? "Edit Resume" : "Edit Cover Letter"}
       </button>
     </div>
-  );
+  )};
 
-  const UploadArea = ({ type }) => (
+  const UploadArea = ({ type }) => {
+    const localFileInputRef = useRef(null);
+    return (
     <div 
       className="w-full max-w-sm border border-gray-300 rounded-2xl p-4 bg-white  cursor-pointer"
-      onClick={handleUploadClick}
+      onClick={() => localFileInputRef.current.click() }
     >
       <div className="text-center">
         <div className="text-[#E55B3C] text-base font-bold mb-2">
-          Upload New One
+          Upload New {type == "resume" ? "Resume" : "Cover Letter"}
         </div>
         <div className="text-sm text-gray-500">File types: PDF, DOCS, TXT</div>
       </div>
       <input 
         type="file"
-        ref={fileInputRef}
-        onChange={(e) => 
-          // setFormData({ ...formData, [type]: e.target.files?.[0] || null})
-          console.log("Uploaded file: ", e.target.files?.[0] || null)
-        }
+        ref={localFileInputRef}
+        onChange={(e) => {
+          const uploadedFile = e.target.files?.[0] || null;
+          setFormData({ ...formData, [`${type}_name`]: uploadedFile.name, [`${type}_data`]: uploadedFile });
+        }}
         className="hidden"
         accept=".pdf,.doc,.docx"
       />
-      {formData[type] && (
+      {formData[`${type}_name`] && formData[`${type}_data`]  && formData[`${type}_data`] instanceof File && (
         <div className="mt-4 text-center text-sm text-gray-700">
-          Selected File: <span className="font-bold">{formData[type]}</span>
+          Selected File: <span className="font-bold">{formData[`${type}_name`]}</span>
         </div>
       )}
     </div>
-  );
-
-  // Step 5: Submitted
-  const Step5 = () => (
-    <div className="max-w-2xl mx-auto">
-      <div className="bg-white border border-gray-400 rounded-lg p-8 text-center">
-        <h1 className="text-2xl font-bold text-black mb-4">
-          Application Submitted
-        </h1>
-        <p className="text-sm text-black mb-6">
-          no: {formData.applicationId}
-        </p>
-        {/* Unchanged body */}
-      </div>
-    </div>
-  );
+    );
+  }
 
   return (
+    <>
     <div className="absolute w-full h-full bg-gray-700/60 flex items-center justify-center z-10 ">
       <div className="fixed inset-0 bg-gray-100 z-50 overflow-y-auto">
         <div className="pt-20 pb-8 px-4">
@@ -213,15 +210,19 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
 
               <div className="grid md:grid-cols-2 gap-8">
                 {/* Resume Section */}
-                <div className="space-y-6">
-                  {resume && <ResumeCard type="resume" file={resume} />}
-                  <UploadArea type="resume" />
+                <div className="flex justify-center">
+                  <div className="space-y-6">
+                    {resume && <ResumeCard type="resume" file={resume} />}
+                    <UploadArea type="resume" />
+                  </div>
                 </div>
 
                 {/* Cover Letter Section */}
-                <div className="space-y-6">
-                  <ResumeCard type="coverLetter" file={coverLetter} />
-                  <UploadArea type="coverLetter" />
+                <div className="flex justify-center">
+                  <div className="space-y-6">
+                    <ResumeCard type="coverLetter" file={coverLetter} />
+                    <UploadArea type="cover_letter" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -325,10 +326,14 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                 <div>
                   <div className="flex justify-between items-center mb-4">
                     <h2 className="text-lg font-bold text-black">Resume</h2>
-                    <button className="text-[#E55B3C] text-base font-bold hover:underline">Edit</button>
+                    { !formData.resume_name && <button className="text-[#E55B3C] text-base font-bold hover:underline">Edit</button> }
                   </div>
                   <div className="flex justify-center">
-                      <ResumeCard type="resume" file={ formData.resume || resume } />
+                    { !formData.resume_name ?
+                      <ResumeCard type="resume" file={ resume } />
+                      :
+                      <UploadArea type="resume" /> 
+                    }
                   </div>
                 </div>
 
@@ -336,10 +341,14 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                 <div>
                   <div className="flex justify-between items-center mb-4">
                     <h2 className="text-lg font-bold text-black">Cover Letter</h2>
-                    <button className="text-[#E55B3C] text-base font-bold hover:underline">Edit</button>
+                    { !formData.cover_letter_name && <button className="text-[#E55B3C] text-base font-bold hover:underline">Edit</button>}
                   </div>
                   <div className="flex justify-center">
-                    <ResumeCard type="coverLetter" file={ formData.cover_letter || coverLetter} />
+                    { !formData.cover_letter_name ?
+                      <ResumeCard type="coverLetter" file={ coverLetter} />
+                      :
+                      <UploadArea type="cover_letter" /> 
+                    }
                   </div>
                 </div>
 
@@ -393,7 +402,6 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
             <div className="max-w-2xl mx-auto">
               <div className="bg-white border border-gray-400 rounded-lg p-8 text-center">
                 <h1 className="text-2xl font-bold text-black mb-4">Application Submitted</h1>
-                <p className="text-sm text-black mb-6">no: {formData.id}</p>
                     
                 <div className="text-left text-sm text-black space-y-4 mb-8">
                   <p>Your application has been submitted!</p>
@@ -409,7 +417,6 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                   <p>Our team will review your submission, and if selected, you will be contacted by email for the next steps.</p>
                   
                   <p>For questions, please contact: <strong>support@techconnectalberta.ca</strong></p>
-                  <p>Your application ID: <strong>{formData.id}</strong></p>
                 </div>
 
                 <div className="flex gap-4 justify-center">
@@ -441,5 +448,18 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
         </div>
       </div>
     </div>
+    {errorMessage &&
+      <PopupMessage
+        type="error"
+        title={
+          errorMessage.includes("answer")
+            ? "Answer Question"
+            : "Apply Job Failed"
+        }
+        description={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
+    }
+    </>
   );
 }
