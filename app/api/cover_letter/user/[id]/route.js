@@ -5,7 +5,7 @@ import { getCoverLetterByUser } from "@/backend/controllers/applicationsControll
 export async function GET(req, { params }) {
   const { id } = await params;
   try {
-    const cv = await getCoverLetterByUser(Number(id));
+    const cv = await getCoverLetterByUser(id);
     return NextResponse.json(cv);
   } catch (e) {
     console.error("GET /api/cover_letter/user/[id] failed: ", e);

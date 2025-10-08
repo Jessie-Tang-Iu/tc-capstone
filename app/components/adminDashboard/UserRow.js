@@ -1,20 +1,54 @@
-// app/components/adminDashboard/UserRow.jsx
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import ChatWindow from "../ChatWindow";
 
 export default function UserRow({
+  id,
   name,
   subtitle,
-  isBanned = false,
+  status, // <-- pass the DB status string
   onMessage,
   onDetails,
-  onBanToggle,
+  onStatusChange,
 }) {
+  const [loading, setLoading] = useState(false);
+  const [openChat, setOpenChat] = useState(false);
+  const [chatRecipient, setChatRecipient] = useState(null);
+  const ME = "11111111-1111-1111-1111-111111111111"; // same admin ID as main panel
+
+  const handleBanToggle = async () => {
+    if (loading) return;
+    setLoading(true);
+
+    // toggle active ↔ banned
+    const newStatus = status === "banned" ? "active" : "banned";
+
+    try {
+      const res = await fetch(`/api/users/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update status");
+      const updated = await res.json();
+
+      // push back to parent
+      onStatusChange?.(updated);
+    } catch (err) {
+      console.error("Ban/Unban failed:", err);
+      alert("Failed to update user status");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const isBanned = status === "banned";
+
   return (
     <div className="mb-3 rounded-xl bg-[#F7EAE2] px-4 py-4">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        {/* Left: name + subtitle */}
         <div className="min-w-0">
           <div className="text-lg font-bold text-black">{name}</div>
           {subtitle && (
@@ -22,34 +56,33 @@ export default function UserRow({
           )}
         </div>
 
-        {/* Right: actions */}
         <div className="flex shrink-0 items-center gap-3">
-          {/* Dark yellow message button with white text */}
           <button
             onClick={onMessage}
-            className="rounded-md bg-yellow-600 px-4 py-2 text-sm font-semibold text-white
-                       hover:bg-yellow-700 active:scale-[0.98] transition"
+            className="rounded-md bg-yellow-600 px-4 py-2 text-sm font-semibold text-white hover:bg-yellow-700 active:scale-[0.98] transition"
           >
             Message
           </button>
 
-          {/* Details (blue) */}
           <button
             onClick={onDetails}
-            className="rounded-md bg-[#4AA3FF] px-4 py-2 text-sm font-semibold text-white
-                       hover:opacity-90 active:scale-[0.98] transition"
+            className="rounded-md bg-[#4AA3FF] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 active:scale-[0.98] transition"
           >
             Details
           </button>
 
-          {/* Fixed width Ban / Unban */}
           <button
-            onClick={onBanToggle}
-            className={`w-28 rounded-md py-2 text-sm font-semibold text-white text-center
-                        hover:opacity-90 active:scale-[0.98] transition
-                        ${isBanned ? "bg-[#2E7D32]" : "bg-[#D32F2F]"}`}
+            onClick={handleBanToggle}
+            disabled={loading}
+            className={`w-28 rounded-md py-2 text-sm font-semibold text-white text-center transition
+              ${isBanned ? "bg-[#2E7D32]" : "bg-[#D32F2F]"}
+              ${
+                loading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:opacity-90 active:scale-[0.98]"
+              }`}
           >
-            {isBanned ? "Unban User" : "Ban User"}
+            {loading ? "Updating..." : isBanned ? "Unban User" : "Ban User"}
           </button>
         </div>
       </div>

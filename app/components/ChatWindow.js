@@ -14,6 +14,7 @@ export default function ChatWindow({
   const [text, setText] = useState("");
   const scrollRef = useRef(null);
   const panelRef = useRef(null);
+  const [errorMsg, setErrorMsg] = useState("");
 
   // Load conversation
   useEffect(() => {
@@ -61,7 +62,12 @@ export default function ChatWindow({
 
   const send = async () => {
     const value = text.trim();
-    if (!value || !me || !recipient) return;
+    if (!value || !me || !recipient) {
+      setErrorMsg(
+        "Cannot send message. Missing sender or recipient information."
+      );
+      return;
+    }
 
     // optimistic add
     const temp = {
@@ -72,6 +78,7 @@ export default function ChatWindow({
     };
     setMessages((m) => [...m, temp]);
     setText("");
+    setErrorMsg("");
 
     try {
       const res = await fetch(`/api/messages`, {
@@ -83,24 +90,37 @@ export default function ChatWindow({
           content: value,
         }),
       });
-      if (res.ok) {
-        const saved = await res.json();
-        // replace temp with saved
-        setMessages((m) =>
-          m.map((x) =>
-            x.id === temp.id
-              ? {
-                  id: saved.id,
-                  from: "me",
-                  text: saved.content,
-                  ts: saved.sent_at,
-                }
-              : x
-          )
-        );
-        onSent?.();
+      if (!res.ok) {
+        const errText = await res.text();
+        if (res.status === 404) {
+          setErrorMsg("Recipient not found. Message could not be sent.");
+        } else {
+          setErrorMsg("Server error. Please try again later.");
+        }
+        console.error("Message send failed:", res.status, errText);
+        setMessages((prev) => prev.filter((m) => m.id !== temp.id));
+        return;
       }
-    } catch {}
+
+      const saved = await res.json();
+      setMessages((m) =>
+        m.map((x) =>
+          x.id === temp.id
+            ? {
+                id: saved.id,
+                from: "me",
+                text: saved.content,
+                ts: saved.sent_at,
+              }
+            : x
+        )
+      );
+      onSent?.();
+    } catch (err) {
+      console.error("Network or server error:", err);
+      setErrorMsg("Network connection failed. Message not sent.");
+      setMessages((prev) => prev.filter((m) => m.id !== temp.id));
+    }
   };
 
   const keyHandler = (e) => {
@@ -150,6 +170,12 @@ export default function ChatWindow({
             ✕
           </button>
         </div>
+
+        {errorMsg && (
+          <div className="bg-red-100 text-red-700 text-xs px-3 py-2 border-t border-red-300">
+            {errorMsg}
+          </div>
+        )}
 
         <div
           ref={scrollRef}

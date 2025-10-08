@@ -3,14 +3,31 @@
 import ApplyCard from "@/app/components/application/AppCard";
 import AppDetail from "@/app/components/application/AppDetail";
 import MemberNavBar from "@/app/components/MemberNavBar";
-import { useUserContext } from "@/app/context/userContext";
-import { useRouter } from "next/router";
+import PopupMessage from "@/app/components/ui/PopupMessage";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function Applications() {
-  const { user, getCurrentSession } = useUserContext();
+const statusOptions = {
+    "S": "Submitted",
+    "U": "Under review",
+    "I": "Interview scheduled",
+    "R": "Rejected",
+    "O": "Offer",
+    "D": "Withdrawn",
+};
 
-  const userId = 7; // Change to user.id when finishing user database
+export default function Applications() {
+  const { user, getCurrentSession } = useUser();
+  const router = useRouter();
+  // console.log("User: ", user);
+
+  // if (!user) {
+  //   router.push("/");
+  //   return;
+  // }
+
+  const userId = user.id; // Change to user.id when finishing user database
   const [resume, setResume] = useState();
   const [coverLetter, setCoverLetter] = useState();
 
@@ -20,6 +37,10 @@ export default function Applications() {
   
   const [applications, setApplications] = useState([]);
   const [status, setStatus] = useState("");
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     // Fetch applications by user_id
@@ -53,17 +74,17 @@ export default function Applications() {
       })
       .catch((error) => console.error('Error fetching cover letter: ', error)
     );
-  }, []);
+  }, [userId]);
 
   // Fetch the information of selected application
   useEffect(() => {
     if (selectedAppId) {
-      console.log("Selected App ID changed:", selectedAppId);
-      console.log(`/api/application/${selectedAppId}`)
+      // console.log("Selected App ID changed:", selectedAppId);
+      console.log(`/api/application/${selectedAppId}`);
       fetch(`/api/application/${selectedAppId}`)
         .then((res) => res.json())
         .then((data) => {
-          setSelectedApp(data)
+          setSelectedApp(data);
           // console.log("Fetched application detail:", selectedApp);
         })
         .catch((error) => {
@@ -81,27 +102,35 @@ export default function Applications() {
     // console.log('cover letter: ', coverLetter);
   };
 
-  const handleUpdateStatus = async (newStatus) => {
+  const handleUpdateStatus = async (app, newStatus) => {
+
+    // Check valid updated status
     let statusArray = ["S", "U", "I", "R", "O", "D"];
-    console.log("newStatus: ", statusArray.indexOf(status), " status: ", statusArray.indexOf(selectedApp.status));
-    if ((statusArray.indexOf(newStatus) < statusArray.indexOf(selectedApp.status)) || (statusArray.indexOf(selectedApp.status) > 2)) {
-      setStatus(selectedApp.status);
-      console.error("Invalid updated status");
-    } else {
-      try {
-        const res = await fetch(`/api/application/${selectedAppId}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newStatus),
-        });
-        if (!res.ok) throw new Error("Failed to update status");
-        setApplications((prev) =>
-          prev.map((a) => (a.id === selectedAppId ? { ...a, status: status } : a))
-        );
-        setSelectedApp({ ...selectedApp, status: status });
-      } catch (e) {
-        console.error(e);
-      }
+    // console.log("newStatus: ", statusArray.indexOf(status), " status: ", statusArray.indexOf(app.status));
+    if ((statusArray.indexOf(newStatus) <= statusArray.indexOf(app.status)) || (statusArray.indexOf(app.status) > 2)) {
+      setStatus(app.status);
+      setErrorMessage("Invalid updated status");
+      return;
+    }
+
+    // Update to database
+    try {
+      const res = await fetch(`/api/application/${app.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newStatus),
+      });
+      if (!res.ok) throw new Error("Failed to update status");
+
+
+      setApplications((prev) =>
+        prev.map((a) => (a.id === app.id ? { ...a, status: newStatus } : a))
+      );
+      if (selectedApp && selectedApp.id == app.id) setSelectedApp({ ...selectedApp, status: newStatus });
+      setShowSuccess(true);
+      setErrorMessage("");
+    } catch (e) {
+      setErrorMessage(e);
     }
   };
 
@@ -109,21 +138,8 @@ export default function Applications() {
     setShowAppDetail(false);
   };
 
-  if (!user) {
-    try {
-      getCurrentSession();
-    } catch (error) {
-      console.error("Error fetching session:", error);
-      alert("Error", "Failed to fetch session. Please sign in again.");
-    }
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Loading...</p>
-      </div>
-    );
-  }
-
   return (
+    <>
     <div className="min-h-screen bg-gray-100">
       <MemberNavBar />
 
@@ -154,7 +170,7 @@ export default function Applications() {
                   setStatus={setStatus}
                   isSelected={selectedAppId === app.id}
                   onClick={() => handleAppSelect(app.id)}
-                  onUpdateStatus={() => handleUpdateStatus(status)}
+                  onUpdateStatus={() => handleUpdateStatus(app, status)}             
                 />
               ))}
           </div>
@@ -169,9 +185,9 @@ export default function Applications() {
           {/* Mobile Back Button */}
           <button
             onClick={handleBackToList}
-            className="md:hidden top-4 ml-5 z-10 text-black rounded-lg text-sm font-normal hover:bg-[#E55B3C]/90 transition-colors"
+            className="md:hidden top-4 ml-5 z-10 text-black rounded-lg text-sm font-normal hover:underline transition-colors"
           >
-            ← Back to Jobs
+            {"< Back to Jobs"}
           </button>
           <div className="mt-5 md:mt-0 h-full">
             <AppDetail 
@@ -184,5 +200,35 @@ export default function Applications() {
         </div>
       </div>
     </div>
+    {/* {showConfirm && (
+      <PopupMessage
+        type="confirm"
+        title="Update status?"
+        description="Are you sure that you want to update your application's status?"
+        onClose={() => setShowConfirm(false)}
+        onConfirm={() => handleUpdateStatus}
+      />
+    )} */}
+    {errorMessage &&
+      <PopupMessage
+        type="error"
+        title={
+          errorMessage.includes("already registered")
+            ? "Already Registered"
+            : "Update Failed"
+          }
+        description={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
+    }
+    {showSuccess && (
+      <PopupMessage
+        type="success"
+        title="Successfully Update"
+        description={`Your application's status is updated to ${statusOptions[status]}`}
+        onClose={() => setShowSuccess(false)}
+      />
+    )}
+    </>
   );
 }

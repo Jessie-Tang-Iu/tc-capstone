@@ -1,4 +1,5 @@
 import { ExternalLink, Download } from "lucide-react";
+import { useState } from "react";
 
 const statusColors = {
     "S": "bg-gray-100 text-gray-800 border-gray-300",
@@ -34,9 +35,9 @@ const QAItem = ({ q, a }) => (
 
 export default function AppDetail({app, resume, coverLetter, onDownload}) {
 
-  console.log("Resume: ", resume);
-  console.log("Cover letter: ", coverLetter);
-  console.log("App: ", app);
+  // console.log("Resume: ", resume);
+  // console.log("Cover letter: ", coverLetter);
+  // console.log("App: ", app);
 
   if (!app) {
     return (
@@ -46,21 +47,59 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
     );
   }
 
-  const appliedDate = app.appliedAt
+  const appliedDate = app.applied_at
     ? new Date(app.applied_at).toLocaleDateString()
     : null;
 
-  // const qs = [];
-  // for (let i = 0; i < application.questions.length; i++) {
-  //   let questionObj = {};
-  //   questionObj.id = i+1;
-  //   questionObj.question = application.questions[i];
-  //   questionObj.answer = application.answers[i] || "No answer provided";
-  //   qs.push(questionObj);
-  // }
-  // // setQuestions(qs);
-  // console.log("Questions and answers:", qs);
+  const getMimeType = (fileName) => {
+    if (!fileName) return 'application.octet-stream';
 
+    const extension = fileName.split('.').pop().toLowerCase();
+    switch (extension) {
+      case 'pdf': return 'application/pdf';
+      case 'doc': return 'application/msword';
+      case 'docx': return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    }
+  }
+
+  const downloadFile = (fileObject, fileName = 'document') => {
+    // File validation
+    if (!fileObject || !fileObject.data || !Array.isArray(fileObject.data)) {
+      console.log('Invalid file object structure for download.')
+      return;
+    }
+
+    // Use byte array and get MIME type from fileName
+    const bytes = fileObject.data;   
+    const mineType = getMimeType(fileName);
+
+    // Create Unit8Array and Blob
+    const byteArray = new Uint8Array(bytes); 
+    const blob = new Blob([byteArray], { type: mineType });
+
+    // Trigger the download
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a')
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+
+    // Clean up
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    console.log(`Download started for ${fileName} with type ${mineType}`);
+  }
+
+  // if (resumeBuffer) console.log("Resume Buffer: ", resumeBuffer);
+
+  // const handleResumeDownload = () => {
+  //   const fs = require('fs');
+  //   const path = require('path');
+  //   const resumeName = `${app.first_name + app.last_name}_resume.pdf`;
+  //   fs.writeFileSync(path.join(__dirname, resumeName), resumeBuffer);
+  //   console.log("Dir: ", path.join(__dirname, resumeName))
+  // }
 
   return (
     <div className="bg-white h-full overflow-y-auto">
@@ -94,14 +133,15 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
           <div className="border border-gray-200 rounded-lg bg-white">
             <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">Contact Information</div>
             <div className="p-4 grid md:grid-cols-2 gap-3">
-              <LabelValue label="First Name" value={app.user_first_name} />
-              <LabelValue label="Last Name" value={app.user_last_name} />
-              <LabelValue label="Email address" value={app.user_email} />
-              <LabelValue label="Phone Number" value={app.user_phone || ""} />
+              <LabelValue label="First Name" value={app.first_name} />
+              <LabelValue label="Last Name" value={app.last_name} />
+              <LabelValue label="Email address" value={app.email} />
+              <LabelValue label="Phone Number" value={app.phone || ""} />
             </div>
           </div>
 
           {/* Relative Information */}
+          {(app.relative_first_name != "" || app.relative_last_name != "") && (
           <div className="border border-gray-200 rounded-lg bg-white">
             <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">Relative Information</div>
             <div className="p-4 grid md:grid-cols-2 gap-3">
@@ -111,22 +151,15 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
               <LabelValue label="Phone Number" value={app.relative_phone} />
             </div>
           </div>
+          )}
         </section>
 
         {/* Resume */}
         <section className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-base md:text-lg font-bold text-black">Resume</h2>
-            {(app?.resume || onDownload) && (
-              <button
-                onClick={onDownload}
-                className="text-sm text-[#E55B3C] hover:underline"
-              >
-                Download
-              </button>
-            )}
           </div>
-          {!app.resume ? (
+          {!app.resume_data ? (
           <div className="border border-gray-200 rounded-lg bg-white">
             <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">TC Alberta Resume</div>
             <div className="p-4 grid gap-3">
@@ -139,16 +172,16 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
             </div>
           </div>
           ) : (
-          <div className="flex items-center gap-2 text-sm text-black">
-            <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-orange-100 text-[#E55B3C] text-xs font-bold">PDF</span>
-            <span className="font-bold truncate">{app.resume.name}</span>
+          <div className="items-center gap-2 text-sm text-black">
+            <span className="inline-flex items-center justify-center h-6 mr-3 rounded bg-orange-100 text-[#E55B3C] text-xs font-bold">{app.resume_name.split('.').pop().toUpperCase()}</span>
+            <span className="font-bold truncate">{app.resume_name}</span>
             <div className="mt-3 rounded-md border border-orange-200 bg-orange-50 p-3">
               <div className="text-sm text-[#E55B3C]">
                 {"We can't load a preview of your resume right now, but it will be submitted as part of your application. Download your resume to make sure everything is correct before you submit your application."}
               </div>
-              {(app.resume?.url || onDownload) && (
+              {app.resume_data && (
                 <button
-                  onClick={onDownload}
+                  onClick={() => downloadFile(app.resume_data, app.resume_name)}
                   className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded bg-[#E55B3C]/80 text-white text-xs font-bold hover:bg-[#E55B3C]/90 transition-colors"
                 >
                   <Download className="w-4 h-4" /> Download Resume
@@ -161,37 +194,28 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
 
         {/* Cover Letter */}
         <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base md:text-lg font-bold text-black">Cover letter</h2>
-            {(app?.cover_letter || onDownload) && (
-              <button
-                onClick={onDownload}
-                className="text-sm text-[#E55B3C] hover:underline"
-              >
-                Download
-              </button>
-            )}
-          </div>
-          {!app.cover_letter ? (
+          <h2 className="text-base md:text-lg font-bold text-black">Cover letter</h2>
+          {!app.cover_letter_name ? (
           <div className="border border-gray-200 rounded-lg bg-white">
             <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">TC Alberta Cover Letter</div>
-              <p className="p-5 text-sm text-black break-words">{coverLetter.content}</p>
-              {/* <LabelValue value={coverLetter.content} /> */}
+              <p className="p-5 text-sm text-black break-words">
+                {coverLetter.content.split('\\n').map((line, idx) => ( <p key={idx} className="mt-3">{line}{"\n"}</p> ))}
+              </p>
           </div>
           ) : (
-          <div className="flex items-center gap-2 text-sm text-black">
-            <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-orange-100 text-[#E55B3C] text-xs font-bold">PDF</span>
-            <span className="font-bold truncate">{app.resume.name}</span>
+          <div className="items-center gap-2 text-sm text-black">
+            <span className="inline-flex items-center justify-center h-6 mr-3 rounded bg-orange-100 text-[#E55B3C] text-xs font-bold">{app.cover_letter_name.split('.').pop().toUpperCase()}</span>
+            <span className="font-bold truncate">{app.cover_letter_name}</span>
             <div className="mt-3 rounded-md border border-orange-200 bg-orange-50 p-3">
               <div className="text-sm text-[#E55B3C]">
                 {"We can't load a preview of your resume right now, but it will be submitted as part of your application. Download your resume to make sure everything is correct before you submit your application."}
               </div>
-              {(app.resume?.url || onDownload) && (
+              {app.cover_letter_name && (
                 <button
                   onClick={onDownload}
                   className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded bg-[#E55B3C]/80 text-white text-xs font-bold hover:bg-[#E55B3C]/90 transition-colors"
                 >
-                  <Download className="w-4 h-4" /> Download Resume
+                  <Download className="w-4 h-4" /> Download Cover Letter
                 </button>
               )}
             </div>

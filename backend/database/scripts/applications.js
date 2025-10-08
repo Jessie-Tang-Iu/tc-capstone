@@ -1,5 +1,14 @@
 import { query } from "../../database/db.js";
 
+const streamToBuffer = (stream) => {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    stream.on('data', (chunk) => chunks.push(chunk));
+    stream.on('error', reject);
+    stream.on('end', () => resolve(Buffer.concat(chunks)));
+  });
+}
+
 // Get function
 
 export async function getApplicationsByUser(id) {
@@ -12,27 +21,27 @@ export async function getApplicationsByUser(id) {
 
 export async function getApplicationById(id) {
   const { rows } = await query(`
-    SELECT  u.id AS user_id, u.firstname AS user_first_name, u.lastname AS user_last_name, u.email AS user_email, 
-		        ap.id, ap.resume, ap.cover_letter, ap.status, ap.applied_at, ap.relative_first_name, ap.relative_last_name, ap.relative_email, ap.relative_phone, ap.answers,
+    SELECT  u.first_name, u.last_name, u.email, u.phone,
+		        ap.id, ap.user_id, ap.resume_name, ap.resume_data, ap.cover_letter_name, ap.cover_letter_data, ap.status, ap.applied_at, ap.relative_first_name, ap.relative_last_name, ap.relative_email, ap.relative_phone, ap.answers,
 		        jb.title, jb.company, jb.location, jb.questions
       FROM application ap JOIN job jb ON ap.job_id = jb.id
-                          JOIN public."user" u ON u.id = ap.user_id
+                          JOIN users u ON u.clerk_id = ap.user_id
      WHERE ap.id = $1`, [id]);
   return rows[0];
 }
 
 export async function getResumeByUser(id) {
   const { rows } = await query(`
-    SELECT u.id AS user_id, firstname AS first_name, lastname AS last_name, email, summary, education, certifications, experience, skills, additional_info  
-      FROM resume r JOIN public."user" u ON u.id = r.user_id
+    SELECT r.user_id AS user_id, first_name, last_name, email, summary, education, certifications, experience, skills, additional_info  
+      FROM resume r JOIN users u ON u.clerk_id = r.user_id
      WHERE user_id = $1`, [id]);
   return rows[0];
 }
 
 export async function getCoverLetterByUser(id) {
   const { rows } = await query(`
-    SELECT u.id AS user_id, firstname AS first_name, lastname AS last_name, email, content
-      FROM cover_letter cv JOIN public."user" u ON u.id = cv.user_id
+    SELECT cv.user_id AS user_id, first_name, last_name, email, content
+      FROM cover_letter cv JOIN users u ON u.clerk_id = cv.user_id
      WHERE user_id = $1`, [id]);
   return rows[0];
 }
@@ -40,15 +49,18 @@ export async function getCoverLetterByUser(id) {
 // Create functions
 
 export async function createApplication(app) {
+  // console.log(streamToBuffer(app.resume_data));
   const { rows } = await query( `
-    INSERT INTO application (user_id, job_id, resume, cover_letter, relative_first_name, relative_last_name, relative_email, relative_phone, answers)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    INSERT INTO application (user_id, job_id, resume_name, resume_data, cover_letter_name, cover_letter_data, relative_first_name, relative_last_name, relative_email, relative_phone, answers)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
     RETURNING *`,
   [
     app.user_id,
     Number (app.job_id),
-    app.resume,
-    app.cover_letter,
+    app.resume_name,
+    app.resume_data,
+    app.cover_letter_name,
+    app.cover_letter_data,
     app.relative_first_name,
     app.relative_last_name,
     app.relative_email,
