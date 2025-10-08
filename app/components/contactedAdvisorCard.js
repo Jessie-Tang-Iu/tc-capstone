@@ -15,7 +15,9 @@ export default function ContactedAdvisorCard({ advisor }) {
         router.push(`/advisor/${advisorID}`)
     }
 
-
+    const handleCheckAvailability = (advisorID) => {
+        router.push(`/advisor/checkAvailability/${advisorID}`)
+    }
 
     return(
         <div className="bg-[#F3E1D5] shadow-md rounded-lg p-6 m-4">
@@ -25,7 +27,7 @@ export default function ContactedAdvisorCard({ advisor }) {
             <div className='flex flex-row space-x-2'>
                 <Button onClick={() => handleViewProfile(advisor.advisor_id)} text="View Profile" />
                 <Button onClick={() => setIsChatOpen(true)} text="Message" />
-                <Button text="Check Availability" />
+                <Button onClick={() => handleCheckAvailability(advisor.advisor_id)} text="Check Availability" />
             </div>
             
 
