@@ -6,7 +6,7 @@ import ChatWindow from "./ChatWindow";
 import Button from "./ui/Button";
 import { useRouter } from "next/navigation";
 
-export default function AdvisorCard({ advisor }) {
+export default function ContactedAdvisorCard({ advisor }) {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const router = useRouter();
 
@@ -15,22 +15,19 @@ export default function AdvisorCard({ advisor }) {
         router.push(`/advisor/${advisorID}`)
     }
 
-    const handleRegister = (advisorID) => {
-        router.push(`/advisor/registerAdvisor/${advisorID}`)
+    const handleCheckAvailability = (advisorID) => {
+        router.push(`/advisor/checkAvailability/${advisorID}`)
     }
-
-
 
     return(
         <div className="bg-[#F3E1D5] shadow-md rounded-lg p-6 m-4">
             <div>
-                <h2 className="text-2xl text-black font-bold mb-2">{advisor.name}</h2>
-                <p className="text-gray-700 mb-4">{advisor.description}</p>
+                <h2 className="text-2xl text-black font-bold mb-2">Advisor ID: {advisor.advisor_id}</h2>
             </div>
             <div className='flex flex-row space-x-2'>
-                <Button onClick={() => handleViewProfile(advisor.advisorID)} text="View Profile" />
+                <Button onClick={() => handleViewProfile(advisor.advisor_id)} text="View Profile" />
                 <Button onClick={() => setIsChatOpen(true)} text="Message" />
-                <Button onClick={() => handleRegister(advisor.advisorID)} text="Register" />
+                <Button onClick={() => handleCheckAvailability(advisor.advisor_id)} text="Check Availability" />
             </div>
             
 

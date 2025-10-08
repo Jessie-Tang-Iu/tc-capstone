@@ -1,44 +1,74 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Navbar from '../components/MemberNavBar'
 import advisors from '../data/advisors.json'
 import userAdvisors from "../data/usersAdvisors.json";
-import AdvisorCard from '../components/advisorCard';
 import { useUser } from '@clerk/nextjs';
+import Button from '../components/ui/Button';
+import { useRouter } from "next/navigation";
+import ContactedAdvisorCard from '../components/contactedAdvisorCard';
 
 export default function AdvisorPage() {
+
+  const [myAdvisorList, setMyAdvisorList] = useState([]);
+
   const userContext = useUser();
   const userID = userContext?.user?.id;
+  const router = useRouter();
 
-  // find advisorIDs for this user
-  const contactedIDs = userAdvisors
-    .filter((contact) => contact.userID === userID)
-    .map((contact) => contact.advisorID);
+  const ME = '11111111-1111-1111-1111-111111111111'; // for testing without login
 
-  // filter advisors that match those IDs
-  const contactedAdvisors = advisors.filter((advisor) =>
-    contactedIDs.includes(advisor.advisorID)
-  );
+  useEffect(() => {
+    if (!ME) return;
+
+    (async () => {
+        try {
+            const res = await fetch(
+                `/api/advisory_sessions?clientId=${ME}`
+            );
+            if (!res.ok) {console.error("Failed to fetch advisory sessions"); return;}
+      
+            const data = await res.json();
+
+            setMyAdvisorList(data);
+            console.log("Return Array: ", data);
+        } catch (error) {
+            console.error("Fetch error: ", error);
+        }
+    })();
+  }, [ME]);
+
+  // navigate to search advisor page
+  const handleNewAdvisor = () => {
+    router.push('/advisor/advisorSearch');
+  }
 
   return (
-    <div className="bg-gray-100 min-h-screen text-black">
-        <Navbar />
-        <h1 className="text-3xl text-center font-bold mt-8">Your Advisor Page</h1>
-        <Link href="/advisor/advisorSearch" className="block text-center mt-6 text-blue-600 hover:underline">
-          Search for Advisors
-        </Link>
+    <main className='bg-gray-100 min-h-screen'>
+      <Navbar />
+      <div className="max-w-6xl mx-auto px-6 py-10">
+        {/* header */}
+        <div className='mb-10 text-center'>
+          <h1 className="text-3xl font-bold text-[#E55B3C]">Your Advisor Page</h1>
+        </div>
+        
+        <div className='flex justify-end'>
+          <Button onClick={handleNewAdvisor} text="Register New Advisor" />
+        </div>
+        
         <div className="mx-12">
-          {contactedAdvisors.length > 0 ? (
-            contactedAdvisors.map((advisor) => (
-              <AdvisorCard key={advisor.advisorID} advisor={advisor} />
+          {myAdvisorList.length > 0 ? (
+            myAdvisorList.map((advisor) => (
+              <ContactedAdvisorCard key={advisor.advisor_id} advisor={advisor} />
             ))
           ) : (
-            <p className="text-center mt-8">You haven’t contacted any advisors yet.</p>
+            <p className="text-center mt-8 text-black">You haven&rsquo;t contacted any advisors yet.</p>
           )}            
         </div>
-
-    </div>
+      </div>
+    </main>
+    
   );
 }

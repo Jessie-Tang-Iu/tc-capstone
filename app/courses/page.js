@@ -9,6 +9,21 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 export default function PageContent() {
+
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filters, setFilters] = useState({
+        beginner: false,
+        intermediate: false,
+        advanced: false,
+        certificateYes: false,
+        certificateNo: false,
+        online: false,
+        inPerson: false,
+        workshop: false,
+    });
+
+    const [filteredCourses, setFilteredCourses] = useState(courses);
+    
     const { isLoaded, isSignedIn, user } = useUser();
     const router = useRouter();
 
@@ -27,20 +42,6 @@ export default function PageContent() {
         // Don’t render anything while redirecting
         return null;
     }
-
-    const [searchQuery, setSearchQuery] = useState("");
-    const [filters, setFilters] = useState({
-        beginner: false,
-        intermediate: false,
-        advanced: false,
-        certificateYes: false,
-        certificateNo: false,
-        online: false,
-        inPerson: false,
-        workshop: false,
-    });
-
-    const [filteredCourses, setFilteredCourses] = useState(courses);
 
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value.toLowerCase());

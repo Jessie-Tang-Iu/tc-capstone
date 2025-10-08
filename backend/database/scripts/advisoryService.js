@@ -76,3 +76,11 @@ export async function updateAvailability(booking) {
   }
   return result.rows[0];
 }
+
+export async function getMyAdvisorySessions(clientId) {
+  const result = await query(`SELECT * FROM advisory_sessions WHERE client_id = $1 AND status = $2`, [
+    clientId,
+    'active',
+  ]);
+  return result.rows;
+}

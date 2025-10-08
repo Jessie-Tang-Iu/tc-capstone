@@ -5,7 +5,7 @@ import { getResumeByUser } from "@/backend/controllers/applicationsController";
 export async function GET(req, { params }) {
   const { id } = await params;
   try {
-    const rs = await getResumeByUser(Number(id));
+    const rs = await getResumeByUser(id);
     return NextResponse.json(rs);
   } catch (e) {
     console.error("GET /api/resume/user/[id] failed: ", e);

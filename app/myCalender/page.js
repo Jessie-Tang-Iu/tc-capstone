@@ -50,9 +50,9 @@ const MyCalendarPage = () => {
         } = await supabase.auth.getUser();
         if (authErr || !user) throw new Error("Not signed in.");
 
-        const { data: bookings, error } = await supabase.from(
-          "workshop_booking"
-        ).select(`
+        const { data: bookings, error } = await supabase
+          .from("workshop_booking")
+          .select(`
             id,
             userID,
             workshopID,

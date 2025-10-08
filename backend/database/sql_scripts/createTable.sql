@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS
   comments,
   posts,
   advisory_bookings,
+  advisory_sessions,
   application,
   cover_letter,
   resume,
@@ -210,6 +211,17 @@ CREATE INDEX idx_advisory_advisor_date ON advisory_bookings (advisor_id, date);
 CREATE INDEX idx_advisory_client_date  ON advisory_bookings (client_id, date);
 
 -- =========================================
+-- ADVISORY SESSIONS
+-- (kept TEXT ids to match your current usage; add FKs later if needed)
+-- =========================================
+CREATE TABLE advisory_sessions (
+  session_id SERIAL PRIMARY KEY,
+  advisor_id TEXT NOT NULL,
+  client_id  TEXT NOT NULL,
+  status     TEXT
+);
+
+-- =========================================
 -- DISCUSSION BOARD
 -- (authorId kept INT as provided; wired to user for integrity)
 -- =========================================
@@ -229,9 +241,9 @@ CREATE TABLE comments (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE INDEX idx_posts_author     ON posts (authorId, created_at DESC);
+CREATE INDEX idx_posts_author     ON posts (author, created_at DESC);
 CREATE INDEX idx_comments_post    ON comments (post_id, created_at);
-CREATE INDEX idx_comments_author  ON comments (authorId, created_at DESC);
+CREATE INDEX idx_comments_author  ON comments (author, created_at DESC);
 
 CREATE TABLE reports (
   report_id           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,   -- internal PK

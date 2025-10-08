@@ -30,6 +30,13 @@ INSERT INTO advisory_bookings (advisor_id, date, startTime, endTime, status) VAL
 ('99999999-9999-9999-9999-999999999999', '2025-09-26', '10:00:00', '12:00:00', 'open'),
 ('22222222-2222-2222-2222-222222222222', '2025-09-27', '10:00:00', '12:00:00', 'open');
 
+-- test data for advisory session
+INSERT INTO advisory_sessions (advisor_id, client_id, status) VALUES 
+('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', 'active'),
+('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', 'pending'),
+('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', 'closed'),
+('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 'active');
+
 INSERT INTO "user" (id, firstname, lastname, email, role) VALUES
 (11111, 'John', 'Smith', 'JohnS@sample.com', 'member'),
 (22222, 'Jane', 'Nguyen', 'JaneNg@sample.com', 'member')

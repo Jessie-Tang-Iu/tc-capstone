@@ -26,3 +26,8 @@ export async function updateAvailabilityController(body) {
     if(!body) throw new Error("Availability content required");
     return await advisoryService.updateAvailability(body);
 }
+
+export async function getMyAdvisorySessionsController(clientId) {
+    if(!clientId) throw new Error("clientId required");
+    return await advisoryService.getMyAdvisorySessions(clientId);
+}
