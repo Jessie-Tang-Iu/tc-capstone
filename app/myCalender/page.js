@@ -15,10 +15,6 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 const MyCalendarPage = () => {
-<<<<<<< Updated upstream
-  // Code Below checks if user is logged in before running ANYTHING else
-  const { isLoaded, isSignedIn, user } = useUser();
-=======
   const calendarRef = useRef(null);
   const [events, setEvents] = useState([]);
   const [bookingData, setBookingData] = useState([]);
@@ -29,7 +25,6 @@ const MyCalendarPage = () => {
   const [showModal, setShowModal] = useState(false);
 
   const { isLoaded, isSignedIn } = useUser();
->>>>>>> Stashed changes
   const router = useRouter();
 
   // Redirect if not signed in
@@ -37,52 +32,18 @@ const MyCalendarPage = () => {
     if (isLoaded && !isSignedIn) router.push("/signIn");
   }, [isLoaded, isSignedIn, router]);
 
-<<<<<<< Updated upstream
-  if (!isLoaded) {
-    return <p>Loading...</p>;
-  }
-
-  if (!isSignedIn) {
-    // Don’t render anything while redirecting
-    return null;
-  }
-
-  const calendarRef = useRef(null);
-  const [events, setEvents] = useState([]);
-  const [bookingData, setBookingData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [currentTitle, setCurrentTitle] = useState("");
-  const [isTodayDisabled, setIsTodayDisabled] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-
-  // esc closes modal
-=======
   // Escape closes modal
->>>>>>> Stashed changes
   useEffect(() => {
     const handleKeyDown = (e) => e.key === "Escape" && setShowModal(false);
     if (showModal) document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [showModal]);
 
-<<<<<<< Updated upstream
-  // fetch "my" event registrations (via API)
-=======
   // Fetch bookings for the current user
->>>>>>> Stashed changes
   useEffect(() => {
-    const fetchUserEvents = async () => {
+    const fetchBookings = async () => {
       try {
         setLoading(true);
-<<<<<<< Updated upstream
-
-        if (!user?.id) throw new Error("Not signed in (Clerk).");
-
-        const res = await fetch(`/api/event_user`);
-        if (!res.ok) throw new Error("Failed to fetch events");
-        const allRegistrations = await res.json();
-=======
         const {
           data: { user },
           error: authErr,
@@ -98,40 +59,27 @@ const MyCalendarPage = () => {
             status,
             workshop:workshopID (id, title, date, start_time)
           `);
->>>>>>> Stashed changes
 
-        // filter for this user’s registrations
-        const myEvents = allRegistrations.filter(
-          (r) => String(r.user_id) === String(user.id)
-        );
+        if (error) throw error;
 
-<<<<<<< Updated upstream
-        // normalize event format for FullCalendar
-        const formatted = myEvents
-          .filter((r) => r.event_date && r.start_time)
-          .map((r) => ({
-            title: r.event_title ?? "Event",
-            start: `${r.event_date}T${r.start_time}`,
-=======
         const formatted = (bookings ?? [])
           .filter((b) => b.workshop?.date && b.workshop?.start_time)
           .map((b) => ({
             title: b.workshop.title ?? "Workshop",
             start: `${b.workshop.date}T${b.workshop.start_time}`,
->>>>>>> Stashed changes
           }));
 
         setEvents(formatted);
-        setBookingData(myEvents);
+        setBookingData(bookings ?? []);
       } catch (err) {
-        console.error("Error loading events:", err.message || err);
+        console.error("Error loading bookings:", err.message || err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUserEvents();
-  }, [user]);
+    fetchBookings();
+  }, []);
 
   // Set title and check today's button state
   const updateTitle = () => {
