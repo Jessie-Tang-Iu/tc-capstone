@@ -7,7 +7,6 @@ import BackToOrigin from "@/app/components/event/BackToOrigin.js";
 import { headers } from "next/headers";
 
 export default async function EventDetailPage(props) {
-  // ✅ Next 15: await both params and headers()
   const { id } = await props.params;
   const hdrs = await headers();
   const proto = hdrs.get("x-forwarded-proto") ?? "http";

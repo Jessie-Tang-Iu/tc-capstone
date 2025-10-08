@@ -298,3 +298,18 @@ CREATE INDEX idx_reports_is_banned ON reports (is_banned);
 
 COMMIT;
 
+----event booking 
+CREATE TABLE event_user (
+  id SERIAL PRIMARY KEY,
+  event_id INTEGER NOT NULL REFERENCES workshop(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+  status TEXT NOT NULL DEFAULT 'registered',  -- could be 'registered', 'cancelled', 'attended'
+  registered_at TIMESTAMP NOT NULL DEFAULT now(),
+  CONSTRAINT uq_event_user UNIQUE (event_id, user_id)
+);
+
+ALTER TABLE "user"
+ADD COLUMN clerk_id TEXT UNIQUE;
+
+CREATE INDEX idx_event_user_event ON event_user (event_id);
+CREATE INDEX idx_event_user_user ON event_user (user_id);

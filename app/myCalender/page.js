@@ -10,12 +10,11 @@ import Button from "../components/ui/Button";
 import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
 import CalendarBigEvent from "../components/myCalender/calenderBig";
 import { deleteBookingByWorkshopId } from "@/lib/workshop_booking_crud";
-import { supabase } from "@/lib/supabaseClient"; // <-- IMPORTANT
+import { supabase } from "@/lib/supabaseClient";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 const MyCalendarPage = () => {
-  // Hooks go first
   const calendarRef = useRef(null);
   const [events, setEvents] = useState([]);
   const [bookingData, setBookingData] = useState([]);
@@ -25,66 +24,40 @@ const MyCalendarPage = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  // Code Below checks if user is logged in before running ANYTHING else
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { isLoaded, isSignedIn } = useUser();
   const router = useRouter();
 
   // Redirect if not signed in
   useEffect(() => {
-    if (isLoaded && !isSignedIn) {
-      router.push("/signIn");
-    }
+    if (isLoaded && !isSignedIn) router.push("/signIn");
   }, [isLoaded, isSignedIn, router]);
 
-  // if (!isLoaded) {
-  //   return <p>Loading...</p>;
-  // }
-
-  // if (!isSignedIn) {
-  //   // Don’t render anything while redirecting
-  //   return null;
-  // }
-
-  if (!isLoaded || !isSignedIn) {
-    return (
-      <div className="bg-gray-100 min-h-screen">
-        <MemberNavbar />
-        <p className="text-center mt-10 text-lg text-gray-700">Loading...</p>
-      </div>
-    );
-  }
-
-  // esc closes modal
+  // Escape closes modal
   useEffect(() => {
     const handleKeyDown = (e) => e.key === "Escape" && setShowModal(false);
     if (showModal) document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [showModal]);
 
-  // fetch "my" bookings (RLS filters rows)
+  // Fetch bookings for the current user
   useEffect(() => {
     const fetchBookings = async () => {
       try {
         setLoading(true);
-
-        // ensure signed-in (optional guard)
         const {
           data: { user },
           error: authErr,
         } = await supabase.auth.getUser();
         if (authErr || !user) throw new Error("Not signed in.");
 
-        // embed workshop via FK column name
-        const { data: bookings, error } = await supabase.from(
-          "workshop_booking"
-        ).select(`
+        const { data: bookings, error } = await supabase
+          .from("workshop_booking")
+          .select(`
             id,
             userID,
             workshopID,
             status,
-            workshop:workshopID (
-              id, title, date, start_time
-            )
+            workshop:workshopID (id, title, date, start_time)
           `);
 
         if (error) throw error;
@@ -93,7 +66,7 @@ const MyCalendarPage = () => {
           .filter((b) => b.workshop?.date && b.workshop?.start_time)
           .map((b) => ({
             title: b.workshop.title ?? "Workshop",
-            start: `${b.workshop.date}T${b.workshop.start_time}`, // ISO-like
+            start: `${b.workshop.date}T${b.workshop.start_time}`,
           }));
 
         setEvents(formatted);
@@ -108,6 +81,7 @@ const MyCalendarPage = () => {
     fetchBookings();
   }, []);
 
+  // Set title and check today's button state
   const updateTitle = () => {
     const api = calendarRef.current?.getApi();
     if (!api) return;
@@ -126,6 +100,7 @@ const MyCalendarPage = () => {
     updateTitle();
   }, []);
 
+  // Handle clicking an event in the calendar
   const handleEventClick = (eventInfo) => {
     const clicked = bookingData.find((item) => {
       const bookingStart = DateTime.fromISO(
@@ -146,6 +121,7 @@ const MyCalendarPage = () => {
     }
   };
 
+  // Navigation buttons (prev/next/today/month/week/day)
   const handleCalendarNav = (action) => {
     const api = calendarRef.current?.getApi();
     if (!api) return;
@@ -158,9 +134,19 @@ const MyCalendarPage = () => {
     updateTitle();
   };
 
+  // Show loading screen until Clerk finishes loading state
+  if (!isLoaded || !isSignedIn) {
+    return (
+      <div className="bg-gray-100 min-h-screen">
+        <MemberNavbar />
+        <p className="text-center mt-10 text-lg text-gray-700">Loading...</p>
+      </div>
+    );
+  }
+
+  // Main content
   return (
     <div className="bg-gray-100 min-h-screen">
-      {/* Navigation */}
       <MemberNavbar />
 
       <h1 className="text-3xl font-bold text-center text-[#E55B3C] mt-6 mb-2">
@@ -212,6 +198,7 @@ const MyCalendarPage = () => {
         {loading && <p className="text-gray-600 mt-2">Loading…</p>}
       </div>
 
+      {/* Modal */}
       {showModal && selectedEvent && (
         <div
           className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50"
@@ -246,7 +233,7 @@ const MyCalendarPage = () => {
         </div>
       )}
 
-      {/* FullCalendar styling override */}
+      {/* Styling */}
       <style jsx global>{`
         .fc {
           color: black;
