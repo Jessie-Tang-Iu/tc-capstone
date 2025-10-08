@@ -52,6 +52,8 @@ export default function ClerkSignIn() {
               src="/logo.jpeg"
               alt="Logo"
               className="w-40 h-40 rounded-2xl shadow-2xl mb-7 mx-auto"
+              width={40}
+              height={40}
             />
             <p className="text-5xl">Hello!</p>
             <p className="text-2xl">Community.</p>

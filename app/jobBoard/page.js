@@ -65,10 +65,6 @@ export default function JobBoardPage() {
       setFilteredJobs(jobs);
     }, [jobs]);
 
-    useEffect(() => {
-      search();
-    }, [filters, search]);
-
     const selectedJob = jobs.find((job) => job.id === selectedJobId);
   
     const handleJobSelect = (jobId) => {
@@ -190,8 +186,12 @@ export default function JobBoardPage() {
       setFilteredJobs(results);
     }, [jobs, filters, query, ,location]);
 
+    useEffect(() => {
+      search();
+    }, [filters, search]);
+
     if (!user) {
-      router.push("/");
+      // router.push("/");
       return (
         <div className="min-h-screen flex items-center justify-center">
           <p className="text-gray-500">Loading...</p>
