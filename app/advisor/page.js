@@ -40,16 +40,6 @@ export default function AdvisorPage() {
     })();
   }, [ME]);
 
-  // find advisorIDs for this user
-  const contactedIDs = userAdvisors
-    .filter((contact) => contact.userID === userID)
-    .map((contact) => contact.advisorID);
-
-  // filter advisors that match those IDs
-  const contactedAdvisors = advisors.filter((advisor) =>
-    contactedIDs.includes(advisor.advisorID)
-  );
-
   // navigate to search advisor page
   const handleNewAdvisor = () => {
     router.push('/advisor/advisorSearch');
