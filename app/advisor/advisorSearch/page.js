@@ -8,6 +8,7 @@ import AdvisorCard from "../../components/advisorCard";
 
 export default function AdvisorSearchPage() {
 
+
   return (
     <main className='bg-gray-100 min-h-screen'>
       <Navbar />
