@@ -1,17 +1,19 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import MemberNavbar from "../components/MemberNavBar";
 import SearchBar from "../components/job/SearchBar";
 import JobCard from "../components/job/JobCard";
 import JobDetail from "../components/job/JobDetail";
 import AdvancedSearch from "../components/job/AdvancedSearch";
 import ApplyForm from "../components/application/ApplyForm";
+import { useRouter } from "next/navigation";
 
 export default function JobBoardPage() {
 
     const { user } = useUser();
+    const router = useRouter();
 
     const [jobs, setJobs] = useState([]);
     const [selectedJobId, setSelectedJobId] = useState();
@@ -65,7 +67,7 @@ export default function JobBoardPage() {
 
     useEffect(() => {
       search();
-    }, [filters]);
+    }, [filters, search]);
 
     const selectedJob = jobs.find((job) => job.id === selectedJobId);
   
@@ -132,7 +134,7 @@ export default function JobBoardPage() {
       }
     }
   
-    const search = () => {
+    const search = useCallback(() => {
       setSelectedJobId();
       let results = jobs;
   
@@ -186,16 +188,10 @@ export default function JobBoardPage() {
         results = results.filter((job) => job.location.toLowerCase().includes(location));
   
       setFilteredJobs(results);
-    }
+    }, [jobs, filters, query, ,location]);
 
     if (!user) {
-      try {
-        getCurrentSession();
-        
-      } catch (error) {
-        console.error("Error fetching session:", error);
-        alert("Error", "Failed to fetch session. Please sign in again.");
-      }
+      router.push("/");
       return (
         <div className="min-h-screen flex items-center justify-center">
           <p className="text-gray-500">Loading...</p>
