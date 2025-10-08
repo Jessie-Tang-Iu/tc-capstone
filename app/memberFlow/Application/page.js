@@ -74,7 +74,7 @@ export default function Applications() {
       })
       .catch((error) => console.error('Error fetching cover letter: ', error)
     );
-  }, []);
+  }, [userId]);
 
   // Fetch the information of selected application
   useEffect(() => {

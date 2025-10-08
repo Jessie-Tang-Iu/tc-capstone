@@ -1,49 +1,114 @@
-// app/adminDashboard/User.js
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SearchBar from "@/app/components/ui/SearchBar";
 import Section from "@/app/components/adminDashboard/Section";
 import UserRow from "@/app/components/adminDashboard/UserRow";
 import PlaceholderCard from "@/app/components/adminDashboard/PlaceholderCard";
 import ChatWindow from "@/app/components/ChatWindow";
-import usersDataDefault from "@/app/data/userForAdminPage.json";
 
-export default function UsersPanel({ data = usersDataDefault, onShowDetails }) {
+export default function UsersPanel({ onShowDetails }) {
   const [query, setQuery] = useState("");
   const [openChat, setOpenChat] = useState(false);
   const [chatTo, setChatTo] = useState("");
+  const [users, setUsers] = useState([]);
 
-  const [normal, setNormal] = useState(data.normal || []);
-  const [employer, setEmployer] = useState(data.employer || []);
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("/api/users", { cache: "no-store" });
+        if (!res.ok) throw new Error("Failed to fetch users");
+        const data = await res.json();
+        setUsers(data.filter((u) => u.status !== "underreview"));
+      } catch (err) {
+        console.error("Error loading users:", err);
+      }
+    })();
+  }, []);
 
-  const filteredNormal = useMemo(
-    () =>
-      normal.filter((u) => u.name.toLowerCase().includes(query.toLowerCase())),
-    [normal, query]
+  const normal = useMemo(
+    () => users.filter((u) => u.role === "member"),
+    [users]
   );
-  const filteredEmployer = useMemo(
-    () =>
-      employer.filter((u) =>
-        u.name.toLowerCase().includes(query.toLowerCase())
-      ),
-    [employer, query]
+  const employer = useMemo(
+    () => users.filter((u) => u.role === "employer"),
+    [users]
   );
+  const advisor = useMemo(
+    () => users.filter((u) => u.role === "advisor"),
+    [users]
+  );
+  const admin = useMemo(() => users.filter((u) => u.role === "admin"), [users]);
 
-  const toggleBan = (listSetter, list, id) => {
-    listSetter(
-      list.map((u) => (u.id === id ? { ...u, banned: !u.banned } : u))
-    );
+  const filterByQuery = (list) =>
+    list.filter((u) => {
+      const fullName = `${u.first_name} ${u.last_name}`.toLowerCase();
+      const email = (u.email ?? "").toLowerCase();
+      const username = (u.username ?? "").toLowerCase();
+      const q = query.toLowerCase();
+      return fullName.includes(q) || email.includes(q) || username.includes(q);
+    });
+
+  async function updateUserStatus(id, newStatus) {
+    try {
+      const res = await fetch(`/api/users/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!res.ok) throw new Error("Failed to update user status");
+      const updated = await res.json();
+      setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
+      return updated;
+    } catch (err) {
+      console.error("Update status error:", err);
+      return null;
+    }
+  }
+
+  const handleBanToggle = async (user) => {
+    const newStatus = user.status === "banned" ? "active" : "banned";
+    await updateUserStatus(user.id, newStatus);
   };
 
-  const openMessage = (name) => {
-    setChatTo(name);
+  const openMessage = (userId) => {
+    setChatTo(userId);
     setOpenChat(true);
   };
 
   const showDetails = (user, roleLabel) => {
-    if (onShowDetails) onShowDetails({ user, roleLabel });
+    onShowDetails?.({ user, roleLabel });
   };
+
+  const renderUserSection = (title, list, roleLabel) => (
+    <Section title={title}>
+      {filterByQuery(list).length === 0 ? (
+        <PlaceholderCard
+          title={`No ${title.toLowerCase()} found`}
+          description="Try another search."
+        />
+      ) : (
+        <div className="h-80 overflow-y-auto pr-2">
+          {filterByQuery(list).map((u) => (
+            <UserRow
+              key={u.id}
+              id={u.id}
+              name={`${u.first_name} ${u.last_name}`}
+              subtitle={`${u.username ?? ""} | ${u.email ?? ""}`}
+              status={u.status}
+              onMessage={() => openMessage(u.id)}
+              onDetails={() => showDetails(u, roleLabel)}
+              onStatusChange={(updated) =>
+                setUsers((prev) =>
+                  prev.map((x) => (x.id === updated.id ? updated : x))
+                )
+              }
+            />
+          ))}
+        </div>
+      )}
+    </Section>
+  );
 
   return (
     <div className="w-full">
@@ -52,55 +117,19 @@ export default function UsersPanel({ data = usersDataDefault, onShowDetails }) {
           User Management
         </div>
         <div className="flex justify-center">
-          <SearchBar value={query} onChange={setQuery} onSearch={() => {}} />
+          <SearchBar
+            placeholder="Username | Email"
+            value={query}
+            onChange={setQuery}
+            onSearch={() => {}}
+          />
         </div>
       </div>
 
-      <Section title="Normal User">
-        {filteredNormal.length === 0 ? (
-          <PlaceholderCard
-            title="No users found"
-            description="Try another search."
-          />
-        ) : (
-          <div className="h-80 overflow-y-auto pr-2">
-            {filteredNormal.map((u) => (
-              <UserRow
-                key={u.id}
-                name={u.name}
-                subtitle={u.subtitle}
-                isBanned={u.banned}
-                onMessage={() => openMessage(u.name)}
-                onDetails={() => showDetails(u, "Normal User")} // ← HERE
-                onBanToggle={() => toggleBan(setNormal, normal, u.id)}
-              />
-            ))}
-          </div>
-        )}
-      </Section>
-
-      <Section title="Employer">
-        {filteredEmployer.length === 0 ? (
-          <PlaceholderCard
-            title="No employers found"
-            description="Try another search."
-          />
-        ) : (
-          <div className="h-80 overflow-y-auto pr-2">
-            {filteredEmployer.map((u) => (
-              <UserRow
-                key={u.id}
-                name={u.name}
-                subtitle={u.subtitle}
-                isBanned={u.banned}
-                onMessage={() => openMessage(u.name)}
-                onDetails={() => showDetails(u, "Employer")} // ← AND HERE
-                onBanToggle={() => toggleBan(setEmployer, employer, u.id)}
-              />
-            ))}
-          </div>
-        )}
-      </Section>
+      {renderUserSection("Admins", admin, "Admin")}
+      {renderUserSection("Employers", employer, "Employer")}
+      {renderUserSection("Advisors", advisor, "Advisor")}
+      {renderUserSection("Normal Users", normal, "Member")}
 
       {openChat && (
         <ChatWindow

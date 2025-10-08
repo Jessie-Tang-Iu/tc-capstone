@@ -30,7 +30,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
         })
         .catch((error) => console.error('Error fetching cover letter: ', error));
     
-    }, []);
+    }, [formData.user_id]);
 
   const handleNext = () => {
     let error = false;

@@ -4,6 +4,7 @@ import { useSignIn } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function ClerkSignIn() {
   const { isLoaded, signIn, setActive } = useSignIn();
@@ -47,7 +48,7 @@ export default function ClerkSignIn() {
       <form onSubmit={handleAuth}>
         <div className="bg-[#F3E1D5] rounded-2xl p-10 flex flex-row lg:w-250 justify-center items-center">
           <div className="text-[#DD5B45] font-bold p-5 flex-2/3">
-            <img
+            <Image
               src="/logo.jpeg"
               alt="Logo"
               className="w-40 h-40 rounded-2xl shadow-2xl mb-7 mx-auto"
