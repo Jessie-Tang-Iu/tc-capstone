@@ -20,7 +20,7 @@ export default function ContactedAdvisorCard({ advisor }) {
     }
 
     return(
-        <div className="bg-[#F3E1D5] shadow-md rounded-lg p-6 m-4">
+        <div className="bg-[#F3E1D5] shadow-md rounded-lg p-6 my-4">
             <div>
                 <h2 className="text-2xl text-black font-bold mb-2">Advisor ID: {advisor.advisor_id}</h2>
             </div>
