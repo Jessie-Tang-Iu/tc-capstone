@@ -50,7 +50,14 @@ export default function ClerkSignUp() {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`,
            },
-          body: JSON.stringify({ role: "member" }),
+          body: JSON.stringify({
+            role: "employer",
+            username: formData.username,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            phone: formData.phoneNumber,
+          }),
         });
 
         router.push("/"); // redirect after everything is done

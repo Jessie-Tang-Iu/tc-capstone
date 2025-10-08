@@ -45,20 +45,27 @@ export default function AdvisorRegister() {
         if (result.status === "complete") {
             // Activate Clerk session
             if (result.createdSessionId) {
-            await setActive({ session: result.createdSessionId });
+                await setActive({ session: result.createdSessionId });
             }
 
             // Optional: update metadata via API if needed
             const token = await getToken({ template: "backend" });
             await fetch("/api/users/metadata", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-                role: "advisor",
-            }),
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    role: "employer",
+                    username: formData.username,
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    email: formData.email,
+                    phone: formData.phoneNumber,
+                    companyName: formData.companyName,
+                    companyRole: formData.title,
+                }),
             });
 
             router.push("/advisorDashboard"); // redirect after signup

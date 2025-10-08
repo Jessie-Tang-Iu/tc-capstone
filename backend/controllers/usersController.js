@@ -71,7 +71,7 @@ export async function updateUserMetadata(req, res) {
     }
 
 
-    return res.json({ success: true, role, user: updatedUser }); // Returns the updated user
+    return res.json({ success: true, user: updatedUser }); // Returns the updated user
   } catch (err) {
     console.error("Metadata update failed:", err);
     res.status(500).json({ error: "Failed to update metadata" });
