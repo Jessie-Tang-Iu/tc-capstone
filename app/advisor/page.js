@@ -33,7 +33,7 @@ export default function AdvisorPage() {
             const data = await res.json();
 
             setMyAdvisorList(data);
-            console.log("Return Array: ", data);
+            // console.log("Return Array: ", data);
         } catch (error) {
             console.error("Fetch error: ", error);
         }
@@ -58,7 +58,7 @@ export default function AdvisorPage() {
           <Button onClick={handleNewAdvisor} text="Register New Advisor" />
         </div>
         
-        <div className="mx-12">
+        <div>
           {myAdvisorList.length > 0 ? (
             myAdvisorList.map((advisor) => (
               <ContactedAdvisorCard key={advisor.advisor_id} advisor={advisor} />

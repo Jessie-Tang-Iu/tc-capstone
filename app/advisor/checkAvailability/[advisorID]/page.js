@@ -4,31 +4,49 @@ import MemberNavbar from "@/app/components/MemberNavBar";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { useRouter } from "next/navigation";
-
-// dummy data
-const dummyEvents = [
-  {
-    title: "Open",
-    start: "2025-10-08T10:00:00",
-    end: "2025-10-08T11:00:00",
-  },
-  {
-    title: "Booked",
-    start: "2025-10-09T14:00:00",
-    end: "2025-10-09T15:00:00",
-  },
-  {
-    title: "Open",
-    start: "2025-10-10T09:30:00",
-    end: "2025-10-10T10:00:00",
-  }
-];
+import { use, useEffect, useState } from "react";
+import { DateTime } from "luxon";
 
 
-export default function CheckAvailabilityPage() {
+export default function CheckAvailabilityPage({ params }) {
+
+    const [advisoryAvailability, setAdvisoryAvailability] = useState([]);
 
     const router = useRouter();
+    const { advisorID } = use(params);
 
+    useEffect(() => {
+
+        if (!advisorID) return;
+    
+            (async () => {
+                try {
+                    const res = await fetch(
+                        `/api/advisory_bookings/advisor?advisorId=${encodeURIComponent(advisorID)}`
+                    );
+                    if (!res.ok) {console.error("Failed to fetch events"); return;}
+              
+                    const data = await res.json();
+    
+                    const mappedEvents = data.map(event => ({
+                        id: event.booking_id,
+                        title: event.status,
+                        date: event.date,
+                        start_time: event.starttime,
+                        end_time: event.endtime,
+                        description: event.description,
+                        type: event.status,
+                    }));
+    
+                    setAdvisoryAvailability(mappedEvents);
+                    console.log("Mapped Event: ", mappedEvents);
+                } catch (error) {
+                    console.error("Fetch error: ", error);
+                }
+            })();
+        
+    }, [advisorID]);
+    
     const handleBackToAdvisorList = () => {
         router.push('/advisor');
     }
@@ -46,16 +64,20 @@ export default function CheckAvailabilityPage() {
                 <FullCalendar
                     plugins={[dayGridPlugin]}
                     initialView="dayGridWeek"
-                    events={dummyEvents}
+                    events={advisoryAvailability.map(event => {
+                        const dateOnly = event.date.split("T")[0];
+                        return {
+                            ...event,
+                            start: `${dateOnly}T${event.start_time}`,
+                            end: `${dateOnly}T${event.end_time}`
+                        };
+                    })}
                     eventContent={(eventInfo) => {
-                        const type = eventInfo.event.title.toLowerCase();
+                        const type = eventInfo.event.extendedProps.type;
                         const colorClass =
                             type === 'open' ? '#B4DDFF' : '#64D991';
-
-                        const startTime = new Date(eventInfo.event.start).toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
+    
+                        const startTime = DateTime.fromJSDate(eventInfo.event.start).toFormat("h:mm a");
                         return (
                             <div 
                                 style={{ backgroundColor: colorClass }} 
@@ -64,7 +86,7 @@ export default function CheckAvailabilityPage() {
                                 <div>
                                     {startTime}
                                 </div>
-                                {eventInfo.event.title}
+                                    {eventInfo.event.title}
                             </div>
                         )
                     }}
