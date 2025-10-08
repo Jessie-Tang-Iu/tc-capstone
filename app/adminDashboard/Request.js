@@ -1,38 +1,73 @@
 "use client";
 
-import { useMemo, useState } from "react";
-
+import { useEffect, useMemo, useState } from "react";
 import SearchBar from "@/app/components/ui/SearchBar";
 import Section from "@/app/components/adminDashboard/Section";
 import PlaceholderCard from "@/app/components/adminDashboard/PlaceholderCard";
 import RequestRow from "@/app/components/adminDashboard/RequestRow";
-import requestsDataDefault from "@/app/data/requestsForAdminPage.json";
 
-export default function RequestsPanel({
-  data = requestsDataDefault,
-  onShowDetails,
-}) {
+export default function RequestsPanel({ onShowDetails }) {
   const [query, setQuery] = useState("");
-  const [normal, setNormal] = useState(data.normal || []);
-  const [employer, setEmployer] = useState(data.employer || []);
+  const [employers, setEmployers] = useState([]);
+  const [advisors, setAdvisors] = useState([]);
 
-  const filteredNormal = useMemo(
-    () =>
-      normal.filter((u) => u.name.toLowerCase().includes(query.toLowerCase())),
-    [normal, query]
-  );
-  const filteredEmployer = useMemo(
-    () =>
-      employer.filter((u) =>
-        u.name.toLowerCase().includes(query.toLowerCase())
-      ),
-    [employer, query]
-  );
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("/api/users?status=underreview", {
+          cache: "no-store",
+        });
+        if (!res.ok) throw new Error("Failed to fetch requests");
+        const data = await res.json();
 
-  const acceptFrom = (list, setter, id) =>
-    setter(list.filter((u) => u.id !== id));
-  const refuseFrom = (list, setter, id) =>
-    setter(list.filter((u) => u.id !== id));
+        setEmployers(
+          data.filter(
+            (u) => u.role === "employer" && u.status === "underreview"
+          )
+        );
+        setAdvisors(
+          data.filter((u) => u.role === "advisor" && u.status === "underreview")
+        );
+      } catch (err) {
+        console.error("Error loading requests:", err);
+      }
+    })();
+  }, []);
+
+  // filtering by search query
+  const filterByQuery = (list) =>
+    list.filter((u) =>
+      `${u.first_name} ${u.last_name}`
+        .toLowerCase()
+        .includes(query.toLowerCase())
+        
+    );
+
+  // helper to update user status in DB
+  async function updateUserStatus(userId, newStatus) {
+    try {
+      const res = await fetch(`/api/users/${userId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!res.ok) throw new Error("Failed to update user status");
+      return await res.json();
+    } catch (err) {
+      console.error("Update status error:", err);
+      return null;
+    }
+  }
+
+  const acceptFrom = async (list, setter, id) => {
+    const updated = await updateUserStatus(id, "active");
+    if (updated) setter(list.filter((u) => u.id !== id));
+  };
+
+  const refuseFrom = async (list, setter, id) => {
+    const updated = await updateUserStatus(id, "banned");
+    if (updated) setter(list.filter((u) => u.id !== id));
+  };
 
   return (
     <div className="w-full">
@@ -46,23 +81,23 @@ export default function RequestsPanel({
         </div>
       </div>
 
-      {/* Normal User requests */}
-      <Section title="Normal User">
-        {filteredNormal.length === 0 ? (
+      {/* Advisor requests */}
+      <Section title="Advisor Requests">
+        {filterByQuery(advisors).length === 0 ? (
           <PlaceholderCard
-            title="No requests"
+            title="No advisor requests"
             description="Nothing to review here."
           />
         ) : (
           <div className="h-80 overflow-y-auto pr-2">
-            {filteredNormal.map((r) => (
+            {filterByQuery(advisors).map((r) => (
               <RequestRow
                 key={r.id}
-                name={r.name}
-                subtitle={r.subtitle}
+                name={`${r.first_name} ${r.last_name}`}
+                subtitle={r.email}
                 onDetails={() => onShowDetails?.(r)}
-                onAccept={() => acceptFrom(normal, setNormal, r.id)}
-                onRefuse={() => refuseFrom(normal, setNormal, r.id)}
+                onAccept={() => acceptFrom(advisors, setAdvisors, r.id)}
+                onRefuse={() => refuseFrom(advisors, setAdvisors, r.id)}
               />
             ))}
           </div>
@@ -70,22 +105,22 @@ export default function RequestsPanel({
       </Section>
 
       {/* Employer requests */}
-      <Section title="Employer">
-        {filteredEmployer.length === 0 ? (
+      <Section title="Employer Requests">
+        {filterByQuery(employers).length === 0 ? (
           <PlaceholderCard
             title="No employer requests"
             description="All caught up!"
           />
         ) : (
           <div className="h-80 overflow-y-auto pr-2">
-            {filteredEmployer.map((r) => (
+            {filterByQuery(employers).map((r) => (
               <RequestRow
                 key={r.id}
-                name={r.name}
-                subtitle={r.subtitle}
+                name={`${r.first_name} ${r.last_name}`}
+                subtitle={r.email}
                 onDetails={() => onShowDetails?.(r)}
-                onAccept={() => acceptFrom(employer, setEmployer, r.id)}
-                onRefuse={() => refuseFrom(employer, setEmployer, r.id)}
+                onAccept={() => acceptFrom(employers, setEmployers, r.id)}
+                onRefuse={() => refuseFrom(employers, setEmployers, r.id)}
               />
             ))}
           </div>

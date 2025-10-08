@@ -1,11 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SearchBar from "@/app/components/ui/SearchBar";
 import ReportRow from "@/app/components/adminDashboard/ReportRow";
 import PlaceholderCard from "@/app/components/adminDashboard/PlaceholderCard";
 import reportsDataDefault from "@/app/data/reportsForAdminPage.json";
-import UserDetailsCard from "@/app/components/adminDashboard/UserDetailsCard";
 
 const IconChevronLeft = () => (
   <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
@@ -15,6 +14,7 @@ const IconChevronLeft = () => (
     />
   </svg>
 );
+
 const IconChevronRight = () => (
   <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
     <path
@@ -29,26 +29,67 @@ export default function ReportsPanel({
   onShowDetails,
 }) {
   const [query, setQuery] = useState("");
-  const reports = data.reports || [];
+  const [sortOrder, setSortOrder] = useState("newest"); // NEW state
 
-  // filter by id/category/issue/reporter/reportId
+  // 1) Fetch from API on mount; fall back to provided data on error
+  const [fetchedReports, setFetchedReports] = useState(null);
+  const [loadError, setLoadError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const res = await fetch("/api/reports", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        // Expect either { reports: [...] } or an array; adapt gently
+        const reports = Array.isArray(json) ? json : json?.reports;
+        if (!cancelled) setFetchedReports(reports ?? []);
+      } catch (err) {
+        if (!cancelled) {
+          setLoadError(err.message);
+          // leave fetchedReports as null so we fall back to prop data below
+        }
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // 2) Source of truth for the list (API if available, else prop JSON)
+  const reportsArray = (fetchedReports ?? data.reports) || [];
+
+  // 3) Filter by query
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
-    if (!q) return reports;
-    return reports.filter((r) =>
+    if (!q) return reportsArray;
+    return reportsArray.filter((r) =>
       [String(r.id), r.category, r.issue, r.reporter, r.reportId].some((v) =>
         (v || "").toLowerCase().includes(q)
       )
     );
-  }, [reports, query]);
+  }, [reportsArray, query]);
 
-  // pagination
+  // 4) Sort by created_at/timeAgo
+  const sorted = useMemo(() => {
+    const arr = [...filtered];
+    arr.sort((a, b) => {
+      const idA = Number(a.reportId ?? a.id ?? 0);
+      const idB = Number(b.reportId ?? b.id ?? 0);
+      return sortOrder === "newest" ? idB - idA : idA - idB;
+    });
+    return arr;
+  }, [filtered, sortOrder]);
+
+  // 5) Pagination
   const pageSize = 5;
   const [page, setPage] = useState(1);
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
   const start = (page - 1) * pageSize;
-  const end = Math.min(start + pageSize, filtered.length);
-  const pageRows = filtered.slice(start, end);
+  const end = Math.min(start + pageSize, sorted.length);
+  const pageRows = sorted.slice(start, end);
 
   return (
     <div className="w-full">
@@ -57,22 +98,39 @@ export default function ReportsPanel({
         <div className="mb-4 text-3xl font-semibold text-[#E55B3C]">
           Report Management
         </div>
-        <div className="flex justify-center">
+        <div className="flex items-center justify-center gap-4">
           <SearchBar
             value={query}
             onChange={setQuery}
             onSearch={() => {}}
             placeholder="Report ID | Issue Type"
           />
+          <button
+            onClick={() =>
+              setSortOrder((prev) => (prev === "newest" ? "oldest" : "newest"))
+            }
+            className="text-sm text-blue-600 underline"
+          >
+            Sort: {sortOrder === "newest" ? "Newest ID" : "Oldest ID"}
+          </button>
         </div>
+        {/* Optional: tiny inline load state */}
+        {fetchedReports === null && !loadError && (
+          <div className="mt-2 text-xs text-gray-500">Loading reports…</div>
+        )}
+        {loadError && (
+          <div className="mt-2 text-xs text-red-500">
+            Failed to load from API, showing local data.
+          </div>
+        )}
       </div>
 
       {/* Pager */}
       <div className="mb-2 flex items-center justify-between text-sm text-black">
-        <div>Total Report: {filtered.length}</div>
+        <div>Total Report: {sorted.length}</div>
         <div className="flex items-center gap-2">
-          <span>{filtered.length === 0 ? "0" : `${start + 1}-${end}`}</span>
-          <span>/ {filtered.length}</span>
+          <span>{sorted.length === 0 ? "0" : `${start + 1}-${end}`}</span>
+          <span>/ {sorted.length}</span>
           <button
             className="rounded-md p-1 hover:bg-gray-100 disabled:opacity-40"
             disabled={page === 1}
@@ -98,14 +156,20 @@ export default function ReportsPanel({
         />
       ) : (
         <div className="rounded-xl bg-white p-3">
-          {pageRows.map((r) => (
+          {pageRows.map((r, idx) => (
             <ReportRow
-              key={r.id}
+              key={
+                r.reportId ??
+                r.public_code ??
+                `${r.id}-${r.category}-${r.issue}-${start + idx}`
+              }
               category={r.category}
               reportId={r.reportId}
               reporter={r.reporter}
               issue={r.issue}
               timeAgo={r.timeAgo}
+              isRemoved={r.isRemoved}
+              isBanned={r.isBanned}
               onDetails={() =>
                 onShowDetails?.({
                   type: "report",

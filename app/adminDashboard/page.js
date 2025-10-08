@@ -1,7 +1,7 @@
 // app/adminDashboard/page.js
 /*
 data need to change to postgres db
-- users
+- users (Half done with dummy data)
 - reports
 - events (DONE)
 - requests
@@ -9,30 +9,55 @@ data need to change to postgres db
 */
 "use client";
 
-import { useState } from "react";
-import Navbar from "../components/NavBarBeforeSignIn";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import MessagePage from "../components/MessagePage";
 import UsersPanel from "@/app/adminDashboard/User";
 import RequestsPanel from "@/app/adminDashboard/Request";
 import ReportsPanel from "@/app/adminDashboard/Report";
 import UserDetailsCard from "../components/adminDashboard/UserDetailsCard";
 import EventPanel from "@/app/adminDashboard/Event";
-import RequestDetailsCard from "@/app/components/adminDashboard/RequestDetailsCard";
-import ReportDetailsCard from "@/app/components/adminDashboard/ReportDetailsCard";
+import Navbar from "../components/NavBarBeforeSignIn";
+import RequestDetailsCard from "../components/adminDashboard/RequestDetailsCard";
+import ReportDetailsCard from "../components/adminDashboard/ReportDetailsCard";
 
 const ME = "11111111-1111-1111-1111-111111111111";
 
 export default function AdminDashboard() {
-  const [tab, setTab] = useState("message");
-  // when null -> show UsersPanel; otherwise show UserDetailsCard
-  const [details, setDetails] = useState(null); // { user, roleLabel } | null
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [tab, setTab] = useState(() => searchParams.get("tab") || "message");
+  const [details, setDetails] = useState(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const current = params.get("tab");
+    if (tab !== current) {
+      params.set("tab", tab);
+      const href = window.location.pathname + "?" + params.toString();
+      router.push(href, { scroll: false });
+    }
+  }, [tab]);
+
+  useEffect(() => {
+    const syncFromUrl = () => {
+      const p = new URLSearchParams(window.location.search);
+      const t = p.get("tab") || "message";
+      setTab((prev) => (prev !== t ? t : prev));
+      setDetails(null);
+    };
+    syncFromUrl();
+    window.addEventListener("popstate", syncFromUrl);
+    return () => window.removeEventListener("popstate", syncFromUrl);
+  }, []);
 
   const TabBtn = ({ v, children }) => (
     <button
       value={v}
       onClick={(e) => {
         setTab(e.currentTarget.value);
-        setDetails(null); // ← reset detail view when switching tabs
+        setDetails(null);
       }}
       className={`w-full text-left rounded-md px-4 py-3 text-sm font-medium transition
         text-black hover:bg-[#F0E0D5] ${tab === v ? "bg-[#E2B596]" : ""}`}
@@ -41,45 +66,77 @@ export default function AdminDashboard() {
     </button>
   );
 
+  const pushParams = (mutator) => {
+    const params = new URLSearchParams(window.location.search);
+    mutator(params);
+    router.push(window.location.pathname + "?" + params.toString(), {
+      scroll: false,
+    });
+  };
+
+  const openUserDetails = ({ user, roleLabel }) => {
+    pushParams((p) => {
+      p.set("tab", "users");
+      p.set("userId", user.id);
+    });
+    setDetails({ type: "user", user, roleLabel });
+  };
+
+  const openRequestDetails = (request) => {
+    pushParams((p) => {
+      p.set("tab", "requests");
+      p.set("requestId", request.id);
+    });
+    setDetails({ type: "request", data: request });
+  };
+
+  const openReportDetails = (report) => {
+    const rid = report.reportId ?? report.id;
+    pushParams((p) => {
+      p.set("tab", "reports");
+      p.set("reportId", String(rid));
+    });
+    setDetails({ type: "report", data: report });
+  };
+
+  // Close any detail
+  const closeDetails = () => {
+    pushParams((p) => {
+      p.delete("userId");
+      p.delete("requestId");
+      p.delete("reportId");
+    });
+    setDetails(null);
+  };
+
   const renderUsers = () =>
     details?.type === "user" ? (
       <UserDetailsCard
-        user={details.data.user}
-        roleLabel={details.data.roleLabel}
-        onClose={() => setDetails(null)}
+        user={details.user}
+        roleLabel={details.roleLabel}
+        onClose={closeDetails}
       />
     ) : (
-      <UsersPanel
-        onShowDetails={({ user, roleLabel }) =>
-          setDetails({ type: "user", data: { user, roleLabel } })
-        }
-      />
+      <UsersPanel onShowDetails={openUserDetails} />
     );
 
   const renderRequests = () =>
     details?.type === "request" ? (
-      <RequestDetailsCard
-        request={details.data}
-        onClose={() => setDetails(null)}
-      />
+      <RequestDetailsCard request={details.data} onClose={closeDetails} />
     ) : (
-      <RequestsPanel
-        onShowDetails={(request) =>
-          setDetails({ type: "request", data: request })
-        }
-      />
+      <RequestsPanel onShowDetails={openRequestDetails} />
     );
 
   const renderReports = () =>
     details?.type === "report" ? (
       <ReportDetailsCard
         report={details.data}
-        onClose={() => setDetails(null)}
+        onClose={closeDetails}
         onBan={(r) => console.log("Ban user:", r.reporter)}
         onRemove={(r) => console.log("Remove report:", r.reportId)}
       />
     ) : (
-      <ReportsPanel onShowDetails={(payload) => setDetails(payload)} />
+      <ReportsPanel onShowDetails={openReportDetails} />
     );
 
   return (

@@ -2,7 +2,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { formatDateToFullDisplay } from "@/app/components/ui/formatDate";
 
 export default function EventCard({
   id,
@@ -10,12 +9,9 @@ export default function EventCard({
   title,
   location,
   highlight,
-  description,
   tab,
   currentTab,
-  /** NEW: if provided, clicking the card will call this instead of navigating */
   onSelect,
-  /** OPTIONAL: if true, suppress navigation even if onSelect is not provided */
   disableNav = false,
 }) {
   const router = useRouter();
@@ -30,8 +26,8 @@ export default function EventCard({
   };
 
   const handleClick = () => {
-    if (onSelect) return onSelect(); // ← admin usage
-    if (!disableNav) return navigate(); // ← default/public usage
+    if (onSelect) return onSelect();
+    if (!disableNav) return navigate();
   };
 
   const handleKeyDown = (e) => {
@@ -41,11 +37,36 @@ export default function EventCard({
     }
   };
 
-  const dateText =
-    date && !Number.isNaN(Date.parse(date))
-      ? formatDateToFullDisplay(date)
-      : date || "Invalid date";
+  // Inline formatting logic here
+  let dateText = date || "Invalid date";
+  if (date) {
+    let d;
 
+    // Case 1: pure date string "YYYY-MM-DD"
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      const [y, m, day] = date.split("-").map(Number);
+      d = new Date(y, m - 1, day); // Local, no UTC shift
+    } else {
+      // Case 2: datetime string (e.g. ISO 8601)
+      d = new Date(date);
+    }
+
+    if (!isNaN(d.getTime())) {
+      const datePart = d.toLocaleDateString("en-GB"); // DD/MM/YYYY
+      const timePart = date.includes("T") // only show time if datetime provided
+        ? d.toLocaleTimeString([], {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          })
+        : "";
+      const weekday = d.toLocaleDateString("en-US", { weekday: "long" });
+
+      dateText = timePart
+        ? `${datePart}, ${timePart} (${weekday})`
+        : `${datePart} (${weekday})`;
+    }
+  }
   const isInteractive = !!onSelect || !disableNav;
 
   return (
@@ -72,7 +93,7 @@ export default function EventCard({
       {/* Description */}
       {highlight && (
         <div className="pt-2 text-sm">
-          {highlight && <p className="font-semibold text-black">{highlight}</p>}
+          <p className="font-semibold text-black">{highlight}</p>
         </div>
       )}
     </div>

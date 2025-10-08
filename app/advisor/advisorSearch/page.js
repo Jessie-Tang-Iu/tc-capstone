@@ -9,18 +9,25 @@ import AdvisorCard from "../../components/advisorCard";
 export default function AdvisorSearchPage() {
 
   return (
-    <div className="bg-gray-100 min-h-screen text-black">
+    <main className='bg-gray-100 min-h-screen'>
       <Navbar />
-      <h1 className="text-3xl text-center font-bold mt-8">Advisor Search</h1>
-      <div className="mx-12">
-        {advisors.length > 0 ? (
-          advisors.map((advisor) => (
-            <AdvisorCard key={advisor.advisorID} advisor={advisor} />
-          ))
-        ) : (
-          <p className="text-gray-600 p-4">No advisors found.</p>
-        )}
+      <div className="max-w-6xl mx-auto px-6 py-10">
+        {/* header */}
+        <div className='mb-10 text-center'>
+          <h1 className="text-3xl font-bold text-[#E55B3C]">Advisor Search</h1>
+        </div>
+        
+        <div className="mx-10">
+          {advisors.length > 0 ? (
+            advisors.map((advisor) => (
+              <AdvisorCard key={advisor.advisorID} advisor={advisor} />
+            ))
+          ) : (
+            <p className="text-gray-600 p-4">No advisors found.</p>
+          )}
+        </div>
       </div>
-    </div>
+    </main>
+    
   );
 }

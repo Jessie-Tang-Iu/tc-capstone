@@ -2,17 +2,19 @@ BEGIN;
 -- Drop in FK-safe order (run only if you want a clean reset)
 DROP TABLE IF EXISTS workshop_booking CASCADE;
 DROP TABLE IF EXISTS workshop CASCADE;
-DROP TABLE IF EXISTS "user" CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 -- Users
-CREATE TABLE "user" (
+CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    email TEXT UNIQUE NOT NULL,
-    firstname TEXT,
-    lastname TEXT,
-    username TEXT,
-    status TEXT NOT NULL DEFAULT 'active',
-    role TEXT,
-    supabase_id TEXT -- optional: keep external reference as TEXT
+    username VARCHAR(50) UNIQUE NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+	status VARCHAR(50) NOT NULL DEFAULT 'active',
+    role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'member', 'advisor', 'employer')),
+    clerk_id VARCHAR(255) UNIQUE NOT NULL,
+	CONSTRAINT chk_status CHECK (status IN ('banned', 'active', 'underreview'))
 );
 -- Workshops
 CREATE TABLE workshop (
@@ -39,7 +41,7 @@ CREATE TABLE workshop (
 -- Workshop bookings
 CREATE TABLE workshop_booking (
     id SERIAL PRIMARY KEY,
-    "userID" INTEGER REFERENCES "user"(id) ON DELETE
+    "userID" INTEGER REFERENCES "users"(id) ON DELETE
     SET NULL,
         "workshopID" INTEGER REFERENCES workshop(id) ON DELETE CASCADE,
         status TEXT NOT NULL DEFAULT 'active',

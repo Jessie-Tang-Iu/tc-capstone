@@ -5,6 +5,7 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useClerk } from "@clerk/nextjs";
 import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 
 export default function MemberNavbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -44,7 +45,7 @@ export default function MemberNavbar() {
     <header className="sticky top-0 z-50 flex justify-between items-center p-4 bg-white border-b border-gray-200 shadow-[0_6px_14px_-6px_rgba(0,0,0,0.18)]">
       {/* Brand: icon always; text only ≥ sm */}
       <Link href="/memberFlow" className="flex items-center space-x-2">
-        <img src="/logo.jpeg" alt="Logo" className="w-8 h-8 shrink-0" />
+        <Image src="/logo.jpeg" alt="Logo" className="w-8 h-8 shrink-0" width={8} height={8} />
         <span className="hidden sm:inline font-bold text-lg text-black whitespace-nowrap">
           Tech Connect Alberta
         </span>
@@ -109,7 +110,7 @@ export default function MemberNavbar() {
                       Courses
                     </Link>
                     <Link
-                      href="#"
+                      href="/advisor"
                       className="block pl-8 pr-4 py-2 text-sm hover:bg-gray-50"
                     >
                       Advisory

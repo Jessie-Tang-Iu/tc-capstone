@@ -5,7 +5,7 @@ import { getApplicationsByUser, createApplication, updateApplicationStatus } fro
 export async function GET(_req, { params }) {
   const { id } = await params;
   try {
-    const apps = await getApplicationsByUser(Number(id));
+    const apps = await getApplicationsByUser(id);
     return NextResponse.json(apps);
   } catch (e) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -20,8 +20,9 @@ export async function POST(req) {
     const newApp = await createApplication(body);
     return NextResponse.json(newApp, { status: 201 });
   } catch (e) {
-    console.error("POST /api/application/user/[id] failed: ", e);
-    const status = e.message.includes("required") ? 400 : 500;
+    // console.log("POST /api/application/user/[id] failed: ", e.message);
+    let status = e.message.includes("required") ? 400 : 500;
+    status = e.message.includes("constraint") ? 450 : 500;
     return NextResponse.json({ error: e.message }, { status });
   }
 }

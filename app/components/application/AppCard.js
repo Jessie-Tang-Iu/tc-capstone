@@ -6,8 +6,8 @@ const statusColors = {
     "U": "bg-blue-100 text-blue-800 border-blue-300",
     "I": "bg-green-100 text-green-800 border-green-300",
     "R": "bg-red-100 text-red-800 border-red-300",
-    "O": "bg-emerald-100 text-emerald-800 border-emerald-300",
-    "D": "bg-yellow-100 text-yellow-800 border-yellow-300",
+    "O": "bg-yellow-100 text-yellow-800 border-yellow-300",
+    "D": "bg-orange-100 text-orange-800 border-orange-300",
 };
 
 const statusOptions = {
@@ -29,7 +29,6 @@ export default function ApplyCard({ app, status, setStatus, isSelected = false, 
             className={`w-full bg-white rounded-lg px-6 py-4 mb-5 space-y-2 text-black transition ${
                 isSelected ? 'ring-2 ring-[#E55B3C] bg-[#E55B3C]/5' : 'hover:bg-gray-50'
             }`}
-            // onClick={onClick}
         >
             <div className="flex flex-col gap-3">
                 <div>
@@ -47,8 +46,9 @@ export default function ApplyCard({ app, status, setStatus, isSelected = false, 
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 md:gap-3">
                         {!editingId && (
                             <button
-                                onClick={() => setEditingId(app.id) }
+                                onClick={() => { setStatus(app.status); setEditingId(app.id); } }
                                 className="mt-3 px-3 py-2 bg-[#E55B3C] text-white rounded-lg text-xs md:text-sm hover:bg-[#E55B3C]/90"
+                                disabled={ app.status == "R" || app.status == "O" || app.status == "D" }
                             >
                                 Update status
                             </button>
@@ -67,7 +67,7 @@ export default function ApplyCard({ app, status, setStatus, isSelected = false, 
                                 </select>
                                 
                                 <button
-                                    onClick={() => { setEditingId(null); onUpdateStatus(status); }}
+                                    onClick={() => { setEditingId(null); onUpdateStatus(app, status); }}
                                     className="px-3 py-2 bg-[#E55B3C] text-white rounded-lg text-sm hover:bg-[#E55B3C]/90"
                                 >
                                     Save

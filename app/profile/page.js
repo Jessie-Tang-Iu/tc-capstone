@@ -6,11 +6,11 @@ import ProfileSection from "../components/profile/profileMember";
 import Security from "../components/profile/security";
 import Privacy from "../components/profile/privacy";
 import Notification from "../components/profile/notification";
-import { useUserContext } from "../context/userContext";
+import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 export default function ProfileDashboard() {
-  const { user, role, getCurrentSession } = useUserContext();
+  const { user, role, getCurrentSession } = useUser();
 
   if (!user) {
     getCurrentSession();
@@ -156,7 +156,7 @@ export default function ProfileDashboard() {
 
         {/* Detail Panel */}
         <div
-          className={`flex-1 py-2
+          className={`flex-1 pt-2
                                 ${showDetail ? "block" : "hidden md:block"}
                                 h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] relative`}
         >
@@ -168,8 +168,9 @@ export default function ProfileDashboard() {
             ← Back to Setting
           </button>
           <div className="mt-5 md:mt-0 h-full">
-            {tab === "profile" && user.role === "member" && (
-              <ProfileSection formData={formData} setFormData={setFormData} />
+            {tab === "profile" && 
+              // user.role === "member" && 
+              (<ProfileSection formData={formData} setFormData={setFormData} />
             )}
             {tab === "security" && (
               <Security formData={formData} setFormData={setFormData} />

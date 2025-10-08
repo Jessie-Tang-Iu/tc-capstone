@@ -92,8 +92,14 @@ export default function EventsPanel() {
     const payload = {
       ...form,
       date: cleanDate,
-      start_time: form.startTime || null,
-      end_time: form.endTime || null,
+      start_time:
+        form.startTime && form.startTime.trim() !== ""
+          ? form.startTime
+          : editingEvent?.start_time || null,
+      end_time:
+        form.endTime && form.endTime.trim() !== ""
+          ? form.endTime
+          : editingEvent?.end_time || null,
       price: Number.isFinite(+form.price) ? +form.price : 0,
     };
 
@@ -202,8 +208,8 @@ export default function EventsPanel() {
     setIsReadOnly(false);
     setIsOpen(true);
 
-    const start = nowLocalYMDHM();
-    const end = new Date(new Date().getTime() + 2 * 60 * 60 * 1000);
+    const start = nowLocalYMDHM(); // turn string
+    const end = new Date(new Date().getTime() + 2 * 60 * 60 * 1000); //turn date
     const endLocal = new Date(end.getTime() - end.getTimezoneOffset() * 60000)
       .toISOString()
       .slice(0, 16);
@@ -244,7 +250,7 @@ export default function EventsPanel() {
   useEffect(() => {
     const onEsc = (e) => e.key === "Escape" && closeModal();
     window.addEventListener("keydown", onEsc);
-    return () => window.removeEventListener("keydown", onEsc);
+    return () => window.removeEventListener("keydown", onEsc); //cleanup function.
   }, []);
 
   // Event handler for clicking on the modal backdrop.
@@ -255,7 +261,6 @@ export default function EventsPanel() {
   const getEventStamp = (ev) => {
     const d = toDateYMD(ev.date);
     const t = toTimeHM(ev.start_time || ev.startTime || "00:00");
-    // sortable ISO-like "yyyy-mm-ddTHH:mm"
     return `${d}T${t}`;
   };
 
@@ -396,9 +401,9 @@ export default function EventsPanel() {
                   className={`border rounded mb-1 px-2 py-1 ${
                     isReadOnly ? "bg-gray-100 text-gray-500" : ""
                   }`}
-                  value={form.startTime}
+                  value={form.startTime || ""}
                   onChange={(e) =>
-                    handleChange("startTime", toTimeHM(e.target.value))
+                    handleChange("startTime", e.target.value || null)
                   }
                   disabled={isReadOnly}
                 />
@@ -413,9 +418,9 @@ export default function EventsPanel() {
                   className={`border rounded mb-1 px-2 py-1 ${
                     isReadOnly ? "bg-gray-100 text-gray-500" : ""
                   }`}
-                  value={form.endTime}
+                  value={form.endTime || ""}
                   onChange={(e) =>
-                    handleChange("endTime", toTimeHM(e.target.value))
+                    handleChange("endTime", e.target.value || null)
                   }
                   disabled={isReadOnly}
                 />
