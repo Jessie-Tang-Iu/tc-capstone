@@ -4,7 +4,7 @@
  * This also allows us to check data in a safe environment before sending it to the database, ESPECIALLY IMPORTANT if files are being uploaded.
 */
 
-import * as posts from "../database/scripts/posts.js"; // Imports all scripts from the posts.js file
+import * as posts from "../database/scripts/posts.js"; // Imports all scripts from the posts.js file since this controller handles calling them
 
 // Calls the getAllPosts function. 
 export async function getPostsController() {

@@ -4,7 +4,6 @@ import { testConnection } from "./database/db.js";
 import usersRouter from "./routes/users.js";
 
 import { clerkMiddleware, getAuth } from "@clerk/express";
-import { clerkClient } from "@clerk/clerk-sdk-node";
 
 dotenv.config();
 
