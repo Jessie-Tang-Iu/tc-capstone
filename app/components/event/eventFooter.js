@@ -43,11 +43,22 @@ export default function EventFooterBar({ dateTime, title, eventId }) {
         }),
       });
 
+      // console.log("Sending registration:", { eventId, userId: user?.id });
+
       const text = await res.text();
       console.log("register response:", res.status, text);
       console.log("sending:", { eventId, userId: user.id });
 
-      if (!res.ok) throw new Error("Failed to register");
+      if (!res.ok) {
+        let errMsg = "Registration failed.";
+        try {
+          const data = JSON.parse(text);
+          if (data.error) errMsg = data.error;
+        } catch {
+          errMsg = text || errMsg;
+        }
+        throw new Error(errMsg);
+      }
       setMessage("Successfully registered!");
     } catch (err) {
       setMessage(err.message || "Error during registration");

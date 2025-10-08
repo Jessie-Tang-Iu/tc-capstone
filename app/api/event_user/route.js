@@ -30,10 +30,7 @@ export async function POST(req) {
       throw new Error("eventId and userId required");
     }
 
-    const result = await registerEventUserController(
-      Number(eventId),
-      Number(userId)
-    );
+    const result = await registerEventUserController(eventId, userId);
     return NextResponse.json(result, { status: 201 });
   } catch (err) {
     console.error("POST /api/event_user failed:", err);

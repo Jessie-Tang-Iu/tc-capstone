@@ -296,5 +296,8 @@ CREATE TABLE event_user (
   CONSTRAINT uq_event_user UNIQUE (event_id, user_id)
 );
 
+ALTER TABLE "user"
+ADD COLUMN clerk_id TEXT UNIQUE;
+
 CREATE INDEX idx_event_user_event ON event_user (event_id);
 CREATE INDEX idx_event_user_user ON event_user (user_id);
