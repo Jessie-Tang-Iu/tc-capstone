@@ -10,22 +10,34 @@ import Button from "../components/ui/Button";
 import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
 import CalendarBigEvent from "../components/myCalender/calenderBig";
 import { deleteBookingByWorkshopId } from "@/lib/workshop_booking_crud";
-import { supabase } from "@/lib/supabaseClient"; // <-- IMPORTANT
+import { supabase } from "@/lib/supabaseClient";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 const MyCalendarPage = () => {
+<<<<<<< Updated upstream
   // Code Below checks if user is logged in before running ANYTHING else
   const { isLoaded, isSignedIn, user } = useUser();
+=======
+  const calendarRef = useRef(null);
+  const [events, setEvents] = useState([]);
+  const [bookingData, setBookingData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentTitle, setCurrentTitle] = useState("");
+  const [isTodayDisabled, setIsTodayDisabled] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const { isLoaded, isSignedIn } = useUser();
+>>>>>>> Stashed changes
   const router = useRouter();
 
   // Redirect if not signed in
   useEffect(() => {
-    if (isLoaded && !isSignedIn) {
-      router.push("/signIn");
-    }
+    if (isLoaded && !isSignedIn) router.push("/signIn");
   }, [isLoaded, isSignedIn, router]);
 
+<<<<<<< Updated upstream
   if (!isLoaded) {
     return <p>Loading...</p>;
   }
@@ -45,35 +57,68 @@ const MyCalendarPage = () => {
   const [showModal, setShowModal] = useState(false);
 
   // esc closes modal
+=======
+  // Escape closes modal
+>>>>>>> Stashed changes
   useEffect(() => {
     const handleKeyDown = (e) => e.key === "Escape" && setShowModal(false);
     if (showModal) document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [showModal]);
 
+<<<<<<< Updated upstream
   // fetch "my" event registrations (via API)
+=======
+  // Fetch bookings for the current user
+>>>>>>> Stashed changes
   useEffect(() => {
     const fetchUserEvents = async () => {
       try {
         setLoading(true);
+<<<<<<< Updated upstream
 
         if (!user?.id) throw new Error("Not signed in (Clerk).");
 
         const res = await fetch(`/api/event_user`);
         if (!res.ok) throw new Error("Failed to fetch events");
         const allRegistrations = await res.json();
+=======
+        const {
+          data: { user },
+          error: authErr,
+        } = await supabase.auth.getUser();
+        if (authErr || !user) throw new Error("Not signed in.");
+
+        const { data: bookings, error } = await supabase.from(
+          "workshop_booking"
+        ).select(`
+            id,
+            userID,
+            workshopID,
+            status,
+            workshop:workshopID (id, title, date, start_time)
+          `);
+>>>>>>> Stashed changes
 
         // filter for this user’s registrations
         const myEvents = allRegistrations.filter(
           (r) => String(r.user_id) === String(user.id)
         );
 
+<<<<<<< Updated upstream
         // normalize event format for FullCalendar
         const formatted = myEvents
           .filter((r) => r.event_date && r.start_time)
           .map((r) => ({
             title: r.event_title ?? "Event",
             start: `${r.event_date}T${r.start_time}`,
+=======
+        const formatted = (bookings ?? [])
+          .filter((b) => b.workshop?.date && b.workshop?.start_time)
+          .map((b) => ({
+            title: b.workshop.title ?? "Workshop",
+            start: `${b.workshop.date}T${b.workshop.start_time}`,
+>>>>>>> Stashed changes
           }));
 
         setEvents(formatted);
@@ -88,6 +133,7 @@ const MyCalendarPage = () => {
     fetchUserEvents();
   }, [user]);
 
+  // Set title and check today's button state
   const updateTitle = () => {
     const api = calendarRef.current?.getApi();
     if (!api) return;
@@ -106,6 +152,7 @@ const MyCalendarPage = () => {
     updateTitle();
   }, []);
 
+  // Handle clicking an event in the calendar
   const handleEventClick = (eventInfo) => {
     const clicked = bookingData.find((item) => {
       const bookingStart = DateTime.fromISO(
@@ -126,6 +173,7 @@ const MyCalendarPage = () => {
     }
   };
 
+  // Navigation buttons (prev/next/today/month/week/day)
   const handleCalendarNav = (action) => {
     const api = calendarRef.current?.getApi();
     if (!api) return;
@@ -138,9 +186,19 @@ const MyCalendarPage = () => {
     updateTitle();
   };
 
+  // Show loading screen until Clerk finishes loading state
+  if (!isLoaded || !isSignedIn) {
+    return (
+      <div className="bg-gray-100 min-h-screen">
+        <MemberNavbar />
+        <p className="text-center mt-10 text-lg text-gray-700">Loading...</p>
+      </div>
+    );
+  }
+
+  // Main content
   return (
     <div className="bg-gray-100 min-h-screen">
-      {/* Navigation */}
       <MemberNavbar />
 
       <h1 className="text-3xl font-bold text-center text-[#E55B3C] mt-6 mb-2">
@@ -192,6 +250,7 @@ const MyCalendarPage = () => {
         {loading && <p className="text-gray-600 mt-2">Loading…</p>}
       </div>
 
+      {/* Modal */}
       {showModal && selectedEvent && (
         <div
           className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50"
@@ -226,7 +285,7 @@ const MyCalendarPage = () => {
         </div>
       )}
 
-      {/* FullCalendar styling override */}
+      {/* Styling */}
       <style jsx global>{`
         .fc {
           color: black;
