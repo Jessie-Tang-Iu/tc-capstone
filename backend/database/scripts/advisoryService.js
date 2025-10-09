@@ -84,3 +84,26 @@ export async function getMyAdvisorySessions(clientId) {
   ]);
   return result.rows;
 }
+
+export async function makeBooking(booking)  {
+  const sql = `
+  UPDATE advisory_bookings
+    SET client_id=$2,
+        description=$3,
+        status=$4
+    WHERE booking_id = $1
+    RETURNING booking_id, client_id, description, status`;
+
+  const values = [
+    Number(booking.bookingId),
+    booking.clientId,
+    booking.description,
+    booking.status,
+  ];
+
+  const result = await query(sql, values);
+  if (result.rows.length === 0) {
+    throw new Error("Booking failed: booking not found");
+  }
+  return result.rows[0];
+}
