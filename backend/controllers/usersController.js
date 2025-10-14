@@ -77,3 +77,11 @@ export async function updateUserMetadata(req, res) {
     res.status(500).json({ error: "Failed to update metadata" });
   }
 }
+
+export async function fetchUserDataByID(req, res) {
+
+}
+
+export async function fetchUserDataByName(req, res) {
+
+}
