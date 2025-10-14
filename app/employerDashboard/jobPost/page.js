@@ -49,7 +49,18 @@ export default function JobPostsPage() {
           <EmployerSidebar />
 
           <section className="flex-1 rounded-xl bg-white shadow">
-            <div className="border-t" />
+            {/* Header bar with Add button */}
+            <div className="flex items-center justify-between border-b px-4 py-3">
+              <div className="text-lg font-semibold text-black">Job Posts</div>
+              <button
+                onClick={() => router.push("/employerDashboard/jobPost/add")}
+                className="bg-[#EE7D5E] text-white px-4 py-2 rounded-md text-sm font-semibold hover:opacity-90 transition"
+              >
+                Add Job Post
+              </button>
+            </div>
+
+            {/* Pagination bar */}
             <div className="flex items-center justify-end gap-3 border-b px-4 py-3 text-sm text-black">
               <span>
                 {start + 1} - {end}
