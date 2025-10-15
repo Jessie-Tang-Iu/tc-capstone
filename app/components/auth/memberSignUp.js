@@ -16,6 +16,8 @@ export default function ClerkSignUp() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -133,16 +135,28 @@ export default function ClerkSignUp() {
               </div>
             </div>
 
-            {/* Username */}
-            <div className="flex flex-col">
-              <label>Username</label>
-              <input
-                required
-                type="text"
-                className="px-2 py-1 mb-3 w-72 rounded bg-[#E2B596] focus:bg-orange-100"
-                onChange={(e) => setUsername(e.target.value)}
-                value={username}
-              />
+            {/* Username and Phone Number*/}
+            <div className="flex flex-row justify-between">
+              <div className="flex flex-col">
+                <label>Username</label>
+                <input
+                  required
+                  type="text"
+                  className="px-2 py-1 mb-3 w-72 rounded bg-[#E2B596] focus:bg-orange-100"
+                  onChange={(e) => setUsername(e.target.value)}
+                  value={username}
+                />
+              </div>
+              <div className="flex flex-col">
+                <label>Phone Number</label>
+                <input
+                  required
+                  type="text"
+                  className="px-2 py-1 mb-3 w-72 rounded bg-[#E2B596] focus:bg-orange-100"
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  value={phoneNumber}
+                />
+              </div>
             </div>
 
             {/* Clerk CAPTCHA */}

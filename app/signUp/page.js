@@ -1,5 +1,5 @@
 import Navbar from "../components/NavBarBeforeSignIn";
-import SignUp from "../components/auth/memberSignUp";
+import ClerkSignUp from "../components/auth/memberSignUp";
 
 
 
@@ -10,7 +10,7 @@ export default function SignUp() {
             <div className="container mx-auto px-4 py-8">
                 <h1 className="text-4xl text-[#DD5B45] text-center font-bold mt-20 mb-2">Create Your Account</h1>
                 <p className="text-black text-center mb-10">Connect with Alberta top tech professionals.</p>
-                <SignUp />
+                <ClerkSignUp />
             </div>
         </main>
     )

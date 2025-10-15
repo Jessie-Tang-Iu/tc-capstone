@@ -58,13 +58,13 @@ export default function AdvisorRegister() {
                 },
                 body: JSON.stringify({
                     role: "advisor",
-                    username: formData.username,
-                    firstName: formData.firstName,
-                    lastName: formData.lastName,
-                    email: formData.email,
-                    phone: formData.phoneNumber,
-                    companyName: formData.companyName,
-                    companyRole: formData.title,
+                    username: username,
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    phone: phoneNumber,
+                    companyName: companyName,
+                    companyRole: title,
                 }),
             });
 

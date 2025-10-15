@@ -1,5 +1,5 @@
 import express from "express";
-import { updateUserMetadata } from "../controllers/usersController.js";
+import { updateUserMetadata, fetchUserDataByID } from "../controllers/usersController.js";
 
 const router = express.Router();
 

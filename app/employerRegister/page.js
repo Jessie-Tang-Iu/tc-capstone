@@ -275,7 +275,13 @@ export default function EmployerRegistration() {
               <div id="clerk-captcha" className="my-4"></div>
 
               <div className="flex justify-center">
-                <Button text="Register" />
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-black text-white rounded px-3 py-2 w-72 mt-6 hover:bg-green-500 active:bg-amber-400 mx-auto block disabled:opacity-60"
+                >
+                  {loading ? "Sending request..." : "Sign Up"}
+                </button>
               </div>
             </form>
           </div>
