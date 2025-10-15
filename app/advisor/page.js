@@ -21,12 +21,12 @@ export default function AdvisorPage() {
   const ME = '11111111-1111-1111-1111-111111111111'; // for testing without login
 
   useEffect(() => {
-    if (!ME) return;
+    if (!userID) return;
 
     (async () => {
         try {
             const res = await fetch(
-                `/api/advisory_sessions?clientId=${ME}`
+                `/api/advisory_sessions?clientId=${userID}`
             );
             if (!res.ok) {console.error("Failed to fetch advisory sessions"); return;}
       
@@ -38,7 +38,7 @@ export default function AdvisorPage() {
             console.error("Fetch error: ", error);
         }
     })();
-  }, [ME]);
+  }, [userID]);
 
   // navigate to search advisor page
   const handleNewAdvisor = () => {

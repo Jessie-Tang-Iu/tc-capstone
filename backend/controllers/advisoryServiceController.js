@@ -32,6 +32,11 @@ export async function getMyAdvisorySessionsController(clientId) {
     return await advisoryService.getMyAdvisorySessions(clientId);
 }
 
+export async function registerAdvisorySessionController(body) {
+    if (!body) throw new Error("Registration Information is required");
+    return await advisoryService.registerAdvisorySession(body);
+}
+
 export async function makeBookingController(body)  {
     if (!body) throw new Error("Booking content required");
     console.log("Booking controller received:", body);

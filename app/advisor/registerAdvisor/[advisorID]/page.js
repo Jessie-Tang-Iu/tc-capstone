@@ -3,16 +3,46 @@
 import MemberNavbar from "@/app/components/MemberNavBar";
 import Button from "@/app/components/ui/Button";
 import { useRouter } from "next/navigation";
-import { use } from "react";
+import { use, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 
 export default function RegisterAdvisor({ params }) {
 
     const { advisorID } = use(params);
     const router = useRouter();
 
+    // user context
+    const userContext = useUser();
+    const userID = userContext?.user?.id;
+
+    // Register advisor state
+    const [newAdvisor, setNewAdvisor] = useState({ advisorId: '99999999-9999-9999-9999-999999999999', clientId: userID , status: 'active'});
+
     const handleBackToAdvisorList = () => {
         router.push('/advisor/advisorSearch');
     }
+
+    const handleRegisterAdvisor = () => {
+        // Post request to register advisor
+        (async () => {
+            try {
+                const res = await fetch(`/api/advisory_sessions`, {
+                    method: 'POST',
+                    headers: {  "Content-Type": "application/json" },
+                    body: JSON.stringify(newAdvisor)
+                });
+
+                if (!res.ok) throw new Error("Failed to register advisor");
+                const registeredAdvisor = await res.json();
+                setNewAdvisor({ advisorId: '99999999-9999-9999-9999-999999999999', clientId: userID , status: 'active'  }); // reset form
+
+                console.log("Registration response: ", registeredAdvisor);
+                router.push('/advisor');
+            } catch (error) {
+                console.error("Fetch error: ", error);
+            }
+        })();
+    };
 
     return (
         <main className="bg-gray-100 min-h-screen">
@@ -37,7 +67,7 @@ export default function RegisterAdvisor({ params }) {
                 {/* Payment */}
                 <div className='my-7 mb-10 text-center'>
                     <h1 className="text-3xl font-bold text-black mb-6">Next Steps: Payment</h1>
-                    <Button text="Payment Gateway" />
+                    <Button text="Payment Gateway" onClick={handleRegisterAdvisor}/>
                 </div>
             </div>
         </main>

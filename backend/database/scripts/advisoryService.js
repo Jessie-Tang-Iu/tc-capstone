@@ -85,6 +85,25 @@ export async function getMyAdvisorySessions(clientId) {
   return result.rows;
 }
 
+export async function registerAdvisorySession(session) {
+  const sql = `
+    INSERT INTO advisory_sessions
+      (advisor_id, client_id, status)
+    VALUES
+      ($1, $2, $3)
+    RETURNING *;
+  `;
+
+  const values = [
+    session.advisorId,
+    session.clientId,
+    "active",
+  ];
+
+  const result = await query(sql, values);
+  return result.rows[0];
+}
+
 export async function makeBooking(booking)  {
   const sql = `
   UPDATE advisory_bookings
