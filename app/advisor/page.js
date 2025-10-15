@@ -1,29 +1,74 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Navbar from '../components/MemberNavBar'
 import advisors from '../data/advisors.json'
 import userAdvisors from "../data/usersAdvisors.json";
-import AdvisorCard from '../components/advisorCard';
 import { useUser } from '@clerk/nextjs';
 import Button from '../components/ui/Button';
 import { useRouter } from "next/navigation";
+import ContactedAdvisorCard from '../components/contactedAdvisorCard';
 
 export default function AdvisorPage() {
+
+  const [myAdvisorList, setMyAdvisorList] = useState([]);
+  const [advisorList, setAdvisorList] = useState([]);
+
   const userContext = useUser();
   const userID = userContext?.user?.id;
   const router = useRouter();
 
-  // find advisorIDs for this user
-  const contactedIDs = userAdvisors
-    .filter((contact) => contact.userID === userID)
-    .map((contact) => contact.advisorID);
+  const ME = '11111111-1111-1111-1111-111111111111'; // for testing without login
 
-  // filter advisors that match those IDs
-  const contactedAdvisors = advisors.filter((advisor) =>
-    contactedIDs.includes(advisor.advisorID)
-  );
+  useEffect(() => {
+    if (!userID) return;
+
+    (async () => {
+        try {
+            const res = await fetch(
+                `/api/advisory_sessions?clientId=${userID}`
+            );
+            if (!res.ok) {console.error("Failed to fetch advisory sessions"); return;}
+      
+            const data = await res.json();
+
+            setMyAdvisorList(data);
+            // console.log("Return Array: ", data);
+        } catch (error) {
+            console.error("Fetch error: ", error);
+        }
+    })();
+  }, [userID]);
+
+  useEffect(() => {
+      
+      (async() => {
+        try {
+        const res = await fetch(
+            `/api/advisor_list`
+        ); // fetch all advisors from the backend
+        if (!res.ok) throw new Error("Failed to fetch advisors");
+  
+        const data = await res.json();
+  
+        const advisorArray = data.map(advisor => ({
+          advisorID: advisor.clerk_id,
+          username: advisor.username,
+          first_name: advisor.first_name,
+          last_name: advisor.last_name,
+          email: advisor.email,
+          phone: advisor.phone,
+          role: advisor.role}));
+  
+        setAdvisorList(advisorArray);
+  
+        } catch (error) {
+          console.error("Fetch error: ", error);
+        }
+      })();
+  
+  }, []);
 
   // navigate to search advisor page
   const handleNewAdvisor = () => {
@@ -43,13 +88,17 @@ export default function AdvisorPage() {
           <Button onClick={handleNewAdvisor} text="Register New Advisor" />
         </div>
         
-        <div className="mx-12">
-          {contactedAdvisors.length > 0 ? (
-            contactedAdvisors.map((advisor) => (
-              <AdvisorCard key={advisor.advisorID} advisor={advisor} />
-            ))
+        <div>
+          {myAdvisorList.length > 0 ? (
+            myAdvisorList.map((advisor) => { 
+              const matchedAdvisor = advisorList.find((a) => a.advisorID === advisor.advisor_id);
+              return matchedAdvisor ? (
+                <ContactedAdvisorCard key={matchedAdvisor.advisorID} advisor={matchedAdvisor} />
+              ) : (
+                <p key={advisor.advisor_id} className="text-center mt-8 text-black">You haven&rsquo;t contacted any advisors yet.</p>
+            )})
           ) : (
-            <p className="text-center mt-8 text-black">You haven’t contacted any advisors yet.</p>
+            <p className="text-center mt-8 text-black">You haven&rsquo;t contacted any advisors yet.</p>
           )}            
         </div>
       </div>

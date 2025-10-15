@@ -10,12 +10,10 @@ import Button from "../components/ui/Button";
 import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
 import CalendarBigEvent from "../components/myCalender/calenderBig";
 import { deleteBookingByWorkshopId } from "@/lib/workshop_booking_crud";
-import { supabase } from "@/lib/supabaseClient"; // <-- IMPORTANT
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 const MyCalendarPage = () => {
-  // Hooks go first
   const calendarRef = useRef(null);
   const [events, setEvents] = useState([]);
   const [bookingData, setBookingData] = useState([]);
@@ -25,70 +23,52 @@ const MyCalendarPage = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  // Code Below checks if user is logged in before running ANYTHING else
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { isLoaded, isSignedIn } = useUser();
   const router = useRouter();
+
+  const { user } = useUser();
 
   // Redirect if not signed in
   useEffect(() => {
-    if (isLoaded && !isSignedIn) {
-      router.push("/signIn");
-    }
+    if (isLoaded && !isSignedIn) router.push("/signIn");
   }, [isLoaded, isSignedIn, router]);
 
-  if (!isLoaded) {
-    return <p>Loading...</p>;
-  }
-
-  if (!isSignedIn) {
-    // Don’t render anything while redirecting
-    return null;
-  }
-
-  // esc closes modal
+  // Escape closes modal
   useEffect(() => {
     const handleKeyDown = (e) => e.key === "Escape" && setShowModal(false);
     if (showModal) document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [showModal]);
 
-  // fetch "my" bookings (RLS filters rows)
+  // Fetch bookings for the current user
   useEffect(() => {
     const fetchBookings = async () => {
       try {
         setLoading(true);
 
-        // ensure signed-in (optional guard)
-        const {
-          data: { user },
-          error: authErr,
-        } = await supabase.auth.getUser();
-        if (authErr || !user) throw new Error("Not signed in.");
+        if (!user) throw new Error("User not signed in.");
 
-        // embed workshop via FK column name
-        const { data: bookings, error } = await supabase.from(
-          "workshop_booking"
-        ).select(`
-            id,
-            userID,
-            workshopID,
-            status,
-            workshop:workshopID (
-              id, title, date, start_time
-            )
-          `);
+        const res = await fetch(`/api/event_user/${user.id}`, {
+          cache: "no-store",
+        });
+        if (!res.ok) throw new Error("Failed to fetch event registrations.");
 
-        if (error) throw error;
+        const data = await res.json();
 
-        const formatted = (bookings ?? [])
-          .filter((b) => b.workshop?.date && b.workshop?.start_time)
-          .map((b) => ({
-            title: b.workshop.title ?? "Workshop",
-            start: `${b.workshop.date}T${b.workshop.start_time}`, // ISO-like
-          }));
+        const formatted = data.map((row) => {
+          const localDate = row.date.split("T")[0];
+          const start = `${localDate}T${row.start_time}`;
+          const end = row.end_time ? `${localDate}T${row.end_time}` : null;
+
+          return {
+            title: row.title,
+            start,
+            end,
+          };
+        });
 
         setEvents(formatted);
-        setBookingData(bookings ?? []);
+        setBookingData(data);
       } catch (err) {
         console.error("Error loading bookings:", err.message || err);
       } finally {
@@ -96,9 +76,10 @@ const MyCalendarPage = () => {
       }
     };
 
-    fetchBookings();
-  }, []);
+    if (user) fetchBookings();
+  }, [user]);
 
+  // Set title and check today's button state
   const updateTitle = () => {
     const api = calendarRef.current?.getApi();
     if (!api) return;
@@ -117,26 +98,28 @@ const MyCalendarPage = () => {
     updateTitle();
   }, []);
 
+  // Handle clicking an event in the calendar
   const handleEventClick = (eventInfo) => {
     const clicked = bookingData.find((item) => {
       const bookingStart = DateTime.fromISO(
-        `${item.workshop?.date}T${item.workshop?.start_time}`
+        `${item.date.split("T")[0]}T${item.start_time}`
       );
       const eventStart = DateTime.fromISO(eventInfo.event.startStr);
       return (
-        item.workshop?.title === eventInfo.event.title &&
+        item.title === eventInfo.event.title &&
         bookingStart.toISO() === eventStart.toISO()
       );
     });
 
-    if (clicked?.workshop) {
-      setSelectedEvent(clicked.workshop);
+    if (clicked) {
+      setSelectedEvent(clicked);
       setShowModal(true);
     } else {
-      console.warn("No matching workshop found for event click");
+      console.warn("No matching event found for click");
     }
   };
 
+  // Navigation buttons (prev/next/today/month/week/day)
   const handleCalendarNav = (action) => {
     const api = calendarRef.current?.getApi();
     if (!api) return;
@@ -149,14 +132,31 @@ const MyCalendarPage = () => {
     updateTitle();
   };
 
+  // Main content
   return (
     <div className="bg-gray-100 min-h-screen">
-      {/* Navigation */}
       <MemberNavbar />
 
       <h1 className="text-3xl font-bold text-center text-[#E55B3C] mt-6 mb-2">
         My Calendar
       </h1>
+
+      {/* just to check if really logined , data is fetched*/}
+      {isLoaded && isSignedIn && (
+        <div className="text-center mb-4">
+          <p className="text-gray-700">User ID: {user?.id}</p>
+
+          {bookingData && bookingData.length > 0 ? (
+            <pre className="text-xs text-gray-600 mt-2 text-left mx-auto max-w-lg bg-gray-100 p-2 rounded overflow-x-auto">
+              {JSON.stringify(bookingData, null, 2)}
+            </pre>
+          ) : (
+            <p className="text-gray-500 text-sm mt-1">
+              (No booking data found)
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Toolbar */}
       <div className="max-w-screen-lg mx-auto px-4 flex justify-between items-center mb-4">
@@ -191,18 +191,32 @@ const MyCalendarPage = () => {
           contentHeight="auto"
           eventClick={handleEventClick}
           eventContent={({ event }) => {
+            let startTime = "";
+            let endTime = "";
+
             try {
-              const dateTime = DateTime.fromISO(event.startStr);
-              const timeStr = dateTime.toFormat("h:mm a");
-              return <CalenderSmallEvent time={timeStr} title={event.title} />;
-            } catch {
-              return <div>{event.title}</div>;
-            }
+              const start = DateTime.fromISO(event.startStr);
+              if (start.isValid) startTime = start.toFormat("h:mm a");
+
+              if (event.end) {
+                const end = DateTime.fromISO(event.end);
+                if (end.isValid) endTime = end.toFormat("h:mm a");
+              }
+            } catch {}
+
+            const displayTime = endTime
+              ? `${startTime} - ${endTime}`
+              : startTime || "End time TBD";
+
+            return (
+              <CalenderSmallEvent time={displayTime} title={event.title} />
+            );
           }}
         />
         {loading && <p className="text-gray-600 mt-2">Loading…</p>}
       </div>
 
+      {/* Modal */}
       {showModal && selectedEvent && (
         <div
           className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50"
@@ -237,7 +251,7 @@ const MyCalendarPage = () => {
         </div>
       )}
 
-      {/* FullCalendar styling override */}
+      {/* Styling */}
       <style jsx global>{`
         .fc {
           color: black;

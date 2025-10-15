@@ -10,10 +10,10 @@ export async function getCommentsByPost(postId) {
 }
 
 // Creates a new comment using the specific postId to link it to a post, along with the author and comment itself.
-export async function createComment(postId, author, content) {
+export async function createComment(postId, user_id, author, content) {
   const result = await query(
-    "INSERT INTO comments (post_id, author, content) VALUES ($1, $2, $3) RETURNING *",
-    [postId, author, content]
+    "INSERT INTO comments (post_id, user_id, author, content) VALUES ($1, $2, $3, $4) RETURNING *",
+    [postId, user_id, author, content]
   );
   return result.rows[0];
 }

@@ -1,4 +1,4 @@
-import { createAvailabilityController, deleteAvailabilityController, updateAvailabilityController } from "@/backend/controllers/advisoryServiceController";
+import { createAvailabilityController, deleteAvailabilityController, makeBookingController, updateAvailabilityController } from "@/backend/controllers/advisoryServiceController";
 import { NextResponse } from "next/server";
 
 export async function POST(request) {
@@ -63,5 +63,29 @@ export async function PUT(request) {
     } catch (error) {
         console.error("Error in PUT /api/advisory_bookings:", error);
         return NextResponse.json({ error: "Failed to change availability" }, { status: 500 });
+    }
+}
+
+export async function PATCH(request) {
+    try {
+        const body = await request.json();
+
+        if(!body.bookingId || !body.clientId ){
+            return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+        }
+
+        const updatedBooking = {
+            bookingId: body.bookingId,
+            clientId: body.clientId,
+            description: body.description || '',
+            status: "booked",
+        }
+
+        const updated = await makeBookingController(updatedBooking);
+
+        return NextResponse.json(updated, { status: 201 });
+    } catch (error) {
+        console.error("Error in PATCH /api/advisory_bookings:", error);
+        return NextResponse.json({ error: "Failed to book session" }, { status: 500 });
     }
 }

@@ -11,10 +11,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { resume } from "react-dom/server";
 
 export default function ProfileDashboard() {
+
   const searchParams = useSearchParams();
   const tab = searchParams.get("tab") || "";
   
-  const { user, getCurrentSession } = useUser();
+  const { user, isLoaded } = useUser();
   // console.log(user)
 
   const router = useRouter();
@@ -65,10 +66,6 @@ export default function ProfileDashboard() {
     },
   });
 
-  if (!user) {
-    getCurrentSession();
-  }
-
   useEffect(() => {
     if (user) {
       // console.log(user);
@@ -104,6 +101,9 @@ export default function ProfileDashboard() {
   // const [tab, setTab] = useState("message");
   const [showDetail, setShowDetail] = useState(tab == "" ? false : true);
 
+  if (!isLoaded) return null;
+
+
   const TabBtn = ({ v, children }) => (
     <button
       value={v}
@@ -111,35 +111,28 @@ export default function ProfileDashboard() {
         router.push(`/profile?tab=${v}`);
         setShowDetail(true);
       }}
-      className={`w-full text-left rounded-md px-4 py-3 text-base font-medium transition
-                text-black hover:bg-[#F0E0D5] ${
-                  tab === v ? "bg-[#E2B596]" : ""
-                }`}
+      className={`w-full text-left rounded-md px-4 py-3 text-base font-medium transition text-black hover:bg-[#F0E0D5] ${tab === v ? "bg-[#E2B596]" : ""}`}
     >
       {children} <span className="ml-1"></span>
       {">"}
     </button>
   );
 
-  const handleBackToList = () => {
-    setShowDetail(false);
-  };
+  const handleBackToList = () => setShowDetail(false);
+
 
   return (
     <main className="bg-gray-100 min-h-screen w-full">
-      {/* Navigation */}
       <MemberNavbar />
       <div className="pt-7 mb-3 md:mb-8 mx-5 md:mx-8">
         <h1 className="text-2xl md:text-3xl font-bold text-black">Setting</h1>
       </div>
 
-      {/* Main Content */}
       <div className="flex flex-col md:flex-row bg-gray-100 min-h-[calc(100vh-80px)] px-6">
-        {/*Advisor Side Bar*/}
         <div
           className={`w-full px-2 md:w-50 lg:w-[250px] xl:w-[300px] bg-gray-100
-                    ${showDetail ? "hidden md:block" : "block"}
-                    h-57 rounded-lg bg-white p-1 shadow`}
+            ${showDetail ? "hidden md:block" : "block"}
+            h-57 rounded-lg bg-white p-1 shadow`}
         >
           <TabBtn v="profile">Profile</TabBtn>
           <TabBtn v="security">Sign & Security</TabBtn>
@@ -147,13 +140,11 @@ export default function ProfileDashboard() {
           <TabBtn v="notifications">Notifications</TabBtn>
         </div>
 
-        {/* Detail Panel */}
         <div
           className={`flex-1 pt-2
-                                ${showDetail ? "block" : "hidden md:block"}
-                                h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] relative`}
+            ${showDetail ? "block" : "hidden md:block"}
+            h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] relative`}
         >
-          {/* Mobile Back Button */}
           <button
             onClick={handleBackToList}
             className="md:hidden top-4 z-10 pl-5 text-black rounded-lg text-sm font-normal cursor-pointer transition-colors"
@@ -170,10 +161,13 @@ export default function ProfileDashboard() {
                 setResumeData={setResumeData}
               />
             )}
+            
             {tab === "security" && (
               <Security formData={formData} setFormData={setFormData} />
             )}
+            
             {tab === "privacy" && <Privacy />}
+            
             {tab === "notifications" && (
               <Notification formData={formData} setFormData={setFormData} />
             )}

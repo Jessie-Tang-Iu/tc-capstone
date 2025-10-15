@@ -1,34 +1,63 @@
 -- Insert fake posts
-INSERT INTO posts (author, title, content) VALUES
-('Alice', 'How to learn React?', 'I am new to React and want to know the best resources to get started.'),
-('Bob', 'Best PostgreSQL tips?', 'Share your favorite tips and tricks for optimizing queries in Postgres.'),
-('Charlie', 'Next.js vs Express?', 'When would you choose Next.js over a traditional Express backend?'),
-('Dana', 'Tailwind CSS worth it?', 'I see Tailwind CSS everywhere—what are the pros and cons compared to plain CSS or Bootstrap?');
+INSERT INTO posts (user_id, author, title, content) VALUES
+('99999999-9999-9999-9999-999999999999', 'Alice', 'How to learn React?', 'I am new to React and want to know the best resources to get started.'),
+('99999999-9999-9999-9999-999999999999', 'Bob', 'Best PostgreSQL tips?', 'Share your favorite tips and tricks for optimizing queries in Postgres.'),
+('22222222-2222-2222-2222-222222222222', 'Charlie', 'Next.js vs Express?', 'When would you choose Next.js over a traditional Express backend?'),
+('22222222-2222-2222-2222-222222222222', 'Dana', 'Tailwind CSS worth it?', 'I see Tailwind CSS everywhere—what are the pros and cons compared to plain CSS or Bootstrap?');
  
 -- Insert fake comments (referencing posts by ID)
-INSERT INTO comments (post_id, author, content) VALUES
-(1, 'Eve', 'I recommend the official React docs—they are super well written!'),
-(1, 'Frank', 'Try Scrimba or Frontend Mentor, very interactive.'),
-(2, 'Grace', 'Use EXPLAIN ANALYZE to understand query performance.'),
-(2, 'Heidi', 'Don’t forget to index frequently used columns.'),
-(3, 'Ivan', 'Next.js is great if you need SSR, otherwise Express is simpler.'),
-(4, 'Judy', 'Tailwind is amazing once you get used to utility classes.'),
-(4, 'Karl', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
+INSERT INTO comments (post_id, user_id, author, content) VALUES
+(1, '99999999-9999-9999-9999-999999999999', 'Eve', 'I recommend the official React docs—they are super well written!'),
+(1, '99999999-9999-9999-9999-999999999999', 'Frank', 'Try Scrimba or Frontend Mentor, very interactive.'),
+(2, '99999999-9999-9999-9999-999999999999', 'Grace', 'Use EXPLAIN ANALYZE to understand query performance.'),
+(2, '99999999-9999-9999-9999-999999999999', 'Heidi', 'Don’t forget to index frequently used columns.'),
+(3, '22222222-2222-2222-2222-222222222222', 'Ivan', 'Next.js is great if you need SSR, otherwise Express is simpler.'),
+(4, '22222222-2222-2222-2222-222222222222', 'Judy', 'Tailwind is amazing once you get used to utility classes.'),
+(4, '22222222-2222-2222-2222-222222222222', 'Karl', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
 
 -- test data
-INSERT INTO advisory_bookings (advisor_id, client_id, date, startTime, description, endTime, status) VALUES 
-('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', '2025-09-16', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', '2025-09-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked'),
-('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', '2025-09-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked');
+--advisors
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES 
+('testAdvisor1', 'Mary', 'Mary', 'White', 'mary.w@gmail.com', '403-555-1234', 'advisor'),
+('testAdvisor2', 'James', 'James', 'Brown', 'jb@hotmail.com', '587-555-5678', 'advisor'),
+('testAdvisor3', 'Harry', 'Harry', 'Potter', 'hp@gmail.com', '123-456-7890', 'advisor'),
+('testAdvisor4', 'Lily', 'Lily', 'Potter', 'lily.p@gmail.com', '123-456-7890', 'advisor'),
+('testAdvisor5', 'John', 'John', 'Doe', 'john.doe@gmail.com', '123-456-7890', 'advisor');
 
+INSERT INTO advisors (clerk_id, company_name, company_role) VALUES 
+('testAdvisor1', 'Tech Solutions', 'Senior Developer'),
+('testAdvisor2', 'Innovatech', 'Project Manager'),
+('testAdvisor3', 'ABC Company', 'Front-end Developer'),
+('testAdvisor4', 'BCD Company', 'Full Stack Developer'),
+('testAdvisor5', 'AAB Tech', 'Project Manager');
+
+--booked slots
+INSERT INTO advisory_bookings (advisor_id, client_id, date, startTime, description, endTime, status) VALUES 
+('testAdvisor1', '11111111-1111-1111-1111-111111111111', '2025-10-16', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('testAdvisor1', '11111111-1111-1111-1111-111111111111', '2025-10-15', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('testAdvisor2', '11111111-1111-1111-1111-111111111111', '2025-10-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked');
+
+--open slots
 INSERT INTO advisory_bookings (advisor_id, date, startTime, endTime, status) VALUES 
-('99999999-9999-9999-9999-999999999999', '2025-09-21', '10:00:00', '12:00:00', 'open'),
-('99999999-9999-9999-9999-999999999999', '2025-09-23', '12:00:00', '14:00:00', 'open'),
-('99999999-9999-9999-9999-999999999999', '2025-09-24', '12:00:00', '14:00:00', 'open'),
-('99999999-9999-9999-9999-999999999999', '2025-09-24', '14:00:00', '16:00:00', 'open'),
-('99999999-9999-9999-9999-999999999999', '2025-09-25', '11:00:00', '13:00:00', 'open'),
-('99999999-9999-9999-9999-999999999999', '2025-09-26', '10:00:00', '12:00:00', 'open'),
-('22222222-2222-2222-2222-222222222222', '2025-09-27', '10:00:00', '12:00:00', 'open');
+('testAdvisor1', '2025-10-13', '10:00:00', '12:00:00', 'open'),
+('testAdvisor1', '2025-10-14', '12:00:00', '14:00:00', 'open'),
+('testAdvisor1', '2025-10-15', '12:00:00', '14:00:00', 'open'),
+('testAdvisor1', '2025-10-15', '14:00:00', '16:00:00', 'open'),
+('testAdvisor1', '2025-10-16', '11:00:00', '13:00:00', 'open'),
+('testAdvisor1', '2025-10-17', '10:00:00', '12:00:00', 'open'),
+('testAdvisor2', '2025-10-13', '10:00:00', '12:00:00', 'open'),
+('testAdvisor2', '2025-10-13', '12:00:00', '14:00:00', 'open'),
+('testAdvisor2', '2025-10-14', '12:00:00', '14:00:00', 'open'),
+('testAdvisor2', '2025-10-15', '12:00:00', '14:00:00', 'open'),
+('testAdvisor2', '2025-10-16', '11:00:00', '13:00:00', 'open'),
+('testAdvisor2', '2025-10-17', '10:00:00', '12:00:00', 'open');
+
+-- test data for advisory session
+INSERT INTO advisory_sessions (advisor_id, client_id, status) VALUES 
+('testAdvisor1', '11111111-1111-1111-1111-111111111111', 'active'),
+('testAdvisor1', '11111111-1111-1111-1111-111111111111', 'pending'),
+('testAdvisor1', '11111111-1111-1111-1111-111111111111', 'closed'),
+('testAdvisor2', '11111111-1111-1111-1111-111111111111', 'active');
 
 INSERT INTO "user" (id, firstname, lastname, email, role) VALUES
 (11111, 'John', 'Smith', 'JohnS@sample.com', 'member'),
@@ -42,12 +71,6 @@ INSERT INTO resume (user_id, summary, skills, experience, education, certificati
 INSERT INTO cover_letter (user_id, content) VALUES
 (11111, 'Dear Hiring Manager,\n\nI am writing to express my interest in the Software Developer position at your esteemed company. With over 5 years of experience in full stack development and a strong background in JavaScript and Python, I am confident in my ability to contribute effectively to your team.\n\nI have attached my resume for your review and would welcome the opportunity to discuss how my skills and experiences align with your needs.\n\nThank you for considering my application.\n\nSincerely,\nJohn Doe'),
 (22222, 'Dear Hiring Manager,\n\nI am excited to apply for the Data Analyst position at your organization. With a Master degree in Data Science and 3 years of hands-on experience in data analysis and visualization, I am eager to bring my expertise to your team.\n\nPlease find my resume attached for your consideration. I look forward to the possibility of discussing how I can contribute to your company success.\n\nThank you for your time and consideration.\n\nBest regards,\nJane Smith');
-
-INSERT INTO application (job_id, user_id, resume, cover_letter, status, relative_first_name, relative_last_name, relative_email, relative_phone, answers) VALUES
-(1, 11111, NULL, NULL, 'S', 'Alice', 'Johnson', 'aliceJ@sample.com', '123-456-7890', ARRAY['Answer 1', 'Answer 2', 'Answer 3', 'Answer 4', 'Answer 5']),
-(1, 22222, NULL, NULL, 'I', 'Jane', 'Doe', 'janeD@sample.com', '555-555-5555', ARRAY['Answer A', 'Answer B', 'Answer C', 'Answer D', 'Answer E']),
-(2, 22222, NULL, NULL, 'U', 'Bob', 'Smith', 'bobS@sample.com', '987-654-3210', ARRAY['Answer A', 'Answer B', 'Answer C', 'Answer D', 'Answer E']);
-
 
 -- Insert data into job tables
 INSERT INTO job_industry (name) VALUES
@@ -143,7 +166,7 @@ VALUES
 
 
 --workshop
-INSERT INTO workshop (title, date, start_time, location, description, highlight)
+INSERT INTO events (title, date, start_time, location, description, highlight)
 VALUES
 ('Ace the Interview: Confidence Meets Strategy',
  '2025-06-27',

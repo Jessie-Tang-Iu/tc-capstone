@@ -26,3 +26,21 @@ export async function updateAvailabilityController(body) {
     if(!body) throw new Error("Availability content required");
     return await advisoryService.updateAvailability(body);
 }
+
+export async function getMyAdvisorySessionsController(clientId) {
+    if(!clientId) throw new Error("clientId required");
+    return await advisoryService.getMyAdvisorySessions(clientId);
+}
+
+export async function registerAdvisorySessionController(body) {
+    if (!body) throw new Error("Registration Information is required");
+    return await advisoryService.registerAdvisorySession(body);
+}
+
+export async function makeBookingController(body)  {
+    if (!body) throw new Error("Booking content required");
+    console.log("Booking controller received:", body);
+    const result = await advisoryService.makeBooking(body);
+    console.log("Booking controller result:", result);
+    return result;
+}

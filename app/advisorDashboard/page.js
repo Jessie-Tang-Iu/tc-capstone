@@ -1,7 +1,7 @@
 "use client";
 
 import MessagePage from "../components/MessagePage";
-import Navbar from "../components/NavBarBeforeSignIn";
+import Navbar from "../components/BlankNavBar";
 import { useState } from "react";
 import MyClientPage from "./myClient";
 import Invoice from "./invoice";
@@ -20,7 +20,7 @@ export default function AdvisorDashboard() {
         console.log("Selected menu:", selected);
     };
 
-    const ME = "99999999-9999-9999-9999-999999999999";
+    const ME = "testAdvisor1"; // for testing without login
 
     const MOCK_MESSAGES = [
     {
