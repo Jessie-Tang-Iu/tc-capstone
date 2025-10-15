@@ -51,7 +51,7 @@ INSERT INTO "users" (id, username, first_name, last_name, email, role, clerk_id)
 ON CONFLICT (clerk_id) DO NOTHING;
 
 INSERT INTO resume (user_id, summary, skills, experience, education, certifications, additional_info) VALUES
-('user_33TygiU42yjY3nfWxD5cEPCACv7', 'Detail-oriented data analyst with expertise in data visualization and statistical analysis.', 'R, Python, Tableau', '3 years at DataInsights as a Data Analyst', 'M.Sc. in Data Science from University Y', 'Certified Data Analyst', 'Looking for remote opportunities.');
+('user_33TygiU42yjY3nfWxD5cEPCACv7', 'Detail-oriented data analyst with expertise in data visualization and statistical analysis.', 'R, Python, Tableau', '3 years at DataInsights as a Data Analyst', 'University Y | M.Sc. | Data Science | 2017 | 2021', 'Certified Data Analyst', 'Looking for remote opportunities.');
 
 INSERT INTO cover_letter (user_id, content) VALUES
 ('user_33TygiU42yjY3nfWxD5cEPCACv7', 'Dear Hiring Manager,\n\nI am excited to apply for the Data Analyst position at your organization. With a Master degree in Data Science and 3 years of hands-on experience in data analysis and visualization, I am eager to bring my expertise to your team.\n\nPlease find my resume attached for your consideration. I look forward to the possibility of discussing how I can contribute to your company success.\n\nThank you for your time and consideration.\n\nBest regards,\nJane Smith');
