@@ -40,7 +40,8 @@ CREATE TABLE "user" (
   username      TEXT,
   status        TEXT NOT NULL DEFAULT 'active',
   role          TEXT,
-  supabase_id   TEXT
+  supabase_id   TEXT,
+  clerk_id      TEXT UNIQUE
 );
 
 -- =========================================
