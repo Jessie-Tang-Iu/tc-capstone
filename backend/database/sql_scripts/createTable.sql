@@ -20,6 +20,7 @@ DROP TABLE IF EXISTS
   message,
   workshop_booking,
   workshop,
+  event_user,
   "user"
 CASCADE;
 
@@ -295,9 +296,6 @@ CREATE INDEX idx_reports_reason ON reports (reason);
 CREATE INDEX idx_reports_is_removed ON reports (is_removed);
 CREATE INDEX idx_reports_is_banned ON reports (is_banned);
 
-
-COMMIT;
-
 ----event booking 
 CREATE TABLE event_user (
   id SERIAL PRIMARY KEY,
@@ -313,3 +311,5 @@ ADD COLUMN clerk_id TEXT UNIQUE;
 
 CREATE INDEX idx_event_user_event ON event_user (event_id);
 CREATE INDEX idx_event_user_user ON event_user (user_id);
+
+COMMIT;

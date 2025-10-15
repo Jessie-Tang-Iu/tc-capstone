@@ -3,10 +3,11 @@
 import MemberNavbar from "@/app/components/MemberNavBar";
 import Button from "@/app/components/ui/Button";
 import { useRouter } from "next/navigation";
+import { use } from "react";
 
 export default function RegisterAdvisor({ params }) {
 
-    const { advisorID } = params;
+    const { advisorID } = use(params);
     const router = useRouter();
 
     const handleBackToAdvisorList = () => {
