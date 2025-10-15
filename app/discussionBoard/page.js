@@ -19,7 +19,6 @@ export default function DiscussionBoard() {
     const userContext = useUser();
     const userID = userContext?.user?.id;
     const userName = userContext?.user?.firstName || "Anonymous";
-    console.log("userID: ", userID, "userName: ", userName);
 
     // Search state
     const [query, setQuery] = useState("");
@@ -107,9 +106,6 @@ export default function DiscussionBoard() {
         if (showCommentModal) setShowCommentModal(false);
         if (showNewPostModal) setShowNewPostModal(false);
     }
-    
-    console.log("selectedPost: ", selectedPost, "userID: ", selectedPost?.user_id);
-    console.log("new post: ", newPost);
 
     return (
     <main className="bg-gray-100 min-h-screen pb-10">
