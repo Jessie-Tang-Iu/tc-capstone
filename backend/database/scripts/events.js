@@ -1,11 +1,11 @@
-// backend/database/workshop_crud.js
+// backend/database/events_crud.js
 import { query } from "../../database/db.js";
 
 /** Get all events (ordered by date ascending) */
 export async function getAllEvents() {
   const result = await query(
     `SELECT id, title, date, start_time, end_time, location, description, highlight, price, status
-       FROM workshop
+       FROM events
    ORDER BY date ASC`
   );
   return result.rows;
@@ -13,14 +13,14 @@ export async function getAllEvents() {
 
 /** Update just the status of an event */
 export async function updateEventStatus(id, status) {
-  await query(`UPDATE workshop SET status = $1 WHERE id = $2`, [status, id]);
+  await query(`UPDATE events SET status = $1 WHERE id = $2`, [status, id]);
 }
 
 /** Create a new event */
 export async function createEvent(event) {
   const result = await query(
     `
-    INSERT INTO workshop
+    INSERT INTO events
       (title, date, start_time, end_time, location, description, highlight, price, status)
     VALUES
       ($1, $2, $3, $4, $5, $6, $7, $8, $9)
@@ -45,7 +45,7 @@ export async function createEvent(event) {
 export async function getEventById(id) {
   const result = await query(
     `SELECT id, title, date, start_time, end_time, location, description, highlight, price, status
-       FROM workshop
+       FROM events
       WHERE id = $1`,
     [id]
   );
@@ -55,7 +55,7 @@ export async function getEventById(id) {
 /** Update event by ID */
 export async function updateEventById(id, e) {
   const result = await query(
-    `UPDATE workshop
+    `UPDATE events
         SET title=$1,
             date=$2,
             start_time=$3,
@@ -85,5 +85,5 @@ export async function updateEventById(id, e) {
 
 /** Delete an event by ID */
 export async function deleteEventById(id) {
-  await query(`DELETE FROM workshop WHERE id = $1`, [id]);
+  await query(`DELETE FROM events WHERE id = $1`, [id]);
 }
