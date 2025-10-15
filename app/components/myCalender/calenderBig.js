@@ -90,9 +90,10 @@ export default function CalendarBigEvent({
 
       {/* Description */}
       <div className="bg-white rounded-lg p-4 shadow-inner mb-4 max-h-48 overflow-y-auto">
-        <p className="text-sm leading-relaxed text-gray-800 whitespace-pre-line">
-          {description}
-        </p>
+        <div
+          className="text-sm leading-relaxed text-gray-800 prose prose-sm max-w-none"
+          dangerouslySetInnerHTML={{ __html: description }}
+        ></div>
       </div>
 
       {/* CTA */}

@@ -50,11 +50,9 @@ export default async function EventDetailPage(props) {
         <h1 className="text-2xl font-bold mb-4">{event.title}</h1>
 
         <div
-          className="mb-6 leading-relaxed prose prose-sm prose-a:text-blue-600 prose-a:underline"
-          dangerouslySetInnerHTML={{
-            __html: convertNewlinesAndLinks(event.description || ""),
-          }}
-        />
+          className="prose prose-sm max-w-none text-black mb-6"
+          dangerouslySetInnerHTML={{ __html: event.description || "" }}
+        ></div>
       </div>
 
       <EventDetailClient event={event} />
