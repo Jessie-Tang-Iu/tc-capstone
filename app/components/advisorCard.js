@@ -5,10 +5,13 @@ import React, { useState } from "react";
 import ChatWindow from "./ChatWindow";
 import Button from "./ui/Button";
 import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 export default function AdvisorCard({ advisor }) {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const router = useRouter();
+    const userContext = useUser();
+    const userID = userContext?.user?.id;
 
     // navigate to advisor detail page
     const handleViewProfile = (advisorID) => {
@@ -37,7 +40,8 @@ export default function AdvisorCard({ advisor }) {
             {isChatOpen && (
                 <div className="fixed bottom-4 right-4 w-80 h-96 z-50">
                     <ChatWindow
-                        recipient={advisor.first_name + " " + advisor.last_name}
+                        me={userID}
+                        recipient={advisor.advisorID}
                         onClose={() => setIsChatOpen(false)}
                     />
                 </div>
