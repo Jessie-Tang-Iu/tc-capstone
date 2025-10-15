@@ -1,34 +1,41 @@
 -- Insert fake posts
-INSERT INTO posts (author, title, content) VALUES
-('Alice', 'How to learn React?', 'I am new to React and want to know the best resources to get started.'),
-('Bob', 'Best PostgreSQL tips?', 'Share your favorite tips and tricks for optimizing queries in Postgres.'),
-('Charlie', 'Next.js vs Express?', 'When would you choose Next.js over a traditional Express backend?'),
-('Dana', 'Tailwind CSS worth it?', 'I see Tailwind CSS everywhere—what are the pros and cons compared to plain CSS or Bootstrap?');
+INSERT INTO posts (user_id, author, title, content) VALUES
+('99999999-9999-9999-9999-999999999999', 'Alice', 'How to learn React?', 'I am new to React and want to know the best resources to get started.'),
+('99999999-9999-9999-9999-999999999999', 'Bob', 'Best PostgreSQL tips?', 'Share your favorite tips and tricks for optimizing queries in Postgres.'),
+('22222222-2222-2222-2222-222222222222', 'Charlie', 'Next.js vs Express?', 'When would you choose Next.js over a traditional Express backend?'),
+('22222222-2222-2222-2222-222222222222', 'Dana', 'Tailwind CSS worth it?', 'I see Tailwind CSS everywhere—what are the pros and cons compared to plain CSS or Bootstrap?');
  
 -- Insert fake comments (referencing posts by ID)
-INSERT INTO comments (post_id, author, content) VALUES
-(1, 'Eve', 'I recommend the official React docs—they are super well written!'),
-(1, 'Frank', 'Try Scrimba or Frontend Mentor, very interactive.'),
-(2, 'Grace', 'Use EXPLAIN ANALYZE to understand query performance.'),
-(2, 'Heidi', 'Don’t forget to index frequently used columns.'),
-(3, 'Ivan', 'Next.js is great if you need SSR, otherwise Express is simpler.'),
-(4, 'Judy', 'Tailwind is amazing once you get used to utility classes.'),
-(4, 'Karl', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
+INSERT INTO comments (post_id, user_id, author, content) VALUES
+(1, '99999999-9999-9999-9999-999999999999', 'Eve', 'I recommend the official React docs—they are super well written!'),
+(1, '99999999-9999-9999-9999-999999999999', 'Frank', 'Try Scrimba or Frontend Mentor, very interactive.'),
+(2, '99999999-9999-9999-9999-999999999999', 'Grace', 'Use EXPLAIN ANALYZE to understand query performance.'),
+(2, '99999999-9999-9999-9999-999999999999', 'Heidi', 'Don’t forget to index frequently used columns.'),
+(3, '22222222-2222-2222-2222-222222222222', 'Ivan', 'Next.js is great if you need SSR, otherwise Express is simpler.'),
+(4, '22222222-2222-2222-2222-222222222222', 'Judy', 'Tailwind is amazing once you get used to utility classes.'),
+(4, '22222222-2222-2222-2222-222222222222', 'Karl', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
 
 -- test data
+--booked slots
 INSERT INTO advisory_bookings (advisor_id, client_id, date, startTime, description, endTime, status) VALUES 
-('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', '2025-09-16', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', '2025-09-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked'),
-('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', '2025-09-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked');
+('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', '2025-10-16', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', '2025-10-15', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', '2025-10-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked');
 
+--open slots
 INSERT INTO advisory_bookings (advisor_id, date, startTime, endTime, status) VALUES 
-('99999999-9999-9999-9999-999999999999', '2025-09-21', '10:00:00', '12:00:00', 'open'),
-('99999999-9999-9999-9999-999999999999', '2025-09-23', '12:00:00', '14:00:00', 'open'),
-('99999999-9999-9999-9999-999999999999', '2025-09-24', '12:00:00', '14:00:00', 'open'),
-('99999999-9999-9999-9999-999999999999', '2025-09-24', '14:00:00', '16:00:00', 'open'),
-('99999999-9999-9999-9999-999999999999', '2025-09-25', '11:00:00', '13:00:00', 'open'),
-('99999999-9999-9999-9999-999999999999', '2025-09-26', '10:00:00', '12:00:00', 'open'),
-('22222222-2222-2222-2222-222222222222', '2025-09-27', '10:00:00', '12:00:00', 'open');
+('99999999-9999-9999-9999-999999999999', '2025-10-13', '10:00:00', '12:00:00', 'open'),
+('99999999-9999-9999-9999-999999999999', '2025-10-14', '12:00:00', '14:00:00', 'open'),
+('99999999-9999-9999-9999-999999999999', '2025-10-15', '12:00:00', '14:00:00', 'open'),
+('99999999-9999-9999-9999-999999999999', '2025-10-15', '14:00:00', '16:00:00', 'open'),
+('99999999-9999-9999-9999-999999999999', '2025-10-16', '11:00:00', '13:00:00', 'open'),
+('99999999-9999-9999-9999-999999999999', '2025-10-17', '10:00:00', '12:00:00', 'open'),
+('22222222-2222-2222-2222-222222222222', '2025-10-13', '10:00:00', '12:00:00', 'open'),
+('22222222-2222-2222-2222-222222222222', '2025-10-13', '12:00:00', '14:00:00', 'open'),
+('22222222-2222-2222-2222-222222222222', '2025-10-14', '12:00:00', '14:00:00', 'open'),
+('22222222-2222-2222-2222-222222222222', '2025-10-15', '12:00:00', '14:00:00', 'open'),
+('22222222-2222-2222-2222-222222222222', '2025-10-16', '11:00:00', '13:00:00', 'open'),
+('22222222-2222-2222-2222-222222222222', '2025-10-17', '10:00:00', '12:00:00', 'open');
 
 -- test data for advisory session
 INSERT INTO advisory_sessions (advisor_id, client_id, status) VALUES 
@@ -111,12 +118,6 @@ INSERT INTO job (title, company, company_info, location, posted_at, industry_id,
 ('Financial Analyst', 'BankTrust', 'BankTrust is a major Canadian bank offering a wide range of financial services to individuals and businesses.', 'Toronto, ON', '2025-09-08', 2, 2, 1, 3, 29.75, 'https://banktrust.com/jobs/finanalyst', 'Analyze financial data and trends.', 'Prepare reports and forecasts.', 'Degree in Finance or related field.', 'Full job details here.', 'Retirement plan, bonuses'),
 ('Civil Engineer', 'InfraBuild', 'InfraBuild specializes in large-scale infrastructure projects, including bridges, highways, and public works.', 'Edmonton, AB', '2025-09-11', 8, 1, 1, 3, 36.50, 'https://infrabuild.com/careers/civileng', 'Design and oversee construction projects.', 'Project management and site supervision.', 'P.Eng. designation required.', 'Full job details here.', 'Vehicle allowance, health benefits'),
 ('Teacher', 'BrightMinds Academy', 'BrightMinds Academy is a private K-12 school dedicated to innovative teaching and student success.', 'Winnipeg, MB', '2025-09-09', 17, 1, 1, 1, 28.00, 'https://brightminds.ca/jobs/teacher', 'Teach and mentor students in assigned subjects.', 'Lesson planning and classroom management.', 'Teaching certificate required.', 'Full job details here.', 'Professional development, pension');
-
-INSERT INTO application (job_id, user_id, resume, cover_letter, status, relative_first_name, relative_last_name, relative_email, relative_phone, answers) VALUES
-(1, 11111, NULL, NULL, 'S', 'Alice', 'Johnson', 'aliceJ@sample.com', '123-456-7890', ARRAY['Answer 1', 'Answer 2', 'Answer 3', 'Answer 4', 'Answer 5']),
-(1, 22222, NULL, NULL, 'I', 'Jane', 'Doe', 'janeD@sample.com', '555-555-5555', ARRAY['Answer A', 'Answer B', 'Answer C', 'Answer D', 'Answer E']),
-(2, 22222, NULL, NULL, 'U', 'Bob', 'Smith', 'bobS@sample.com', '987-654-3210', ARRAY['Answer A', 'Answer B', 'Answer C', 'Answer D', 'Answer E']);
-
 
 INSERT INTO message (sent_user_id, receive_user_id, content, status) VALUES
 ('11111111-1111-1111-1111-111111111111', '99999999-9999-9999-9999-999999999999', 'Hey there, this is ME sending the first test message.', 'S'),

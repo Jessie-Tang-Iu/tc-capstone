@@ -4,7 +4,7 @@
  * This also allows us to check data in a safe environment before sending it to the database, ESPECIALLY IMPORTANT if files are being uploaded.
 */
 
-import * as posts from "../database/scripts/posts.js"; // Imports all scripts from the posts.js file
+import * as posts from "../database/scripts/posts.js"; // Imports all scripts from the posts.js file since this controller handles calling them
 
 // Calls the getAllPosts function. 
 export async function getPostsController() {
@@ -14,7 +14,7 @@ export async function getPostsController() {
 // Takes the new post body and converts it into a variable for each field (Author, Title, Content). Once the login is completed, Author will be automated.
 // If the title or content are missing, it will throw an error. (Author is optional, defaults to Anonymous if not provided)
 export async function createPostController(body) {
-  const { author, title, content } = body;
+  const { user_id, author, title, content } = body;
   if (!title || !content) throw new Error("Title and content required");
-  return await posts.createPost(author || "Anonymous", title, content);
+  return await posts.createPost(user_id, author || "Anonymous", title, content);
 }

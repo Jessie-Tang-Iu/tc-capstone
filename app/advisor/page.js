@@ -21,24 +21,24 @@ export default function AdvisorPage() {
   const ME = '11111111-1111-1111-1111-111111111111'; // for testing without login
 
   useEffect(() => {
-    if (!ME) return;
+    if (!userID) return;
 
     (async () => {
         try {
             const res = await fetch(
-                `/api/advisory_sessions?clientId=${ME}`
+                `/api/advisory_sessions?clientId=${userID}`
             );
             if (!res.ok) {console.error("Failed to fetch advisory sessions"); return;}
       
             const data = await res.json();
 
             setMyAdvisorList(data);
-            console.log("Return Array: ", data);
+            // console.log("Return Array: ", data);
         } catch (error) {
             console.error("Fetch error: ", error);
         }
     })();
-  }, [ME]);
+  }, [userID]);
 
   // navigate to search advisor page
   const handleNewAdvisor = () => {
@@ -58,7 +58,7 @@ export default function AdvisorPage() {
           <Button onClick={handleNewAdvisor} text="Register New Advisor" />
         </div>
         
-        <div className="mx-12">
+        <div>
           {myAdvisorList.length > 0 ? (
             myAdvisorList.map((advisor) => (
               <ContactedAdvisorCard key={advisor.advisor_id} advisor={advisor} />

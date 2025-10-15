@@ -6,7 +6,7 @@ export async function POST(req) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": req.headers.get("authorization"), // forward raw token
+        "Authorization": req.headers.get("authorization"),
       },
       body: JSON.stringify(body),
     });
@@ -18,4 +18,3 @@ export async function POST(req) {
     return new Response(JSON.stringify({ error: "Failed to update metadata" }), { status: 500 });
   }
 }
-

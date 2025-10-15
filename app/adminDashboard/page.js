@@ -9,6 +9,8 @@ data need to change to postgres db
 */
 "use client";
 
+import { Suspense } from "react";
+
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import MessagePage from "../components/MessagePage";
@@ -23,7 +25,7 @@ import ReportDetailsCard from "../components/adminDashboard/ReportDetailsCard";
 
 const ME = "11111111-1111-1111-1111-111111111111";
 
-export default function AdminDashboard() {
+function AdminDashboardCore() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -169,5 +171,13 @@ export default function AdminDashboard() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function AdminDashboard() {
+  return (
+    <Suspense fallback={<p>Loading dashboard...</p>}>
+      <AdminDashboardCore />
+    </Suspense>
   );
 }

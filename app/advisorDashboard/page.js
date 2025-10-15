@@ -1,7 +1,7 @@
 "use client";
 
 import MessagePage from "../components/MessagePage";
-import Navbar from "../components/NavBarBeforeSignIn";
+import Navbar from "../components/BlankNavBar";
 import { useState } from "react";
 import MyClientPage from "./myClient";
 import Invoice from "./invoice";
