@@ -48,10 +48,27 @@ const MyCalendarPage = () => {
 
         if (!user) throw new Error("User not signed in.");
 
-        const bookings = []; // placeholder or new source
+        const res = await fetch(`/api/event_user/${user.id}`, {
+          cache: "no-store",
+        });
+        if (!res.ok) throw new Error("Failed to fetch event registrations.");
 
-        setEvents(bookings);
-        setBookingData(bookings);
+        const data = await res.json();
+
+        const formatted = data.map((row) => {
+          const localDate = row.date.split("T")[0];
+          const start = `${localDate}T${row.start_time}`;
+          const end = row.end_time ? `${localDate}T${row.end_time}` : null;
+
+          return {
+            title: row.title,
+            start,
+            end,
+          };
+        });
+
+        setEvents(formatted);
+        setBookingData(data);
       } catch (err) {
         console.error("Error loading bookings:", err.message || err);
       } finally {
@@ -85,20 +102,20 @@ const MyCalendarPage = () => {
   const handleEventClick = (eventInfo) => {
     const clicked = bookingData.find((item) => {
       const bookingStart = DateTime.fromISO(
-        `${item.workshop?.date}T${item.workshop?.start_time}`
+        `${item.date.split("T")[0]}T${item.start_time}`
       );
       const eventStart = DateTime.fromISO(eventInfo.event.startStr);
       return (
-        item.workshop?.title === eventInfo.event.title &&
+        item.title === eventInfo.event.title &&
         bookingStart.toISO() === eventStart.toISO()
       );
     });
 
-    if (clicked?.workshop) {
-      setSelectedEvent(clicked.workshop);
+    if (clicked) {
+      setSelectedEvent(clicked);
       setShowModal(true);
     } else {
-      console.warn("No matching workshop found for event click");
+      console.warn("No matching event found for click");
     }
   };
 
@@ -115,16 +132,6 @@ const MyCalendarPage = () => {
     updateTitle();
   };
 
-  // Show loading screen until Clerk finishes loading state
-  if (!isLoaded || !isSignedIn) {
-    return (
-      <div className="bg-gray-100 min-h-screen">
-        <MemberNavbar />
-        <p className="text-center mt-10 text-lg text-gray-700">Loading...</p>
-      </div>
-    );
-  }
-
   // Main content
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -134,9 +141,21 @@ const MyCalendarPage = () => {
         My Calendar
       </h1>
 
-      {/* just to check if really logined */}
+      {/* just to check if really logined , data is fetched*/}
       {isLoaded && isSignedIn && (
-        <p className="text-center text-gray-700 mb-4">User ID: {user?.id}</p>
+        <div className="text-center mb-4">
+          <p className="text-gray-700">User ID: {user?.id}</p>
+
+          {bookingData && bookingData.length > 0 ? (
+            <pre className="text-xs text-gray-600 mt-2 text-left mx-auto max-w-lg bg-gray-100 p-2 rounded overflow-x-auto">
+              {JSON.stringify(bookingData, null, 2)}
+            </pre>
+          ) : (
+            <p className="text-gray-500 text-sm mt-1">
+              (No booking data found)
+            </p>
+          )}
+        </div>
       )}
 
       {/* Toolbar */}
@@ -172,13 +191,26 @@ const MyCalendarPage = () => {
           contentHeight="auto"
           eventClick={handleEventClick}
           eventContent={({ event }) => {
+            let startTime = "";
+            let endTime = "";
+
             try {
-              const dateTime = DateTime.fromISO(event.startStr);
-              const timeStr = dateTime.toFormat("h:mm a");
-              return <CalenderSmallEvent time={timeStr} title={event.title} />;
-            } catch {
-              return <div>{event.title}</div>;
-            }
+              const start = DateTime.fromISO(event.startStr);
+              if (start.isValid) startTime = start.toFormat("h:mm a");
+
+              if (event.end) {
+                const end = DateTime.fromISO(event.end);
+                if (end.isValid) endTime = end.toFormat("h:mm a");
+              }
+            } catch {}
+
+            const displayTime = endTime
+              ? `${startTime} - ${endTime}`
+              : startTime || "End time TBD";
+
+            return (
+              <CalenderSmallEvent time={displayTime} title={event.title} />
+            );
           }}
         />
         {loading && <p className="text-gray-600 mt-2">Loading…</p>}
