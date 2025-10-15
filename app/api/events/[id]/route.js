@@ -8,7 +8,7 @@ import {
 
 // GET /api/events/:id  -> works for public event page & admin
 export async function GET(_req, { params }) {
-  const { id } = params;
+  const { id } = await params;
   try {
     const event = await getEventByIdController(Number(id));
     if (!event) {

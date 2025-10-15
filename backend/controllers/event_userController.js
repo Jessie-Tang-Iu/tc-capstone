@@ -23,13 +23,6 @@ export async function getEventsByUserController(userId) {
   if (!userId) throw new Error("User ID required");
   return await eventUser.getEventsByUser(userId);
 }
-
-// Register a user for an event
-export async function registerEventUserController(eventId, userId) {
-  if (!eventId || !userId) throw new Error("Event ID and User ID required");
-  return await eventUser.registerEventUser(eventId, userId);
-}
-
 // Cancel a user's registration
 export async function cancelEventUserController(eventId, userId) {
   if (!eventId || !userId) throw new Error("Event ID and User ID required");
@@ -37,7 +30,18 @@ export async function cancelEventUserController(eventId, userId) {
 }
 
 // Check if a user is already registered for an event
-export async function getEventUserController(eventId, userId) {
-  if (!eventId || !userId) throw new Error("Event ID and User ID required");
-  return await eventUser.getEventUser(eventId, userId);
+export async function getEventsByClerkIdController(clerkId) {
+  if (!clerkId) throw new Error("Clerk ID required");
+  return await eventUser.getEventsByClerkId(clerkId);
+}
+
+//check if a user is already registered for an event
+export async function registerEventUserController(eventId, clerkId) {
+  if (!eventId || !clerkId) throw new Error("Event ID and Clerk ID required");
+
+  const existing = await eventUser.getEventUser(eventId, clerkId);
+  if (existing && existing.status === "registered") {
+    throw new Error("Event already registered.");
+  }
+  return await eventUser.registerEventUser(eventId, clerkId);
 }
