@@ -10,11 +10,9 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 export default function ProfileDashboard() {
-  const { user, role, getCurrentSession } = useUser();
+  const { user, isLoaded } = useUser();
 
-  if (!user) {
-    getCurrentSession();
-  }
+  if (!isLoaded) return null;
 
   useEffect(() => {
     if (user) {
@@ -168,9 +166,9 @@ export default function ProfileDashboard() {
             ← Back to Setting
           </button>
           <div className="mt-5 md:mt-0 h-full">
-            {tab === "profile" && 
-              // user.role === "member" && 
-              (<ProfileSection formData={formData} setFormData={setFormData} />
+            {tab === "profile" && (
+              // user.role === "member" &&
+              <ProfileSection formData={formData} setFormData={setFormData} />
             )}
             {tab === "security" && (
               <Security formData={formData} setFormData={setFormData} />
