@@ -137,12 +137,12 @@ const MyCalendarPage = () => {
     <div className="bg-gray-100 min-h-screen">
       <MemberNavbar />
 
-      <h1 className="text-3xl font-bold text-center text-[#E55B3C] mt-6 mb-2">
+      <h1 className="text-3xl font-bold text-center text-[#E55B3C] mt-6 mb-2 mr-15">
         My Calendar
       </h1>
 
       {/* just to check if really logined , data is fetched*/}
-      {isLoaded && isSignedIn && (
+      {/* {isLoaded && isSignedIn && (
         <div className="text-center mb-4">
           <p className="text-gray-700">User ID: {user?.id}</p>
 
@@ -156,7 +156,7 @@ const MyCalendarPage = () => {
             </p>
           )}
         </div>
-      )}
+      )} */}
 
       {/* Toolbar */}
       <div className="max-w-screen-lg mx-auto px-4 flex justify-between items-center mb-4">
@@ -226,25 +226,34 @@ const MyCalendarPage = () => {
             <CalendarBigEvent
               workshop={selectedEvent}
               onClose={() => setShowModal(false)}
-              onDelete={() => {
+              onDelete={async () => {
                 if (!selectedEvent) return;
-                deleteBookingByWorkshopId(selectedEvent.id)
-                  .then(() => {
-                    setEvents((prev) =>
-                      prev.filter(
-                        (e) =>
-                          !(
-                            e.title === selectedEvent.title &&
-                            e.start ===
-                              `${selectedEvent.date}T${selectedEvent.start_time}`
-                          )
-                      )
-                    );
-                    setShowModal(false);
-                  })
-                  .catch((err) =>
-                    alert("Failed to delete booking: " + err.message)
-                  );
+
+                const confirmed = confirm(
+                  "Are you sure you want to unregister from this event?"
+                );
+                if (!confirmed) return;
+
+                try {
+                  const res = await fetch("/api/event_user", {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      eventId: selectedEvent.id,
+                      clerkId: user.id,
+                    }),
+                  });
+
+                  if (!res.ok) {
+                    const data = await res.json();
+                    throw new Error(data.error || "Failed to unregister");
+                  }
+
+                  alert("You have successfully unregistered from this event.");
+                  window.location.reload(); // reload to reflect backend change
+                } catch (err) {
+                  alert("Error: " + err.message);
+                }
               }}
             />
           </div>
