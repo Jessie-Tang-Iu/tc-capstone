@@ -10,7 +10,6 @@ import Button from "../components/ui/Button";
 import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
 import CalendarBigEvent from "../components/myCalender/calenderBig";
 import { deleteBookingByWorkshopId } from "@/lib/workshop_booking_crud";
-import { supabase } from "@/lib/supabaseClient";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
@@ -26,6 +25,8 @@ const MyCalendarPage = () => {
 
   const { isLoaded, isSignedIn } = useUser();
   const router = useRouter();
+
+  const { user } = useUser();
 
   // Redirect if not signed in
   useEffect(() => {
@@ -44,33 +45,13 @@ const MyCalendarPage = () => {
     const fetchBookings = async () => {
       try {
         setLoading(true);
-        const {
-          data: { user },
-          error: authErr,
-        } = await supabase.auth.getUser();
-        if (authErr || !user) throw new Error("Not signed in.");
 
-        const { data: bookings, error } = await supabase
-          .from("workshop_booking")
-          .select(`
-            id,
-            userID,
-            workshopID,
-            status,
-            workshop:workshopID (id, title, date, start_time)
-          `);
+        if (!user) throw new Error("User not signed in.");
 
-        if (error) throw error;
+        const bookings = []; // placeholder or new source
 
-        const formatted = (bookings ?? [])
-          .filter((b) => b.workshop?.date && b.workshop?.start_time)
-          .map((b) => ({
-            title: b.workshop.title ?? "Workshop",
-            start: `${b.workshop.date}T${b.workshop.start_time}`,
-          }));
-
-        setEvents(formatted);
-        setBookingData(bookings ?? []);
+        setEvents(bookings);
+        setBookingData(bookings);
       } catch (err) {
         console.error("Error loading bookings:", err.message || err);
       } finally {
@@ -78,8 +59,8 @@ const MyCalendarPage = () => {
       }
     };
 
-    fetchBookings();
-  }, []);
+    if (user) fetchBookings();
+  }, [user]);
 
   // Set title and check today's button state
   const updateTitle = () => {
@@ -152,6 +133,11 @@ const MyCalendarPage = () => {
       <h1 className="text-3xl font-bold text-center text-[#E55B3C] mt-6 mb-2">
         My Calendar
       </h1>
+
+      {/* just to check if really logined */}
+      {isLoaded && isSignedIn && (
+        <p className="text-center text-gray-700 mb-4">User ID: {user?.id}</p>
+      )}
 
       {/* Toolbar */}
       <div className="max-w-screen-lg mx-auto px-4 flex justify-between items-center mb-4">

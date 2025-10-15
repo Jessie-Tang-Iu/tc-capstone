@@ -3,6 +3,12 @@ BEGIN;
 -- =========================================
 -- DROP (FK-safe order)
 -- =========================================
+
+-- workshop table is not longer available, its replaced by event table
+DROP TABLE IF EXISTS workshop_booking CASCADE;
+DROP TABLE IF EXISTS workshop CASCADE;
+
+
 DROP TABLE IF EXISTS
   reports,
   comments,
@@ -18,8 +24,8 @@ DROP TABLE IF EXISTS
   job_type,
   job_industry,
   message,
-  workshop_booking,
-  workshop,
+  events, 
+  event_user,
   "user"
 CASCADE;
 
@@ -38,41 +44,44 @@ CREATE TABLE "user" (
 );
 
 -- =========================================
--- WORKSHOPS
+-- Events
 -- =========================================
-CREATE TABLE workshop (
-  id                     SERIAL PRIMARY KEY,
-  title                  TEXT NOT NULL,
-  date                   DATE NOT NULL,
-  start_time             TIME,
-  end_time               TIME,          -- added 15/09/2025
-  status                 TEXT NOT NULL DEFAULT 'active',
-  location               TEXT,
-  description            TEXT,
-  image_url              TEXT,
-  "maxCapacity"          INTEGER,
-  "currentCapacity"      INTEGER NOT NULL DEFAULT 0,
-  "registrationDeadline" TIMESTAMP,
-  highlight              TEXT,          -- added 15/09/2025
-  price                  NUMERIC,       -- added 15/09/2025
-  supabase_id            TEXT,
-  CONSTRAINT chk_capacity_nonneg  CHECK ("currentCapacity" >= 0),
-  CONSTRAINT chk_capacity_bounds  CHECK ("maxCapacity" IS NULL OR "currentCapacity" <= "maxCapacity"),
-  CONSTRAINT chk_price_nonneg     CHECK (price IS NULL OR price >= 0)
+CREATE TABLE events (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  date DATE NOT NULL,
+  start_time TIME,
+  end_time TIME,
+  status TEXT NOT NULL DEFAULT 'active',
+  location TEXT,
+  description TEXT,
+  image_url TEXT,
+  max_capacity INTEGER,
+  current_capacity INTEGER NOT NULL DEFAULT 0,
+  registration_deadline TIMESTAMP,
+  highlight TEXT,
+  price NUMERIC,
+  CONSTRAINT chk_capacity_nonneg CHECK (current_capacity >= 0),
+  CONSTRAINT chk_capacity_bounds CHECK (max_capacity IS NULL OR current_capacity <= max_capacity),
+  CONSTRAINT chk_price_nonneg CHECK (price IS NULL OR price >= 0)
 );
 
-CREATE TABLE workshop_booking (
-  id           SERIAL PRIMARY KEY,
-  "userID"     INTEGER REFERENCES "user"(id) ON DELETE SET NULL,
-  "workshopID" INTEGER REFERENCES workshop(id) ON DELETE CASCADE,
-  status       TEXT NOT NULL DEFAULT 'active',
-  supabase_id  TEXT,
-  CONSTRAINT uq_booking UNIQUE ("userID","workshopID")
+CREATE INDEX idx_event_date ON events (date, start_time);
+
+-- =========================================
+-- event_user
+-- =========================================
+CREATE TABLE event_user (
+  id SERIAL PRIMARY KEY,
+  event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+  status TEXT NOT NULL DEFAULT 'registered',
+  registered_at TIMESTAMP NOT NULL DEFAULT now(),
+  CONSTRAINT uq_event_user UNIQUE (event_id, user_id)
 );
 
-CREATE INDEX idx_workshop_date ON workshop (date, start_time);
-CREATE INDEX idx_booking_user ON workshop_booking ("userID");
-CREATE INDEX idx_booking_ws   ON workshop_booking ("workshopID");
+CREATE INDEX idx_event_user_event ON event_user (event_id);
+CREATE INDEX idx_event_user_user ON event_user (user_id);
 
 -- =========================================
 -- MESSAGING
@@ -297,19 +306,3 @@ CREATE INDEX idx_reports_is_banned ON reports (is_banned);
 
 
 COMMIT;
-
-----event booking 
-CREATE TABLE event_user (
-  id SERIAL PRIMARY KEY,
-  event_id INTEGER NOT NULL REFERENCES workshop(id) ON DELETE CASCADE,
-  user_id INTEGER NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
-  status TEXT NOT NULL DEFAULT 'registered',  -- could be 'registered', 'cancelled', 'attended'
-  registered_at TIMESTAMP NOT NULL DEFAULT now(),
-  CONSTRAINT uq_event_user UNIQUE (event_id, user_id)
-);
-
-ALTER TABLE "user"
-ADD COLUMN clerk_id TEXT UNIQUE;
-
-CREATE INDEX idx_event_user_event ON event_user (event_id);
-CREATE INDEX idx_event_user_user ON event_user (user_id);
