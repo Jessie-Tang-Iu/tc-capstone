@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import Navbar from "../../components/NavBarBeforeSignIn";
+import Navbar from "../../components/BlankNavBar";
 import EmployerSidebar from "../../components/employerDashboard/EmployerSideBar";
 import EmployerJobPostItem from "../../components/employerDashboard/EmployerJobPostItem";
 import jobs from "../../data/jobs.json";

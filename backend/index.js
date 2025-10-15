@@ -3,23 +3,23 @@ import dotenv from "dotenv";
 import { testConnection } from "./database/db.js";
 import usersRouter from "./routes/users.js";
 
-import { clerkMiddleware, getAuth } from "@clerk/express";
-import { clerkClient } from "@clerk/clerk-sdk-node";
+import { clerkMiddleware } from "@clerk/express";
 
 dotenv.config();
 
 const app = express();
 const PORT = 5000;
 
-// JSON parsing
+// JSON parsing, takes the Json sent for the request body and creates a object from it instead
 app.use(express.json());
 
-// Clerk middleware to populate req.auth if token is valid
+// This checks for session tokens in requests, so that way when getAuth(req) is called in controllers it get the user that requested it
 app.use(clerkMiddleware());
 
 // Routes
 app.use("/users", usersRouter);
 
+// Async code to test the database then start listening on Port 5000 if successful
 (async () => {
   await testConnection();
   app.listen(PORT, () => {

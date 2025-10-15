@@ -2,45 +2,27 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 
 import Navbar from "./components/NavBarBeforeSignIn";
 import Link from "next/link";
 
 function PageContent() {
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { isLoaded, sessionId } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     if (!isLoaded) return;
 
-    if (isSignedIn) {
-      const role = "member";
-
-      switch (role) {
-        case "admin":
-          router.push("/adminDashboard");
-          break;
-        case "member":
-          router.push("/memberFlow");
-          break;
-        case "employer":
-          router.push("/employerDashboard/application");
-          break;
-        case "advisor":
-          router.push("/advisorDashboard");
-          break;
-        default:
-          router.push("/memberFlow");
-          break;
-      }
+    if (sessionId) {
+      router.replace("/post-login");
     }
-  }, [isLoaded, isSignedIn, user, router]);
+  }, [isLoaded, sessionId, router]);
 
   return (
     <>
       <Navbar />
-      {/* Page content */}
+      {/* Page content for signed-out users */}
       <main className="bg-gray-100 min-h-screen">
         <div className="container mx-auto px-4 py-8">
           <h1 className="text-2xl font-bold text-center mb-6 text-orange-500">
