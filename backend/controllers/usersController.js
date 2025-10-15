@@ -1,6 +1,6 @@
 import { clerkClient } from "@clerk/clerk-sdk-node";
 import { getAuth } from "@clerk/express";
-import { handleEmployer, handleAdvisor, handleMember } from "../database/scripts/users.js";
+import { handleEmployer, handleAdvisor, handleMember, getUserdataByClerkID } from "../database/scripts/users.js";
 
 export async function updateUserMetadata(req, res) {
   try {
@@ -79,9 +79,30 @@ export async function updateUserMetadata(req, res) {
 }
 
 export async function fetchUserDataByID(req, res) {
+  try {
+    const { isAuthenticated } = getAuth(req);
+    if (!isAuthenticated) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
 
-}
+    const { clerk_id } = req.params;
+    if (!clerk_id) {
+      return res.status(400).json({ error: "Missing clerk_id" });
+    }
 
-export async function fetchUserDataByName(req, res) {
+    const user = await getUserdataByClerkID(clerk_id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
+    // Return only these 3 fields
+    return res.json({
+      firstName: user.first_name,
+      lastName: user.last_name,
+      username: user.username,
+    });
+  } catch (err) {
+    console.error("Error fetching user by clerk_id:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
 }

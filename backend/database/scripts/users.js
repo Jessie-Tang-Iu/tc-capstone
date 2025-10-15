@@ -72,6 +72,17 @@ export async function handleMember(userData) {
   return { success: true, userId };
 }
 
+// ---------- FETCH USER DATA BY CLERK ID ----------
 
 export async function getUserdataByClerkID(clerkId) {
+  const result = await query(
+    `
+    SELECT username, first_name, last_name
+    FROM users
+    WHERE clerk_id = $1;
+    `,
+    [clerkId]
+  );
+
+  return result.rows[0] || null;
 }
