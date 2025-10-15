@@ -2,56 +2,39 @@
 
 import { useEffect, useState } from "react";
 import MemberNavbar from "../components/MemberNavBar";
-import ProfileSection from "../components/profile/profileMember";
-import Security from "../components/profile/security";
-import Privacy from "../components/profile/privacy";
-import Notification from "../components/profile/notification";
+import ProfileSection from "./profileMember";
+import Security from "./security";
+import Privacy from "./privacy";
+import Notification from "./notification";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { resume } from "react-dom/server";
 
 export default function ProfileDashboard() {
-  const { user, isLoaded } = useUser();
 
-  const [tab, setTab] = useState("message");
-  const [showDetail, setShowDetail] = useState(false);
+  const searchParams = useSearchParams();
+  const tab = searchParams.get("tab") || "";
+  
+  const { user, isLoaded } = useUser();
+  // console.log(user)
+
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     // Basic Information
+    user_id: user?.id || "",
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
     preferredName: "",
-    pronouns: "She/Her",
-    headline: "",
+    pronouns: "She/Her/Hers",
     website: "",
-    linkText: "",
+    address: "",
     countryRegion: "",
     city: "",
     email: user?.email || "",
     phoneNumber: user?.phone || "",
     showEmailInProfile: false,
     showPhoneInProfile: false,
-
-    // Current Position
-    industry: "Software Development",
-    title: "",
-    employmentType: "Permanent Full-time",
-    company: "",
-    currentlyWorking: false,
-    startMonth: "March",
-    startYear: "2023",
-    endMonth: "May",
-    endYear: "2025",
-    location: "",
-    description: "",
-
-    // Education
-    school: "",
-    degree: "",
-    fieldOfStudy: "",
-    eduStartMonth: "March",
-    eduStartYear: "2023",
-    eduEndMonth: "May",
-    eduEndYear: "2025",
-    eduDescription: "",
 
     // Sign & Security
     emails: [
@@ -64,11 +47,11 @@ export default function ProfileDashboard() {
       { phone: "US +1 (519) XXX-XXX", isPrimary: false },
       { phone: "US +1 (519) XXX-XXX", isPrimary: false },
     ],
-    currentPassword: "",
-    newPassword: "",
-    retypePassword: "",
+  });
 
-    // Notifications
+  const [resumeData, setResumeData] = useState();
+
+  const [notificationData, setNotificationData] = useState({
     notifications: {
       newMessage: { email: false, phone: true },
       newComment: { email: true, phone: true },
@@ -85,37 +68,50 @@ export default function ProfileDashboard() {
 
   useEffect(() => {
     if (user) {
+      // console.log(user);
       setFormData((prev) => ({
         ...prev,
         firstName: user?.firstName || "",
         lastName: user?.lastName || "",
-        email: user?.email || "",
-        phoneNumber: user?.phone || "",
+        email: user?.emailAddresses[0].emailAddress || "",
+        phoneNumber: user?.phoneNumbers.length > 0 ? user?.phoneNumbers[0].phoneNumber : "",
         emails: [
           { email: user?.email || "#######@gmail.com", isPrimary: true },
           { email: "#######@gmail.com", isPrimary: false },
           { email: "#######@gmail.com", isPrimary: false },
         ],
         phones: [
-          { phone: user?.phone || "US +1 (519) XXX-XXX", isPrimary: true },
+          { phone: user?.phoneNumbers.length > 0 ? user?.phoneNumbers[0].phoneNumber : "US +1 (519) XXX-XXX", isPrimary: true },
           { phone: "US +1 (519) XXX-XXX", isPrimary: false },
           { phone: "US +1 (519) XXX-XXX", isPrimary: false },
         ],
       }));
     }
+
+    fetch(`/api/resume/user/${user.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setResumeData(data);
+        console.log(" Resume: ", data);
+      })
+      .catch((error) => console.error('Error fetching resume:', error));
+
   }, [user]);
 
+  // const [tab, setTab] = useState("message");
+  const [showDetail, setShowDetail] = useState(tab == "" ? false : true);
+
   if (!isLoaded) return null;
+
 
   const TabBtn = ({ v, children }) => (
     <button
       value={v}
       onClick={(e) => {
-        setTab(e.currentTarget.value);
+        router.push(`/profile?tab=${v}`);
         setShowDetail(true);
       }}
-      className={`w-full text-left rounded-md px-4 py-3 text-base font-medium transition
-        text-black hover:bg-[#F0E0D5] ${tab === v ? "bg-[#E2B596]" : ""}`}
+      className={`w-full text-left rounded-md px-4 py-3 text-base font-medium transition text-black hover:bg-[#F0E0D5] ${tab === v ? "bg-[#E2B596]" : ""}`}
     >
       {children} <span className="ml-1"></span>
       {">"}
@@ -123,6 +119,7 @@ export default function ProfileDashboard() {
   );
 
   const handleBackToList = () => setShowDetail(false);
+
 
   return (
     <main className="bg-gray-100 min-h-screen w-full">
@@ -155,13 +152,22 @@ export default function ProfileDashboard() {
             ← Back to Setting
           </button>
           <div className="mt-5 md:mt-0 h-full">
-            {tab === "profile" && (
-              <ProfileSection formData={formData} setFormData={setFormData} />
+            {tab === "profile" && 
+              // user.role === "member" && 
+              (<ProfileSection 
+                formData={formData} 
+                setFormData={setFormData}
+                resumeData={resumeData}
+                setResumeData={setResumeData}
+              />
             )}
+            
             {tab === "security" && (
               <Security formData={formData} setFormData={setFormData} />
             )}
+            
             {tab === "privacy" && <Privacy />}
+            
             {tab === "notifications" && (
               <Notification formData={formData} setFormData={setFormData} />
             )}

@@ -54,26 +54,24 @@ export default function MemberNavbar() {
       {/* Mobile: hamburger + popover (shows ALL items) */}
       <div className="relative lg:hidden" ref={popRef}>
         <button
-          aria-label="Open menu"
-          aria-expanded={isMobileMenuOpen}
           className="p-2 text-black"
-          onClick={() => setIsMobileMenuOpen((v) => !v)}
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
         {isMobileMenuOpen && (
-          <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg ring-1 ring-black/5 overflow-hidden">
-            <ul className="py-2 text-sm text-black">
+          <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-50">
+            <ul className="flex flex-col text-black">
               <li>
-                <Link href="/memberFlow" className="block px-4 py-2 hover:bg-gray-50">
+                <Link href="/memberFlow" className="block px-4 py-2 hover:text-orange-500">
                   Home
                 </Link>
               </li>
               <li>
                 <Link
                   href="/event"
-                  className="block px-4 py-2 hover:bg-gray-50"
+                  className="block px-4 py-2 hover:text-orange-500"
                 >
                   Upcoming Event
                 </Link>
@@ -81,7 +79,7 @@ export default function MemberNavbar() {
               <li>
                 <Link
                   href="/myCalender"
-                  className="block px-4 py-2 hover:bg-gray-50"
+                  className="block px-4 py-2 hover:text-orange-500"
                 >
                   My Calendar
                 </Link>
@@ -90,7 +88,7 @@ export default function MemberNavbar() {
               {/* Services (expand/collapse) */}
               <li>
                 <button
-                  className="w-full flex items-center justify-between px-4 py-2 hover:bg-gray-50"
+                  className="w-full flex items-center justify-between px-4 py-2 hover:text-orange-500"
                   onClick={() => setIsMobileServicesOpen((v) => !v)}
                   aria-expanded={isMobileServicesOpen}
                 >
@@ -105,19 +103,19 @@ export default function MemberNavbar() {
                   <div className="pb-2">
                     <Link
                       href="/courses"
-                      className="block pl-8 pr-4 py-2 text-sm hover:bg-gray-50"
+                      className="block pl-8 pr-4 py-2 hover:text-orange-500"
                     >
                       Courses
                     </Link>
                     <Link
                       href="/advisor"
-                      className="block pl-8 pr-4 py-2 text-sm hover:bg-gray-50"
+                      className="block pl-8 pr-4 py-2 hover:text-orange-500"
                     >
                       Advisory
                     </Link>
                     <Link
                       href="/discussionBoard"
-                      className="block pl-8 pr-4 py-2 text-sm hover:bg-gray-50"
+                      className="block pl-8 pr-4 py-2 hover:text-orange-500"
                     >
                       Discussion
                     </Link>
@@ -128,7 +126,7 @@ export default function MemberNavbar() {
               {/* Job (expand/collapse) */}
               <li>
                 <button
-                  className="w-full flex items-center justify-between px-4 py-2 hover:bg-gray-50"
+                  className="w-full flex items-center justify-between px-4 py-2 hover:text-orange-500"
                   onClick={() => setIsMobileJobOpen((v) => !v)}
                   aria-expanded={isMobileJobOpen}
                 >
@@ -143,13 +141,13 @@ export default function MemberNavbar() {
                   <div className="pb-2">
                     <Link
                       href="/jobBoard"
-                      className="block pl-8 pr-4 py-2 text-sm hover:bg-gray-50"
+                      className="block pl-8 pr-4 py-2 hover:text-orange-500"
                     >
                       Job Board
                     </Link>
                     <Link
-                      href="/memberFlow/Application"
-                      className="block pl-8 pr-4 py-2 text-sm hover:bg-gray-50"
+                      href="/memberFlow/application"
+                      className="block pl-8 pr-4 py-2 hover:text-orange-500"
                     >
                       Applications
                     </Link>
@@ -157,14 +155,14 @@ export default function MemberNavbar() {
                 )}
               </li>
               <li>
-                <Link href="/profile" className="block px-4 py-2 hover:bg-gray-50">
+                <Link href="/profile" className="block px-4 py-2 hover:text-orange-500">
                   Profile
                 </Link>
               </li>
               <li>
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 hover:bg-gray-50"
+                  className="w-full text-left px-4 py-2 hover:text-orange-500"
                 >
                   Log Out
                 </button>
@@ -203,19 +201,19 @@ export default function MemberNavbar() {
             <div className={`absolute top-full left-0 mt-2 bg-white border rounded shadow-lg ${isDesktopServicesOpen ? 'block' : 'hidden'}`}>
               <Link
                 href="/courses"
-                className="block px-4 py-2 text-sm hover:bg-gray-50"
+                className="block px-4 py-2 hover:text-orange-500"
               >
                 Courses
               </Link>
               <Link
                 href="/advisor"
-                className="block px-4 py-2 text-sm hover:bg-gray-50"
+                className="block px-4 py-2 hover:text-orange-500"
               >
                 Advisory
               </Link>
               <Link
                 href="/discussionBoard"
-                className="block px-4 py-2 text-sm hover:bg-gray-50"
+                className="block px-4 py-2 hover:text-orange-500"
               >
                 Discussion
               </Link>
@@ -232,13 +230,13 @@ export default function MemberNavbar() {
             <div className={`absolute top-full left-0 mt-2 bg-white border rounded shadow-lg ${isDesktopJobOpen ? 'block' : 'hidden'}`}>
               <Link
                 href="/jobBoard"
-                className="block px-4 py-2 text-sm hover:bg-gray-50"
+                className="block px-4 py-2 hover:text-orange-500"
               >
                 Job Board
               </Link>
               <Link
-                href="/memberFlow/Application"
-                className="block px-4 py-2 text-sm hover:bg-gray-50"
+                href="/memberFlow/application"
+                className="block px-4 py-2 hover:text-orange-500"
               >
                 Applications
               </Link>
