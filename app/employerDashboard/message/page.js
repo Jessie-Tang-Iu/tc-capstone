@@ -1,6 +1,6 @@
 "use client";
 
-import Navbar from "@/app/components/NavBarBeforeSignIn";
+import Navbar from "@/app/components/BlankNavBar";
 import EmployerSidebar from "@/app/components/employerDashboard/EmployerSideBar";
 import MessagePage from "@/app/components/MessagePage"; // <- your table component
 
