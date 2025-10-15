@@ -53,12 +53,12 @@ export async function handleAdvisor(userData) {
 
   await query(
     `
-    INSERT INTO advisors (clerk_id, advisor_name, advisor_role)
+    INSERT INTO advisors (clerk_id, company_name, company_role)
     VALUES ($1, $2, $3)
     ON CONFLICT (clerk_id)
     DO UPDATE SET 
-      advisor_name = EXCLUDED.advisor_name,
-      advisor_role = EXCLUDED.advisor_role;
+      company_name = EXCLUDED.company_name,
+      company_role = EXCLUDED.company_role;
     `,
     [userData.clerkId, userData.companyName, userData.companyRole]
   );
