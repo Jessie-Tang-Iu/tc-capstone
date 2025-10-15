@@ -21,22 +21,40 @@ DROP TABLE IF EXISTS
   workshop_booking,
   workshop,
   event_user,
-  "user"
+  users,
+  employers,
+  advisors
 CASCADE;
 
 -- =========================================
 -- CORE: Users
 -- =========================================
-CREATE TABLE "user" (
-  id            SERIAL PRIMARY KEY,
-  email         TEXT UNIQUE NOT NULL,
-  firstname     TEXT,
-  lastname      TEXT,
-  username      TEXT,
-  status        TEXT NOT NULL DEFAULT 'active',
-  role          TEXT,
-  supabase_id   TEXT
+CREATE TABLE users (
+    clerk_id VARCHAR(255) PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    status VARCHAR(20) DEFAULT 'active',
+    role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'member', 'advisor', 'employer'))
 );
+
+CREATE TABLE employers (
+    clerk_id VARCHAR(255) PRIMARY KEY,
+    company_name VARCHAR(255) NOT NULL,
+    company_role VARCHAR(100) NOT NULL,
+    company_id VARCHAR(100),
+    CONSTRAINT fk_employer_user FOREIGN KEY (clerk_id) REFERENCES users(clerk_id) ON DELETE CASCADE
+);
+
+CREATE TABLE advisors (
+    clerk_id VARCHAR(255) PRIMARY KEY,
+    company_name VARCHAR(255) NOT NULL,
+    company_role VARCHAR(100) NOT NULL,
+    CONSTRAINT fk_advisor_user FOREIGN KEY (clerk_id) REFERENCES users(clerk_id) ON DELETE CASCADE
+);
+
 
 -- =========================================
 -- WORKSHOPS
@@ -228,18 +246,16 @@ CREATE TABLE advisory_sessions (
 -- =========================================
 CREATE TABLE posts (
     id SERIAL PRIMARY KEY,
-    user_id TEXT NOT NULL,
-    author VARCHAR(100) NOT NULL,
+    author_id VARCHAR(255) REFERENCES users(clerk_id) ON DELETE CASCADE,
     title TEXT NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
- 
+
 CREATE TABLE comments (
     id SERIAL PRIMARY KEY,
     post_id INT REFERENCES posts(id) ON DELETE CASCADE,
-    user_id TEXT NOT NULL,
-    author VARCHAR(100) NOT NULL,
+    author_id VARCHAR(255) REFERENCES users(clerk_id) ON DELETE CASCADE,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
