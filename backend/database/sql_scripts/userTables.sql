@@ -22,7 +22,7 @@ CREATE TABLE employers (
 
 CREATE TABLE advisors (
     clerk_id VARCHAR(255) PRIMARY KEY,
-    advisor_title VARCHAR(100) NOT NULL,
-    company_name VARCHAR(255),
+    company_name VARCHAR(255) NOT NULL,
+    company_role VARCHAR(100) NOT NULL,
     CONSTRAINT fk_advisor_user FOREIGN KEY (clerk_id) REFERENCES users(clerk_id) ON DELETE CASCADE
 );
