@@ -9,7 +9,8 @@ CREATE TABLE users (
     last_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     phone VARCHAR(20),
-    role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'member', 'advisor', 'employer'))
+    role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'member', 'advisor', 'employer')),
+    status VARCHAR(50) NOT NULL DEFAULT 'active' CHECK (status IN ('banned', 'active', 'under-review'))
 );
 
 CREATE TABLE employers (
