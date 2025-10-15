@@ -51,12 +51,12 @@ export default function ClerkSignUp() {
             "Authorization": `Bearer ${token}`,
            },
           body: JSON.stringify({
-            role: "employer",
-            username: formData.username,
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-            phone: formData.phoneNumber,
+            role: "member",
+            username: username,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: phoneNumber,
           }),
         });
 

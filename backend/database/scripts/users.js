@@ -17,12 +17,12 @@ async function insertUser(userData) {
           email = EXCLUDED.email,
           phone = EXCLUDED.phone,
           role = EXCLUDED.role
-        RETURNING id;
+        RETURNING clerk_id;
         `,
-        [normalizedUsername, userData.firstName, userData.lastName, userData.email, userData.phone, userData.role, userData.clerkId]
+        [userData.clerkId, normalizedUsername, userData.firstName, userData.lastName, userData.email, userData.phone, userData.role]
     );
 
-    return result.rows[0].id;
+    return result.rows[0].clerk_id;
 }
 
 // ---------- ROLE-SPECIFIC HANDLERS ----------

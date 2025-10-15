@@ -57,7 +57,7 @@ export default function AdvisorRegister() {
                     "Authorization": `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    role: "employer",
+                    role: "advisor",
                     username: formData.username,
                     firstName: formData.firstName,
                     lastName: formData.lastName,
