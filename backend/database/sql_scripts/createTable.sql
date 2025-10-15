@@ -228,6 +228,7 @@ CREATE TABLE advisory_sessions (
 -- =========================================
 CREATE TABLE posts (
     id SERIAL PRIMARY KEY,
+    user_id TEXT NOT NULL,
     author VARCHAR(100) NOT NULL,
     title TEXT NOT NULL,
     content TEXT NOT NULL,
@@ -237,6 +238,7 @@ CREATE TABLE posts (
 CREATE TABLE comments (
     id SERIAL PRIMARY KEY,
     post_id INT REFERENCES posts(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL,
     author VARCHAR(100) NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
