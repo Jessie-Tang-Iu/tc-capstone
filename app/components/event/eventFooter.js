@@ -39,7 +39,7 @@ export default function EventFooterBar({ dateTime, title, eventId }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           eventId,
-          userId: user.id, // Clerk user id
+          clerkId: user.id,
         }),
       });
 

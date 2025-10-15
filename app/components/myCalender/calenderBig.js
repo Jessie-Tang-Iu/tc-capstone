@@ -1,4 +1,3 @@
-// components/booking/CalendarBigEvent.js
 "use client";
 
 import { IoTrashOutline } from "react-icons/io5";
@@ -16,15 +15,22 @@ export default function CalendarBigEvent({
   const dateStr = DateTime.fromISO(workshop.date).toFormat(
     "dd LLLL, yyyy (cccc)"
   );
-  // Format time range in AM/PM format
+
   const formatTime = (time) => {
     if (!time) return "";
     return DateTime.fromFormat(time, "HH:mm:ss").toFormat("h:mm a");
   };
 
-  const timeStr = `${formatTime(workshop.start_time)} – ${formatTime(
-    workshop.end_time
-  )}`;
+  let timeStr = "";
+  if (workshop.start_time && workshop.end_time) {
+    timeStr = `${formatTime(workshop.start_time)} – ${formatTime(
+      workshop.end_time
+    )}`;
+  } else if (workshop.start_time && !workshop.end_time) {
+    timeStr = `${formatTime(workshop.start_time)} (End time TBD)`;
+  } else {
+    timeStr = "Time not specified";
+  }
 
   const location =
     workshop.location || "Online (Please use the link to enter our meeting)";
