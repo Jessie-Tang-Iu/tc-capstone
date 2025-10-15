@@ -10,7 +10,8 @@ import {
 // GET /api/reports/:id → fetch one report
 export async function GET(req, { params }) {
   try {
-    const report = await getReportByIdController(params.id);
+    const { id } = await params;
+    const report = await getReportByIdController(id);
     if (!report) {
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
@@ -23,18 +24,19 @@ export async function GET(req, { params }) {
 // PUT /api/reports/:id → generic update (ban/remove or other fields)
 export async function PUT(req, { params }) {
   try {
+    const { id } = await params;
     const body = await req.json();
 
     let updated;
 
     // if specifically passed flags, handle with helpers
     if (body.is_banned !== undefined) {
-      updated = await markReportedBannedController(params.id, body.is_banned);
+      updated = await markReportedBannedController(id, body.is_banned);
     } else if (body.is_removed !== undefined) {
-      updated = await markReportRemovedController(params.id, body.is_removed);
+      updated = await markReportRemovedController(id, body.is_removed);
     } else {
       // fallback: generic update (reason, followup_id, etc.)
-      updated = await updateReportByIdController(params.id, body);
+      updated = await updateReportByIdController(id, body);
     }
 
     return NextResponse.json(updated, { status: 200 });
@@ -46,7 +48,8 @@ export async function PUT(req, { params }) {
 // DELETE /api/reports/:id → hard delete
 export async function DELETE(req, { params }) {
   try {
-    await deleteReportByIdController(params.id);
+    const { id } = await params;
+    await deleteReportByIdController(id);
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });
