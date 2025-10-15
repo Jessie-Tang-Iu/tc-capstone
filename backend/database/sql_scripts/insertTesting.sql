@@ -19,11 +19,17 @@ INSERT INTO comments (post_id, user_id, author, content) VALUES
 --advisors
 INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES 
 ('testAdvisor1', 'Mary', 'Mary', 'White', 'mary.w@gmail.com', '403-555-1234', 'advisor'),
-('testAdvisor2', 'James', 'James', 'Brown', 'jb@hotmail.com', '587-555-5678', 'advisor');
+('testAdvisor2', 'James', 'James', 'Brown', 'jb@hotmail.com', '587-555-5678', 'advisor'),
+('testAdvisor3', 'Harry', 'Harry', 'Potter', 'hp@gmail.com', '123-456-7890', 'advisor'),
+('testAdvisor4', 'Lily', 'Lily', 'Potter', 'lily.p@gmail.com', '123-456-7890', 'advisor'),
+('testAdvisor5', 'John', 'John', 'Doe', 'john.doe@gmail.com', '123-456-7890', 'advisor');
 
 INSERT INTO advisors (clerk_id, company_name, company_role) VALUES 
 ('testAdvisor1', 'Tech Solutions', 'Senior Developer'),
-('testAdvisor2', 'Innovatech', 'Project Manager');
+('testAdvisor2', 'Innovatech', 'Project Manager'),
+('testAdvisor3', 'ABC Company', 'Front-end Developer'),
+('testAdvisor4', 'BCD Company', 'Full Stack Developer'),
+('testAdvisor5', 'AAB Tech', 'Project Manager');
 
 --booked slots
 INSERT INTO advisory_bookings (advisor_id, client_id, date, startTime, description, endTime, status) VALUES 
