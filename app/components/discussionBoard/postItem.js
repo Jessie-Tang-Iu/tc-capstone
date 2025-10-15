@@ -14,9 +14,9 @@ export default function PostItem({ title, first_name, last_name, username, onCli
       disabled={disabled}
     >
       <div className="flex justify-start items-start">
-        <p className="text-left font-semibold text-black">{displayName}</p>
+        <p className="text-left font-semibold text-black">{title}</p>
       </div>
-      <p className="text-left text-gray-700 text-sm mt-1">{title}</p>
+      <p className="text-left text-gray-700 text-sm mt-1">{displayName}</p>
     </button>
   );
 }
