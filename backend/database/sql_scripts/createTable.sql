@@ -36,7 +36,7 @@ CREATE TABLE users (
     last_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     phone VARCHAR(20),
-    status VARCHAR(20) DEFAULT 'active',
+    status VARCHAR(20) NOT NULL DEFAULT 'active',
     role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'member', 'advisor', 'employer'))
 );
 
@@ -82,7 +82,7 @@ CREATE TABLE workshop (
 
 CREATE TABLE workshop_booking (
   id           SERIAL PRIMARY KEY,
-  "userID"     INTEGER REFERENCES "user"(id) ON DELETE SET NULL,
+  "userID"     INTEGER REFERENCES users(clerk_id) ON DELETE SET NULL,
   "workshopID" INTEGER REFERENCES workshop(id) ON DELETE CASCADE,
   status       TEXT NOT NULL DEFAULT 'active',
   supabase_id  TEXT,
@@ -172,7 +172,7 @@ CREATE INDEX idx_job_posted_at  ON job (posted_at DESC);
 CREATE TABLE resume (
   id              BIGSERIAL PRIMARY KEY,
   user_id         INT NOT NULL UNIQUE
-                   REFERENCES "user"(id) ON DELETE CASCADE,
+                   REFERENCES users(clerk_id) ON DELETE CASCADE,
   uploaded_at     TIMESTAMP NOT NULL DEFAULT now(),
   summary         TEXT,
   skills          TEXT,
@@ -185,7 +185,7 @@ CREATE TABLE resume (
 CREATE TABLE cover_letter (
   id          BIGSERIAL PRIMARY KEY,
   user_id     INT NOT NULL UNIQUE
-               REFERENCES "user"(id) ON DELETE CASCADE,
+               REFERENCES users(id) ON DELETE CASCADE,
   uploaded_at TIMESTAMP NOT NULL DEFAULT now(),
   content     TEXT
 );
@@ -193,7 +193,7 @@ CREATE TABLE cover_letter (
 CREATE TABLE application (
   id                  BIGSERIAL PRIMARY KEY,
   job_id              BIGINT NOT NULL REFERENCES job(id) ON DELETE CASCADE,
-  user_id             INT    NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+  user_id             INT    NOT NULL REFERENCES users(clerk_id) ON DELETE CASCADE,
   resume              BYTEA,
   cover_letter        BYTEA,
   status              CHAR(1) NOT NULL DEFAULT 'S', -- S/U/I/R/O/D
@@ -318,14 +318,11 @@ CREATE INDEX idx_reports_is_banned ON reports (is_banned);
 CREATE TABLE event_user (
   id SERIAL PRIMARY KEY,
   event_id INTEGER NOT NULL REFERENCES workshop(id) ON DELETE CASCADE,
-  user_id INTEGER NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(clerk_id) ON DELETE CASCADE,
   status TEXT NOT NULL DEFAULT 'registered',  -- could be 'registered', 'cancelled', 'attended'
   registered_at TIMESTAMP NOT NULL DEFAULT now(),
   CONSTRAINT uq_event_user UNIQUE (event_id, user_id)
 );
-
-ALTER TABLE "user"
-ADD COLUMN clerk_id TEXT UNIQUE;
 
 CREATE INDEX idx_event_user_event ON event_user (event_id);
 CREATE INDEX idx_event_user_user ON event_user (user_id);
