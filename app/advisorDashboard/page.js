@@ -20,7 +20,7 @@ export default function AdvisorDashboard() {
         console.log("Selected menu:", selected);
     };
 
-    const ME = "99999999-9999-9999-9999-999999999999";
+    const ME = "testAdvisor1"; // for testing without login
 
     const MOCK_MESSAGES = [
     {

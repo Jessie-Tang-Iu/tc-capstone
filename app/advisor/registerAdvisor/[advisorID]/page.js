@@ -16,7 +16,7 @@ export default function RegisterAdvisor({ params }) {
     const userID = userContext?.user?.id;
 
     // Register advisor state
-    const [newAdvisor, setNewAdvisor] = useState({ advisorId: '99999999-9999-9999-9999-999999999999', clientId: userID , status: 'active'});
+    const [newAdvisor, setNewAdvisor] = useState({ advisorId: advisorID, clientId: userID , status: 'active'});
 
     const handleBackToAdvisorList = () => {
         router.push('/advisor/advisorSearch');
@@ -34,7 +34,7 @@ export default function RegisterAdvisor({ params }) {
 
                 if (!res.ok) throw new Error("Failed to register advisor");
                 const registeredAdvisor = await res.json();
-                setNewAdvisor({ advisorId: '99999999-9999-9999-9999-999999999999', clientId: userID , status: 'active'  }); // reset form
+                setNewAdvisor({ advisorId: advisorID, clientId: userID , status: 'active'  }); // reset form
 
                 console.log("Registration response: ", registeredAdvisor);
                 router.push('/advisor');

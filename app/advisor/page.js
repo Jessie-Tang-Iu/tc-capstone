@@ -13,6 +13,7 @@ import ContactedAdvisorCard from '../components/contactedAdvisorCard';
 export default function AdvisorPage() {
 
   const [myAdvisorList, setMyAdvisorList] = useState([]);
+  const [advisorList, setAdvisorList] = useState([]);
 
   const userContext = useUser();
   const userID = userContext?.user?.id;
@@ -40,6 +41,35 @@ export default function AdvisorPage() {
     })();
   }, [userID]);
 
+  useEffect(() => {
+      
+      (async() => {
+        try {
+        const res = await fetch(
+            `/api/advisor_list`
+        ); // fetch all advisors from the backend
+        if (!res.ok) throw new Error("Failed to fetch advisors");
+  
+        const data = await res.json();
+  
+        const advisorArray = data.map(advisor => ({
+          advisorID: advisor.clerk_id,
+          username: advisor.username,
+          first_name: advisor.first_name,
+          last_name: advisor.last_name,
+          email: advisor.email,
+          phone: advisor.phone,
+          role: advisor.role}));
+  
+        setAdvisorList(advisorArray);
+  
+        } catch (error) {
+          console.error("Fetch error: ", error);
+        }
+      })();
+  
+  }, []);
+
   // navigate to search advisor page
   const handleNewAdvisor = () => {
     router.push('/advisor/advisorSearch');
@@ -60,9 +90,13 @@ export default function AdvisorPage() {
         
         <div>
           {myAdvisorList.length > 0 ? (
-            myAdvisorList.map((advisor) => (
-              <ContactedAdvisorCard key={advisor.advisor_id} advisor={advisor} />
-            ))
+            myAdvisorList.map((advisor) => { 
+              const matchedAdvisor = advisorList.find((a) => a.advisorID === advisor.advisor_id);
+              return matchedAdvisor ? (
+                <ContactedAdvisorCard key={matchedAdvisor.advisorID} advisor={matchedAdvisor} />
+              ) : (
+                <p key={advisor.advisor_id} className="text-center mt-8 text-black">You haven&rsquo;t contacted any advisors yet.</p>
+            )})
           ) : (
             <p className="text-center mt-8 text-black">You haven&rsquo;t contacted any advisors yet.</p>
           )}            
