@@ -18,14 +18,9 @@ const statusOptions = {
 };
 
 export default function Applications() {
-  const { user, getCurrentSession } = useUser();
+  const { user } = useUser();
   const router = useRouter();
   // console.log("User: ", user);
-
-  // if (!user) {
-  //   router.push("/");
-  //   return;
-  // }
 
   const userId = user.id; // Change to user.id when finishing user database
   const [resume, setResume] = useState();
@@ -98,6 +93,14 @@ export default function Applications() {
     }
   }, [selectedAppId]);
 
+  const sortedApplications = (applications) => {
+    return [...applications].sort((a, b) => {
+      const dateA = new Date(a.applied_at).getTime();
+      const dateB = new Date(b.applied_at).getTime();
+      return dateB - dateA;
+    });
+  }
+
   const handleAppSelect = (appId) => {
     setSelectedAppId(appId);
     setShowAppDetail(true);
@@ -165,18 +168,17 @@ export default function Applications() {
                     h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto`}
         >
           <div className="px-2 md:px-4 py-2">
-            {applications
-              .map((app) => (
-                <ApplyCard
-                  key={app.id}
-                  app={app}
-                  status={status}
-                  setStatus={setStatus}
-                  isSelected={selectedAppId === app.id}
-                  onClick={() => handleAppSelect(app.id)}
-                  onUpdateStatus={() => handleUpdateStatus(app, status)}             
-                />
-              ))}
+            {sortedApplications(applications).map((app) => (
+              <ApplyCard
+                key={app.id}
+                app={app}
+                status={status}
+                setStatus={setStatus}
+                isSelected={selectedAppId === app.id}
+                onClick={() => handleAppSelect(app.id)}
+                onUpdateStatus={() => handleUpdateStatus(app, status)}             
+              />
+            ))}
           </div>
         </div>
 
