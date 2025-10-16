@@ -1,4 +1,4 @@
-import { getMyAdvisorySessionsController, registerAdvisorySessionController } from "@/backend/controllers/advisoryServiceController";
+import { changeClientStatusController, getMyAdvisorySessionsController, registerAdvisorySessionController } from "@/backend/controllers/advisoryServiceController";
 import { NextResponse } from "next/server";
 
 
@@ -26,6 +26,21 @@ export async function POST(request) {
         return NextResponse.json(registeredAdvisor, { status: 201 });
     } catch (error) {
         console.error("Error in POST /api/advisory_sessions:", error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
+export async function PATCH(request) {
+    try {
+        const body = await request.json();
+        console.log("body", body);
+        if (!body.sessionId || !body.status) {
+            return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+        }
+        const changeClientStatus = await changeClientStatusController(body.sessionId, body.status);
+        return NextResponse.json(changeClientStatus, { status: 201 });
+    } catch (error) {
+        console.error("Error in PATCH /api/advisory_sessions:", error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }

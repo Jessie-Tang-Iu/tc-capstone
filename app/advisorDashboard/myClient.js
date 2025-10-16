@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchBar from "../components/ui/SearchBar";
 import usersData from "@/app/data/userForAdminPage.json" assert { type: "json" };
 import PlaceholderCard from "../components/adminDashboard/PlaceholderCard";
@@ -9,23 +9,58 @@ import ChatWindow from "../components/ChatWindow";
 
 
 
-export default function MyClientPage() {
+export default function MyClientPage({currentUserId}) {
 
     const [query, setQuery] = useState("");
     const [openChat, setOpenChat] = useState(false);
     const [chatTo, setChatTo] = useState("");
 
     // initialize from JSON
-    const [clients, setClients] = useState(usersData.normal || []);
+    const [clients, setClients] = useState([]);
 
-    const filteredClient = clients.filter((u) =>
-        u.name.toLowerCase().includes(query.toLowerCase())
-    );
+    // fetch the clients for advisor by advisorId
+    useEffect(() => {
+        console.log("Fetching with advisorId:", currentUserId); 
+        (async () => {
+            try {
+                const res = await fetch(
+                    `/api/advisory_sessions/advisor?advisorId=${currentUserId}`
+                );
+                if (!res.ok) {console.error("Failed to fetch events"); return;}
+          
+                const data = await res.json();
 
-    const openMessage = (name) => {
-        setChatTo(name);
+                console.log("Fetched data:", data);
+                setClients(data);
+            } catch(error) {
+                console.error("Fetch error: ", error);
+            }
+        })();
+    }, [currentUserId])
+
+    // sorting clients list by status
+    const statusOrder = {
+        active: 1,
+        pending: 2,
+        closed: 3,
+    };
+
+    const sortedClients = [...clients].sort((a, b) => {
+        return (statusOrder[a.status] || 999) - (statusOrder[b.status] || 999);
+    });
+
+
+    const openMessage = (e) => {
+        setChatTo(e);
         setOpenChat(true);
     };
+
+    // filter clients by search input
+    const filteredClients = sortedClients.filter((u) =>
+        u.first_name.toLowerCase().includes(query.toLowerCase()) ||
+        u.last_name.toLowerCase().includes(query.toLowerCase()) ||
+        String(u.session_id).includes(query.toLowerCase())
+    );
 
     return(
         <main>
@@ -39,7 +74,7 @@ export default function MyClientPage() {
                         value={query}
                         onChange={setQuery}
                         onSearch={() => {}}
-                        placeholder="Client Name"
+                        placeholder="Client Name | Session ID"
                     />
                 </div>
             </div>
@@ -48,19 +83,21 @@ export default function MyClientPage() {
             <div className="mb-4 rounded-xl bg-white shadow text-center">
                 <p className="flex items-start border-b px-4 py-3 text-2xl font-semibold text-black">Client List</p>
                 <div className="p-4">
-                    {filteredClient.length === 0 ? (
+                    {clients.length === 0 ? (
                         <PlaceholderCard
                             title="No clients found"
                             description="Try again"
                         />
                     ) : (
                         <div className="h-140 overflow-y-auto pr-2">
-                            {filteredClient.map((u) => ( 
+                            {filteredClients.map((u) => ( 
                                 <ClientRow
-                                key={u.id}
-                                name={u.name}
-                                subtitle={u.subtitle}
-                                onMessage={() => openMessage(u.name)}
+                                key={u.session_id}
+                                sessionID={u.session_id}
+                                name={u.first_name + ' ' + u.last_name}
+                                message={u.message}
+                                subtitle={u.status}
+                                onMessage={() => openMessage(u.client_id)}
                                 />
                             ))}
                         </div>
@@ -70,6 +107,7 @@ export default function MyClientPage() {
 
             {openChat && (
                 <ChatWindow
+                    me={currentUserId}
                     recipient={chatTo}
                     onClose={() => setOpenChat(false)}
                     onSend={(text) => console.log("send:", { to: chatTo, text })}
