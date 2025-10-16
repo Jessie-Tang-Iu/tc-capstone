@@ -91,7 +91,7 @@ export default function AdvisorPage() {
         
       </div>
 
-      <p className='text-red-700 w-4/5 mx-auto mt-10 mb-10'>* Disclaimer: View Availability feature is only available when status is 'active'!</p>
+      <p className='text-red-700 w-4/5 mx-auto mt-10 mb-10'>* Disclaimer: View Availability feature is only available when status is &#39;active&#39;!</p>
 
     </main>
     
