@@ -18,7 +18,7 @@ const statusOptions = {
 };
 
 export default function Applications() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const router = useRouter();
   // console.log("User: ", user);
 
@@ -27,8 +27,6 @@ export default function Applications() {
   //   router.push("/");
   //   return;
   // }
-
-  const userId = user?.id; // Change to user.id when finishing user database
 
   const [resume, setResume] = useState();
   const [coverLetter, setCoverLetter] = useState();
@@ -46,8 +44,6 @@ export default function Applications() {
 
   useEffect(() => {
     if (!isLoaded || !user) return;
-
-    const userId = user.id;
 
     // Fetch applications by user_id
     fetch(`/api/application/user/${user.id}`)
