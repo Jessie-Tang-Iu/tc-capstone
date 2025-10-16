@@ -47,7 +47,7 @@ export default function ContactedAdvisorCard({ advisor }) {
     }, [advisor]);
 
     return(
-        <div className='w-85 h-30 bg-[#f8eae2] shadow rounded-xl flex flex-row py-3 px-4 text-start'>
+        <div className='w-85 h-30 bg-white shadow rounded-xl flex flex-row py-3 px-4 text-start'>
             <div className='w-2/3 flex flex-col justify-between'>
                 <p className='font-bold text-[25px] mb-2'>{advisor.first_name} {advisor.last_name}</p>
                 <p className='text-gray-500'>{advisor.company_role}</p>

@@ -293,7 +293,7 @@ export default function MyAvailability({advisorId}) {
     
 
     return(
-        <main>
+        <main className="px-10 py-7 rounded-xl bg-white shadow">
             <h1 className="text-3xl font-bold text-center text-[#E55B3C] mb-2">
                 My Availability
             </h1>

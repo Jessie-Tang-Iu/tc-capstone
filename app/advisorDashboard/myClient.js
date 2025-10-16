@@ -80,7 +80,7 @@ export default function MyClientPage({currentUserId}) {
 
             {/* My Client */}
             <div className="mb-4 rounded-xl bg-white shadow text-center">
-                <div className="flex flex-row border-b rounded-t-xl text-black font-bold justify-between bg-[#F3E1D5] px-4 py-3 text-1xl text-start">
+                <div className="flex flex-row border-b rounded-t-xl text-white font-bold justify-between bg-[#E55B3C] px-4 py-3 text-1xl text-start">
                     <p className="w-1/12 px-2 py-1">Session ID</p>
                     <p className="w-1/12 px-2 py-1">Name</p>
                     <p className="w-2/12 px-2 py-1">Email</p>
