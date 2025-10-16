@@ -38,6 +38,19 @@ export default function MyClientPage({currentUserId}) {
         })();
     }, [currentUserId])
 
+    const openMessage = (e) => {
+        setChatTo(e);
+        setOpenChat(true);
+    };
+
+    // filter clients by search input
+    const filteredClients = clients.filter((u) =>
+        u.first_name.toLowerCase().includes(query.toLowerCase()) ||
+        u.last_name.toLowerCase().includes(query.toLowerCase()) ||
+        String(u.session_id).includes(query.toLowerCase())  ||
+        u.status.toLowerCase().includes(query.toLowerCase())
+    );
+
     // sorting clients list by status
     const statusOrder = {
         active: 1,
@@ -45,22 +58,9 @@ export default function MyClientPage({currentUserId}) {
         closed: 3,
     };
 
-    const sortedClients = [...clients].sort((a, b) => {
+    const sortedClients = [...filteredClients].sort((a, b) => {
         return (statusOrder[a.status] || 999) - (statusOrder[b.status] || 999);
     });
-
-
-    const openMessage = (e) => {
-        setChatTo(e);
-        setOpenChat(true);
-    };
-
-    // filter clients by search input
-    const filteredClients = sortedClients.filter((u) =>
-        u.first_name.toLowerCase().includes(query.toLowerCase()) ||
-        u.last_name.toLowerCase().includes(query.toLowerCase()) ||
-        String(u.session_id).includes(query.toLowerCase())
-    );
 
     return(
         <main>
@@ -74,14 +74,29 @@ export default function MyClientPage({currentUserId}) {
                         value={query}
                         onChange={setQuery}
                         onSearch={() => {}}
-                        placeholder="Client Name | Session ID"
+                        placeholder="Client Name | Session ID | Status"
                     />
                 </div>
             </div>
 
             {/* My Client */}
             <div className="mb-4 rounded-xl bg-white shadow text-center">
-                <p className="flex items-start border-b px-4 py-3 text-2xl font-semibold text-black">Client List</p>
+                {/* <p className="flex items-start border-b px-4 py-3 text-2xl font-semibold text-black">Client List</p> */}
+                <div className="flex flex-row border-b rounded-t-xl text-black font-bold justify-between bg-[#F3E1D5] px-4 py-3 text-1xl text-start">
+                    <p className="w-1/12 px-2 py-1">Session ID</p>
+                    <p className="w-1/12 px-2 py-1">Name</p>
+                    <p className="w-2/12 px-2 py-1">Email</p>
+                    <p className="w-4/12 px-2 py-1">Request</p>
+                    <p className="w-1/12 px-2 py-1">Status</p>
+                    <p className="w-2/12 px-2 py-1">Created Date</p>
+                    <p className="w-1/12 px-2 py-1">Actions</p>
+                </div>
+
+                <div className="px-3">
+                    
+                </div>
+                
+
                 <div className="p-4">
                     {clients.length === 0 ? (
                         <PlaceholderCard
@@ -89,14 +104,11 @@ export default function MyClientPage({currentUserId}) {
                             description="Try again"
                         />
                     ) : (
-                        <div className="h-140 overflow-y-auto pr-2">
-                            {filteredClients.map((u) => ( 
+                        <div className="max-h-140 overflow-y-auto">
+                            {sortedClients.map((u) => ( 
                                 <ClientRow
                                 key={u.session_id}
-                                sessionID={u.session_id}
-                                name={u.first_name + ' ' + u.last_name}
-                                message={u.message}
-                                subtitle={u.status}
+                                client={u}
                                 onMessage={() => openMessage(u.client_id)}
                                 />
                             ))}
