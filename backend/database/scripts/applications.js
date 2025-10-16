@@ -102,7 +102,7 @@ export async function createCoverLetter(coverLetter) {
 
 export async function updateApplicationStatus(id, status) {
   const { rows } = await query(`
-    UPDATE application SET status = $1 WHERE id = $2 RETURNING *`, [status, id]);
+    UPDATE application SET status = $1, applied_at = NOW() WHERE id = $2 RETURNING *`, [status, id]);
   return rows[0];
 }
 

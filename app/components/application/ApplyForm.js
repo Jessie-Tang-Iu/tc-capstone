@@ -152,7 +152,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
       )}
       <button 
         className="w-full bg-[#E55B3C] text-white py-2 rounded text-sm font-normal hover:bg-[#E55B3C]/90 transition-colors mt-4"
-        onClick={() => router.push("/profile")}
+        onClick={() => router.push(`/profile?tab=profile`)}
       >
         {type === "resume" ? "Edit Resume" : "Edit Cover Letter"}
       </button>

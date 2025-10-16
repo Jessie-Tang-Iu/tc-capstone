@@ -6,7 +6,7 @@ import MemberNavBar from "@/app/components/MemberNavBar";
 import PopupMessage from "@/app/components/ui/PopupMessage";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const statusOptions = {
   S: "Submitted",
@@ -18,9 +18,10 @@ const statusOptions = {
 };
 
 export default function Applications() {
-  const { user, getCurrentSession } = useUser();
+  const { user } = useUser();
   const router = useRouter();
   // console.log("User: ", user);
+
 
   // if (!user) {
   //   router.push("/");
@@ -28,6 +29,7 @@ export default function Applications() {
   // }
 
   const userId = user?.id; // Change to user.id when finishing user database
+
   const [resume, setResume] = useState();
   const [coverLetter, setCoverLetter] = useState();
 
@@ -48,7 +50,7 @@ export default function Applications() {
     const userId = user.id;
 
     // Fetch applications by user_id
-    fetch(`/api/application/user/${userId}`)
+    fetch(`/api/application/user/${user.id}`)
       .then((res) => res.json())
       .then((data) => {
         setApplications(data);
@@ -59,7 +61,7 @@ export default function Applications() {
       });
 
     // Fetch resume by user_id
-    fetch(`/api/resume/user/${userId}`)
+    fetch(`/api/resume/user/${user.id}`)
       .then((res) => res.json())
       .then((data) => {
         setResume(data);
@@ -68,7 +70,7 @@ export default function Applications() {
       .catch((error) => console.error("Error fetching resume:", error));
 
     // Fetch cover letter by user_id
-    fetch(`/api/cover_letter/user/${userId}`)
+    fetch(`/api/cover_letter/user/${user.id}`)
       .then((res) => res.json())
       .then((data) => {
         setCoverLetter(data);
@@ -76,6 +78,7 @@ export default function Applications() {
       })
       .catch((error) => console.error("Error fetching cover letter: ", error));
   }, [userId]);
+
 
   // Fetch the information of selected application
   useEffect(() => {
@@ -93,6 +96,14 @@ export default function Applications() {
         });
     }
   }, [selectedAppId]);
+
+  const sortedApplications = (applications) => {
+    return [...applications].sort((a, b) => {
+      const dateA = new Date(a.applied_at).getTime();
+      const dateB = new Date(b.applied_at).getTime();
+      return dateB - dateA;
+    });
+  }
 
   const handleAppSelect = (appId) => {
     setSelectedAppId(appId);
