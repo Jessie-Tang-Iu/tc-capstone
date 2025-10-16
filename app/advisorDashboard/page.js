@@ -90,7 +90,7 @@ export default function AdvisorDashboard() {
                     <div className=" w-full ml-6">
                         {menuSelection === "message" && <MessagePage currentUserId={ME} />}
                         {menuSelection === "booking" && <MyBookingPage advisorId={ME} />}
-                        {menuSelection === "client" && <MyClientPage />}
+                        {menuSelection === "client" && <MyClientPage currentUserId={ME}/>}
                         {menuSelection === "availability" && <MyAvailability advisorId={ME} />}
                         {menuSelection === "invoice" && <Invoice />}
                     </div>

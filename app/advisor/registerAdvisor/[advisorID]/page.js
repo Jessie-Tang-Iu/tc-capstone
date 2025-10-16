@@ -16,7 +16,7 @@ export default function RegisterAdvisor({ params }) {
     const userID = userContext?.user?.id;
 
     // Register advisor state
-    const [newAdvisor, setNewAdvisor] = useState({ advisorId: advisorID, clientId: userID , status: 'active'});
+    const [newAdvisor, setNewAdvisor] = useState({ advisorId: advisorID, clientId: userID , message: '', status: 'pending'});
 
     const handleBackToAdvisorList = () => {
         router.push('/advisor/advisorSearch');
@@ -34,7 +34,7 @@ export default function RegisterAdvisor({ params }) {
 
                 if (!res.ok) throw new Error("Failed to register advisor");
                 const registeredAdvisor = await res.json();
-                setNewAdvisor({ advisorId: advisorID, clientId: userID , status: 'active'  }); // reset form
+                setNewAdvisor({ advisorId: advisorID, clientId: userID , message: '', status: 'pending'  }); // reset form
 
                 console.log("Registration response: ", registeredAdvisor);
                 router.push('/advisor');
@@ -43,6 +43,12 @@ export default function RegisterAdvisor({ params }) {
             }
         })();
     };
+
+    const handleMessageChange = (e) => {
+        setNewAdvisor({ advisorId: advisorID, clientId: userID , message: e.target.value, status: 'pending' });
+    }
+
+    console.log(newAdvisor);
 
     return (
         <main className="bg-gray-100 min-h-screen">
@@ -64,9 +70,21 @@ export default function RegisterAdvisor({ params }) {
                     <hr className='text-black' />
                 </div>
 
+                {/* Leave Message */}
+                <div className='my-7 mb-10 text-center'>
+                    <h1 className="text-3xl font-bold text-black mb-6">Step 1: Leave A Message To {advisorID}</h1>
+                    <p className="text-gray-700 mb-7">This will help your advisorSharing a short message about your goals, questions, or needs will help your advisor understand how best to support you — and respond faster with relevant guidance.</p>
+                    <textarea
+                        className="border rounded border-black w-100 min-h-40 mb-6 p-3 text-black"
+                        onChange={handleMessageChange}
+                        placeholder="I am working in front-end development and need some advise"
+                        />
+                    <hr className='text-black' />
+                </div>
+
                 {/* Payment */}
                 <div className='my-7 mb-10 text-center'>
-                    <h1 className="text-3xl font-bold text-black mb-6">Next Steps: Payment</h1>
+                    <h1 className="text-3xl font-bold text-black mb-6">Step 2: Payment</h1>
                     <Button text="Payment Gateway" onClick={handleRegisterAdvisor}/>
                 </div>
             </div>
