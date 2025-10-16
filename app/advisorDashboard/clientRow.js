@@ -25,22 +25,6 @@ export default function ClientRow({
         }
     }, [selectedStatus]);
 
-    useEffect(() => {
-        if(!selectedStatus) return;
-
-        if(selectedStatus === 'active') {
-            setStatusStyle("rounded bg-blue-100 text-blue-700");
-        }
-
-        if(selectedStatus === 'closed') {
-            setStatusStyle("rounded bg-red-100 text-red-700");
-        }
-
-        if(selectedStatus === 'pending') {
-            setStatusStyle("rounded bg-yellow-100 text-yellow-700");
-        }
-    },[selectedStatus])
-
     const handleChangeStatus = (newStatus) => {
         const userConfirmed = confirm("Are you sure to change the " + client.first_name + ' ' + client.last_name + " status to: " + newStatus + "?");
         if (userConfirmed) {

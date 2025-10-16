@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import SearchBar from "../components/ui/SearchBar";
-import usersData from "@/app/data/userForAdminPage.json" assert { type: "json" };
 import PlaceholderCard from "../components/adminDashboard/PlaceholderCard";
 import ClientRow from "./clientRow";
 import ChatWindow from "../components/ChatWindow";
@@ -81,7 +80,6 @@ export default function MyClientPage({currentUserId}) {
 
             {/* My Client */}
             <div className="mb-4 rounded-xl bg-white shadow text-center">
-                {/* <p className="flex items-start border-b px-4 py-3 text-2xl font-semibold text-black">Client List</p> */}
                 <div className="flex flex-row border-b rounded-t-xl text-black font-bold justify-between bg-[#F3E1D5] px-4 py-3 text-1xl text-start">
                     <p className="w-1/12 px-2 py-1">Session ID</p>
                     <p className="w-1/12 px-2 py-1">Name</p>
@@ -91,11 +89,6 @@ export default function MyClientPage({currentUserId}) {
                     <p className="w-2/12 px-2 py-1">Created Date</p>
                     <p className="w-1/12 px-2 py-1">Actions</p>
                 </div>
-
-                <div className="px-3">
-                    
-                </div>
-                
 
                 <div className="p-4">
                     {clients.length === 0 ? (
