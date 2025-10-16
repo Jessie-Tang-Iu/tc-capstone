@@ -53,11 +53,11 @@ INSERT INTO advisory_bookings (advisor_id, date, startTime, endTime, status) VAL
 ('testAdvisor2', '2025-10-17', '10:00:00', '12:00:00', 'open');
 
 -- test data for advisory session
-INSERT INTO advisory_sessions (advisor_id, client_id, status) VALUES 
-('testAdvisor1', '11111111-1111-1111-1111-111111111111', 'active'),
-('testAdvisor1', '11111111-1111-1111-1111-111111111111', 'pending'),
-('testAdvisor1', '11111111-1111-1111-1111-111111111111', 'closed'),
-('testAdvisor2', '11111111-1111-1111-1111-111111111111', 'active');
+INSERT INTO advisory_sessions (advisor_id, client_id, message, status) VALUES 
+('testAdvisor1', 'testAdvisor2', 'I need help with front-end', 'active'),
+('testAdvisor1', 'testAdvisor2', 'I need help with backend', 'pending'),
+('testAdvisor1', 'testAdvisor2', null, 'closed'),
+('testAdvisor2', 'testAdvisor1', 'I need help with front-end', 'active');
 
 INSERT INTO "user" (id, firstname, lastname, email, role) VALUES
 (11111, 'John', 'Smith', 'JohnS@sample.com', 'member'),

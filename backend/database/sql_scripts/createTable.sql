@@ -228,6 +228,7 @@ CREATE TABLE advisory_sessions (
   session_id SERIAL PRIMARY KEY,
   advisor_id TEXT NOT NULL,
   client_id  TEXT NOT NULL,
+  message    TEXT,
   status     TEXT
 );
 
