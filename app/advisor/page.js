@@ -54,10 +54,10 @@ export default function AdvisorPage() {
 
 
   return (
-    <main className='bg-gradient-to-br from-[#f8eae2] to-white min-h-screen'>
+    <main className='bg-gradient-to-br from-[#f8eae2] to-white min-h-screen pb-5'>
       <Navbar />
 
-      <div className='w-4/5 h-200 mx-auto mt-10'>
+      <div className='w-4/5 sm:h-200 mx-auto mt-10'>
         {/* Header: centered title, search on its own row */}
         <div className="mb-4 rounded-xl bg-white p-6 shadow text-center">
             <div className="mb-4 text-4xl font-semibold text-[#E55B3C]">
