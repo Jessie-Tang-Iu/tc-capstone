@@ -79,7 +79,7 @@ export default function JobBoardPage() {
     };
 
     const handleApply = () => {
-      // reset ApplyForm
+      if (!user) return;
       setFormData({
         id: null,
         job_id: selectedJobId,
