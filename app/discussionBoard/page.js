@@ -96,6 +96,7 @@ export default function DiscussionBoard() {
         }
     };
 
+    // filter posts by search input
     const filteredPost = posts.filter((u) =>
         u.author.toLowerCase().includes(query.toLowerCase()) ||
         u.title.toLowerCase().includes(query.toLowerCase())

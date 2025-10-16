@@ -217,7 +217,7 @@ export default function ProfileSection({ formData, setFormData, resumeData, setR
             >Add</button>
           </div>
 
-          <div className="border border-gray-300 rounded-lg p-4 mb-3 max-w-3xl">
+          <div className="w-full border border-gray-300 rounded-lg p-4 mb-3">
             <div className="mb-3">
               <label className="block text-base md:text-lg font-normal text-black mb-2">School*</label>
               <input
@@ -299,7 +299,7 @@ export default function ProfileSection({ formData, setFormData, resumeData, setR
             >Add</button>
           </div>
 
-          <div className="border border-gray-300 rounded-lg p-4 mb-6 max-w-3xl">
+          <div className="w-full border border-gray-300 rounded-lg p-4 mb-6">
             <div className="grid md:grid-cols-2 gap-x-6 gap-y-3 mb-3">
               <div>
                 <label className="block text-base md:text-lg font-normal text-black mb-2">Industry*</label>

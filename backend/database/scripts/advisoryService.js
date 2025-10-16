@@ -77,6 +77,25 @@ export async function updateAvailability(booking) {
   return result.rows[0];
 }
 
+export async function getAdvisorySessionsByAdvisorId(advisorId) {
+  const result = await query(`SELECT * FROM advisory_sessions a 
+                                JOIN users u
+                                ON a.client_id = u.clerk_id
+                                WHERE a.advisor_id = $1`, [
+    advisorId,
+  ]);
+  console.log("Query result:", result.rows);
+  return result.rows;
+}
+
+export async function changeClientStatus(sessionId, status) {
+  const result = await query(`UPDATE advisory_sessions SET status = $2 WHERE session_id = $1 RETURNING *`,[
+    sessionId,
+    status
+  ]);
+  return result.rows[0];
+}
+
 export async function getMyAdvisorySessions(clientId) {
   const result = await query(`SELECT * FROM advisory_sessions WHERE client_id = $1 AND status = $2`, [
     clientId,
@@ -88,16 +107,17 @@ export async function getMyAdvisorySessions(clientId) {
 export async function registerAdvisorySession(session) {
   const sql = `
     INSERT INTO advisory_sessions
-      (advisor_id, client_id, status)
+      (advisor_id, client_id, message, status)
     VALUES
-      ($1, $2, $3)
+      ($1, $2, $3, $4)
     RETURNING *;
   `;
 
   const values = [
     session.advisorId,
     session.clientId,
-    "active",
+    session.message,
+    session.status,
   ];
 
   const result = await query(sql, values);

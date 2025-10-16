@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import MemberNavbar from "../components/MemberNavBar";
 import ProfileSection from "./profileMember";
 import Security from "./security";
@@ -10,7 +10,7 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { resume } from "react-dom/server";
 
-export default function ProfileDashboard() {
+function ProfileDashboardContent() {
 
   const searchParams = useSearchParams();
   const tab = searchParams.get("tab") || "";
@@ -175,5 +175,13 @@ export default function ProfileDashboard() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function ProfileDashboard() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProfileDashboardContent />
+    </Suspense>
   );
 }
