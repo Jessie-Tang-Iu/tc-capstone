@@ -216,13 +216,22 @@ const MyCalendarPage = () => {
         {loading && <p className="text-gray-600 mt-2">Loading…</p>}
       </div>
 
-      {/* Modal */}
       {showModal && selectedEvent && (
         <div
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50"
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex justify-center items-center"
           onClick={() => setShowModal(false)}
         >
-          <div className="w-full max-w-lg" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="bg-transparent flex justify-center items-center"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "720px",
+              minWidth: "720px",
+              maxWidth: "720px",
+              flexShrink: 0,
+              flexGrow: 0,
+            }}
+          >
             <CalendarBigEvent
               workshop={selectedEvent}
               onClose={() => setShowModal(false)}
@@ -250,7 +259,7 @@ const MyCalendarPage = () => {
                   }
 
                   alert("You have successfully unregistered from this event.");
-                  window.location.reload(); // reload to reflect backend change
+                  window.location.reload();
                 } catch (err) {
                   alert("Error: " + err.message);
                 }

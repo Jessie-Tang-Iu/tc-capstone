@@ -91,10 +91,16 @@ export default function EventClient({ initialEvents = [] }) {
           const time = normalizeTime(row.start_time);
           const allDay = !time;
 
+          // Add matching end to prevent overflow into next day
+          const end = allDay
+            ? dateOnly
+            : `${dateOnly}T${normalizeTime(row.end_time) || time}`;
+
           return {
             id: String(row.id),
             title: row.title || "Untitled",
             start: allDay ? dateOnly : `${dateOnly}T${time}`,
+            end,
             allDay,
           };
         })
@@ -195,32 +201,46 @@ export default function EventClient({ initialEvents = [] }) {
                 <CalenderSmallEvent time={timeText} title={info.event.title} />
               );
             }}
+            eventTimeFormat={{
+              hour: "numeric",
+              minute: "2-digit",
+              meridiem: "short",
+            }}
           />
 
           {isOpen && selectedEvent && (
             <div
-              className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50"
+              className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex justify-center items-center"
               onClick={() => setIsOpen(false)}
             >
               <div
-                className="rounded-lg p-4"
+                className="bg-transparent"
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* Wrapper is relative so the button can be absolutely placed "inside" the card */}
-                <CalendarBigEvent
-                  workshop={selectedEvent}
-                  onClose={() => setIsOpen(false)}
-                  onView={() => {
-                    const id = selectedEvent?.id;
-                    if (id === undefined || id === null) return;
-                    setIsOpen(false);
-                    router.push(
-                      `/event/${encodeURIComponent(
-                        String(id)
-                      )}?from=calendar&tab=${encodeURIComponent(tab)}`
-                    );
+                <div
+                  className="mx-auto"
+                  style={{
+                    width: "700px",
+                    minWidth: "700px",
+                    maxWidth: "700px",
+                    background: "transparent",
                   }}
-                />
+                >
+                  <CalendarBigEvent
+                    workshop={selectedEvent}
+                    onClose={() => setIsOpen(false)}
+                    onView={() => {
+                      const id = selectedEvent?.id;
+                      if (id === undefined || id === null) return;
+                      setIsOpen(false);
+                      router.push(
+                        `/event/${encodeURIComponent(
+                          String(id)
+                        )}?from=calendar&tab=${encodeURIComponent(tab)}`
+                      );
+                    }}
+                  />
+                </div>
               </div>
             </div>
           )}
