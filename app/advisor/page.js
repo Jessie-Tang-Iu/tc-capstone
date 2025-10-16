@@ -7,6 +7,7 @@ import Button from '../components/ui/Button';
 import { useRouter } from "next/navigation";
 import ContactedAdvisorCard from '../components/contactedAdvisorCard';
 import SearchBar from '../components/ui/SearchBar';
+import { RxCalendar, RxChatBubble, RxIdCard } from 'react-icons/rx';
 
 export default function AdvisorPage() {
 
@@ -53,7 +54,7 @@ export default function AdvisorPage() {
 
 
   return (
-    <main className='bg-gray-100 min-h-screen'>
+    <main className='bg-gradient-to-br from-[#f8eae2] to-white min-h-screen'>
       <Navbar />
 
       <div className='w-4/5 h-200 mx-auto mt-10'>
@@ -72,14 +73,31 @@ export default function AdvisorPage() {
             </div>
         </div>
 
-        <div className='flex justify-end'>
+        {/* icon indication */}
+        <div className='flex justify-between items-center ml-2'>
+          <div className='flex flex-row space-x-7 text-black'>
+            <div className='flex flex-row space-x-2'>
+              <RxIdCard size={25} />
+              <p>Advisor Profile</p>
+            </div>
+            
+            <div className='flex flex-row space-x-2'>
+              <RxChatBubble size={25} />
+              <p>Chat Box</p>
+            </div>
+
+            <div className='flex flex-row space-x-2'>
+              <RxCalendar size={25} />
+              <p>Advisor Availability</p>
+            </div>
+          </div>
           <Button onClick={handleNewAdvisor} text="Register New Advisor" />
         </div>
 
         <div className="flex flex-wrap justify-start my-4 lg:space-x-6 sm:space-x-5 space-y-10 text-center text-black">
           {filteredAdvisors.length > 0 ? (
             filteredAdvisors.map((advisor) => { 
-              return(<ContactedAdvisorCard key={advisor.advisor_id} advisor={advisor} />)
+              return(<ContactedAdvisorCard key={advisor.session_id} advisor={advisor} />)
             })
           ) : (
             <div className="w-full">
@@ -91,7 +109,7 @@ export default function AdvisorPage() {
         
       </div>
 
-      <p className='text-red-700 w-4/5 mx-auto mt-10 mb-10'>* Disclaimer: View Availability feature is only available when status is &#39;active&#39;!</p>
+      <p className='text-red-600 w-4/5 mx-auto mt-10 mb-10'>* Disclaimer: View Availability feature is only available when status is &#39;active&#39;!</p>
 
     </main>
     

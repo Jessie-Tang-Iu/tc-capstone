@@ -58,7 +58,7 @@ export default function AdvisorSearchPage() {
   );
 
   return (
-    <main className='bg-gray-100 min-h-screen'>
+    <main className='bg-gradient-to-br from-[#f8eae2] to-white min-h-screen'>
       <Navbar />
       <div className='w-4/5 mx-auto mt-10'>
         <button onClick={handleBackToAdvisorList} className="text-[20px] text-black font-semibold mb-2">&lt; Back to Advisor List</button>

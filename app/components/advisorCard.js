@@ -24,7 +24,7 @@ export default function AdvisorCard({ advisor }) {
 
 
     return(
-        <div className='w-115 h-40 bg-[#f8eae2] shadow rounded-xl flex flex-row py-3 px-4 text-start'>
+        <div className='w-115 h-40 bg-white shadow rounded-xl flex flex-row py-3 px-4 text-start'>
             <div className='flex flex-col mr-5'>
                 <div className="flex flex-row space-x-2">
                     <RxAvatar size={90} />
