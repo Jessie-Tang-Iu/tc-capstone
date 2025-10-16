@@ -97,9 +97,14 @@ export async function changeClientStatus(sessionId, status) {
 }
 
 export async function getMyAdvisorySessions(clientId) {
-  const result = await query(`SELECT * FROM advisory_sessions WHERE client_id = $1 AND status = $2`, [
+  const result = await query(`SELECT session_id, advisor_id, client_id, message, status, first_name, last_name, email, company_role
+                              FROM advisory_sessions a
+                              JOIN users u
+                              ON a.advisor_id = u.clerk_id
+                              JOIN advisors ad
+                              ON ad.clerk_id = a.advisor_id
+                              WHERE a.client_id = $1`, [
     clientId,
-    'active',
   ]);
   return result.rows;
 }

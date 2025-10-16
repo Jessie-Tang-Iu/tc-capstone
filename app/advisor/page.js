@@ -1,25 +1,22 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 import Navbar from '../components/MemberNavBar'
-import advisors from '../data/advisors.json'
-import userAdvisors from "../data/usersAdvisors.json";
 import { useUser } from '@clerk/nextjs';
 import Button from '../components/ui/Button';
 import { useRouter } from "next/navigation";
 import ContactedAdvisorCard from '../components/contactedAdvisorCard';
+import SearchBar from '../components/ui/SearchBar';
 
 export default function AdvisorPage() {
 
   const [myAdvisorList, setMyAdvisorList] = useState([]);
-  const [advisorList, setAdvisorList] = useState([]);
+
+  const [query, setQuery] = useState("");
 
   const userContext = useUser();
   const userID = userContext?.user?.id;
   const router = useRouter();
-
-  const ME = '11111111-1111-1111-1111-111111111111'; // for testing without login
 
   useEffect(() => {
     if (!userID) return;
@@ -34,74 +31,68 @@ export default function AdvisorPage() {
             const data = await res.json();
 
             setMyAdvisorList(data);
-            // console.log("Return Array: ", data);
+            console.log("Return Array: ", data);
         } catch (error) {
             console.error("Fetch error: ", error);
         }
     })();
   }, [userID]);
 
-  useEffect(() => {
-      
-      (async() => {
-        try {
-        const res = await fetch(
-            `/api/advisor_list`
-        ); // fetch all advisors from the backend
-        if (!res.ok) throw new Error("Failed to fetch advisors");
-  
-        const data = await res.json();
-  
-        const advisorArray = data.map(advisor => ({
-          advisorID: advisor.clerk_id,
-          username: advisor.username,
-          first_name: advisor.first_name,
-          last_name: advisor.last_name,
-          email: advisor.email,
-          phone: advisor.phone,
-          role: advisor.role}));
-  
-        setAdvisorList(advisorArray);
-  
-        } catch (error) {
-          console.error("Fetch error: ", error);
-        }
-      })();
-  
-  }, []);
-
   // navigate to search advisor page
   const handleNewAdvisor = () => {
     router.push('/advisor/advisorSearch');
   }
 
+  // filter advisor by search input
+    const filteredAdvisors = myAdvisorList.filter((u) =>
+        u.first_name.toLowerCase().includes(query.toLowerCase()) ||
+        u.last_name.toLowerCase().includes(query.toLowerCase()) ||
+        u.company_role.toLowerCase().includes(query.toLowerCase()) ||
+        u.status.toLowerCase().includes(query.toLowerCase())
+    );
+
+
   return (
     <main className='bg-gray-100 min-h-screen'>
       <Navbar />
-      <div className="max-w-6xl mx-auto px-6 py-10">
-        {/* header */}
-        <div className='mb-10 text-center'>
-          <h1 className="text-3xl font-bold text-[#E55B3C]">Your Advisor Page</h1>
+
+      <div className='w-4/5 h-200 mx-auto mt-10'>
+        {/* Header: centered title, search on its own row */}
+        <div className="mb-4 rounded-xl bg-white p-6 shadow text-center">
+            <div className="mb-4 text-4xl font-semibold text-[#E55B3C]">
+                Your Advisor Page
+            </div>
+            <div className="flex justify-center">
+                <SearchBar
+                    value={query}
+                    onChange={setQuery}
+                    onSearch={() => {}}
+                    placeholder="Advisor Name | Work Title | Status"
+                />
+            </div>
         </div>
-        
+
         <div className='flex justify-end'>
           <Button onClick={handleNewAdvisor} text="Register New Advisor" />
         </div>
-        
-        <div>
-          {myAdvisorList.length > 0 ? (
-            myAdvisorList.map((advisor) => { 
-              const matchedAdvisor = advisorList.find((a) => a.advisorID === advisor.advisor_id);
-              return matchedAdvisor ? (
-                <ContactedAdvisorCard key={matchedAdvisor.advisorID} advisor={matchedAdvisor} />
-              ) : (
-                <p key={advisor.advisor_id} className="text-center mt-8 text-black">You haven&rsquo;t contacted any advisors yet.</p>
-            )})
+
+        <div className="flex flex-wrap justify-start my-4 lg:space-x-6 sm:space-x-5 space-y-10 text-center text-black">
+          {filteredAdvisors.length > 0 ? (
+            filteredAdvisors.map((advisor) => { 
+              return(<ContactedAdvisorCard key={advisor.advisor_id} advisor={advisor} />)
+            })
           ) : (
-            <p className="text-center mt-8 text-black">You haven&rsquo;t contacted any advisors yet.</p>
+            <div className="w-full">
+              <p className="text-center mt-8 text-black font-bold text-[20px]">There is no Registered Advisor.</p>
+              <p className="text-center mt-3 text-gray-700">Try to register a new advisor</p>
+            </div>
           )}            
         </div>
+        
       </div>
+
+      <p className='text-red-700 w-4/5 mx-auto mt-10 mb-10'>* Disclaimer: View Availability feature is only available when status is 'active'!</p>
+
     </main>
     
   );
