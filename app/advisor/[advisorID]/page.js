@@ -62,22 +62,19 @@ export default function AdvisorPage({ params }) {
 
 
     return (
-        <main className="bg-gray-100 min-h-screen">
+        <main className="bg-gradient-to-br from-[#f8eae2] to-white min-h-screen">
             <Navbar />
-            <div className="max-w-6xl mx-auto px-6 pt-10">
-                <button onClick={handleBackToAdvisorList} className="text-[20px] text-black font-semibold mb-2 mx-12">&lt; Back to Advisor List</button>
+            <div className="w-4/5 mx-auto mt-10">
+                <button onClick={handleBackToAdvisorList} className="text-[20px] text-black font-semibold mb-2">&lt; Back to Advisor List</button>
                 {/* header */}
                 <div className='mb-10 text-center'>
                     <h1 className="text-3xl font-bold text-[#E55B3C] mt-5 mb-10">Advisor Details</h1>
-                    <hr className='text-black mx-12' />
+                    {/* <hr className='text-black' /> */}
                 </div>
 
-                {/* Advisor Details */}
-                <div className='mx-12'>
-                    <h1 className="text-2xl text-black font-bold mb-2">{advisor.first_name} {advisor.last_name}</h1>
-                </div>
-                
-                <div className="mx-12 my-8 p-6 bg-[#F3E1D5] rounded-lg shadow-md text-black">
+                {/* Advisor Details */}                
+                <div className="my-8 p-6 bg-white rounded-lg shadow-md text-black">
+                    <h1 className="text-2xl text-black font-bold mb-8">{advisor.first_name} {advisor.last_name}</h1>
                     <h1 className="text-2xl text-black font-bold mb-2">Experience</h1>
                     <div className='mb-10'>
                         <h1 className="text-2xl text-black font-bold mb-2">Contact Information</h1>

@@ -54,37 +54,42 @@ export default function MyBookingPage({advisorId}) {
 
     return(
         <main className="min-h-screen">
-            <h1 className="text-3xl font-bold text-center text-[#E55B3C] mb-2">
-                My Calendar
-            </h1>
+            
+            <div className="py-10 rounded-xl bg-white shadow">
 
-            <FullCalendar
-                plugins={[dayGridPlugin]}
-                initialView="dayGridMonth"
-                // convert data for Full Calendar use
-                events={events.map(event => {
-                    const dateOnly = event.date.split("T")[0];
-                    return {
-                        ...event,
-                        start: `${dateOnly}T${event.start_time}`,
-                        end: `${dateOnly}T${event.end_time}`
-                    };
-                })}
-                eventClick={handleEventClick}
-                eventContent={( eventInfo ) => {
-                    try {
-                        const startTime = DateTime.fromJSDate(eventInfo.event.start).toFormat("h:mm a");
-                    return (
-                        <CalenderSmallEvent
-                            time={startTime}
-                            title={eventInfo.event.title}
-                        />
-                    );
-                    } catch (error) {
-                        return <div>{eventInfo.event.title}</div>;
-                    }
-                }}
-            />
+                <h1 className="text-3xl font-bold text-center text-[#E55B3C] mb-5">
+                    My Calendar
+                </h1>
+
+                <FullCalendar
+                    plugins={[dayGridPlugin]}
+                    initialView="dayGridMonth"
+                    // convert data for Full Calendar use
+                    events={events.map(event => {
+                        const dateOnly = event.date.split("T")[0];
+                        return {
+                            ...event,
+                            start: `${dateOnly}T${event.start_time}`,
+                            end: `${dateOnly}T${event.end_time}`
+                        };
+                    })}
+                    eventClick={handleEventClick}
+                    eventContent={( eventInfo ) => {
+                        try {
+                            const startTime = DateTime.fromJSDate(eventInfo.event.start).toFormat("h:mm a");
+                        return (
+                            <CalenderSmallEvent
+                                time={startTime}
+                                title={eventInfo.event.title}
+                            />
+                        );
+                        } catch (error) {
+                            return <div>{eventInfo.event.title}</div>;
+                        }
+                    }}
+                />
+            </div>
+            
 
             {isOpen===true &&
                 <div

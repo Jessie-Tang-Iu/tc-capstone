@@ -6,10 +6,15 @@ import advisors from "../../data/advisors.json";
 import userAdvisors from "../../data/usersAdvisors.json"; // This is here for future implementation of connecting a advisor to a user account
 import AdvisorCard from "../../components/advisorCard";
 import { useRouter } from "next/navigation";
+import SearchBar from "@/app/components/ui/SearchBar";
 
 export default function AdvisorSearchPage() {
 
+  // Advisor State
   const [advisorList, setAdvisorList] = useState([]);
+
+  // Query Status
+  const [query, setQuery] = useState("");
 
   const router = useRouter();
 
@@ -46,19 +51,33 @@ export default function AdvisorSearchPage() {
       router.push('/advisor');
   }
 
+  // filter advisors by search input
+  const filteredAdvisor = advisorList.filter((u) =>
+      u.first_name.toLowerCase().includes(query.toLowerCase()) ||
+      u.last_name.toLowerCase().includes(query.toLowerCase())
+  );
+
   return (
-    <main className='bg-gray-100 min-h-screen'>
+    <main className='bg-gradient-to-br from-[#f8eae2] to-white min-h-screen'>
       <Navbar />
-      <div className="max-w-6xl mx-auto px-6 py-10">
-        <button onClick={handleBackToAdvisorList} className="text-[20px] text-black font-semibold mb-2 mx-15">&lt; Back to Advisor List</button>
+      <div className='w-4/5 mx-auto mt-10'>
+        <button onClick={handleBackToAdvisorList} className="text-[20px] text-black font-semibold mb-2">&lt; Back to Advisor List</button>
         {/* header */}
         <div className='mb-10 text-center'>
           <h1 className="text-3xl font-bold text-[#E55B3C]">Advisor Search</h1>
+          <div className="flex justify-center mt-5">
+              <SearchBar
+                  value={query}
+                  onChange={setQuery}
+                  onSearch={() => {}}
+                  placeholder="Advisor Name | Position | Skill Sets"
+              />
+          </div>
         </div>
         
-        <div className="mx-10">
+        <div className="flex flex-wrap justify-start my-4 lg:space-x-6 sm:space-x-5 space-y-10 text-center text-black">
           {advisorList.length > 0 ? (
-            advisorList.map((advisor) => (
+            filteredAdvisor.map((advisor) => (
               <AdvisorCard key={advisor.advisorID} advisor={advisor} />
             ))
           ) : (
