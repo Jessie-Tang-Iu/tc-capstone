@@ -3,6 +3,9 @@
 import { useUser } from "@clerk/nextjs";
 import React from "react";
 import Button from "../ui/Button";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeSanitize from "rehype-sanitize";
 
 export default function CommentItem({ author_id, first_name, last_name, username, content }) {
   const userContext = useUser();
@@ -24,7 +27,11 @@ export default function CommentItem({ author_id, first_name, last_name, username
           />
         )}
       </div>
-      <p className="mt-2 ml-2 text-gray-700">{content}</p>
+      <div className="mt-2 ml-2 text-gray-700 prose prose-sm">
+        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize]}>
+          {content}
+        </ReactMarkdown>
+      </div>
     </div>
   );
 }

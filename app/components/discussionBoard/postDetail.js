@@ -3,6 +3,9 @@
 import React from "react";
 import Button from "../ui/Button";
 import { useUser } from "@clerk/nextjs";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeSanitize from "rehype-sanitize";
 
 export default function PostDetail({ title, author_id, first_name, last_name, username, content, created_at }) {
   const userContext = useUser();
@@ -25,7 +28,11 @@ export default function PostDetail({ title, author_id, first_name, last_name, us
       <p className="text-sm text-gray-500 mb-4">
         By {displayName} on {new Date(created_at).toLocaleString()}
       </p>
-      <p className="text-black whitespace-pre-wrap mt-5 border-t border-gray-500 pt-4">{content}</p>
+      <div className="prose prose-gray max-w-none mt-5 border-t border-gray-500 pt-4 text-black">
+        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize]}>
+          {content}
+        </ReactMarkdown>
+      </div>
     </div>
   );
 }
