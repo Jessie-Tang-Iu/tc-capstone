@@ -13,8 +13,8 @@ const streamToBuffer = (stream) => {
 
 export async function getApplicationsByUser(id) {
   const { rows } = await query(`
-    SELECT ap.id, jb.title, jb.company, jb.location, ap.status, ap.applied_at AS "appliedAt"
-      FROM application ap JOIN job jb ON ap.job_id = jb.id
+    SELECT ap.id, je.title, je.company_name AS company, je.location, ap.status, ap.applied_at AS "appliedAt"
+      FROM application ap JOIN (SELECT * FROM job jb JOIN employers e ON jb.employer_id = e.clerk_id) je ON ap.job_id = je.id
      WHERE user_id = $1 ORDER BY applied_at DESC`, [id]);
   return rows;
 }
@@ -23,8 +23,8 @@ export async function getApplicationById(id) {
   const { rows } = await query(`
     SELECT  u.first_name, u.last_name, u.email, u.phone,
 		        ap.id, ap.user_id, ap.resume_name, ap.resume_data, ap.cover_letter_name, ap.cover_letter_data, ap.status, ap.applied_at, ap.relative_first_name, ap.relative_last_name, ap.relative_email, ap.relative_phone, ap.answers,
-		        jb.title, jb.company, jb.location, jb.questions
-      FROM application ap JOIN job jb ON ap.job_id = jb.id
+		        jb.title, jb.company_name AS company, jb.location, jb.questions
+      FROM application ap JOIN (SELECT * FROM job j JOIN employers e ON j.employer_id = e.clerk_id) jb ON ap.job_id = jb.id
                           JOIN users u ON u.clerk_id = ap.user_id
      WHERE ap.id = $1`, [id]);
   return rows[0];

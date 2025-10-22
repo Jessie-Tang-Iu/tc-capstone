@@ -130,32 +130,32 @@ CREATE TABLE job_workplace (
 );
 
 CREATE TABLE job (
-  id                  BIGSERIAL PRIMARY KEY,
-  employer_id         VARCHAR(255) PRIMARY KEY,,
-  title               TEXT NOT NULL,
-  company_info        TEXT,
-  location            TEXT NOT NULL,
-  industry_id         INT,
-  workplace_id        INT,
-  type_id             INT,
-  experience_id       INT,
-  status              CHAR(1) NOT NULL DEFAULT 'A', -- A: Active, I: Inactive
-  salary_per_hour     NUMERIC(5, 2),
-  link                TEXT,
-  description         TEXT,
-  responsibilities    TEXT,
-  requirements        TEXT,
-  details             TEXT,
-  benefits            TEXT,
-  questions           TEXT[],
-  posted_at           TIMESTAMP NOT NULL DEFAULT now(),
-  CONSTRAINT chk_status CHECK (status IN ('A', 'I')),
-  CONSTRAINT chk_salary CHECK (salary_per_hour >= 0),
-  CONSTRAINT fk_employer FOREIGN KEY (employer_id) REFERENCES employers(clerk_id),
-  CONSTRAINT fk_industry FOREIGN KEY (industry_id) REFERENCES job_industry(id),
-  CONSTRAINT fk_workplace FOREIGN KEY (workplace_id) REFERENCES job_workplace(id),
-  CONSTRAINT fk_type FOREIGN KEY (type_id) REFERENCES job_type(id),
-  CONSTRAINT fk_experience FOREIGN KEY (experience_id) REFERENCES job_experience(id)
+    id                  BIGSERIAL PRIMARY KEY,
+    employer_id         VARCHAR(255) NOT NULL,
+    title               TEXT NOT NULL,
+    company_info        TEXT,
+    location            TEXT NOT NULL,
+    industry_id         INT,
+    workplace_id        INT,
+    type_id             INT,
+    experience_id       INT,
+    status              CHAR(1) NOT NULL DEFAULT 'A', -- A: Active, I: Inactive
+    salary_per_hour     NUMERIC(5, 2),
+    link                TEXT,
+    description         TEXT,
+    responsibilities    TEXT,
+    requirements        TEXT,
+    details             TEXT,
+    benefits            TEXT,
+    questions           TEXT[],
+    posted_at           TIMESTAMP NOT NULL DEFAULT now(),
+    CONSTRAINT chk_status CHECK (status IN ('A', 'I')),
+    CONSTRAINT chk_salary CHECK (salary_per_hour >= 0),
+    CONSTRAINT fk_employer FOREIGN KEY (employer_id) REFERENCES employers(clerk_id),
+    CONSTRAINT fk_industry FOREIGN KEY (industry_id) REFERENCES job_industry(id),
+    CONSTRAINT fk_workplace FOREIGN KEY (workplace_id) REFERENCES job_workplace(id),
+    CONSTRAINT fk_type FOREIGN KEY (type_id) REFERENCES job_type(id),
+    CONSTRAINT fk_experience FOREIGN KEY (experience_id) REFERENCES job_experience(id)
 );
 
 CREATE INDEX idx_job_lookup     ON job (industry_id, workplace_id, type_id, experience_id);
