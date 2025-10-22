@@ -17,14 +17,6 @@ export default function SessionBigEvent({
     // advisor name status
     const [advisorName, setAdvisorName] = useState("");
 
-    if (!session) return null;
-
-    const dateStr = DateTime.fromISO(session.date).toFormat(
-        "dd LLLL, yyyy (cccc)"
-    );
-
-    const description = session.description || "No description available.";
-
     useEffect(() => {
         if (!session.advisorId) return;
 
@@ -47,6 +39,15 @@ export default function SessionBigEvent({
             }
         })();
     }, [session.advisorId]);
+
+    if (!session) return null;
+
+    const dateStr = DateTime.fromISO(session.date).toFormat(
+        "dd LLLL, yyyy (cccc)"
+    );
+
+    const description = session.description || "No description available.";
+
 
   return (
     <div className="bg-[#e0f1f3] p-6 rounded-xl shadow-xl text-black relative w-full max-w-2xl mx-auto flex flex-col">
