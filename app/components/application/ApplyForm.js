@@ -128,17 +128,27 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
           <div className="text-sm text-gray-500 leading-relaxed h-85">
               {type === "resume" ? (
                 <>
-                  <b>Summary: </b>{file.summary}
-                  <br />
-                  <b>Education: </b>{file.education}
-                  <br />
-                  <b>Certification: </b>{file.certifications}
-                  <br />
-                  <b>Skills: </b>{file.skills}
-                  <br />
-                  <b>Experience: </b>{file.experience}
-                  <br />
-                  <b>Additional information: </b>{file.additional_info}
+                  <b>Summary: </b>
+                    <p className="pl-5">{file.summary}</p>
+
+                  <b>Education: </b>
+                  <ul className="pl-5">
+                    {file.education.map((edu, index) => (<li key={index}>{edu}</li>))}
+                  </ul>
+
+                  <b>Certification: </b>
+                  <p className="pl-5">{file.certifications.map((crt) => `${crt}, `)}</p>
+
+                  <b>Skills: </b>
+                  <p className="pl-5">{file.skills.map((skill) => `${skill}, `)}</p>
+
+                  <b>Experience: </b>
+                  <ul className="pl-5">                   
+                    {file.experience.map((exp, index) => <li key={index}>{exp}</li>)}
+                  </ul> 
+
+                  <b>Additional information: </b>
+                   <p className="pl-5">{file.additional_info}</p>
                 </>
             ) : (
               <>
