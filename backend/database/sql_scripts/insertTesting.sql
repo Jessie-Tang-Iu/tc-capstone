@@ -33,9 +33,9 @@ INSERT INTO advisors (clerk_id, company_name, company_role) VALUES
 
 --booked slots
 INSERT INTO advisory_bookings (advisor_id, client_id, date, startTime, description, endTime, status) VALUES 
-('testAdvisor1', '11111111-1111-1111-1111-111111111111', '2025-10-16', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('testAdvisor1', '11111111-1111-1111-1111-111111111111', '2025-10-15', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('testAdvisor2', '11111111-1111-1111-1111-111111111111', '2025-10-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked');
+('testAdvisor1', 'testAdvisor2', '2025-10-16', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('testAdvisor1', 'testAdvisor2', '2025-10-15', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('testAdvisor2', 'testAdvisor1', '2025-10-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked');
 
 --open slots
 INSERT INTO advisory_bookings (advisor_id, date, startTime, endTime, status) VALUES 
