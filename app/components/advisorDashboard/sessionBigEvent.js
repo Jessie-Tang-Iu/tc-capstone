@@ -19,31 +19,7 @@ export default function SessionBigEvent({
     "dd LLLL, yyyy (cccc)"
   );
 
-  const formatTime = (time) => {
-    if (!time) return "";
-    return DateTime.fromFormat(time, "HH:mm:ss").toFormat("h:mm a");
-  };
-
-  let timeStr = "";
-  if (session.start_time && session.end_time) {
-    timeStr = `${formatTime(session.start_time)} – ${formatTime(
-      session.end_time
-    )}`;
-  } else if (session.start_time && !session.end_time) {
-    timeStr = `${formatTime(session.start_time)} (End time TBD)`;
-  } else {
-    timeStr = "Time not specified";
-  }
-
-  const location =
-    session.location || "Online (Please use the link to enter our meeting)";
-  const advisor = session.advisor || "N/A";
-  const registerLink = session.register_link || "";
-  const organizer = session.organizer || "Tech Connect Alberta";
   const description = session.description || "No description available.";
-
-  console.log("Session: ", session);
-  console.log("Session Date: ", session.date)
 
   return (
     <div className="bg-[#e0f1f3] p-6 rounded-xl shadow-xl text-black relative w-full max-w-2xl mx-auto flex flex-col">
@@ -73,23 +49,16 @@ export default function SessionBigEvent({
       {/* Date + Time */}
       <div className="text-sm text-gray-700 mb-2 flex justify-between">
         <span>{dateStr}</span>
-        {/* <span>{timeStr}</span> */}
         <span>{session.start_time} - {session.end_time}</span>
       </div>
 
-      {/* Location */}
-      <div className="text-sm mb-2">
-        <span className="font-medium">Location: </span>
-        {location}
-      </div>
-
-      {/* Speaker */}
+      {/* Client */}
       <div className="text-sm mb-2">
         <span className="font-medium">Client: </span>
         {session.clientId}
       </div>
 
-      {/* Organizer */}
+      {/* Advisor */}
       <div className="text-sm mb-4">
         <span className="font-medium">Advisor: </span>
         {session.advisorId}
@@ -100,27 +69,6 @@ export default function SessionBigEvent({
         <p className="text-sm leading-relaxed text-gray-800 whitespace-pre-line">
           {description}
         </p>
-      </div>
-
-      {/* CTA */}
-      <div className="mt-auto flex justify-center">
-        {registerLink ? (
-          <a
-            href={registerLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-6 py-3 bg-[#E55B3C] hover:bg-[#d44f32] text-white font-semibold rounded-lg transition"
-          >
-            View / Register
-          </a>
-        ) : onView ? (
-          <button
-            onClick={onView}
-            className="px-6 py-3 bg-[#E55B3C] hover:bg-[#d44f32] text-white font-semibold rounded-lg transition"
-          >
-            View Event Page
-          </button>
-        ) : null}
       </div>
     </div>
   );
