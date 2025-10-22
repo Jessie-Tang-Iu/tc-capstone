@@ -46,7 +46,7 @@ export default function ExperienceCard({ index, exp, setNewExp, onSave, onRemove
       {/* View */}
       {(!editingExp && exp) && (
       <div className="w-full flex justify-center">
-        <h2 className="flex-3 text-base md:text-lg font-bold text-black">{`${experience.title} - ${experience.company}`}</h2>
+        <h2 className="flex-3 text-base font-bold text-black">{`${experience.title} - ${experience.company}`}</h2>
         <button className="text-[#E55B3C] text-base font-bold hover:underline ml-5" onClick={() => setEditingExp(exp) }>Edit</button>
         <button className="text-[#E55B3C] text-base font-bold hover:underline ml-5" 
           onClick={() => onRemove(index)}

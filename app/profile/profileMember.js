@@ -230,6 +230,7 @@ export default function ProfileSection({ formData, setFormData, resumeData, setR
           <button className="text-sm mb-6 px-6 py-2 bg-[#E55B3C] hover:bg-[#d14f32] font-semibold rounded-md transition duration-200 cursor-pointer focus:outline-none active:scale-95 text-white">Save</button>
         </div>
 
+        {/* Summary */}
         <div>
           <label className="block text-lg md:text-xl font-bold text-black mb-2">Summary</label>
           <textarea

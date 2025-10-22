@@ -172,7 +172,7 @@ function ProfileDashboardContent() {
             {tab === "privacy" && <Privacy />}
             
             {tab === "notifications" && (
-              <Notification formData={formData} setFormData={setFormData} />
+              <Notification formData={notificationData} setFormData={setNotificationData} />
             )}
           </div>
         </div>

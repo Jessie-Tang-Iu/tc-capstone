@@ -114,7 +114,7 @@ export default function EducationCard({ index, edu, setNewEdu, onSave, onRemove 
 
       {(!editingEdu && edu) && (
       <div className="w-full flex justify-center">
-        <h2 className="flex-3 text-base md:text-lg font-bold text-black">{education.school}</h2>
+        <h2 className="flex-3 text-base font-bold text-black">{education.school}</h2>
         <button className="text-[#E55B3C] text-base font-bold hover:underline ml-5" onClick={() => setEditingEdu(edu) }>Edit</button>
         <button className="text-[#E55B3C] text-base font-bold hover:underline ml-5" 
           onClick={() => onRemove(index)}
