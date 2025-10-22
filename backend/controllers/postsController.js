@@ -21,8 +21,9 @@ export async function createPostController(body) {
 
 // Edit an existing post
 export async function updatePostController(body) {
-  const { post_id, author_id, title, content } = body;
-  if (!post_id || !author_id || !title || !content)
+  const { id, author_id, title, content } = body;
+  if (!id || !author_id || !title || !content){
     throw new Error("Missing required fields");
-  return await posts.updatePost(post_id, author_id, title, content);
+  }
+  return await posts.updatePost(id, author_id, title, content);
 }

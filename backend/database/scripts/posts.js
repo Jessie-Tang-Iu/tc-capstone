@@ -27,13 +27,13 @@ export async function createPost(author_id, title, content) {
 
 // Update a Post
 
-export async function updatePost(post_id, author_id, title, content) {
+export async function updatePost(id, author_id, title, content) {
   const result = await query(
     `UPDATE posts
-     SET title = $3, content = $4, updated_at = NOW()
+     SET title = $3, content = $4
      WHERE id = $1 AND author_id = $2
      RETURNING *`,
-    [post_id, author_id, title, content]
+    [id, author_id, title, content]
   );
   return result.rows[0];
 }

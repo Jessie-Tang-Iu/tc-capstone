@@ -31,6 +31,8 @@ export async function PUT(req) {
     const updatedPost = await updatePostController(body);
     return new Response(JSON.stringify(updatedPost), { status: 200 });
   } catch (err) {
+    console.log("PUT /api/posts error:", err.message);
     return new Response(JSON.stringify({ error: err.message }), { status: 400 });
   }
 }
+

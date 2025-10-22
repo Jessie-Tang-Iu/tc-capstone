@@ -124,11 +124,13 @@ export default function DiscussionBoard() {
     const handleEditPost = async () => {
         try {
             const updatedPayload = {
-                post_id: editPost.id,
+                id: editPost.id,
                 author_id: userID,
                 title: editPost.title.trim(),
                 content: editPost.content.trim(),
             };
+
+            console.log("Updating post with payload:", updatedPayload);
 
             const res = await fetch("/api/posts", {
                 method: "PUT",
