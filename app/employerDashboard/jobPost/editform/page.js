@@ -1,15 +1,18 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import dynamic from "next/dynamic";
+import "react-quill-new/dist/quill.snow.css";
+
 import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "@/app/components/NavBarBeforeSignIn";
 import EmployerSidebar from "@/app/components/employerDashboard/EmployerSideBar";
 import PopupMessage from "@/app/components/ui/PopupMessage";
 import jobs from "@/app/data/jobs.json";
 
-/* Small reusable UI atoms */
+/* ========== UI Elements ========== */
 const FieldLabel = ({ children }) => (
-  <div className="text-xs font-medium text-gray-700">{children}</div>
+  <div className="text-xs font-medium text-gray-700 mb-1">{children}</div>
 );
 const Input = (props) => (
   <input
@@ -27,26 +30,7 @@ const Select = ({ children, ...props }) => (
     {children}
   </select>
 );
-const TextAreaWithCount = ({ label, value, setValue, max = 500, rows = 5 }) => {
-  const count = value.length;
-  return (
-    <div className="mb-6">
-      <div className="mb-2 font-semibold text-sm">{label}</div>
-      <div className="rounded-md border border-gray-300">
-        <textarea
-          value={value}
-          onChange={(e) => setValue(e.target.value.slice(0, max))}
-          rows={rows}
-          placeholder=""
-          className="w-full resize-none rounded-md px-3 py-2 text-sm outline-none"
-        />
-        <div className="flex justify-end px-2 pb-1 text-[11px] text-gray-500">
-          {count} / {max}
-        </div>
-      </div>
-    </div>
-  );
-};
+
 const HeaderButton = ({ children, kind = "solid", onClick }) => {
   const base =
     "px-6 py-2 rounded-md text-sm font-semibold transition cursor-pointer";
@@ -62,22 +46,30 @@ const HeaderButton = ({ children, kind = "solid", onClick }) => {
   );
 };
 
+/* ========== Rich Text Editor ========== */
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
+const toolbarOptions = [
+  [{ font: [] }, { size: [] }],
+  ["bold", "italic", "underline", "strike"],
+  [{ color: [] }, { background: [] }],
+  [{ align: [] }],
+  ["clean"],
+];
+
 export default function JobPostEditForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // check mode from ?id=3
   const id = searchParams.get("id");
   const isEdit = !!id;
   const jobId = isEdit ? Number(id) : null;
 
-  // fetch job only if editing
   const existingData = useMemo(() => {
     if (!isEdit) return {};
     return jobs.find((j) => j.id === jobId) ?? {};
   }, [isEdit, jobId]);
 
-  // form states
+  /* ========== Form State ========== */
   const [title, setTitle] = useState(existingData.title || "");
   const [location, setLocation] = useState(
     existingData.location || "Calgary, Alberta"
@@ -96,9 +88,11 @@ export default function JobPostEditForm() {
   const [moreDetails, setMoreDetails] = useState(
     existingData.moreDetails || ""
   );
+
   const [popup, setPopup] = useState(null);
   const [errors, setErrors] = useState({});
 
+  /* ========== Handlers ========== */
   const handleSave = () => {
     const newErrors = {};
     if (!title.trim()) newErrors.title = "Job title is required.";
@@ -136,6 +130,7 @@ export default function JobPostEditForm() {
     });
   };
 
+  /* ========== Render ========== */
   return (
     <div className="min-h-screen bg-white text-black">
       <Navbar />
@@ -148,6 +143,7 @@ export default function JobPostEditForm() {
           <EmployerSidebar />
 
           <section className="flex-1 rounded-xl bg-white shadow">
+            {/* Header */}
             <div className="flex items-center justify-between border-b px-4 py-3">
               <div className="text-[15px] font-semibold">
                 {isEdit ? existingData.title : "New Job Post"}
@@ -160,6 +156,7 @@ export default function JobPostEditForm() {
               </div>
             </div>
 
+            {/* Form Body */}
             <div className="space-y-6 px-4 py-4">
               <div>
                 <FieldLabel>Job Title</FieldLabel>
@@ -228,31 +225,71 @@ export default function JobPostEditForm() {
                 </div>
               </div>
 
-              <TextAreaWithCount
-                label="About the Company"
-                value={aboutCompany}
-                setValue={setAboutCompany}
-              />
-              <TextAreaWithCount
-                label="About the Job"
-                value={aboutJob}
-                setValue={setAboutJob}
-              />
-              <TextAreaWithCount
-                label="What You Bring to the Team"
-                value={bringToTeam}
-                setValue={setBringToTeam}
-              />
-              <TextAreaWithCount
-                label="Required Skills"
-                value={skillsNeed}
-                setValue={setSkillsNeed}
-              />
-              <TextAreaWithCount
-                label="More Details"
-                value={moreDetails}
-                setValue={setMoreDetails}
-              />
+              {/* Rich text sections */}
+              <div>
+                <FieldLabel>About the Company</FieldLabel>
+                <ReactQuill
+                  theme="snow"
+                  value={aboutCompany}
+                  onChange={setAboutCompany}
+                  placeholder="Describe your company background"
+                  modules={{ toolbar: toolbarOptions }}
+                  className="bg-white text-black min-h-[220px] rounded-md mb-15"
+                  style={{ height: "220px" }}
+                />
+              </div>
+
+              <div>
+                <FieldLabel>About the Job</FieldLabel>
+                <ReactQuill
+                  theme="snow"
+                  value={aboutJob}
+                  onChange={setAboutJob}
+                  placeholder="Explain the job responsibilities and goals"
+                  modules={{ toolbar: toolbarOptions }}
+                  className="bg-white text-black min-h-[220px] rounded-md mb-15"
+                  style={{ height: "220px" }}
+                />
+              </div>
+
+              <div>
+                <FieldLabel>What You Bring to the Team</FieldLabel>
+                <ReactQuill
+                  theme="snow"
+                  value={bringToTeam}
+                  onChange={setBringToTeam}
+                  placeholder="List the qualities or mindset you expect"
+                  modules={{ toolbar: toolbarOptions }}
+                  className="bg-white text-black min-h-[220px] rounded-md mb-15"
+                  style={{ height: "220px" }}
+                />
+              </div>
+
+              <div>
+                <FieldLabel>Required Skills</FieldLabel>
+                <ReactQuill
+                  theme="snow"
+                  value={skillsNeed}
+                  onChange={setSkillsNeed}
+                  placeholder="Outline the technical and soft skills needed"
+                  modules={{ toolbar: toolbarOptions }}
+                  className="bg-white text-black min-h-[220px] rounded-md mb-15"
+                  style={{ height: "220px" }}
+                />
+              </div>
+
+              <div>
+                <FieldLabel>More Details</FieldLabel>
+                <ReactQuill
+                  theme="snow"
+                  value={moreDetails}
+                  onChange={setMoreDetails}
+                  placeholder="Any additional notes or benefits"
+                  modules={{ toolbar: toolbarOptions }}
+                  className="bg-white text-black min-h-[220px] rounded-md mb-15"
+                  style={{ height: "220px" }}
+                />
+              </div>
             </div>
           </section>
         </div>
