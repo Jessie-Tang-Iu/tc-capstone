@@ -13,7 +13,7 @@ export default function MyBookingPage({advisorId}) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [events, setEvents] = useState([]);
-    const [selectedEvent, setSelectedEvent] = useState({ id: null, title: null, date: null , start_time: null, end_time: null, description: null, clientId: null, advisorId: null});
+    const [selectedEvent, setSelectedEvent] = useState({ id: null, title: null, date: null , start_time: null, end_time: null, description: null, clientName: null, advisorId: null});
 
     useEffect(() => {
         if (!advisorId) return;
@@ -37,7 +37,7 @@ export default function MyBookingPage({advisorId}) {
                     start_time: event.starttime,
                     end_time: event.endtime,
                     description: event.description,
-                    clientId: event.client_id,
+                    clientName: (event.first_name || '') + ((' ' + event.last_name) || ''),
                     advisorId: event.advisor_id,
                 }));
 
@@ -59,14 +59,12 @@ export default function MyBookingPage({advisorId}) {
             start_time: event.start?.toISOString().split("T")[1]?.slice(0,5),
             end_time: event.end?.toISOString().split("T")[1]?.slice(0,5),
             description: event.extendedProps.description || "",
-            clientId: event.extendedProps.clientId,
+            clientName: event.extendedProps.clientName,
             advisorId: event.extendedProps.advisorId,
         }
         setSelectedEvent(selected);
         setIsOpen(true);
     }
-
-    console.log("Selected Event Date", selectedEvent.date);
 
     return(
         <main className="min-h-screen">
@@ -97,7 +95,7 @@ export default function MyBookingPage({advisorId}) {
                             <SessionSmallEvent
                                 time={startTime}
                                 title={eventInfo.event.title}
-                                client={eventInfo.event.extendedProps.clientId}
+                                client={eventInfo.event.extendedProps.clientName}
                             />
                         );
                         } catch (error) {

@@ -6,20 +6,47 @@
 import { IoTrashOutline } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 import { DateTime } from "luxon";
+import { useEffect, useState } from "react";
 
 export default function SessionBigEvent({
   session,
   onDelete,
-  onClose,
-  onView,
+  onClose
 }) {
-  if (!session) return null;
 
-  const dateStr = DateTime.fromISO(session.date).toFormat(
-    "dd LLLL, yyyy (cccc)"
-  );
+    // advisor name status
+    const [advisorName, setAdvisorName] = useState("");
 
-  const description = session.description || "No description available.";
+    if (!session) return null;
+
+    const dateStr = DateTime.fromISO(session.date).toFormat(
+        "dd LLLL, yyyy (cccc)"
+    );
+
+    const description = session.description || "No description available.";
+
+    useEffect(() => {
+        if (!session.advisorId) return;
+
+        (async () => {
+            try {
+                const res = await fetch(`/api/advisor_list`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ advisorId: session.advisorId })}
+                );
+                if (!res.ok) {console.error("Failed to advisor"); return;}
+        
+                const data = await res.json();
+
+                setAdvisorName(data.first_name + ' ' + data.last_name);
+            } catch (error) {
+                console.error("Fetch error: ", error);
+            }
+        })();
+    }, [session.advisorId]);
 
   return (
     <div className="bg-[#e0f1f3] p-6 rounded-xl shadow-xl text-black relative w-full max-w-2xl mx-auto flex flex-col">
@@ -55,13 +82,13 @@ export default function SessionBigEvent({
       {/* Client */}
       <div className="text-sm mb-2">
         <span className="font-medium">Client: </span>
-        {session.clientId}
+        {session.clientName}
       </div>
 
       {/* Advisor */}
       <div className="text-sm mb-4">
         <span className="font-medium">Advisor: </span>
-        {session.advisorId}
+        {advisorName}
       </div>
 
       {/* Description */}

@@ -10,11 +10,12 @@ import ChatWindow from "../components/ChatWindow";
 
 export default function MyClientPage({currentUserId}) {
 
+    // Client Page Feature status
     const [query, setQuery] = useState("");
     const [openChat, setOpenChat] = useState(false);
     const [chatTo, setChatTo] = useState("");
 
-    // initialize from JSON
+    // client status
     const [clients, setClients] = useState([]);
 
     // fetch the clients for advisor by advisorId
