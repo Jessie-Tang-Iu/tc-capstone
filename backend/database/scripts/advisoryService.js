@@ -8,8 +8,8 @@ export async function getAllBookings() {
 
 // Get all bookings by advisoryId
 export async function getBookingsByAdvisorId(id) {
-  const result = await query(`SELECT * FROM advisory_bookings a 
-                              LEFT OUTER JOIN users u
+  const result = await query(`SELECT a.*, u.clerk_id, u.username, u.first_name, u.last_name, u.email, u.phone, u.role FROM advisory_bookings a 
+                              LEFT OUTER JOIN public.users u
                               ON a.client_id = u.clerk_id
                               WHERE advisor_id = $1`, 
     [id]
@@ -81,7 +81,7 @@ export async function updateAvailability(booking) {
 }
 
 export async function getAdvisorySessionsByAdvisorId(advisorId) {
-  const result = await query(`SELECT * FROM advisory_sessions a 
+  const result = await query(`SELECT a.*, u.clerk_id, u.username, u.first_name, u.last_name, u.email, u.phone, u.role FROM advisory_sessions a 
                                 JOIN users u
                                 ON a.client_id = u.clerk_id
                                 WHERE a.advisor_id = $1`, [
@@ -100,11 +100,11 @@ export async function changeClientStatus(sessionId, status) {
 }
 
 export async function getMyAdvisorySessions(clientId) {
-  const result = await query(`SELECT session_id, advisor_id, client_id, message, status, first_name, last_name, email, company_role
+  const result = await query(`SELECT a.session_id, a.advisor_id, a.client_id, a.message, a.status, u.first_name, u.last_name, u.email, ad.company_role, ad.company_name
                               FROM advisory_sessions a
-                              JOIN users u
+                              LEFT OUTER JOIN users u
                               ON a.advisor_id = u.clerk_id
-                              JOIN advisors ad
+                              LEFT OUTER JOIN advisors ad
                               ON ad.clerk_id = a.advisor_id
                               WHERE a.client_id = $1`, [
     clientId,

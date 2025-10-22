@@ -19,6 +19,8 @@ export default function AdvisorPage() {
   const userID = userContext?.user?.id;
   const router = useRouter();
 
+  console.log("User Id: ", userID);
+
   useEffect(() => {
     if (!userID) return;
 

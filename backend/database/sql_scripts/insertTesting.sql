@@ -16,6 +16,9 @@ INSERT INTO comments (post_id, user_id, author, content) VALUES
 (4, '22222222-2222-2222-2222-222222222222', 'Karl', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
 
 -- test data
+--members
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES
+('user_33TltDhWmKiEGfSs7DJk6b1HlI1', 'Jessie', 'Jessie', 'Tang', 'gmail.com', '123-456-7890', 'member');
 --advisors
 INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES 
 ('testAdvisor1', 'Mary', 'Mary', 'White', 'mary.w@gmail.com', '403-555-1234', 'advisor'),
@@ -252,3 +255,7 @@ VALUES
  'Calgary Innovation Centre',
  'A full-day intensive session on pitching, funding rounds, and investor engagement for early-stage startups.',
  'Hands-on workshops to prepare founders for funding success.');
+
+-- admin user
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES
+('user_34RDeo5WKU2K8s6AArG7XBAODkb', 'admin', 'admin', 'account', 'admin@gmail.com', '1234567890', 'admin');
