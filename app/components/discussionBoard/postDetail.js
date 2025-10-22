@@ -6,27 +6,43 @@ import { useUser } from "@clerk/nextjs";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-export default function PostDetail({ title, author_id, first_name, last_name, username, content, created_at }) {
-  const userContext = useUser();
-  const userID = userContext?.user?.id;
+export default function PostDetail({ id, title, author_id, first_name, last_name, username, content, created_at, onEdit }) {
+  const { user } = useUser();
+  const userID = user?.id;
 
-  const displayName = first_name && last_name
-    ? `${first_name} ${last_name}`
-    : username || "Unknown";
+  const displayName =
+    first_name && last_name
+      ? `${first_name} ${last_name}`
+      : username || "Unknown";
+
+  const formattedDate = new Date(created_at).toLocaleString();
 
   return (
     <div className="p-4 mb-10">
-      <div className="flex flex-row justify-between">
+      <div className="flex flex-row justify-between items-start">
         <h2 className="text-2xl font-bold text-black mb-2">{title}</h2>
+
         {author_id === userID && (
           <div className="flex justify-end">
-            <Button text="Edit Post" onClick={() => alert("Edit post feature coming soon!")} />
+            <Button
+              text="Edit Post"
+              onClick={() =>
+                onEdit &&
+                onEdit({
+                  id,
+                  title,
+                  content,
+                })
+              }
+            />
           </div>
         )}
       </div>
+
       <p className="text-sm text-gray-500 mb-4">
-        By {displayName} on {new Date(created_at).toLocaleString()}
+        By {displayName} on {formattedDate}
       </p>
+
       <div className="markdown-body mt-5 border-t border-gray-500 pt-4">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>
           {content}

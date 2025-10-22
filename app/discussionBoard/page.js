@@ -24,9 +24,11 @@ export default function DiscussionBoard() {
     const [query, setQuery] = useState("");
     const [showNewPostModal, setShowNewPostModal] = useState(false);
     const [showCommentModal, setShowCommentModal] = useState(false);
+    const [showEditPostModal, setShowEditPostModal] = useState(false);
 
     const [newPost, setNewPost] = useState({ author_id: userID, author_name: userName, title: "", content: "" });
     const [newComment, setNewComment] = useState({ author_id: userID, author_name: userName, content: "" });
+    const [editPost, setEditPost] = useState({ id: null, title: "", content: "" });
 
 
     // Loads all posts into the frontend on page load
@@ -117,7 +119,36 @@ export default function DiscussionBoard() {
             console.error("Error adding comment:", err);
         }
     };
+    
+    // Handle Edit Post, takes the new data and updates the post in the backend
+    const handleEditPost = async () => {
+        try {
+            const updatedPayload = {
+                post_id: editPost.id,
+                author_id: userID,
+                title: editPost.title.trim(),
+                content: editPost.content.trim(),
+            };
 
+            const res = await fetch("/api/posts", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedPayload),
+            });
+
+            if (!res.ok) throw new Error("Failed to update post");
+            const updatedPost = await res.json();
+
+            // Update UI
+            setPosts((prev) =>
+            prev.map((p) => (p.id === updatedPost.id ? updatedPost : p))
+            );
+            setSelectedPost(updatedPost);
+            setShowEditPostModal(false);
+        } catch (err) {
+            console.error("Error updating post:", err);
+        }
+    };
 
     // Filter posts based on search query
     const filteredPost = posts.filter(
@@ -177,7 +208,17 @@ export default function DiscussionBoard() {
                 <div className="w-3/4 overflow-y-auto pl-5">
                     {selectedPost && (
                         <div>
-                            <PostDetail {...selectedPost} />
+                            <PostDetail
+                                {...selectedPost}
+                                onEdit={(post) => {
+                                    setEditPost({
+                                    id: post.id,
+                                    title: post.title,
+                                    content: post.content,
+                                    });
+                                    setShowEditPostModal(true);
+                                }}
+                            />
                             <div className="p-4 space-y-2">
                                 <h3 className="text-lg font-bold text-black border-b border-gray-500 pb-4">
                                     Comments
@@ -318,6 +359,68 @@ export default function DiscussionBoard() {
                             </button>
                             <Button onClick={handleAddComment} text="Comment" />
                         </div>
+                    </div>
+                </div>
+            )}
+            
+            {/* Edit Post Modal */}
+            {showEditPostModal && (
+                <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-auto overflow-hidden text-black">
+                    {/* Header */}
+                    <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50">
+                        <h1 className="text-2xl font-bold text-[#E55B3C]">Edit Post</h1>
+                        <button onClick={() => setShowEditPostModal(false)} title="Close">
+                        <RxCross2 className="cursor-pointer text-gray-600 hover:text-black" size={22} />
+                        </button>
+                    </div>
+
+                    {/* Body */}
+                    <div className="p-6 space-y-5">
+                        <p className="text-sm text-gray-600">
+                        Editing as <span className="font-semibold">{userName}</span>
+                        </p>
+
+                        {/* Title */}
+                        <div>
+                        <label className="block font-medium mb-1">Title</label>
+                        <input
+                            type="text"
+                            className="border border-gray-300 focus:ring-2 focus:ring-[#E55B3C] focus:outline-none w-full px-3 py-2 rounded-lg"
+                            value={editPost.title}
+                            onChange={(e) => setEditPost({ ...editPost, title: e.target.value })}
+                        />
+                        </div>
+
+                        {/* Content */}
+                        <div>
+                        <label className="block font-medium mb-1">Content (Markdown Supported)</label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <textarea
+                            className="border border-gray-300 rounded-lg w-full p-3 min-h-[10em] focus:ring-2 focus:ring-[#E55B3C] focus:outline-none"
+                            value={editPost.content}
+                            onChange={(e) => setEditPost({ ...editPost, content: e.target.value })}
+                            />
+                            <div className="border border-gray-200 rounded-lg p-3 bg-gray-50 prose prose-sm max-w-none overflow-y-auto">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                {editPost.content || "_Nothing to preview yet..._"}
+                            </ReactMarkdown>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="flex justify-end gap-4 px-6 py-4 border-t border-gray-200 bg-gray-50">
+                        <button
+                        onClick={() => setShowEditPostModal(false)}
+                        type="button"
+                        className="font-semibold px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 transition duration-200 active:scale-95"
+                        >
+                        Cancel
+                        </button>
+                        <Button onClick={handleEditPost} text="Save Changes" />
+                    </div>
                     </div>
                 </div>
             )}
