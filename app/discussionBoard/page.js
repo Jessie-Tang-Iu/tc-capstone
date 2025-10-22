@@ -9,6 +9,8 @@ import SearchBar from "../components/ui/SearchBar";
 import Button from "../components/ui/Button";
 import { RxCross2 } from "react-icons/rx";
 import { useUser } from "@clerk/nextjs";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export default function DiscussionBoard() {
     const { user } = useUser();
@@ -201,55 +203,81 @@ export default function DiscussionBoard() {
             {/* New Post Modal */}
             {showNewPostModal && (
                 <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
-                    <div className="bg-white p-6 rounded-xl shadow-xl text-black relative w-full max-w-lg mx-auto">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-auto overflow-hidden text-black">
+                    {/* Header */}
+                    <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50">
+                        <h1 className="text-2xl font-bold text-[#E55B3C]">Create New Post</h1>
                         <button onClick={handleCloseWindow} title="Close">
-                            <RxCross2
-                                className="cursor-pointer text-gray-600 hover:text-black"
-                                size={20}
-                            />
+                        <RxCross2 className="cursor-pointer text-gray-600 hover:text-black" size={22} />
                         </button>
-                        <h1 className="text-2xl font-bold text-center text-[#E55B3C] mb-2">
-                            Create New Post
-                        </h1>
-                        <div className="flex flex-col px-20 my-3">
-                            <p className="text-sm text-gray-600 mb-3">
-                                Posting as <span className="font-semibold">{userName}</span>
-                            </p>
+                    </div>
 
-                            <label>Title:</label>
-                            <input
-                                type="text"
-                                className="border h-8 px-2 rounded"
-                                value={newPost.title}
-                                onChange={(e) =>
-                                    setNewPost({ ...newPost, title: e.target.value })
-                                }
-                            />
-                            <p className="text-red-500 mb-3"></p>
+                    {/* Body */}
+                    <div className="p-6 space-y-5">
+                        <p className="text-sm text-gray-600">
+                        Posting as <span className="font-semibold">{userName}</span>
+                        </p>
 
-                            <label>Content:</label>
-                            <textarea
-                                className="border px-2 rounded min-h-[4.5em]"
-                                value={newPost.content}
-                                onChange={(e) =>
-                                    setNewPost({ ...newPost, content: e.target.value })
-                                }
-                            />
-                            <p className="text-red-500 mb-3"></p>
+                        {/* Title */}
+                        <div>
+                        <label className="block font-medium mb-1">Title</label>
+                        <input
+                            type="text"
+                            className="border border-gray-300 focus:ring-2 focus:ring-[#E55B3C] focus:outline-none w-full px-3 py-2 rounded-lg"
+                            value={newPost.title}
+                            onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
+                            placeholder="Enter your post title"
+                        />
                         </div>
-                        <div className="flex justify-center">
-                            <button
-                                onClick={() => setShowNewPostModal(false)}
-                                type="button"
-                                className="font-semibold px-3 py-2 rounded-md mr-8 bg-[#D9D9D9] transition duration-200 ease-in-out cursor-pointer focus:outline-none active:scale-95"
+
+                        {/* Content */}
+                        <div>
+                        <div className="flex justify-between items-center mb-1">
+                            <label className="block font-medium">Content (Markdown Supported)</label>
+                            <a
+                            href="https://www.markdownguide.org/basic-syntax/"
+                            target="_blank"
+                            className="text-xs text-blue-600 hover:underline"
+                            rel="noopener noreferrer"
                             >
-                                Cancel
-                            </button>
-                            <Button onClick={handleAddPost} text="Post" />
+                            Markdown help ↗
+                            </a>
                         </div>
+
+                        {/* Markdown Textarea + Preview */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <textarea
+                            className="border border-gray-300 rounded-lg w-full p-3 min-h-[10em] focus:ring-2 focus:ring-[#E55B3C] focus:outline-none"
+                            placeholder="Write your post here using Markdown..."
+                            value={newPost.content}
+                            onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
+                            />
+
+                            {/* Live Markdown Preview */}
+                            <div className="border border-gray-200 rounded-lg p-3 bg-gray-50 prose prose-sm max-w-none overflow-y-auto">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                {newPost.content || "_Nothing to preview yet..._"}
+                            </ReactMarkdown>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    {/* Footer Buttons */}
+                    <div className="flex justify-end gap-4 px-6 py-4 border-t border-gray-200 bg-gray-50">
+                        <button
+                        onClick={() => setShowNewPostModal(false)}
+                        type="button"
+                        className="font-semibold px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 transition duration-200 active:scale-95"
+                        >
+                        Cancel
+                        </button>
+                        <Button onClick={handleAddPost} text="Post" />
+                    </div>
                     </div>
                 </div>
             )}
+
 
             {/* Add Comment Modal */}
             {showCommentModal && (
