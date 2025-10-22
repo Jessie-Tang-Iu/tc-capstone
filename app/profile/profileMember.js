@@ -61,7 +61,7 @@ export default function ProfileSection({ formData, setFormData, resumeData, setR
       return;
     }
     let updatedExp = resumeData.experience;
-    updatedExp[idx] = `${newExp.title} | ${newExp.company} | ${newExp.type} | ${newExp.startMonth} | ${newExp.startYear} | ${newExp.endMonth} | ${newExp.endYear}`;
+    updatedExp[idx] = `${newExp.title} | ${newExp.company} | ${newExp.type} | ${newExp.startMonth} | ${newExp.startYear} | ${newExp.endMonth} | ${newExp.endYear} | ${newExp.description}`;
     console.log(updatedExp);
     handleFormChange("experience", updatedExp);
     setNewExp({title: "", company: "", type: "", startMonth: "", startYear: "", endMonth: "", endYear: "", description: ""})
