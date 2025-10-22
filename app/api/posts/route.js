@@ -16,9 +16,11 @@ export async function GET() {
 export async function POST(req) {
   try {
     const body = await req.json();
+    console.log("Received POST body:", body);
     const newPost = await createPostController(body);
     return new Response(JSON.stringify(newPost), { status: 201 });
   } catch (err) {
+    console.error("POST /api/posts error:", err.message);
     return new Response(JSON.stringify({ error: err.message }), { status: 400 });
   }
 }

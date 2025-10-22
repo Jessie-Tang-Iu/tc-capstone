@@ -2,6 +2,7 @@
 
 import NavBar from "../components/MemberNavBar";
 import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import PostItem from "../components/discussionBoard/postItem";
 import PostDetail from "../components/discussionBoard/postDetail";
 import CommentItem from "../components/discussionBoard/commentItem";
@@ -9,8 +10,9 @@ import SearchBar from "../components/ui/SearchBar";
 import Button from "../components/ui/Button";
 import { RxCross2 } from "react-icons/rx";
 import { useUser } from "@clerk/nextjs";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+
+import "react-quill-new/dist/quill.snow.css";
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 export default function DiscussionBoard() {
     const { user } = useUser();
@@ -68,6 +70,8 @@ export default function DiscussionBoard() {
                 title: newPost.title.trim(),
                 content: newPost.content.trim(),
             };
+
+            console.log("Creating post with payload:", postPayload);
 
             // Send to backend
             const res = await fetch("/api/posts", {
@@ -165,6 +169,17 @@ export default function DiscussionBoard() {
         setShowCommentModal(false);
     };
 
+    // Configures what features are available in the Quill editor toolbar
+    const quillModules = {
+        toolbar: [
+        [{ header: [1, 2, 3, false] }],
+        ["bold", "italic", "underline", "strike"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["link"],
+        ["clean"],
+        ],
+    };
+
     return (
         <main className="bg-gray-100 min-h-screen pb-10">
             <NavBar />
@@ -246,77 +261,51 @@ export default function DiscussionBoard() {
             {/* New Post Modal */}
             {showNewPostModal && (
                 <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-auto overflow-hidden text-black">
-                    {/* Header */}
-                    <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-auto text-black">
+                        <div className="flex justify-between items-center px-6 py-4 border-b bg-gray-50">
                         <h1 className="text-2xl font-bold text-[#E55B3C]">Create New Post</h1>
-                        <button onClick={handleCloseWindow} title="Close">
-                        <RxCross2 className="cursor-pointer text-gray-600 hover:text-black" size={22} />
-                        </button>
-                    </div>
-
-                    {/* Body */}
-                    <div className="p-6 space-y-5">
-                        <p className="text-sm text-gray-600">
-                        Posting as <span className="font-semibold">{userName}</span>
-                        </p>
-
-                        {/* Title */}
-                        <div>
-                        <label className="block font-medium mb-1">Title</label>
-                        <input
-                            type="text"
-                            className="border border-gray-300 focus:ring-2 focus:ring-[#E55B3C] focus:outline-none w-full px-3 py-2 rounded-lg"
-                            value={newPost.title}
-                            onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
-                            placeholder="Enter your post title"
+                        <RxCross2
+                            onClick={handleCloseWindow}
+                            className="cursor-pointer text-gray-600 hover:text-black"
+                            size={22}
                         />
                         </div>
 
-                        {/* Content */}
-                        <div>
-                        <div className="flex justify-between items-center mb-1">
-                            <label className="block font-medium">Content (Markdown Supported)</label>
-                            <a
-                            href="https://www.markdownguide.org/basic-syntax/"
-                            target="_blank"
-                            className="text-xs text-blue-600 hover:underline"
-                            rel="noopener noreferrer"
-                            >
-                            Markdown help ↗
-                            </a>
-                        </div>
+                        <div className="p-6 space-y-5">
+                        <p className="text-sm text-gray-600">
+                            Posting as <span className="font-semibold">{userName}</span>
+                        </p>
 
-                        {/* Markdown Textarea + Preview */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <textarea
-                            className="border border-gray-300 rounded-lg w-full p-3 min-h-[10em] focus:ring-2 focus:ring-[#E55B3C] focus:outline-none"
-                            placeholder="Write your post here using Markdown..."
+                        {/* Title */}
+                        <input
+                            type="text"
+                            className="border border-gray-300 focus:ring-2 focus:ring-[#E55B3C] w-full px-3 py-2 rounded-lg"
+                            placeholder="Enter post title"
+                            value={newPost.title}
+                            onChange={(e) =>
+                            setNewPost({ ...newPost, title: e.target.value })
+                            }
+                        />
+
+                        {/* Quill Editor */}
+                        <ReactQuill
+                            theme="snow"
+                            modules={quillModules}
                             value={newPost.content}
-                            onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
-                            />
-
-                            {/* Live Markdown Preview */}
-                            <div className="border border-gray-200 rounded-lg p-3 bg-gray-50 prose prose-sm max-w-none overflow-y-auto">
-                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                {newPost.content || "_Nothing to preview yet..._"}
-                            </ReactMarkdown>
-                            </div>
+                            onChange={(val) => setNewPost({ ...newPost, content: val })}
+                            className="min-h-[10em] rounded-lg"
+                        />
                         </div>
-                        </div>
-                    </div>
 
-                    {/* Footer Buttons */}
-                    <div className="flex justify-end gap-4 px-6 py-4 border-t border-gray-200 bg-gray-50">
+                        <div className="flex justify-end gap-4 px-6 py-4 border-t bg-gray-50">
                         <button
-                        onClick={() => setShowNewPostModal(false)}
-                        type="button"
-                        className="font-semibold px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 transition duration-200 active:scale-95"
+                            onClick={handleCloseWindow}
+                            className="px-4 py-2 bg-gray-200 rounded-md font-semibold hover:bg-gray-300"
                         >
-                        Cancel
+                            Cancel
                         </button>
                         <Button onClick={handleAddPost} text="Post" />
-                    </div>
+                        </div>
                     </div>
                 </div>
             )}
@@ -368,61 +357,48 @@ export default function DiscussionBoard() {
             {/* Edit Post Modal */}
             {showEditPostModal && (
                 <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-auto overflow-hidden text-black">
-                    {/* Header */}
-                    <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-auto text-black">
+                        <div className="flex justify-between items-center px-6 py-4 border-b bg-gray-50">
                         <h1 className="text-2xl font-bold text-[#E55B3C]">Edit Post</h1>
-                        <button onClick={() => setShowEditPostModal(false)} title="Close">
-                        <RxCross2 className="cursor-pointer text-gray-600 hover:text-black" size={22} />
-                        </button>
-                    </div>
-
-                    {/* Body */}
-                    <div className="p-6 space-y-5">
-                        <p className="text-sm text-gray-600">
-                        Editing as <span className="font-semibold">{userName}</span>
-                        </p>
-
-                        {/* Title */}
-                        <div>
-                        <label className="block font-medium mb-1">Title</label>
-                        <input
-                            type="text"
-                            className="border border-gray-300 focus:ring-2 focus:ring-[#E55B3C] focus:outline-none w-full px-3 py-2 rounded-lg"
-                            value={editPost.title}
-                            onChange={(e) => setEditPost({ ...editPost, title: e.target.value })}
+                        <RxCross2
+                            onClick={handleCloseWindow}
+                            className="cursor-pointer text-gray-600 hover:text-black"
+                            size={22}
                         />
                         </div>
 
-                        {/* Content */}
-                        <div>
-                        <label className="block font-medium mb-1">Content (Markdown Supported)</label>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <textarea
-                            className="border border-gray-300 rounded-lg w-full p-3 min-h-[10em] focus:ring-2 focus:ring-[#E55B3C] focus:outline-none"
-                            value={editPost.content}
-                            onChange={(e) => setEditPost({ ...editPost, content: e.target.value })}
-                            />
-                            <div className="border border-gray-200 rounded-lg p-3 bg-gray-50 prose prose-sm max-w-none overflow-y-auto">
-                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                {editPost.content || "_Nothing to preview yet..._"}
-                            </ReactMarkdown>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
+                        <div className="p-6 space-y-5">
+                        <p className="text-sm text-gray-600">
+                            Editing as <span className="font-semibold">{userName}</span>
+                        </p>
 
-                    {/* Footer */}
-                    <div className="flex justify-end gap-4 px-6 py-4 border-t border-gray-200 bg-gray-50">
+                        <input
+                            type="text"
+                            className="border border-gray-300 focus:ring-2 focus:ring-[#E55B3C] w-full px-3 py-2 rounded-lg"
+                            value={editPost.title}
+                            onChange={(e) =>
+                            setEditPost({ ...editPost, title: e.target.value })
+                            }
+                        />
+
+                        <ReactQuill
+                            theme="snow"
+                            modules={quillModules}
+                            value={editPost.content}
+                            onChange={(val) => setEditPost({ ...editPost, content: val })}
+                            className="min-h-[10em] rounded-lg"
+                        />
+                        </div>
+
+                        <div className="flex justify-end gap-4 px-6 py-4 border-t bg-gray-50">
                         <button
-                        onClick={() => setShowEditPostModal(false)}
-                        type="button"
-                        className="font-semibold px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 transition duration-200 active:scale-95"
+                            onClick={handleCloseWindow}
+                            className="px-4 py-2 bg-gray-200 rounded-md font-semibold hover:bg-gray-300"
                         >
-                        Cancel
+                            Cancel
                         </button>
                         <Button onClick={handleEditPost} text="Save Changes" />
-                    </div>
+                        </div>
                     </div>
                 </div>
             )}

@@ -10,6 +10,8 @@ export default function PostDetail({ id, title, author_id, first_name, last_name
   const { user } = useUser();
   const userID = user?.id;
 
+  const dummyTags = "Tag1,Tag2,Tag3"; // Placeholder for tags
+
   const displayName =
     first_name && last_name
       ? `${first_name} ${last_name}`
@@ -43,11 +45,15 @@ export default function PostDetail({ id, title, author_id, first_name, last_name
         By {displayName} on {formattedDate}
       </p>
 
-      <div className="markdown-body mt-5 border-t border-gray-500 pt-4">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-          {content}
-        </ReactMarkdown>
+      <div>
+        Tags: 
       </div>
+
+      {/* Allows the content to render the HTML output from quill, TO-DO: Sanitize input to prevent XSS */}
+      <div
+        className="post-content mt-5 border-t border-gray-500 pt-4 text-black space-y-4 leading-relaxed"
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
     </div>
   );
 }
