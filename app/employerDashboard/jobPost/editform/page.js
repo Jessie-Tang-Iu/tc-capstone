@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 
@@ -8,9 +8,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "@/app/components/NavBarBeforeSignIn";
 import EmployerSidebar from "@/app/components/employerDashboard/EmployerSideBar";
 import PopupMessage from "@/app/components/ui/PopupMessage";
-import jobs from "@/app/data/jobs.json";
 
-/* ========== UI Elements ========== */
+/* ========== UI ========== */
 const FieldLabel = ({ children }) => (
   <div className="text-xs font-medium text-gray-700 mb-1">{children}</div>
 );
@@ -30,7 +29,6 @@ const Select = ({ children, ...props }) => (
     {children}
   </select>
 );
-
 const HeaderButton = ({ children, kind = "solid", onClick }) => {
   const base =
     "px-6 py-2 rounded-md text-sm font-semibold transition cursor-pointer";
@@ -46,7 +44,7 @@ const HeaderButton = ({ children, kind = "solid", onClick }) => {
   );
 };
 
-/* ========== Rich Text Editor ========== */
+/* ========== ReactQuill ========== */
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 const toolbarOptions = [
   [{ font: [] }, { size: [] }],
@@ -64,73 +62,174 @@ export default function JobPostEditForm() {
   const isEdit = !!id;
   const jobId = isEdit ? Number(id) : null;
 
-  const existingData = useMemo(() => {
-    if (!isEdit) return {};
-    return jobs.find((j) => j.id === jobId) ?? {};
-  }, [isEdit, jobId]);
-
-  /* ========== Form State ========== */
-  const [title, setTitle] = useState(existingData.title || "");
-  const [location, setLocation] = useState(
-    existingData.location || "Calgary, Alberta"
-  );
-  const [type, setType] = useState(existingData.type || "On-site");
-  const [salary, setSalary] = useState(existingData.salary || "");
-  const [link, setLink] = useState(existingData.link || "");
-  const [aboutCompany, setAboutCompany] = useState(
-    existingData.aboutCompany || ""
-  );
-  const [aboutJob, setAboutJob] = useState(existingData.aboutJob || "");
-  const [bringToTeam, setBringToTeam] = useState(
-    existingData.bringToTeam || ""
-  );
-  const [skillsNeed, setSkillsNeed] = useState(existingData.skillsNeed || "");
-  const [moreDetails, setMoreDetails] = useState(
-    existingData.moreDetails || ""
-  );
-
+  const [loading, setLoading] = useState(true);
   const [popup, setPopup] = useState(null);
   const [errors, setErrors] = useState({});
+  const [jobData, setJobData] = useState({});
 
-  /* ========== Handlers ========== */
-  const handleSave = () => {
+  // dropdown options
+  const [industries, setIndustries] = useState([]);
+  const [experiences, setExperiences] = useState([]);
+  const [types, setTypes] = useState([]);
+  const [workplaces, setWorkplaces] = useState([]);
+
+  // fetch dropdowns
+  useEffect(() => {
+    const loadDropdowns = async () => {
+      try {
+        const [ind, exp, typ, work] = await Promise.all([
+          fetch("/api/job/industries").then((r) => r.json()),
+          fetch("/api/job/experience").then((r) => r.json()),
+          fetch("/api/job/types").then((r) => r.json()),
+          fetch("/api/job/workplaces").then((r) => r.json()),
+        ]);
+        // console.log("Industries:", ind);
+        setIndustries(ind);
+        setExperiences(exp);
+        setTypes(typ);
+        setWorkplaces(work);
+      } catch (err) {
+        console.error("Dropdown load failed:", err);
+      }
+    };
+    loadDropdowns();
+  }, []);
+
+  /* ======= Fetch existing job ======= */
+  useEffect(() => {
+    if (!isEdit) {
+      setLoading(false);
+      return;
+    }
+    const fetchJob = async () => {
+      try {
+        const res = await fetch(`/api/job/${jobId}`);
+        if (!res.ok) throw new Error("Failed to load job details");
+        const data = await res.json();
+        setJobData(data);
+      } catch (err) {
+        console.error("Error fetching job:", err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchJob();
+  }, [isEdit, jobId]);
+
+  /* ======= Form fields ======= */
+  const [title, setTitle] = useState("");
+  const [company, setCompany] = useState("");
+  const [location, setLocation] = useState("Calgary, Alberta");
+  const [industryId, setIndustryId] = useState("");
+  const [workplaceId, setWorkplaceId] = useState("");
+  const [typeId, setTypeId] = useState("");
+  const [experienceId, setExperienceId] = useState("");
+  const [salary, setSalary] = useState("");
+  const [link, setLink] = useState("");
+  const [aboutCompany, setAboutCompany] = useState("");
+  const [aboutJob, setAboutJob] = useState("");
+  const [bringToTeam, setBringToTeam] = useState("");
+  const [skillsNeed, setSkillsNeed] = useState("");
+  const [moreDetails, setMoreDetails] = useState("");
+  const [benefits, setBenefits] = useState("");
+
+  /* ======= Prefill ======= */
+  useEffect(() => {
+    if (isEdit && jobData?.title) {
+      setTitle(jobData.title || "");
+      setCompany(jobData.company || "");
+      setLocation(jobData.location || "Calgary, Alberta");
+      setIndustryId(jobData.industry_id || "");
+      setWorkplaceId(jobData.workplace_id || "");
+      setTypeId(jobData.type_id || "");
+      setExperienceId(jobData.experience_id || "");
+      setSalary(jobData.salary_per_hour || "");
+      setLink(jobData.link || "");
+      setAboutCompany(jobData.company_info || "");
+      setAboutJob(jobData.description || "");
+      setBringToTeam(jobData.responsibilities || "");
+      setSkillsNeed(jobData.requirements || "");
+      setMoreDetails(jobData.details || "");
+      setBenefits(jobData.benefits || "");
+    }
+  }, [jobData, isEdit]);
+
+  /* ======= Save ======= */
+  const handleSave = async () => {
     const newErrors = {};
+    const stripHtml = (html) => html.replace(/<[^>]*>/g, "").trim();
+
     if (!title.trim()) newErrors.title = "Job title is required.";
-    if (!String(salary).trim())
-      newErrors.salary = "Please enter a salary amount.";
-    if (link && !/^https?:\/\//i.test(link))
-      newErrors.link = "Invalid URL format.";
+    if (!company.trim()) newErrors.company = "Company name is required.";
+    if (!location.trim()) newErrors.location = "Location is required.";
+    if (!industryId) newErrors.industry = "Industry is required.";
+    if (!workplaceId) newErrors.workplace = "Workplace is required.";
+    if (!typeId) newErrors.type = "Job type is required.";
+    if (!experienceId) newErrors.experience = "Experience level is required.";
+    if (!String(salary).trim()) newErrors.salary = "Salary is required.";
 
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) return;
+    if (!stripHtml(aboutCompany))
+      newErrors.aboutCompany = "Company info is required.";
+    if (!stripHtml(aboutJob))
+      newErrors.aboutJob = "Job description is required.";
 
-    const jobData = {
-      id: isEdit ? existingData.id : Math.floor(Math.random() * 100000),
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    const payload = {
       title,
+      company,
       location,
-      type,
-      salary,
+      postedAt: new Date().toISOString(),
+      industryId: Number(industryId),
+      workplaceId: Number(workplaceId),
+      typeId: Number(typeId),
+      experienceId: Number(experienceId),
+      salaryPerHour: Number(salary),
       link,
-      aboutCompany,
-      aboutJob,
-      bringToTeam,
-      skillsNeed,
-      moreDetails,
+      description: aboutJob,
+      responsibilities: bringToTeam,
+      requirements: skillsNeed,
+      details: moreDetails,
+      benefits,
     };
 
-    console.log(isEdit ? "Updated job:" : "Created job:", jobData);
+    try {
+      const res = await fetch(isEdit ? `/api/job/${jobId}` : "/api/job", {
+        method: isEdit ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    setPopup({
-      type: "success",
-      title: isEdit ? "Job Post Updated" : "Job Post Created",
-      description: isEdit
-        ? "Your job post has been successfully updated."
-        : "Your new job post has been added successfully.",
-      buttonText: "OK",
-    });
+      if (!res.ok) throw new Error(`Failed to save job post (${res.status})`);
+      setPopup({
+        type: "success",
+        title: isEdit ? "Updated" : "Created",
+        description: isEdit
+          ? "Job post successfully updated."
+          : "New job post added successfully.",
+        buttonText: "OK",
+      });
+    } catch (err) {
+      console.error("Error saving job:", err);
+      setPopup({
+        type: "error",
+        title: "Error",
+        description: err.message,
+        buttonText: "OK",
+      });
+    }
   };
 
-  /* ========== Render ========== */
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-600">
+        Loading...
+      </div>
+    );
+
   return (
     <div className="min-h-screen bg-white text-black">
       <Navbar />
@@ -142,11 +241,11 @@ export default function JobPostEditForm() {
         <div className="flex gap-6">
           <EmployerSidebar />
 
-          <section className="flex-1 rounded-xl bg-white shadow">
+          <section className="flex-1 rounded-xl bg-white shadow px-4 py-4">
             {/* Header */}
-            <div className="flex items-center justify-between border-b px-4 py-3">
+            <div className="flex items-center justify-between border-b pb-3 mb-6">
               <div className="text-[15px] font-semibold">
-                {isEdit ? existingData.title : "New Job Post"}
+                {title || "New Job"}
               </div>
               <div className="flex items-center gap-3">
                 <HeaderButton kind="ghost" onClick={() => router.back()}>
@@ -156,140 +255,194 @@ export default function JobPostEditForm() {
               </div>
             </div>
 
-            {/* Form Body */}
-            <div className="space-y-6 px-4 py-4">
+            {/* Basic Info */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <FieldLabel>Job Title</FieldLabel>
                 <Input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g. Software Developer"
                 />
                 {errors.title && (
-                  <p className="text-red-500 text-xs mt-1">{errors.title}</p>
+                  <p className="text-red-500 text-xs">{errors.title}</p>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="flex flex-col gap-3">
-                  <FieldLabel>Location</FieldLabel>
-                  <Select
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                  >
-                    {[
-                      "Calgary, Alberta",
-                      "Edmonton, Alberta",
-                      "Vancouver, BC",
-                      "Toronto, ON",
-                    ].map((opt) => (
-                      <option key={opt}>{opt}</option>
-                    ))}
-                  </Select>
-
-                  <FieldLabel>Type</FieldLabel>
-                  <Select
-                    value={type}
-                    onChange={(e) => setType(e.target.value)}
-                  >
-                    {["Remote", "On-site", "Hybrid", "Contract"].map((opt) => (
-                      <option key={opt}>{opt}</option>
-                    ))}
-                  </Select>
-
-                  <FieldLabel>Salary</FieldLabel>
-                  <div className="flex items-center gap-2 whitespace-nowrap">
-                    <Input
-                      value={salary}
-                      onChange={(e) => setSalary(e.target.value)}
-                      placeholder="e.g. 35.00"
-                      inputMode="decimal"
-                    />
-                    <span className="text-sm text-gray-600">/ Hourly</span>
-                  </div>
-                  {errors.salary && (
-                    <p className="text-red-500 text-xs mt-1">{errors.salary}</p>
-                  )}
-                </div>
-
-                <div className="flex flex-col gap-3">
-                  <FieldLabel>External Link</FieldLabel>
-                  <Input
-                    value={link}
-                    onChange={(e) => setLink(e.target.value)}
-                    placeholder="https://..."
-                  />
-                  {errors.link && (
-                    <p className="text-red-500 text-xs mt-1">{errors.link}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Rich text sections */}
               <div>
-                <FieldLabel>About the Company</FieldLabel>
-                <ReactQuill
-                  theme="snow"
-                  value={aboutCompany}
-                  onChange={setAboutCompany}
-                  placeholder="Describe your company background"
-                  modules={{ toolbar: toolbarOptions }}
-                  className="bg-white text-black min-h-[220px] rounded-md mb-15"
-                  style={{ height: "220px" }}
+                <FieldLabel>Company</FieldLabel>
+                <Input
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
                 />
+                {errors.company && (
+                  <p className="text-red-500 text-xs">{errors.company}</p>
+                )}
               </div>
 
               <div>
-                <FieldLabel>About the Job</FieldLabel>
-                <ReactQuill
-                  theme="snow"
-                  value={aboutJob}
-                  onChange={setAboutJob}
-                  placeholder="Explain the job responsibilities and goals"
-                  modules={{ toolbar: toolbarOptions }}
-                  className="bg-white text-black min-h-[220px] rounded-md mb-15"
-                  style={{ height: "220px" }}
+                <FieldLabel>Location</FieldLabel>
+                <Input
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
                 />
+                {errors.location && (
+                  <p className="text-red-500 text-xs">{errors.location}</p>
+                )}
               </div>
 
               <div>
-                <FieldLabel>What You Bring to the Team</FieldLabel>
-                <ReactQuill
-                  theme="snow"
-                  value={bringToTeam}
-                  onChange={setBringToTeam}
-                  placeholder="List the qualities or mindset you expect"
-                  modules={{ toolbar: toolbarOptions }}
-                  className="bg-white text-black min-h-[220px] rounded-md mb-15"
-                  style={{ height: "220px" }}
+                <FieldLabel>Salary (per hour)</FieldLabel>
+                <Input
+                  value={salary}
+                  onChange={(e) => setSalary(e.target.value)}
+                  placeholder="e.g. 30.00"
                 />
+                {errors.salary && (
+                  <p className="text-red-500 text-xs">{errors.salary}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Dropdowns */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div>
+                <FieldLabel>Industry</FieldLabel>
+                <Select
+                  value={industryId}
+                  onChange={(e) => setIndustryId(e.target.value)}
+                >
+                  <option value="">Select Industry</option>
+                  {industries.map((opt) => (
+                    <option key={opt.id} value={opt.id}>
+                      {opt.name}
+                    </option>
+                  ))}
+                </Select>
+                {errors.industry && (
+                  <p className="text-red-500 text-xs">{errors.industry}</p>
+                )}
               </div>
 
               <div>
-                <FieldLabel>Required Skills</FieldLabel>
-                <ReactQuill
-                  theme="snow"
-                  value={skillsNeed}
-                  onChange={setSkillsNeed}
-                  placeholder="Outline the technical and soft skills needed"
-                  modules={{ toolbar: toolbarOptions }}
-                  className="bg-white text-black min-h-[220px] rounded-md mb-15"
-                  style={{ height: "220px" }}
-                />
+                <FieldLabel>Workplace</FieldLabel>
+                <Select
+                  value={workplaceId}
+                  onChange={(e) => setWorkplaceId(e.target.value)}
+                >
+                  <option value="">Select Workplace</option>
+                  {workplaces.map((opt) => (
+                    <option key={opt.id} value={opt.id}>
+                      {opt.name}
+                    </option>
+                  ))}
+                </Select>
+                {errors.workplace && (
+                  <p className="text-red-500 text-xs">{errors.workplace}</p>
+                )}
               </div>
 
               <div>
-                <FieldLabel>More Details</FieldLabel>
-                <ReactQuill
-                  theme="snow"
-                  value={moreDetails}
-                  onChange={setMoreDetails}
-                  placeholder="Any additional notes or benefits"
-                  modules={{ toolbar: toolbarOptions }}
-                  className="bg-white text-black min-h-[220px] rounded-md mb-15"
-                  style={{ height: "220px" }}
-                />
+                <FieldLabel>Job Type</FieldLabel>
+                <Select
+                  value={typeId}
+                  onChange={(e) => setTypeId(e.target.value)}
+                >
+                  <option value="">Select Type</option>
+                  {types.map((opt) => (
+                    <option key={opt.id} value={opt.id}>
+                      {opt.name}
+                    </option>
+                  ))}
+                </Select>
+                {errors.type && (
+                  <p className="text-red-500 text-xs">{errors.type}</p>
+                )}
               </div>
+
+              <div>
+                <FieldLabel>Experience</FieldLabel>
+                <Select
+                  value={experienceId}
+                  onChange={(e) => setExperienceId(e.target.value)}
+                >
+                  <option value="">Select Experience</option>
+                  {experiences.map((opt) => (
+                    <option key={opt.id} value={opt.id}>
+                      {opt.name}
+                    </option>
+                  ))}
+                </Select>
+                {errors.experience && (
+                  <p className="text-red-500 text-xs">{errors.experience}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Rich Text Fields */}
+            <div className="mt-8">
+              <FieldLabel>About the Company</FieldLabel>
+              <ReactQuill
+                theme="snow"
+                value={aboutCompany}
+                onChange={setAboutCompany}
+                modules={{ toolbar: toolbarOptions }}
+              />
+              {errors.aboutCompany && (
+                <p className="text-red-500 text-xs">{errors.aboutCompany}</p>
+              )}
+            </div>
+
+            <div className="mt-8">
+              <FieldLabel>About the Job</FieldLabel>
+              <ReactQuill
+                theme="snow"
+                value={aboutJob}
+                onChange={setAboutJob}
+                modules={{ toolbar: toolbarOptions }}
+              />
+              {errors.aboutJob && (
+                <p className="text-red-500 text-xs">{errors.aboutJob}</p>
+              )}
+            </div>
+
+            <div className="mt-8">
+              <FieldLabel>Responsibilities</FieldLabel>
+              <ReactQuill
+                theme="snow"
+                value={bringToTeam}
+                onChange={setBringToTeam}
+                modules={{ toolbar: toolbarOptions }}
+              />
+            </div>
+
+            <div className="mt-8">
+              <FieldLabel>Requirements</FieldLabel>
+              <ReactQuill
+                theme="snow"
+                value={skillsNeed}
+                onChange={setSkillsNeed}
+                modules={{ toolbar: toolbarOptions }}
+              />
+            </div>
+
+            <div className="mt-8">
+              <FieldLabel>Details</FieldLabel>
+              <ReactQuill
+                theme="snow"
+                value={moreDetails}
+                onChange={setMoreDetails}
+                modules={{ toolbar: toolbarOptions }}
+              />
+            </div>
+
+            <div className="mt-8 mb-12">
+              <FieldLabel>Benefits</FieldLabel>
+              <ReactQuill
+                theme="snow"
+                value={benefits}
+                onChange={setBenefits}
+                modules={{ toolbar: toolbarOptions }}
+              />
             </div>
           </section>
         </div>

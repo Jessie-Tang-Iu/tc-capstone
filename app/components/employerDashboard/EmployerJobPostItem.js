@@ -44,11 +44,13 @@ export default function EmployerJobPostItem({
           {statusText} | Posted {weeksAgo} week{weeksAgo !== 1 ? "s" : ""} ago
         </div>
 
-        {salary_per_hour && (
-          <div className="mt-1 text-sm font-semibold text-[#EE7D5E]">
-            ${salary_per_hour.toFixed(2)} / hour
-          </div>
-        )}
+        {salary_per_hour != null &&
+          salary_per_hour !== "" &&
+          !isNaN(salary_per_hour) && (
+            <div className="mt-1 text-sm font-semibold text-[#EE7D5E]">
+              ${Number(salary_per_hour).toFixed(2)} / hour
+            </div>
+          )}
       </div>
 
       {/* Manage Button */}
