@@ -39,20 +39,22 @@ export async function POST(req) {
 
 // DELETE /api/event_user
 // Cancel a registration — expects { eventId, clerkId }
+
 export async function DELETE(req) {
   try {
-    const body = await req.json();
-    const { eventId, clerkId } = body;
+    const { eventId, clerkId } = await req.json();
 
     if (!eventId || !clerkId) {
-      throw new Error("eventId and clerkId required");
+      return NextResponse.json(
+        { error: "Event ID and Clerk ID required" },
+        { status: 400 }
+      );
     }
 
     const result = await cancelEventUserController(eventId, clerkId);
     return NextResponse.json(result, { status: 200 });
   } catch (err) {
     console.error("DELETE /api/event_user failed:", err);
-    const status = err.message.includes("required") ? 400 : 500;
-    return NextResponse.json({ error: err.message }, { status });
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

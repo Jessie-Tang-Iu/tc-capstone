@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import EventCard from "../components/event/eventCard";
 import Button from "../components/ui/Button";
 import { RxCross2 } from "react-icons/rx";
+import EventFormPanel from "../components/adminDashboard/EventFormPanel";
 
 /* ========== Helpers ========== */
 // Functions for formatting and time-related logic are grouped here for clarity.
@@ -92,23 +93,23 @@ export default function EventsPanel() {
     const payload = {
       ...form,
       date: cleanDate,
-      start_time:
-        form.startTime && form.startTime.trim() !== ""
-          ? form.startTime
-          : editingEvent?.start_time || null,
-      end_time:
-        form.endTime && form.endTime.trim() !== ""
-          ? form.endTime
-          : editingEvent?.end_time || null,
+      start_time: form.startTime?.trim() ? form.startTime : null,
+      end_time: form.endTime?.trim() ? form.endTime : null,
       price: Number.isFinite(+form.price) ? +form.price : 0,
     };
 
     const url = eventId ? `/api/events/${eventId}` : "/api/events";
     const method = eventId ? "PUT" : "POST";
 
+    Object.keys(payload).forEach((k) => {
+      if (payload[k] === "" || payload[k] === undefined) {
+        payload[k] = null;
+      }
+    });
+
     const res = await fetch(url, {
       method,
-      headers: { "Content-Type": "application/json" }, //application/json is a MIME type (Multipurpose Internet Mail Extensions type). It tells the server what format of data is being sent in the HTTP request body.
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
 
@@ -290,26 +291,40 @@ export default function EventsPanel() {
   return (
     <main>
       <div className="flex items-center justify-between gap-3">
-        <Button onClick={openAdd} text="Add Event" />
+        {!isOpen && <Button onClick={openAdd} text="Add Event" />}
 
-        <div className="flex items-center gap-2">
-          <label htmlFor="sort" className="text-sm font-medium text-gray-700">
-            Sort:
-          </label>
-          <select
-            id="sort"
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-            className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C] focus:border-[#E55B3C] transition"
-          >
-            <option value="newest">Newest first</option>
-            <option value="oldest">Oldest first</option>
-          </select>
-        </div>
+        {!isOpen && (
+          <div className="flex items-center gap-2">
+            <label htmlFor="sort" className="text-sm font-medium text-gray-700">
+              Sort:
+            </label>
+            <select
+              id="sort"
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C] focus:border-[#E55B3C] transition"
+            >
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+            </select>
+          </div>
+        )}
       </div>
 
+      {/* Conditional rendering */}
       <div className="mt-3">
-        {events.length > 0 ? (
+        {isOpen ? (
+          <EventFormPanel
+            eventId={eventId}
+            form={form}
+            errors={errors}
+            isReadOnly={isReadOnly}
+            onChange={handleChange}
+            onSubmit={handleSubmit}
+            onDelete={handleDelete}
+            onClose={closeModal}
+          />
+        ) : events.length > 0 ? (
           <div className="space-y-4">
             {sortedEvents.map((ev) => (
               <div
@@ -317,7 +332,12 @@ export default function EventsPanel() {
                 className="cursor-pointer"
                 onClick={() => openEdit(ev)}
               >
-                <EventCard {...ev} disableNav onSelect={() => openEdit(ev)} />
+                <EventCard
+                  {...ev}
+                  disableNav
+                  onSelect={() => openEdit(ev)}
+                  date={`${ev.date}T${ev.start_time || "00:00"}`}
+                />
               </div>
             ))}
           </div>
@@ -325,188 +345,6 @@ export default function EventsPanel() {
           <div className="text-gray-500 text-sm">No events found.</div>
         )}
       </div>
-
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50"
-          onMouseDown={onBackdropClick}
-        >
-          <div
-            ref={modalRef} //to detect outside click
-            className="w-full max-w-lg"
-            onMouseDown={(e) => e.stopPropagation()}
-          >
-            <div className="bg-white p-6 rounded-xl shadow-xl text-black relative w-full max-w-lg mx-auto">
-              <div className="flex items-center justify-between mb-2">
-                <h1 className="text-2xl font-bold text-[#E55B3C]">
-                  {eventId ? "Edit Event" : "Add Event"}
-                </h1>
-                <div className="flex items-center gap-2">
-                  <button onClick={closeModal} title="Close">
-                    <RxCross2
-                      className="cursor-pointer text-gray-600 hover:text-black"
-                      size={20}
-                    />
-                  </button>
-                </div>
-              </div>
-
-              {isReadOnly && (
-                <div className="mb-4 flex items-start gap-2 rounded-md border border-yellow-500 bg-yellow-100 px-3 py-2 text-yellow-900">
-                  <span className="font-semibold">
-                    This event has already passed — fields are view-only.
-                  </span>
-                </div>
-              )}
-
-              <form
-                onSubmit={handleSubmit}
-                className="flex flex-col mx-10 my-5"
-              >
-                <label htmlFor="title">Title:</label>
-                <input
-                  id="title"
-                  type="text"
-                  className={`border rounded mb-3 px-2 py-1 ${
-                    isReadOnly ? "bg-gray-100 text-gray-500" : ""
-                  }`}
-                  value={form.title}
-                  onChange={(e) => handleChange("title", e.target.value)}
-                  required
-                  disabled={isReadOnly}
-                />
-
-                <label htmlFor="date">Date:</label>
-                <input
-                  id="date"
-                  type="date"
-                  className={`border rounded mb-1 px-2 py-1 ${
-                    isReadOnly ? "bg-gray-100 text-gray-500" : ""
-                  }`}
-                  value={form.date}
-                  onChange={(e) =>
-                    handleChange("date", toDateYMD(e.target.value))
-                  }
-                  required
-                  disabled={isReadOnly}
-                />
-                <p className="text-red-500 text-sm min-h-[1.25rem]">
-                  {errors.date}
-                </p>
-
-                <label htmlFor="startTime">Start Time:</label>
-                <input
-                  id="startTime"
-                  type="time"
-                  className={`border rounded mb-1 px-2 py-1 ${
-                    isReadOnly ? "bg-gray-100 text-gray-500" : ""
-                  }`}
-                  value={form.startTime || ""}
-                  onChange={(e) =>
-                    handleChange("startTime", e.target.value || null)
-                  }
-                  disabled={isReadOnly}
-                />
-                <p className="text-red-500 text-sm min-h-[1.25rem]">
-                  {errors.startTime}
-                </p>
-
-                <label htmlFor="endTime">End Time:</label>
-                <input
-                  id="endTime"
-                  type="time"
-                  className={`border rounded mb-1 px-2 py-1 ${
-                    isReadOnly ? "bg-gray-100 text-gray-500" : ""
-                  }`}
-                  value={form.endTime || ""}
-                  onChange={(e) =>
-                    handleChange("endTime", e.target.value || null)
-                  }
-                  disabled={isReadOnly}
-                />
-                <p className="text-red-500 text-sm min-h-[1.25rem]">
-                  {errors.endTime}
-                </p>
-
-                <label htmlFor="location">Location:</label>
-                <input
-                  id="location"
-                  type="text"
-                  className={`border rounded mb-3 px-2 py-1 ${
-                    isReadOnly ? "bg-gray-100 text-gray-500" : ""
-                  }`}
-                  value={form.location}
-                  onChange={(e) => handleChange("location", e.target.value)}
-                  placeholder="online | The Platform"
-                  required
-                  disabled={isReadOnly}
-                />
-
-                <label htmlFor="description">Description:</label>
-                <textarea
-                  id="description"
-                  className={`border rounded mb-3 px-2 py-1 ${
-                    isReadOnly ? "bg-gray-100 text-gray-500" : ""
-                  }`}
-                  value={form.description}
-                  onChange={(e) => handleChange("description", e.target.value)}
-                  required
-                  disabled={isReadOnly}
-                  placeholder="Full description will show up on the event detail page"
-                />
-
-                <label htmlFor="highlight">Highlight:</label>
-                <textarea
-                  id="highlight"
-                  className={`border rounded mb-3 px-2 py-1 ${
-                    isReadOnly ? "bg-gray-100 text-gray-500" : ""
-                  }`}
-                  value={form.highlight}
-                  onChange={(e) => handleChange("highlight", e.target.value)}
-                  disabled={isReadOnly}
-                  placeholder="The highlight will show up bolded on the event card but not inside the detail page"
-                />
-
-                <label htmlFor="price">Price:</label>
-                <input
-                  id="price"
-                  type="number"
-                  className={`border rounded mb-4 px-2 py-1 ${
-                    isReadOnly ? "bg-gray-100 text-gray-500" : ""
-                  }`}
-                  value={form.price}
-                  onChange={(e) => handleChange("price", e.target.value)}
-                  disabled={isReadOnly}
-                />
-
-                <div className="mt-2 flex gap-2">
-                  {!isReadOnly && (
-                    <button
-                      type="submit"
-                      className="rounded-md bg-black text-white px-4 py-2 disabled:opacity-40"
-                      disabled={
-                        !!errors.date || !!errors.startTime || !!errors.endTime
-                      }
-                    >
-                      Save
-                    </button>
-                  )}
-                  {/* The delete button is now only shown once, next to the save button */}
-                  {eventId && (
-                    <button
-                      type="button"
-                      onClick={handleDelete}
-                      className="rounded-md bg-red-500 text-white px-4 py-2 hover:bg-red-600"
-                    >
-                      Delete
-                    </button>
-                  )}
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
     </main>
   );
 }

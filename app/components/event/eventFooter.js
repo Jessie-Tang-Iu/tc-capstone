@@ -11,6 +11,8 @@ export default function EventFooterBar({ dateTime, title, eventId }) {
   const [isRegistering, setIsRegistering] = useState(false);
   const [message, setMessage] = useState("");
 
+  const [isPastEvent, setIsPastEvent] = useState(false);
+
   useEffect(() => {
     if (!dateTime) {
       setFormattedDate("Date not available");
@@ -24,9 +26,15 @@ export default function EventFooterBar({ dateTime, title, eventId }) {
     }
 
     setFormattedDate(formatDateToFullDisplay(dateTime));
+    const now = new Date();
+    setIsPastEvent(parsed < now);
   }, [dateTime]);
 
   const handleRegister = async () => {
+    if (isPastEvent) {
+      setMessage("This event has already passed. Registration is closed.");
+      return;
+    }
     try {
       if (!isLoaded || !isSignedIn) {
         setMessage("Please sign in first");

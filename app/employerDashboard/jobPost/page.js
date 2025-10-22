@@ -53,8 +53,10 @@ export default function JobPostsPage() {
             <div className="flex items-center justify-between border-b px-4 py-3">
               <div className="text-lg font-semibold text-black">Job Posts</div>
               <button
-                onClick={() => router.push("/employerDashboard/jobPost/add")}
-                className="bg-[#EE7D5E] text-white px-4 py-2 rounded-md text-sm font-semibold hover:opacity-90 transition"
+                onClick={() =>
+                  router.push("/employerDashboard/jobPost/editform")
+                }
+                className="bg-[#EE7D5E] text-white px-4 py-2 rounded-md text-sm font-semibold hover:opacity-90 transition cursor-pointer"
               >
                 Add Job Post
               </button>
@@ -91,7 +93,9 @@ export default function JobPostsPage() {
                     selected={selectedId === job.id}
                     onClick={() => setSelectedId(job.id)}
                     onManage={() =>
-                      router.push(`/employerDashboard/jobPost/${job.id}`)
+                      router.push(
+                        `/employerDashboard/jobPost/editform?id=${job.id}`
+                      )
                     }
                   />
                 </li>

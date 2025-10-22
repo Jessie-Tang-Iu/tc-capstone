@@ -40,7 +40,7 @@ export default function CalendarBigEvent({
   const description = workshop.description || "No description available.";
 
   return (
-    <div className="bg-[#FDF1EC] p-6 rounded-xl shadow-xl text-black relative w-full max-w-2xl mx-auto flex flex-col">
+    <div className="bg-[#FDF1EC] p-6 rounded-xl shadow-xl text-black relative w-[700px] min-w-[700px] max-w-[700px] mx-auto flex flex-col">
       {/* Header */}
       <div className="flex justify-between items-start mb-4">
         <h2 className="text-xl font-bold text-gray-900">{workshop.title}</h2>
@@ -63,38 +63,33 @@ export default function CalendarBigEvent({
           )}
         </div>
       </div>
-
       {/* Date + Time */}
       <div className="text-sm text-gray-700 mb-2 flex justify-between">
         <span>{dateStr}</span>
         <span>{timeStr}</span>
       </div>
-
       {/* Location */}
       <div className="text-sm mb-2">
         <span className="font-medium">Location: </span>
         {location}
       </div>
-
       {/* Speaker */}
       <div className="text-sm mb-2">
         <span className="font-medium">Speaker: </span>
         {advisor}
       </div>
-
       {/* Organizer */}
       <div className="text-sm mb-4">
         <span className="font-medium">Organizer: </span>
         {organizer}
       </div>
-
       {/* Description */}
       <div className="bg-white rounded-lg p-4 shadow-inner mb-4 max-h-48 overflow-y-auto">
-        <p className="text-sm leading-relaxed text-gray-800 whitespace-pre-line">
-          {description}
-        </p>
+        <div
+          className="text-sm leading-relaxed text-gray-800 prose prose-sm max-w-none"
+          dangerouslySetInnerHTML={{ __html: description }}
+        ></div>
       </div>
-
       {/* CTA */}
       <div className="mt-auto flex justify-center">
         {registerLink ? (
