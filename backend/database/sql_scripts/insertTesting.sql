@@ -59,20 +59,43 @@ INSERT INTO advisory_sessions (advisor_id, client_id, message, status) VALUES
 ('testAdvisor1', 'testAdvisor2', null, 'closed'),
 ('testAdvisor2', 'testAdvisor1', 'I need help with front-end', 'active');
 
-INSERT INTO "user" (id, firstname, lastname, email, role) VALUES
-(11111, 'John', 'Smith', 'JohnS@sample.com', 'member'),
-(22222, 'Jane', 'Nguyen', 'JaneNg@sample.com', 'member')
-ON CONFLICT (id) DO NOTHING;
+-- Test data for applications
+-- members
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES 
+('testMember1', 'johnsmith', 'John', 'Smith', 'JohnS@sample.com', '403-555-1034', 'member'),
+('testMember2', 'janenguyen', 'Jane', 'Nguyen', 'JaneNg@sample.com', '587-555-5078', 'member'),
+ON CONFLICT (clerk_id) DO NOTHING;
 
+-- resume
 INSERT INTO resume (user_id, summary, skills, experience, education, certifications, additional_info) VALUES
-(11111, 'Experienced software developer with a passion for creating innovative solutions.', 'JavaScript, Python, SQL', '5 years at TechCorp as a Full Stack Developer', 'B.Sc. in Computer Science from University X', 'Certified Scrum Master', 'Open to relocation.'),
-(22222, 'Detail-oriented data analyst with expertise in data visualization and statistical analysis.', 'R, Python, Tableau', '3 years at DataInsights as a Data Analyst', 'M.Sc. in Data Science from University Y', 'Certified Data Analyst', 'Looking for remote opportunities.');
-
+('testMember1', 'Experienced software developer with a passion for creating innovative solutions.', ARRAY['JavaScript, Python, SQL'], ARRAY['Full Stack Developer | TechCorp | Contract | April | 2013 | June | 2018'], ARRAY['University X | Bachelor | Computer Science | 2010 | 2014'], ARRAY['Certified Scrum Master'], 'Open to relocation.'),
+('testMember2', 'Detail-oriented data analyst with expertise in data visualization and statistical analysis.', ARRAY['R, Python, Tableau'], ARRAY['Data Analyst | Data Insights | Full-time | January | 2020 | August | 2022'], ARRAY['University Y | Master | Data Science | 2012 | 2016'], ARRAY['Certified Data Analyst'], 'Looking for remote opportunities.'),
+-- cover letter
 INSERT INTO cover_letter (user_id, content) VALUES
-(11111, 'Dear Hiring Manager,\n\nI am writing to express my interest in the Software Developer position at your esteemed company. With over 5 years of experience in full stack development and a strong background in JavaScript and Python, I am confident in my ability to contribute effectively to your team.\n\nI have attached my resume for your review and would welcome the opportunity to discuss how my skills and experiences align with your needs.\n\nThank you for considering my application.\n\nSincerely,\nJohn Doe'),
-(22222, 'Dear Hiring Manager,\n\nI am excited to apply for the Data Analyst position at your organization. With a Master degree in Data Science and 3 years of hands-on experience in data analysis and visualization, I am eager to bring my expertise to your team.\n\nPlease find my resume attached for your consideration. I look forward to the possibility of discussing how I can contribute to your company success.\n\nThank you for your time and consideration.\n\nBest regards,\nJane Smith');
+('testMember1', 'Dear Hiring Manager,\n\nI am writing to express my interest in the Software Developer position at your esteemed company. With over 5 years of experience in full stack development and a strong background in JavaScript and Python, I am confident in my ability to contribute effectively to your team.\n\nI have attached my resume for your review and would welcome the opportunity to discuss how my skills and experiences align with your needs.\n\nThank you for considering my application.\n\nSincerely,\nJohn Doe'),
+('testMember2', 'Dear Hiring Manager,\n\nI am excited to apply for the Data Analyst position at your organization. With a Master degree in Data Science and 3 years of hands-on experience in data analysis and visualization, I am eager to bring my expertise to your team.\n\nPlease find my resume attached for your consideration. I look forward to the possibility of discussing how I can contribute to your company success.\n\nThank you for your time and consideration.\n\nBest regards,\nJane Smith');
 
--- Insert data into job tables
+-- TEST DATA FOR JOB BOARD
+
+-- users
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES 
+('testEmployer1', 'TCcompany', 'Employer', 'A', 'employer1@techcorp.com', '403-555-1134', 'employer'),
+('testEmployer2', 'HFcompany', 'Employer', 'B', 'employer2@healthfirst.com', '403-555-1334', 'employer'),
+('testEmployer3', 'BTcompany', 'Employer', 'C', 'employer3@banktrust.com', '403-555-1434', 'employer'),
+('testEmployer4', 'IBcompany', 'Employer', 'D', 'employer4@infrabuild.com', '403-555-1534', 'employer'),
+('testEmployer5', 'BMacademy', 'Employer', 'E', 'employer5@brightminds.com', '403-555-1634', 'employer')
+ON CONFLICT (clerk_id) DO NOTHING;
+
+-- employers
+INSERT INTO employers (company_id, clerk_id, company_name, company_role) VALUES
+('testCompany1', 'testEmployer1', 'TechCorp company', 'HR assistant'),
+('testCompany2', 'testEmployer2', 'HealthFirst company', 'project manager'),
+('testCompany3', 'testEmployer3', 'BankTrust company', 'HR assistant'),
+('testCompany4', 'testEmployer4', 'InfraBuild company', 'HR assistant'),
+('testCompany5', 'testEmployer5', 'BrightMinds academy', 'HR assistant')
+ON CONFLICT (clerk_id) DO NOTHING;
+
+-- industries
 INSERT INTO job_industry (name) VALUES
 ('IT'),
 ('Banking'),
@@ -102,6 +125,7 @@ INSERT INTO job_industry (name) VALUES
 ('Travel & Tourism'),
 ('Other');
 
+-- types
 INSERT INTO job_type (name) VALUES
 ('Full-time'),
 ('Part-time'),
@@ -113,6 +137,7 @@ INSERT INTO job_type (name) VALUES
 ('Freelance'),
 ('Other');
 
+-- experience
 INSERT INTO job_experience (name) VALUES
 ('Entry'),
 ('Senior'),
@@ -121,18 +146,29 @@ INSERT INTO job_experience (name) VALUES
 ('Associate'),
 ('Other');
 
+-- workplaces
 INSERT INTO job_workplace (name) VALUES
 ('On-site'),
 ('Remote'),
 ('Hybrid'),
 ('Other');
 
-INSERT INTO job (title, company, company_info, location, posted_at, industry_id, workplace_id, type_id, experience_id, salary_per_hour, link, description, responsibilities, requirements, details, benefits) VALUES
-('Software Engineer', 'TechCorp', 'TechCorp is a leading technology solutions provider specializing in cloud computing and AI-driven products.', 'Vancouver, BC', '2025-09-10', 1, 3, 1, 3, 32.35, 'https://techcorp.com/jobs/123', 'Develop and maintain software applications.', 'Design, code, test software.', 'Bachelors degree in Computer Science.', 'Full job details here.', 'Health insurance, 401k'),
-('Nurse Practitioner', 'HealthFirst', 'HealthFirst operates a network of clinics focused on patient-centered care and innovative health solutions.', 'Calgary, AB', '2025-09-12', 4, 1, 1, 2, 45.00, 'https://healthfirst.com/careers/np', 'Provide primary and specialty healthcare services.', 'Diagnose and treat patients.', 'Registered Nurse with NP license.', 'Full job details here.', 'Comprehensive health benefits'),
-('Financial Analyst', 'BankTrust', 'BankTrust is a major Canadian bank offering a wide range of financial services to individuals and businesses.', 'Toronto, ON', '2025-09-08', 2, 2, 1, 3, 29.75, 'https://banktrust.com/jobs/finanalyst', 'Analyze financial data and trends.', 'Prepare reports and forecasts.', 'Degree in Finance or related field.', 'Full job details here.', 'Retirement plan, bonuses'),
-('Civil Engineer', 'InfraBuild', 'InfraBuild specializes in large-scale infrastructure projects, including bridges, highways, and public works.', 'Edmonton, AB', '2025-09-11', 8, 1, 1, 3, 36.50, 'https://infrabuild.com/careers/civileng', 'Design and oversee construction projects.', 'Project management and site supervision.', 'P.Eng. designation required.', 'Full job details here.', 'Vehicle allowance, health benefits'),
-('Teacher', 'BrightMinds Academy', 'BrightMinds Academy is a private K-12 school dedicated to innovative teaching and student success.', 'Winnipeg, MB', '2025-09-09', 17, 1, 1, 1, 28.00, 'https://brightminds.ca/jobs/teacher', 'Teach and mentor students in assigned subjects.', 'Lesson planning and classroom management.', 'Teaching certificate required.', 'Full job details here.', 'Professional development, pension');
+-- jobs
+INSERT INTO job (title, employer_id, company_info, location, posted_at, industry_id, workplace_id, type_id, experience_id, salary_per_hour, link, description, responsibilities, requirements, details, benefits) VALUES
+('Software Engineer', 'testEmployer1', 'TechCorp is a leading technology solutions provider specializing in cloud computing and AI-driven products.', 'Vancouver, BC', '2025-09-10', 1, 2, 1, 3, 32.35, 'https://techcorp.com/jobs/123', 'Develop and maintain software applications.', 'Design, code, test software.', 'Bachelors degree in Computer Science.', 'Full job details here.', 'Health insurance, 401k'),
+('Nurse Practitioner', 'testEmployer2', 'HealthFirst operates a network of clinics focused on patient-centered care and innovative health solutions.', 'Calgary, AB', '2025-09-12', 4, 2, 2, 2, 45.00, 'https://healthfirst.com/careers/np', 'Provide primary and specialty healthcare services.', 'Diagnose and treat patients.', 'Registered Nurse with NP license.', 'Full job details here.', 'Comprehensive health benefits'),
+('Financial Analyst', 'testEmployer3', 'BankTrust is a major Canadian bank offering a wide range of financial services to individuals and businesses.', 'Toronto, ON', '2025-09-08', 2, 3, 3, 3, 29.75, 'https://banktrust.com/jobs/finanalyst', 'Analyze financial data and trends.', 'Prepare reports and forecasts.', 'Degree in Finance or related field.', 'Full job details here.', 'Retirement plan, bonuses'),
+('Civil Engineer', 'testEmployer4', 'InfraBuild specializes in large-scale infrastructure projects, including bridges, highways, and public works.', 'Edmonton, AB', '2025-09-11', 8, 2, 4, 3, 36.50, 'https://infrabuild.com/careers/civileng', 'Design and oversee construction projects.', 'Project management and site supervision.', 'P.Eng. designation required.', 'Full job details here.', 'Vehicle allowance, health benefits'),
+('Teacher', 'testEmployer5', 'BrightMinds Academy is a private K-12 school dedicated to innovative teaching and student success.', 'Winnipeg, MB', '2025-09-09', 17, 1, 5, 1, 28.00, 'https://brightminds.ca/jobs/teacher', 'Teach and mentor students in assigned subjects.', 'Lesson planning and classroom management.', 'Teaching certificate required.', 'Full job details here.', 'Professional development, pension');
+
+-- Questions field can include questions like:
+UPDATE job
+   SET questions = ARRAY[
+    'Why are you interested in this position?',
+    'Describe a challenging situation you faced at work and how you handled it.',
+    'What are your salary expectations?',
+    'When can you start?']
+ WHERE id IN (1, 2, 3, 4, 5);
 
 INSERT INTO message (sent_user_id, receive_user_id, content, status) VALUES
 ('11111111-1111-1111-1111-111111111111', '99999999-9999-9999-9999-999999999999', 'Hey there, this is ME sending the first test message.', 'S'),

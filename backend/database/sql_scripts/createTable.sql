@@ -130,28 +130,32 @@ CREATE TABLE job_workplace (
 );
 
 CREATE TABLE job (
-  id                BIGSERIAL PRIMARY KEY,
-  -- employer_id     UUID,
-  title             TEXT NOT NULL,
-  company           TEXT NOT NULL,
-  company_info      TEXT,
-  location          TEXT NOT NULL,
-  industry_id       INT  REFERENCES job_industry(id),
-  workplace_id      INT  REFERENCES job_workplace(id),
-  type_id           INT  REFERENCES job_type(id),
-  experience_id     INT  REFERENCES job_experience(id),
-  status            CHAR(1) NOT NULL DEFAULT 'A', -- A/I
-  salary_per_hour   NUMERIC(5,2),
-  link              TEXT,
-  description       TEXT,
-  responsibilities  TEXT,
-  requirements      TEXT,
-  details           TEXT,
-  benefits          TEXT,
-  questions         TEXT[],
-  posted_at         TIMESTAMP NOT NULL DEFAULT now(),
-  CONSTRAINT chk_job_status  CHECK (status IN ('A','I')),
-  CONSTRAINT chk_job_salary  CHECK (salary_per_hour IS NULL OR salary_per_hour >= 0)
+  id                  BIGSERIAL PRIMARY KEY,
+  employer_id         VARCHAR(255) PRIMARY KEY,,
+  title               TEXT NOT NULL,
+  company_info        TEXT,
+  location            TEXT NOT NULL,
+  industry_id         INT,
+  workplace_id        INT,
+  type_id             INT,
+  experience_id       INT,
+  status              CHAR(1) NOT NULL DEFAULT 'A', -- A: Active, I: Inactive
+  salary_per_hour     NUMERIC(5, 2),
+  link                TEXT,
+  description         TEXT,
+  responsibilities    TEXT,
+  requirements        TEXT,
+  details             TEXT,
+  benefits            TEXT,
+  questions           TEXT[],
+  posted_at           TIMESTAMP NOT NULL DEFAULT now(),
+  CONSTRAINT chk_status CHECK (status IN ('A', 'I')),
+  CONSTRAINT chk_salary CHECK (salary_per_hour >= 0),
+  CONSTRAINT fk_employer FOREIGN KEY (employer_id) REFERENCES employers(clerk_id),
+  CONSTRAINT fk_industry FOREIGN KEY (industry_id) REFERENCES job_industry(id),
+  CONSTRAINT fk_workplace FOREIGN KEY (workplace_id) REFERENCES job_workplace(id),
+  CONSTRAINT fk_type FOREIGN KEY (type_id) REFERENCES job_type(id),
+  CONSTRAINT fk_experience FOREIGN KEY (experience_id) REFERENCES job_experience(id)
 );
 
 CREATE INDEX idx_job_lookup     ON job (industry_id, workplace_id, type_id, experience_id);
@@ -162,40 +166,44 @@ CREATE INDEX idx_job_posted_at  ON job (posted_at DESC);
 -- =========================================
 CREATE TABLE resume (
   id              BIGSERIAL PRIMARY KEY,
-  user_id         INT NOT NULL UNIQUE
-                   REFERENCES "user"(id) ON DELETE CASCADE,
+  user_id         VARCHAR(255) UNIQUE NOT NULL,
   uploaded_at     TIMESTAMP NOT NULL DEFAULT now(),
   summary         TEXT,
-  skills          TEXT,
-  experience      TEXT,
-  education       TEXT,
-  certifications  TEXT,
-  additional_info TEXT
+  skills          TEXT[],
+  experience      TEXT[],
+  education       TEXT[],
+  certifications  TEXT[],
+  additional_info TEXT,
+  CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES "users"(clerk_id) ON DELETE CASCADE
 );
 
 CREATE TABLE cover_letter (
-  id          BIGSERIAL PRIMARY KEY,
-  user_id     INT NOT NULL UNIQUE
-               REFERENCES "user"(id) ON DELETE CASCADE,
-  uploaded_at TIMESTAMP NOT NULL DEFAULT now(),
-  content     TEXT
+  id              BIGSERIAL PRIMARY KEY,
+  user_id         VARCHAR(255) NOT NULL UNIQUE,
+  uploaded_at     TIMESTAMP NOT NULL DEFAULT now(),
+  content         TEXT,
+  CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES "users"(clerk_id) ON DELETE CASCADE
 );
 
 CREATE TABLE application (
   id                  BIGSERIAL PRIMARY KEY,
-  job_id              BIGINT NOT NULL REFERENCES job(id) ON DELETE CASCADE,
-  user_id             INT    NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
-  resume              BYTEA,
-  cover_letter        BYTEA,
-  status              CHAR(1) NOT NULL DEFAULT 'S', -- S/U/I/R/O/D
+  job_id              BIGINT NOT NULL,
+  user_id             VARCHAR(255) NOT NULL,
+  resume_name         VARCHAR(500),
+  resume_data         BYTEA,
+  cover_letter_name   VARCHAR(500),
+  cover_letter_data   BYTEA,
+  status              CHAR(1) NOT NULL DEFAULT 'S', -- S: Submitted, U: Under Reviewed, I: Interview Scheduled, R: Rejected, O: Offer, D: Withdrawn
   applied_at          TIMESTAMP NOT NULL DEFAULT now(),
-  relative_first_name TEXT,
+  relative_first_name  TEXT,
   relative_last_name  TEXT,
   relative_email      TEXT,
   relative_phone      TEXT,
   answers             TEXT[],
-  CONSTRAINT chk_app_status CHECK (status IN ('S','U','I','R','O','D')),
-  CONSTRAINT uq_app_job_user UNIQUE (job_id, user_id)
+  CONSTRAINT chk_status CHECK (status IN ('S', 'U', 'I', 'R', 'O', 'D')),
+  CONSTRAINT fk_job_user UNIQUE (job_id, user_id),
+  CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(clerk_id) ON DELETE CASCADE,
+  CONSTRAINT fk_job FOREIGN KEY (job_id) REFERENCES job(id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_app_user   ON application (user_id);
