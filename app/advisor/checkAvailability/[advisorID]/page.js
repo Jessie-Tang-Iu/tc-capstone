@@ -129,7 +129,7 @@ export default function CheckAvailabilityPage({ params }) {
         setIsClicked(false);
     }
     return(
-        <main className='bg-gradient-to-br from-[#f8eae2] to-white min-h-screen'>        
+        <main className='bg-gradient-to-br from-[#f8eae2] to-white min-h-screen pb-10'>        
             <MemberNavbar />
 
             <div className='w-4/5 mx-auto mt-10'>
