@@ -68,8 +68,8 @@ ON CONFLICT (clerk_id) DO NOTHING;
 
 -- resume
 INSERT INTO resume (user_id, summary, skills, experience, education, certifications, additional_info) VALUES
-('testMember1', 'Experienced software developer with a passion for creating innovative solutions.', ARRAY['JavaScript, Python, SQL'], ARRAY['5 years at TechCorp as a Full Stack Developer'], ARRAY['University X | B.Sc. | Computer Science | 2020 | 2024'], ARRAY['Certified Scrum Master'], 'Open to relocation.'),
-('testMember2', 'Detail-oriented data analyst with expertise in data visualization and statistical analysis.', ARRAY['R, Python, Tableau'], ARRAY['3 years at DataInsights as a Data Analyst'], ARRAY['University Y | M.Sc. | Data Science | 2012 | 2016'], ARRAY['Certified Data Analyst'], 'Looking for remote opportunities.');
+('testMember1', 'Experienced software developer with a passion for creating innovative solutions.', ARRAY['JavaScript, Python, SQL'], ARRAY['5 years at TechCorp as a Full Stack Developer'], ARRAY['University X | Bachelor | Computer Science | 2020 | 2024'], ARRAY['Certified Scrum Master'], 'Open to relocation.'),
+('testMember2', 'Detail-oriented data analyst with expertise in data visualization and statistical analysis.', ARRAY['R, Python, Tableau'], ARRAY['3 years at DataInsights as a Data Analyst'], ARRAY['University Y | Master | Data Science | 2012 | 2016'], ARRAY['Certified Data Analyst'], 'Looking for remote opportunities.'),
 
 -- cover letter
 INSERT INTO cover_letter (user_id, content) VALUES
