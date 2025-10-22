@@ -131,7 +131,7 @@ CREATE TABLE job_workplace (
 
 CREATE TABLE job (
   id                  BIGSERIAL PRIMARY KEY,
-  employer_id         VARCHAR(255) PRIMARY KEY,,
+  employer_id         VARCHAR(255) NOT NULL,
   title               TEXT NOT NULL,
   company_info        TEXT,
   location            TEXT NOT NULL,
