@@ -9,7 +9,7 @@ export async function getAllBookings() {
 // Get all bookings by advisoryId
 export async function getBookingsByAdvisorId(id) {
   const result = await query(`SELECT * FROM advisory_bookings a 
-                              JOIN users u
+                              LEFT OUTER JOIN users u
                               ON a.client_id = u.clerk_id
                               WHERE advisor_id = $1`, 
     [id]
