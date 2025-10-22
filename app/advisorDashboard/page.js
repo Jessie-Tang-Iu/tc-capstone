@@ -1,7 +1,7 @@
 "use client";
 
 import MessagePage from "../components/MessagePage";
-import Navbar from "../components/BlankNavBar";
+import Navbar from "../components/AdvisorNavBar";
 import { useState } from "react";
 import MyClientPage from "./myClient";
 import Invoice from "./invoice";
@@ -20,7 +20,7 @@ export default function AdvisorDashboard() {
         console.log("Selected menu:", selected);
     };
 
-    const ME = "99999999-9999-9999-9999-999999999999";
+    const ME = "testAdvisor1"; // for testing without login
 
     const MOCK_MESSAGES = [
     {
@@ -39,7 +39,7 @@ export default function AdvisorDashboard() {
     ];
 
     return(
-        <main className="w-full min-h-screen bg-white">
+        <main className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
             <Navbar />
         
             <div className="mx-auto w-full max-w-8xl px-6 py-8">
@@ -90,7 +90,7 @@ export default function AdvisorDashboard() {
                     <div className=" w-full ml-6">
                         {menuSelection === "message" && <MessagePage currentUserId={ME} />}
                         {menuSelection === "booking" && <MyBookingPage advisorId={ME} />}
-                        {menuSelection === "client" && <MyClientPage />}
+                        {menuSelection === "client" && <MyClientPage currentUserId={ME}/>}
                         {menuSelection === "availability" && <MyAvailability advisorId={ME} />}
                         {menuSelection === "invoice" && <Invoice />}
                     </div>

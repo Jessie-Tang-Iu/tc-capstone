@@ -1,24 +1,23 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 import Navbar from '../components/MemberNavBar'
-import advisors from '../data/advisors.json'
-import userAdvisors from "../data/usersAdvisors.json";
 import { useUser } from '@clerk/nextjs';
 import Button from '../components/ui/Button';
 import { useRouter } from "next/navigation";
 import ContactedAdvisorCard from '../components/contactedAdvisorCard';
+import SearchBar from '../components/ui/SearchBar';
+import { RxCalendar, RxChatBubble, RxIdCard } from 'react-icons/rx';
 
 export default function AdvisorPage() {
 
   const [myAdvisorList, setMyAdvisorList] = useState([]);
 
+  const [query, setQuery] = useState("");
+
   const userContext = useUser();
   const userID = userContext?.user?.id;
   const router = useRouter();
-
-  const ME = '11111111-1111-1111-1111-111111111111'; // for testing without login
 
   useEffect(() => {
     if (!userID) return;
@@ -33,7 +32,7 @@ export default function AdvisorPage() {
             const data = await res.json();
 
             setMyAdvisorList(data);
-            // console.log("Return Array: ", data);
+            console.log("Return Array: ", data);
         } catch (error) {
             console.error("Fetch error: ", error);
         }
@@ -45,29 +44,73 @@ export default function AdvisorPage() {
     router.push('/advisor/advisorSearch');
   }
 
+  // filter advisor by search input
+    const filteredAdvisors = myAdvisorList.filter((u) =>
+        u.first_name.toLowerCase().includes(query.toLowerCase()) ||
+        u.last_name.toLowerCase().includes(query.toLowerCase()) ||
+        u.company_role.toLowerCase().includes(query.toLowerCase()) ||
+        u.status.toLowerCase().includes(query.toLowerCase())
+    );
+
+
   return (
-    <main className='bg-gray-100 min-h-screen'>
+    <main className='bg-gradient-to-br from-[#f8eae2] to-white min-h-screen pb-5'>
       <Navbar />
-      <div className="max-w-6xl mx-auto px-6 py-10">
-        {/* header */}
-        <div className='mb-10 text-center'>
-          <h1 className="text-3xl font-bold text-[#E55B3C]">Your Advisor Page</h1>
+
+      <div className='w-4/5 sm:h-200 mx-auto mt-10'>
+        {/* Header: centered title, search on its own row */}
+        <div className="mb-4 rounded-xl bg-white p-6 shadow text-center">
+            <div className="mb-4 text-4xl font-semibold text-[#E55B3C]">
+                Your Advisor Page
+            </div>
+            <div className="flex justify-center">
+                <SearchBar
+                    value={query}
+                    onChange={setQuery}
+                    onSearch={() => {}}
+                    placeholder="Advisor Name | Work Title | Status"
+                />
+            </div>
         </div>
-        
-        <div className='flex justify-end'>
+
+        {/* icon indication */}
+        <div className='flex justify-between items-center ml-2'>
+          <div className='flex flex-row space-x-7 text-black'>
+            <div className='flex flex-row space-x-2'>
+              <RxIdCard size={25} />
+              <p>Advisor Profile</p>
+            </div>
+            
+            <div className='flex flex-row space-x-2'>
+              <RxChatBubble size={25} />
+              <p>Chat Box</p>
+            </div>
+
+            <div className='flex flex-row space-x-2'>
+              <RxCalendar size={25} />
+              <p>Advisor Availability</p>
+            </div>
+          </div>
           <Button onClick={handleNewAdvisor} text="Register New Advisor" />
         </div>
-        
-        <div>
-          {myAdvisorList.length > 0 ? (
-            myAdvisorList.map((advisor) => (
-              <ContactedAdvisorCard key={advisor.advisor_id} advisor={advisor} />
-            ))
+
+        <div className="flex flex-wrap lg:justify-start sm:justify-between my-4 lg:space-x-6 sm:space-x-5 space-y-10 text-center text-black">
+          {filteredAdvisors.length > 0 ? (
+            filteredAdvisors.map((advisor) => { 
+              return(<ContactedAdvisorCard key={advisor.session_id} advisor={advisor} />)
+            })
           ) : (
-            <p className="text-center mt-8 text-black">You haven&rsquo;t contacted any advisors yet.</p>
+            <div className="w-full">
+              <p className="text-center mt-8 text-black font-bold text-[20px]">There is no Registered Advisor.</p>
+              <p className="text-center mt-3 text-gray-700">Try to register a new advisor</p>
+            </div>
           )}            
         </div>
+        
       </div>
+
+      <p className='text-red-600 w-4/5 mx-auto mt-10 mb-10'>* Disclaimer: View Availability feature is only available when status is &#39;active&#39;!</p>
+
     </main>
     
   );

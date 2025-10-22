@@ -27,6 +27,16 @@ export async function updateAvailabilityController(body) {
     return await advisoryService.updateAvailability(body);
 }
 
+export async function getAdvisorySessionsByAdvisorIdController(advisorId) {
+    if(!advisorId) throw new Error("advisorId required");
+    return await advisoryService.getAdvisorySessionsByAdvisorId(advisorId);
+}
+
+export async function changeClientStatusController(sessionId, status) {
+    if(!sessionId || !status) throw new Error("sessionId and status are required");
+    return await advisoryService.changeClientStatus(sessionId, status);
+}
+
 export async function getMyAdvisorySessionsController(clientId) {
     if(!clientId) throw new Error("clientId required");
     return await advisoryService.getMyAdvisorySessions(clientId);

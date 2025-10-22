@@ -129,15 +129,19 @@ export default function CheckAvailabilityPage({ params }) {
         setIsClicked(false);
     }
     return(
-        <main className='bg-gray-100 min-h-screen'>
+        <main className='bg-gradient-to-br from-[#f8eae2] to-white min-h-screen pb-10'>        
             <MemberNavbar />
-            <div className="max-w-6xl mx-auto px-6 py-10">
+
+            <div className='w-4/5 mx-auto mt-10'>
+                {/* Page Navigator */}
                 <button onClick={handleBackToAdvisorList} className="text-[20px] text-black font-semibold mb-2">&lt; Back to Advisor List</button>
+
                 {/* header */}
                 <div className='mb-10 text-center'>
                     <h1 className="text-3xl font-bold text-[#E55B3C]">Check Availability</h1>
                 </div>
 
+                <div className="p-10 rounded-xl bg-white shadow">
                 <FullCalendar
                     plugins={[dayGridPlugin]}
                     initialView="dayGridWeek"
@@ -169,6 +173,7 @@ export default function CheckAvailabilityPage({ params }) {
                         )
                     }}
                 />
+                </div>
 
                 {/* Calendar Style */}
                 <style jsx global>

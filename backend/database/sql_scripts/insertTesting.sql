@@ -16,33 +16,48 @@ INSERT INTO comments (post_id, user_id, author, content) VALUES
 (4, '22222222-2222-2222-2222-222222222222', 'Karl', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
 
 -- test data
+--advisors
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES 
+('testAdvisor1', 'Mary', 'Mary', 'White', 'mary.w@gmail.com', '403-555-1234', 'advisor'),
+('testAdvisor2', 'James', 'James', 'Brown', 'jb@hotmail.com', '587-555-5678', 'advisor'),
+('testAdvisor3', 'Harry', 'Harry', 'Potter', 'hp@gmail.com', '123-456-7890', 'advisor'),
+('testAdvisor4', 'Lily', 'Lily', 'Potter', 'lily.p@gmail.com', '123-456-7890', 'advisor'),
+('testAdvisor5', 'John', 'John', 'Doe', 'john.doe@gmail.com', '123-456-7890', 'advisor');
+
+INSERT INTO advisors (clerk_id, company_name, company_role) VALUES 
+('testAdvisor1', 'Tech Solutions', 'Senior Developer'),
+('testAdvisor2', 'Innovatech', 'Project Manager'),
+('testAdvisor3', 'ABC Company', 'Front-end Developer'),
+('testAdvisor4', 'BCD Company', 'Full Stack Developer'),
+('testAdvisor5', 'AAB Tech', 'Project Manager');
+
 --booked slots
 INSERT INTO advisory_bookings (advisor_id, client_id, date, startTime, description, endTime, status) VALUES 
-('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', '2025-10-16', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', '2025-10-15', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', '2025-10-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked');
+('testAdvisor1', 'testAdvisor2', '2025-10-16', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('testAdvisor1', 'testAdvisor2', '2025-10-15', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('testAdvisor2', 'testAdvisor1', '2025-10-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked');
 
 --open slots
 INSERT INTO advisory_bookings (advisor_id, date, startTime, endTime, status) VALUES 
-('99999999-9999-9999-9999-999999999999', '2025-10-13', '10:00:00', '12:00:00', 'open'),
-('99999999-9999-9999-9999-999999999999', '2025-10-14', '12:00:00', '14:00:00', 'open'),
-('99999999-9999-9999-9999-999999999999', '2025-10-15', '12:00:00', '14:00:00', 'open'),
-('99999999-9999-9999-9999-999999999999', '2025-10-15', '14:00:00', '16:00:00', 'open'),
-('99999999-9999-9999-9999-999999999999', '2025-10-16', '11:00:00', '13:00:00', 'open'),
-('99999999-9999-9999-9999-999999999999', '2025-10-17', '10:00:00', '12:00:00', 'open'),
-('22222222-2222-2222-2222-222222222222', '2025-10-13', '10:00:00', '12:00:00', 'open'),
-('22222222-2222-2222-2222-222222222222', '2025-10-13', '12:00:00', '14:00:00', 'open'),
-('22222222-2222-2222-2222-222222222222', '2025-10-14', '12:00:00', '14:00:00', 'open'),
-('22222222-2222-2222-2222-222222222222', '2025-10-15', '12:00:00', '14:00:00', 'open'),
-('22222222-2222-2222-2222-222222222222', '2025-10-16', '11:00:00', '13:00:00', 'open'),
-('22222222-2222-2222-2222-222222222222', '2025-10-17', '10:00:00', '12:00:00', 'open');
+('testAdvisor1', '2025-10-13', '10:00:00', '12:00:00', 'open'),
+('testAdvisor1', '2025-10-14', '12:00:00', '14:00:00', 'open'),
+('testAdvisor1', '2025-10-15', '12:00:00', '14:00:00', 'open'),
+('testAdvisor1', '2025-10-15', '14:00:00', '16:00:00', 'open'),
+('testAdvisor1', '2025-10-16', '11:00:00', '13:00:00', 'open'),
+('testAdvisor1', '2025-10-17', '10:00:00', '12:00:00', 'open'),
+('testAdvisor2', '2025-10-13', '10:00:00', '12:00:00', 'open'),
+('testAdvisor2', '2025-10-13', '12:00:00', '14:00:00', 'open'),
+('testAdvisor2', '2025-10-14', '12:00:00', '14:00:00', 'open'),
+('testAdvisor2', '2025-10-15', '12:00:00', '14:00:00', 'open'),
+('testAdvisor2', '2025-10-16', '11:00:00', '13:00:00', 'open'),
+('testAdvisor2', '2025-10-17', '10:00:00', '12:00:00', 'open');
 
 -- test data for advisory session
-INSERT INTO advisory_sessions (advisor_id, client_id, status) VALUES 
-('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', 'active'),
-('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', 'pending'),
-('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', 'closed'),
-('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 'active');
+INSERT INTO advisory_sessions (advisor_id, client_id, message, status) VALUES 
+('testAdvisor1', 'testAdvisor2', 'I need help with front-end', 'active'),
+('testAdvisor1', 'testAdvisor2', 'I need help with backend', 'pending'),
+('testAdvisor1', 'testAdvisor2', null, 'closed'),
+('testAdvisor2', 'testAdvisor1', 'I need help with front-end', 'active');
 
 INSERT INTO "user" (id, firstname, lastname, email, role) VALUES
 (11111, 'John', 'Smith', 'JohnS@sample.com', 'member'),
