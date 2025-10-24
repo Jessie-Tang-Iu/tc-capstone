@@ -7,7 +7,7 @@ import {
 } from "@/backend/controllers/eventsController";
 
 // GET /api/events/:id  -> works for public event page & admin
-export async function GET(req, { params }) {
+export async function GET(_req, { params }) {
   const { id } = await params;
   try {
     const event = await getEventByIdController(Number(id));
