@@ -7,6 +7,7 @@ export async function GET(_req, { params }) {
     const apps = await getApplicationById(Number(id));
     return NextResponse.json(apps);
   } catch (e) {
+    console.error("GET /api/application/[id] failed: ", e);
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 }
