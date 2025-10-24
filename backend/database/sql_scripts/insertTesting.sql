@@ -62,8 +62,8 @@ INSERT INTO advisory_sessions (advisor_id, client_id, message, status) VALUES
 -- Test data for applications
 -- members
 INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES 
-('testMember1', 'johnsmith', 'John', 'Smith', 'JohnS@sample.com', '403-555-1034', 'member'),
-('testMember2', 'janenguyen', 'Jane', 'Nguyen', 'JaneNg@sample.com', '587-555-5078', 'member'),
+('testMember1', 'johnsmith', 'John', 'Smith', 'JohnS@sample.com', '403-555-1934', 'member'),
+('testMember2', 'janenguyen', 'Jane', 'Nguyen', 'JaneNg@sample.com', '587-555-5078', 'member')
 ON CONFLICT (clerk_id) DO NOTHING;
 
 -- resume
