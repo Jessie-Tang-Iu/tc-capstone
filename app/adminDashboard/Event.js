@@ -332,12 +332,7 @@ export default function EventsPanel() {
                 className="cursor-pointer"
                 onClick={() => openEdit(ev)}
               >
-                <EventCard
-                  {...ev}
-                  disableNav
-                  onSelect={() => openEdit(ev)}
-                  date={`${ev.date}T${ev.start_time || "00:00"}`}
-                />
+                <EventCard {...ev} disableNav />
               </div>
             ))}
           </div>
