@@ -19,7 +19,7 @@ import RequestsPanel from "@/app/adminDashboard/Request";
 import ReportsPanel from "@/app/adminDashboard/Report";
 import UserDetailsCard from "../components/adminDashboard/UserDetailsCard";
 import EventPanel from "@/app/adminDashboard/Event";
-import Navbar from "../components/NavBarBeforeSignIn";
+import Navbar from "../components/AdvisorNavBar";
 import RequestDetailsCard from "../components/adminDashboard/RequestDetailsCard";
 import ReportDetailsCard from "../components/adminDashboard/ReportDetailsCard";
 

@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import Navbar from "@/app/components/NavBarBeforeSignIn";
+import Navbar from "@/app/components/BlankNavBar";
 import EmployerSidebar from "@/app/components/employerDashboard/EmployerSideBar";
 import PopupMessage from "@/app/components/ui/PopupMessage";
 

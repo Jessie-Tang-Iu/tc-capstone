@@ -61,7 +61,7 @@ export default function JobPostsPage() {
       <Navbar />
       <main className="mx-auto w-full px-6 py-8">
         <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
-          Employer Dashboard
+          Employer DashBoard
         </h1>
 
         <div className="flex gap-6">
