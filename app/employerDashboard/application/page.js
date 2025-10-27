@@ -38,10 +38,10 @@ export default function ApplicationsPage() {
   const rows = useMemo(() => applications.slice(start, end), [page]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
       <Navbar />
 
-      <main className="mx-auto w-full px-6 py-8 bg-white rounded-xl">
+      <main className="mx-auto w-full px-6 py-8  rounded-xl">
         <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
           Employer DashBoard
         </h1>

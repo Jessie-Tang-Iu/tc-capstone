@@ -206,57 +206,235 @@ VALUES
 
 
 --workshop
-INSERT INTO events (title, date, start_time, location, description, highlight)
+INSERT INTO events 
+(title, date, start_time, end_time, status, location, description, image_url, max_capacity, current_capacity, registration_deadline, highlight, price)
 VALUES
 ('Ace the Interview: Confidence Meets Strategy',
- '2025-06-27',
- '18:00:00',
- 'Online Meeting',
- 'Tech Connect Alberta is excited to be part of this engaging career development session.`',
- 'Join Us for an Empowering Career Workshop: Ace the Interview - Confidence Meets Strategy!'),
+ '2025-05-12',
+ '10:00',
+ '12:00',
+ 'active',
+ 'Calgary Downtown Campus, Room 304',
+ '<h2>About this Workshop</h2>
+ <p>This interactive session helps participants master the art of confident communication. You will learn <strong>interview techniques</strong>, body language awareness, and strategic storytelling to make a lasting impression. Mock interviews and personalized feedback will be included.</p>
+ <h3>Key Takeaways</h3>
+ <ul>
+   <li>Build confidence under pressure</li>
+   <li>Structure answers using the STAR method</li>
+   <li>Learn how to research company culture effectively</li>
+ </ul>',
+ 'https://images.unsplash.com/photo-1531379410502-63bfe8cdaf6b',
+ 50, 0, '2025-05-10 23:59:00',
+ 'Mock interviews and real recruiter feedback',
+ 0.00);
 
-('Launch Your Startup: Funding & Pitching Essentials',
- '2025-07-01',
- '12:00:00',
+
+INSERT INTO events 
+(title, date, start_time, end_time, status, location, description, image_url, max_capacity, current_capacity, registration_deadline, highlight, price)
+VALUES
+('Tech Career Fair 2025',
+ '2025-06-15',
+ '09:00',
+ '16:00',
+ 'active',
+ 'SAIT Main Hall, Calgary',
+ '<h2>Event Overview</h2>
+ <p>Meet over <strong>40 top tech employers</strong> from Alberta and beyond. Bring your resume, network with recruiters, and explore internship and full-time opportunities.</p>
+ <h3>Participating Companies</h3>
+ <p>Amazon, IBM, Benevity, Unity Technologies, and more.</p>
+ <h3>Preparation Tips</h3>
+ <ul>
+   <li>Dress professionally</li>
+   <li>Prepare a 30-second elevator pitch</li>
+   <li>Bring 5+ printed resumes</li>
+ </ul>',
+ 'https://images.unsplash.com/photo-1551836022-d5d88e9218df',
+ 500, 0, '2025-06-13 23:59:00',
+ 'Largest student-employer event of the year',
+ 0.00);
+
+
+INSERT INTO events 
+(title, date, start_time, end_time, status, location, description, image_url, max_capacity, current_capacity, registration_deadline, highlight, price)
+VALUES
+('AI in Healthcare Conference',
+ '2025-07-22',
+ '09:30',
+ '17:30',
+ 'active',
+ 'University of Calgary, Science Theatre',
+ '<h2>Conference Details</h2>
+ <p>This one-day event explores how <strong>artificial intelligence</strong> is transforming the healthcare industry. Sessions include predictive diagnosis, medical imaging, and ethics in AI-driven systems.</p>
+ <h3>Speakers</h3>
+ <ul>
+   <li>Dr. Mei Chen (Google Health)</li>
+   <li>Prof. Alan Roberts (UCalgary)</li>
+   <li>Sophia Nguyen (AI Ethics Researcher)</li>
+ </ul>
+ <p><em>Networking reception and light lunch included.</em></p>',
+ 'https://images.unsplash.com/photo-1581091870622-3b7b5e1a7a29',
+ 300, 0, '2025-07-20 23:59:00',
+ 'Global leaders in AI and healthcare innovation',
+ 50.00);
+
+
+INSERT INTO events 
+(title, date, start_time, end_time, status, location, description, image_url, max_capacity, current_capacity, registration_deadline, highlight, price)
+VALUES
+('Building Cloud Infrastructure with Azure',
+ '2025-08-05',
+ '13:00',
+ '17:00',
+ 'active',
+ 'Tech Hub Lab 204',
+ '<h2>Hands-On Workshop</h2>
+ <p>Learn to deploy scalable virtual machines, configure Azure Blob Storage, and automate with Azure Functions. Participants will follow a guided lab to create a mini cloud infrastructure from scratch.</p>
+ <h3>Requirements</h3>
+ <ul>
+   <li>Laptop with admin privileges</li>
+   <li>Microsoft Azure Student Account</li>
+ </ul>
+ <p>All attendees will receive a digital certificate upon completion.</p>',
+ 'https://images.unsplash.com/photo-1555949963-aa79dcee981d',
+ 40, 0, '2025-08-03 23:59:00',
+ 'Live cloud infrastructure lab session',
+ 20.00);
+
+
+INSERT INTO events 
+(title, date, start_time, end_time, status, location, description, image_url, max_capacity, current_capacity, registration_deadline, highlight, price)
+VALUES
+('Women in Tech Leadership Panel',
+ '2025-08-28',
+ '15:00',
+ '17:00',
+ 'active',
+ 'Calgary Central Library Auditorium',
+ '<h2>Event Summary</h2>
+ <p>Join a panel of inspiring women leaders who have transformed the tech industry. This session focuses on <strong>career progression, inclusivity, and mentorship</strong>.</p>
+ <h3>Panelists</h3>
+ <ul>
+   <li>Maria Chen – VP of Engineering, Benevity</li>
+   <li>Ayesha Singh – Founder of SheCodes Alberta</li>
+   <li>Emily Zhao – Senior Cloud Architect, Microsoft</li>
+ </ul>
+ <p>Snacks and coffee provided. Open to all genders.</p>',
+ 'https://images.unsplash.com/photo-1600880292089-90e24c92a3c7',
+ 200, 0, '2025-08-26 23:59:00',
+ 'Hear from Canada’s top women tech executives',
+ 0.00);
+
+
+INSERT INTO events 
+(title, date, start_time, end_time, status, location, description, image_url, max_capacity, current_capacity, registration_deadline, highlight, price)
+VALUES
+('Networking Night: Developers Connect',
+ '2025-09-10',
+ '18:00',
+ '21:00',
+ 'active',
+ 'The Edison Building Rooftop, Calgary',
+ '<h2>What to Expect</h2>
+ <p>An informal evening to connect with software engineers, UX designers, and data professionals. Enjoy appetizers, casual games, and meaningful discussions.</p>
+ <h3>Activities</h3>
+ <ul>
+   <li>Speed Networking</li>
+   <li>Tech Trivia</li>
+   <li>Startup Pitch Corner</li>
+ </ul>',
+ 'https://images.unsplash.com/photo-1561484930-998b6a7b63fe',
+ 120, 0, '2025-09-08 23:59:00',
+ 'Food, games, and networking under the stars',
+ 10.00);
+
+
+INSERT INTO events 
+(title, date, start_time, end_time, status, location, description, image_url, max_capacity, current_capacity, registration_deadline, highlight, price)
+VALUES
+('Data Visualization with Python and Power BI',
+ '2025-09-25',
+ '10:00',
+ '15:00',
+ 'active',
+ 'SAIT Innovation Centre Lab',
+ '<h2>Workshop Content</h2>
+ <p>Transform raw datasets into powerful visual stories. Learn to clean, model, and visualize data using <strong>Pandas, Matplotlib, and Power BI</strong>.</p>
+ <h3>Skills Covered</h3>
+ <ul>
+   <li>Python data manipulation</li>
+   <li>Power BI dashboards</li>
+   <li>Storytelling with data</li>
+ </ul>',
+ 'https://images.unsplash.com/photo-1556761175-4b46a572b786',
+ 60, 0, '2025-09-23 23:59:00',
+ 'Hands-on data visualization crash course',
+ 25.00);
+
+
+INSERT INTO events 
+(title, date, start_time, end_time, status, location, description, image_url, max_capacity, current_capacity, registration_deadline, highlight, price)
+VALUES
+('Cybersecurity Awareness Bootcamp',
+ '2025-10-12',
+ '09:00',
+ '17:00',
+ 'active',
  'Calgary Tech Hub',
- 'This workshop will help you refine your pitch, understand funding stages, and build investor confidence.',
- 'Get expert guidance on pitching, funding, and launching your own tech startup.'),
+ '<h2>Program Outline</h2>
+ <p>Designed for IT students and professionals who want to strengthen their cybersecurity foundations. Topics include <strong>network defense, ethical hacking, and incident response</strong>.</p>
+ <h3>Included Labs</h3>
+ <ul>
+   <li>Wireshark Traffic Analysis</li>
+   <li>SQL Injection Simulation</li>
+   <li>Phishing Defense Workshop</li>
+ </ul>',
+ 'https://images.unsplash.com/photo-1614064641938-3b70c1d6cc0f',
+ 80, 0, '2025-10-10 23:59:00',
+ 'Full-day cybersecurity training with labs',
+ 35.00);
 
-('AI Tools for Career Advancement',
- '2025-07-10',
- '15:00:00',
- 'Online Webinar',
- 'Discover how to use tools like ChatGPT, LinkedIn AI, and job matchers to boost your job hunt.',
- 'Explore modern AI tools that can help you level up your career.'),
 
-('Building Your Brand as a Developer',
- '2025-08-15',
- '13:00:00',
- 'Online Workshop',
- 'We''ll explore LinkedIn optimization, GitHub portfolios, and storytelling strategies for tech professionals.',
- 'Learn how to craft your personal brand and digital portfolio effectively.'),
+INSERT INTO events 
+(title, date, start_time, end_time, status, location, description, image_url, max_capacity, current_capacity, registration_deadline, highlight, price)
+VALUES
+('AI Hackathon: Code for Change',
+ '2025-11-15',
+ '08:00',
+ '23:59',
+ 'active',
+ 'Platform Calgary',
+ '<h2>Hackathon Overview</h2>
+ <p>Join a 15-hour hackathon to solve social issues using AI. Teams will compete to develop innovative applications addressing <strong>mental health, sustainability, and accessibility</strong>.</p>
+ <h3>Prizes</h3>
+ <ul>
+   <li>$2000 Cash Prize</li>
+   <li>Mentorship from Google Cloud Engineers</li>
+   <li>Free cloud credits</li>
+ </ul>',
+ 'https://images.unsplash.com/photo-1519389950473-47ba0277781c',
+ 150, 0, '2025-11-13 23:59:00',
+ '15-hour innovation sprint for a better world',
+ 15.00);
 
-('Tech Industry Mixer',
- '2025-09-03',
- '17:00:00',
- 'SAIT Downtown Campus',
- 'An in-person event to connect with key players in Calgary''s tech scene — refreshments provided!',
- 'Network with employers, alumni, and industry mentors.'),
 
-('Career Growth with AI: Mastering Tools and Strategies',
- '2025-10-08',
- '14:00:00',
- 'Online Webinar',
- 'Learn how AI can accelerate your career development with practical hands-on strategies.',
- 'Harness AI tools to boost productivity, networking, and career decision-making.'),
-
-('Startup Funding Bootcamp',
- '2025-10-22',
- '10:00:00',
- 'Calgary Innovation Centre',
- 'A full-day intensive session on pitching, funding rounds, and investor engagement for early-stage startups.',
- 'Hands-on workshops to prepare founders for funding success.');
-
--- admin user
-INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES
-('user_34RDeo5WKU2K8s6AArG7XBAODkb', 'admin', 'admin', 'account', 'admin@gmail.com', '1234567890', 'admin');
+INSERT INTO events 
+(title, date, start_time, end_time, status, location, description, image_url, max_capacity, current_capacity, registration_deadline, highlight, price)
+VALUES
+('Portfolio Showcase & Networking Gala',
+ '2025-12-05',
+ '17:00',
+ '21:00',
+ 'active',
+ 'Telus Convention Centre',
+ '<h2>Event Summary</h2>
+ <p>Celebrate the end of the academic year with an elegant evening where students present their capstone projects. Industry guests, recruiters, and faculty will attend.</p>
+ <h3>Agenda</h3>
+ <ul>
+   <li>Student Project Demos</li>
+   <li>Awards Ceremony</li>
+   <li>Networking Dinner</li>
+ </ul>',
+ 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d',
+ 300, 0, '2025-12-03 23:59:00',
+ 'Formal gala celebrating student innovation',
+ 40.00);

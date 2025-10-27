@@ -19,7 +19,7 @@ import RequestsPanel from "@/app/adminDashboard/Request";
 import ReportsPanel from "@/app/adminDashboard/Report";
 import UserDetailsCard from "../components/adminDashboard/UserDetailsCard";
 import EventPanel from "@/app/adminDashboard/Event";
-import Navbar from "../components/NavBarBeforeSignIn";
+import Navbar from "../components/AdvisorNavBar";
 import RequestDetailsCard from "../components/adminDashboard/RequestDetailsCard";
 import ReportDetailsCard from "../components/adminDashboard/ReportDetailsCard";
 
@@ -142,7 +142,7 @@ function AdminDashboardCore() {
     );
 
   return (
-    <main className="w-full min-h-screen bg-white">
+    <main className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
       <Navbar />
 
       <div className="mx-auto w-full max-w-8xl px-6 py-8">

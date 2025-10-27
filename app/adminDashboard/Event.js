@@ -3,14 +3,12 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import EventCard from "../components/event/eventCard";
 import Button from "../components/ui/Button";
-import { RxCross2 } from "react-icons/rx";
 import EventFormPanel from "../components/adminDashboard/EventFormPanel";
+import SearchBar from "../components/ui/SearchBar";
 
 /* ========== Helpers ========== */
-// Functions for formatting and time-related logic are grouped here for clarity.
 const toTimeHM = (t) => {
   if (!t) return "";
-  // Handles HH:mm or HH:mm:ss formats
   if (/^\d{2}:\d{2}$/.test(t)) return t;
   if (/^\d{2}:\d{2}:\d{2}$/.test(t)) return t.slice(0, 5);
   return "";
@@ -20,13 +18,12 @@ const toDateYMD = (d) => {
   if (!d) return "";
   if (typeof d !== "string") {
     try {
-      return new Date(d).toISOString().slice(0, 10); //toISOString returns yyyy-MM-ddTHH:mm:ss.sssZ like 2024-06-15T00:00:00.000Z
+      return new Date(d).toISOString().slice(0, 10);
     } catch {
       return "";
     }
   }
   if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
-  // Converts dd/MM/yyyy to yyyy-MM-dd
   const m = d.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
   if (m) return `${m[3]}-${m[2]}-${m[1]}`;
   try {
@@ -43,13 +40,14 @@ const nowLocalYMDHM = () => {
   return local.toISOString().slice(0, 16);
 };
 
-/* ========== Events Panel Component ========== */
+/* ========== Component ========== */
 export default function EventsPanel() {
   const [events, setEvents] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [editingEvent, setEditingEvent] = useState(null); // null = add, object = edit
+  const [editingEvent, setEditingEvent] = useState(null);
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [sortOrder, setSortOrder] = useState("newest");
+  const [query, setQuery] = useState("");
 
   const [form, setForm] = useState({
     title: "",
@@ -68,14 +66,14 @@ export default function EventsPanel() {
     endTime: "",
   });
 
-  const modalRef = useRef(null); //to detect outside click for the pop up window
+  const modalRef = useRef(null);
 
   const eventId = useMemo(
     () => editingEvent?.id ?? editingEvent?.event_id ?? null,
     [editingEvent]
   );
 
-  /* ========== API Interactions ========== */
+  /* ========== Fetch Events ========== */
   useEffect(() => {
     (async () => {
       const res = await fetch("/api/events", { cache: "no-store" });
@@ -83,8 +81,9 @@ export default function EventsPanel() {
     })();
   }, []);
 
+  /* ========== CRUD Operations ========== */
   const handleSubmit = async (e) => {
-    e.preventDefault(); //Prevents the browser from navigating/reloading when the form submits.
+    e.preventDefault();
     if (isReadOnly) return;
 
     const cleanDate = toDateYMD(form.date);
@@ -102,9 +101,7 @@ export default function EventsPanel() {
     const method = eventId ? "PUT" : "POST";
 
     Object.keys(payload).forEach((k) => {
-      if (payload[k] === "" || payload[k] === undefined) {
-        payload[k] = null;
-      }
+      if (payload[k] === "" || payload[k] === undefined) payload[k] = null;
     });
 
     const res = await fetch(url, {
@@ -120,7 +117,6 @@ export default function EventsPanel() {
     }
 
     const savedEvent = await res.json();
-
     setEvents((prev) =>
       eventId
         ? prev.map((e) =>
@@ -133,20 +129,17 @@ export default function EventsPanel() {
 
   const handleDelete = async () => {
     if (!eventId) return;
-
     const res = await fetch(`/api/events/${eventId}`, { method: "DELETE" });
     if (!res.ok) {
       console.error("Delete failed:", res.status, await res.text());
       setErrors((e) => ({ ...e, form: "Delete failed." }));
       return;
     }
-
     setEvents((prev) => prev.filter((e) => (e.id ?? e.event_id) !== eventId));
     closeModal();
   };
 
-  /* ========== Form and Modal Logic ========== */
-  // Moved validation and handlers here to keep API and UI logic separate.
+  /* ========== Form Logic ========== */
   const validate = (d, st, et) => {
     const now = nowLocalYMDHM();
     const today = now.split("T")[0];
@@ -178,14 +171,14 @@ export default function EventsPanel() {
 
   const handleChange = (key, value) => {
     setForm((prev) => {
-      const nextForm = {
+      const next = {
         ...prev,
         [key]: key === "price" ? Number(value) : value,
       };
       if (["date", "startTime", "endTime"].includes(key)) {
-        validate(nextForm.date, nextForm.startTime, nextForm.endTime);
+        validate(next.date, next.startTime, next.endTime);
       }
-      return nextForm;
+      return next;
     });
   };
 
@@ -209,8 +202,8 @@ export default function EventsPanel() {
     setIsReadOnly(false);
     setIsOpen(true);
 
-    const start = nowLocalYMDHM(); // turn string
-    const end = new Date(new Date().getTime() + 2 * 60 * 60 * 1000); //turn date
+    const start = nowLocalYMDHM();
+    const end = new Date(new Date().getTime() + 2 * 60 * 60 * 1000);
     const endLocal = new Date(end.getTime() - end.getTimezoneOffset() * 60000)
       .toISOString()
       .slice(0, 16);
@@ -233,11 +226,10 @@ export default function EventsPanel() {
     setEditingEvent(ev);
     setIsReadOnly(isEventPast(ev));
     setIsOpen(true);
-
     setForm({
       title: ev.title || "",
       date: toDateYMD(ev.date),
-      startTime: toTimeHM(ev.start_time || ev.startTime || ""), // frontend and backend have different style conventions.
+      startTime: toTimeHM(ev.start_time || ev.startTime || ""),
       endTime: toTimeHM(ev.end_time || ev.endTime || ""),
       location: ev.location || "",
       description: ev.description || "",
@@ -247,57 +239,56 @@ export default function EventsPanel() {
     setErrors({});
   };
 
-  // Effect for handling keyboard events (Escape key).
-  useEffect(() => {
-    const onEsc = (e) => e.key === "Escape" && closeModal();
-    window.addEventListener("keydown", onEsc);
-    return () => window.removeEventListener("keydown", onEsc); //cleanup function.
-  }, []);
-
-  // Event handler for clicking on the modal backdrop.
-  const onBackdropClick = (e) => {
-    if (modalRef.current && !modalRef.current.contains(e.target)) closeModal();
-  };
-
+  /* ========== Sorting + Search ========== */
   const getEventStamp = (ev) => {
     const d = toDateYMD(ev.date);
     const t = toTimeHM(ev.start_time || ev.startTime || "00:00");
     return `${d}T${t}`;
   };
 
-  // Memoize the sorted list
   const sortedEvents = useMemo(() => {
     const copy = [...events];
     copy.sort((a, b) => {
       const A = getEventStamp(a);
       const B = getEventStamp(b);
-      // newest first by default
-      return sortOrder === "newest"
-        ? A < B
-          ? 1
-          : A > B
-          ? -1
-          : 0
-        : A < B
-        ? -1
-        : A > B
-        ? 1
-        : 0;
+      return sortOrder === "newest" ? (A < B ? 1 : -1) : A < B ? -1 : 1;
     });
     return copy;
   }, [events, sortOrder]);
 
-  /* ========== Render Output ========== */
+  const filteredEvents = useMemo(() => {
+    const q = query.toLowerCase();
+    return sortedEvents.filter(
+      (ev) =>
+        ev.title?.toLowerCase().includes(q) ||
+        ev.location?.toLowerCase().includes(q)
+    );
+  }, [sortedEvents, query]);
+
+  /* ========== Render ========== */
   return (
     <main>
-      <div className="flex items-center justify-between gap-3">
-        {!isOpen && <Button onClick={openAdd} text="Add Event" />}
+      {/* Top Header Section */}
+      <div className="mb-6 rounded-xl bg-white p-6 shadow">
+        <div className="mb-4 text-3xl font-semibold text-[#E55B3C] text-center">
+          Event Management
+        </div>
 
-        {!isOpen && (
+        <div className="flex flex-wrap justify-between items-center mb-4 gap-3">
+          <Button onClick={openAdd} text="Add Event" />
+          <div className="flex justify-center">
+            <SearchBar
+              placeholder="Search by title or location"
+              value={query}
+              onChange={setQuery}
+              onSearch={() => {}}
+            />
+          </div>
           <div className="flex items-center gap-2">
             <label htmlFor="sort" className="text-sm font-medium text-gray-700">
               Sort:
             </label>
+
             <select
               id="sort"
               value={sortOrder}
@@ -308,11 +299,11 @@ export default function EventsPanel() {
               <option value="oldest">Oldest first</option>
             </select>
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Conditional rendering */}
-      <div className="mt-3">
+      {/* Event list or form */}
+      <div>
         {isOpen ? (
           <EventFormPanel
             eventId={eventId}
@@ -324,25 +315,22 @@ export default function EventsPanel() {
             onDelete={handleDelete}
             onClose={closeModal}
           />
-        ) : events.length > 0 ? (
-          <div className="space-y-4">
-            {sortedEvents.map((ev) => (
+        ) : filteredEvents.length > 0 ? (
+          <div className="space-y-4 h-[700px] overflow-y-auto pr-2">
+            {filteredEvents.map((ev) => (
               <div
                 key={ev.id ?? ev.event_id}
                 className="cursor-pointer"
                 onClick={() => openEdit(ev)}
               >
-                <EventCard
-                  {...ev}
-                  disableNav
-                  onSelect={() => openEdit(ev)}
-                  date={`${ev.date}T${ev.start_time || "00:00"}`}
-                />
+                <EventCard {...ev} disableNav />
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-gray-500 text-sm">No events found.</div>
+          <div className="text-gray-500 text-sm text-center mt-10">
+            No events found.
+          </div>
         )}
       </div>
     </main>
