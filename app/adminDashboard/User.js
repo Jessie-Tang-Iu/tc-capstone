@@ -92,51 +92,51 @@ export default function UsersPanel({ onShowDetails }) {
 
   return (
     <div className="w-full">
-      {/* Header */}
       <div className="mb-4 rounded-xl bg-white p-6 shadow">
         <div className="mb-4 text-3xl font-semibold text-[#E55B3C] text-center">
           User Management
         </div>
 
-        {/* Search and Tabs in same row */}
-        <div className="flex flex-wrap justify-between items-center gap-3">
-          <div className="flex flex-wrap gap-3">
-            {roles.map((r) => (
-              <button
-                key={r.key}
-                onClick={() => handleTabClick(r.key)}
-                className={`px-4 py-2 rounded-md font-semibold text-sm transition
-                  ${
-                    activeTab === r.key
-                      ? "bg-[#E55B3C] text-white"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-              >
-                {r.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex justify-end">
-            <SearchBar
-              placeholder="Search by username or email"
-              value={query}
-              onChange={setQuery}
-              onSearch={() => {}}
-            />
-          </div>
+        <div className="flex justify-center">
+          <SearchBar
+            placeholder="Search by username or email"
+            value={query}
+            onChange={setQuery}
+            onSearch={() => {}}
+          />
         </div>
       </div>
 
-      {/* Section */}
-      <Section title={roles.find((r) => r.key === activeTab)?.label}>
+      {/* Section with tabs inside */}
+      <Section>
+        {/* Browser-style tabs */}
+        <div className="flex border-b border-gray-300 mb-4">
+          {roles.map((r) => (
+            <button
+              key={r.key}
+              onClick={() => handleTabClick(r.key)}
+              className={`px-5 py-2 text-sm font-semibold rounded-t-md transition-all
+                ${
+                  activeTab === r.key
+                    ? "bg-white border-x border-t border-gray-300 text-[#E55B3C]"
+                    : "text-gray-600 hover:text-[#E55B3C] bg-gray-100"
+                }`}
+              style={{
+                marginBottom: activeTab === r.key ? "-1px" : "0", // make active tab sit seamlessly
+              }}
+            >
+              {r.label}
+            </button>
+          ))}
+        </div>
+
         {filterByQuery(currentList).length === 0 ? (
           <PlaceholderCard
             title={`No ${activeTab}s found`}
             description="Try another search."
           />
         ) : (
-          <div className="h-[700px] overflow-y-auto pr-2">
+          <div className="h-[700px] overflow-y-auto pr-2 bg-white">
             {filterByQuery(currentList).map((u) => (
               <UserRow
                 key={u.id}
