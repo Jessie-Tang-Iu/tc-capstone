@@ -139,6 +139,7 @@ export default function UsersPanel({ onShowDetails }) {
           <div className="h-[700px] overflow-y-auto pr-2 bg-white">
             {filterByQuery(currentList).map((u) => (
               <UserRow
+                {...u}
                 key={u.id}
                 id={u.id}
                 name={`${u.first_name} ${u.last_name}`}

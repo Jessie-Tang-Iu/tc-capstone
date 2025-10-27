@@ -141,12 +141,13 @@ export default function RequestsPanel({ onShowDetails }) {
           <div className="h-[700px] overflow-y-auto pr-2 bg-white  rounded-b-md ">
             {filterByQuery(currentList).map((r) => (
               <RequestRow
+                {...r}
                 key={r.id}
                 name={`${r.first_name} ${r.last_name}`}
                 subtitle={r.email}
                 onAccept={() => acceptRequest(activeTab, r.id)}
                 onRefuse={() => refuseRequest(activeTab, r.id)}
-                onDetails={() => onShowDetails?.({ type: "request", data: r })}
+                onDetails={() => onShowDetails?.(r)}
               />
             ))}
           </div>

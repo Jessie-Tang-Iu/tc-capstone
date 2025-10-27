@@ -192,8 +192,9 @@ export default function ReportsPanel({
               isBanned={r.isBanned}
               onDetails={() =>
                 onShowDetails?.({
-                  type: "report",
-                  data: r,
+                  ...r,
+                  id: r.id || r.reportId || r.report_id,
+                  report_id: r.reportId || r.id,
                 })
               }
               onDelete={handleDelete}
