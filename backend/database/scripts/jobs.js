@@ -3,7 +3,8 @@ import { query } from "../../database/db.js";
 export async function getAllJobPosts() {
   const { rows } = await query(`
     SELECT  jb.id AS id, 
-            title, company, 
+            e.company_name AS company,
+            title, 
             company_info, 
             location, 
             status, 
@@ -20,10 +21,11 @@ export async function getAllJobPosts() {
             details, 
             benefits,
             questions
-     FROM job jb  JOIN job_experience je ON jb.experience_id = je.id
-                  JOIN job_industry ji ON jb.industry_id = ji.id
-                  JOIN job_type jt ON jb.type_id = jt.id
-                  JOIN job_workplace jw ON jb.workplace_id = jw.id
+     FROM job jb  JOIN job_experience je  ON jb.experience_id = je.id
+                  JOIN job_industry ji    ON jb.industry_id = ji.id
+                  JOIN job_type jt        ON jb.type_id = jt.id
+                  JOIN job_workplace jw   ON jb.workplace_id = jw.id
+                  JOIN employers e        ON jb.employer_id = e.clerk_id
      ORDER BY posted_at ASC`);
   return rows;
 }
@@ -35,11 +37,12 @@ export async function getJobPostById(id) {
 
 export async function getJobPostByEmployerId(id) {
   const { rows } = await query(`
-    SELECT jb.id AS id, title, company, company_info, location, status, salary_per_hour, posted_at, ji.name AS industry, je.name AS experience, jt.name AS type, jw.name AS workplace, link, description, responsibilities, requirements, details, benefits
-     FROM job jb  JOIN job_experience je ON jb.experience_id = je.id
-                  JOIN job_industry ji ON jb.industry_id = ji.id
-                  JOIN job_type jt ON jb.type_id = jt.id
-                  JOIN job_workplace jw ON jb.workplace_id = jw.id
+    SELECT jb.id AS id, title, e.company_name AS company, company_info, location, status, salary_per_hour, posted_at, ji.name AS industry, je.name AS experience, jt.name AS type, jw.name AS workplace, link, description, responsibilities, requirements, details, benefits
+     FROM job jb  JOIN job_experience je  ON jb.experience_id = je.id
+                  JOIN job_industry ji    ON jb.industry_id = ji.id
+                  JOIN job_type jt        ON jb.type_id = jt.id
+                  JOIN job_workplace jw   ON jb.workplace_id = jw.id
+                  JOIN employers e        ON jb.employer_id = e.clerk_id
      WHERE jb.employer_id = $1
      ORDER BY posted_at ASC`, [id]);
   return rows;
@@ -68,7 +71,7 @@ export async function getAllJobWorkplaces() {
 export async function createJobPost(post) {
   const query = `
     INSERT INTO job 
-      (title, company, location, posted_at, industry_id, workplace_id, type_id, experience_id, salary_per_hour, link, description, responsibilities, requirements, details, benefits) 
+      (title, employer_id, location, posted_at, industry_id, workplace_id, type_id, experience_id, salary_per_hour, link, description, responsibilities, requirements, details, benefits) 
     VALUES
       ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
     RETURNING *;
@@ -76,7 +79,7 @@ export async function createJobPost(post) {
 
   const values = [
     post.title,
-    post.company,
+    post.employerId,
     post.location,
     post.postedAt,
     post.industryId,

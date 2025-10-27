@@ -1,9 +1,9 @@
 "use client";
 
-export default function Button({ text, onClick, disabled, className }) {
+export default function Button({ text, onClick, disabled, className, type="button" }) {
   return (
     <button
-      type="button"
+      type={type}
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
       className={`

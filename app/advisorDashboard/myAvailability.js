@@ -45,7 +45,7 @@ export default function MyAvailability({advisorId}) {
                     }));
     
                     setEvents(mappedEvents);
-                    console.log(mappedEvents);
+                    console.log("Mapped Event: ", mappedEvents);
                 } catch (error) {
                     console.error("Fetch error: ", error);
                 }

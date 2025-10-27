@@ -15,8 +15,7 @@ function ProfileDashboardContent() {
   const searchParams = useSearchParams();
   const tab = searchParams.get("tab") || "";
   
-  const { user, isLoaded } = useUser();
-  // console.log(user)
+  const { user, isLoaded, isSignedIn } = useUser();
 
   const router = useRouter();
 
@@ -86,23 +85,19 @@ function ProfileDashboardContent() {
           { phone: "US +1 (519) XXX-XXX", isPrimary: false },
         ],
       }));
-    }
 
-    fetch(`/api/resume/user/${user.id}`)
+      fetch(`/api/resume/user/${user.id}`)
       .then((res) => res.json())
       .then((data) => {
         setResumeData(data);
         console.log(" Resume: ", data);
       })
       .catch((error) => console.error('Error fetching resume:', error));
-
+    }
   }, [user]);
 
   // const [tab, setTab] = useState("message");
   const [showDetail, setShowDetail] = useState(tab == "" ? false : true);
-
-  if (!isLoaded) return null;
-
 
   const TabBtn = ({ v, children }) => (
     <button
@@ -120,6 +115,14 @@ function ProfileDashboardContent() {
 
   const handleBackToList = () => setShowDetail(false);
 
+  if (!isLoaded) {
+    return <p>Loading...</p>;
+  }
+
+  if (!isSignedIn) {
+    // Don’t render anything while redirecting
+    return null;
+  }
 
   return (
     <main className="bg-gray-100 min-h-screen w-full">
