@@ -57,7 +57,7 @@ export default function JobPostsPage() {
   const rows = useMemo(() => jobs.slice(start, end), [jobs, page]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
       <Navbar />
       <main className="mx-auto w-full px-6 py-8">
         <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">

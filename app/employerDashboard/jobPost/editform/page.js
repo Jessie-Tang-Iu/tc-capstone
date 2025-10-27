@@ -231,7 +231,7 @@ export default function JobPostEditForm() {
     );
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white text-black">
       <Navbar />
       <main className="mx-auto w-full px-6 py-8">
         <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">

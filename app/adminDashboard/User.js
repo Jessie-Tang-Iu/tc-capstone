@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import SearchBar from "@/app/components/ui/SearchBar";
 import Section from "@/app/components/adminDashboard/Section";
 import UserRow from "@/app/components/adminDashboard/UserRow";
@@ -11,45 +11,45 @@ export default function UsersPanel({ onShowDetails }) {
   const [query, setQuery] = useState("");
   const [openChat, setOpenChat] = useState(false);
   const [chatTo, setChatTo] = useState("");
-  const [users, setUsers] = useState([]);
+  const [usersByRole, setUsersByRole] = useState({});
+  const [activeTab, setActiveTab] = useState("admin");
+  const [fetchedRoles, setFetchedRoles] = useState({});
+
+  const roles = [
+    { key: "admin", label: "Admins" },
+    { key: "employer", label: "Employers" },
+    { key: "advisor", label: "Advisors" },
+    { key: "member", label: "Members" },
+  ];
+
+  const fetchUsersByRole = async (roleKey) => {
+    try {
+      const res = await fetch(`/api/users?role=${roleKey}`, {
+        cache: "no-store",
+      });
+      if (!res.ok) throw new Error("Failed to fetch users");
+      const data = await res.json();
+      const filtered = data.filter(
+        (u) => u.status !== "underreview" && u.role === roleKey
+      );
+      setUsersByRole((prev) => ({ ...prev, [roleKey]: filtered }));
+      setFetchedRoles((prev) => ({ ...prev, [roleKey]: true }));
+    } catch (err) {
+      console.error(`Error loading ${roleKey}:`, err);
+      setUsersByRole((prev) => ({ ...prev, [roleKey]: [] }));
+    }
+  };
 
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch("/api/users", { cache: "no-store" });
-        if (!res.ok) throw new Error("Failed to fetch users");
-        const data = await res.json();
-        setUsers(data.filter((u) => u.status !== "underreview"));
-      } catch (err) {
-        console.error("Error loading users:", err);
-      }
-    })();
+    fetchUsersByRole(activeTab);
   }, []);
 
-  const normal = useMemo(
-    () => users.filter((u) => u.role === "member"),
-    [users]
-  );
-  const employer = useMemo(
-    () => users.filter((u) => u.role === "employer"),
-    [users]
-  );
-  const advisor = useMemo(
-    () => users.filter((u) => u.role === "advisor"),
-    [users]
-  );
-  const admin = useMemo(() => users.filter((u) => u.role === "admin"), [users]);
+  const handleTabClick = (roleKey) => {
+    setActiveTab(roleKey);
+    if (!fetchedRoles[roleKey]) fetchUsersByRole(roleKey);
+  };
 
-  const filterByQuery = (list) =>
-    list.filter((u) => {
-      const fullName = `${u.first_name} ${u.last_name}`.toLowerCase();
-      const email = (u.email ?? "").toLowerCase();
-      const username = (u.username ?? "").toLowerCase();
-      const q = query.toLowerCase();
-      return fullName.includes(q) || email.includes(q) || username.includes(q);
-    });
-
-  async function updateUserStatus(id, newStatus) {
+  const updateUserStatus = async (id, newStatus) => {
     try {
       const res = await fetch(`/api/users/${id}`, {
         method: "PATCH",
@@ -58,17 +58,15 @@ export default function UsersPanel({ onShowDetails }) {
       });
       if (!res.ok) throw new Error("Failed to update user status");
       const updated = await res.json();
-      setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
-      return updated;
+      setUsersByRole((prev) => ({
+        ...prev,
+        [activeTab]: prev[activeTab].map((u) =>
+          u.id === updated.id ? updated : u
+        ),
+      }));
     } catch (err) {
       console.error("Update status error:", err);
-      return null;
     }
-  }
-
-  const handleBanToggle = async (user) => {
-    const newStatus = user.status === "banned" ? "active" : "banned";
-    await updateUserStatus(user.id, newStatus);
   };
 
   const openMessage = (userId) => {
@@ -80,57 +78,86 @@ export default function UsersPanel({ onShowDetails }) {
     onShowDetails?.({ user, roleLabel });
   };
 
-  const renderUserSection = (title, list, roleLabel) => (
-    <Section title={title}>
-      {filterByQuery(list).length === 0 ? (
-        <PlaceholderCard
-          title={`No ${title.toLowerCase()} found`}
-          description="Try another search."
-        />
-      ) : (
-        <div className="h-80 overflow-y-auto pr-2">
-          {filterByQuery(list).map((u) => (
-            <UserRow
-              key={u.id}
-              id={u.id}
-              name={`${u.first_name} ${u.last_name}`}
-              subtitle={`${u.username ?? ""} | ${u.email ?? ""}`}
-              status={u.status}
-              onMessage={() => openMessage(u.id)}
-              onDetails={() => showDetails(u, roleLabel)}
-              onStatusChange={(updated) =>
-                setUsers((prev) =>
-                  prev.map((x) => (x.id === updated.id ? updated : x))
-                )
-              }
-            />
-          ))}
-        </div>
-      )}
-    </Section>
-  );
+  const currentList = usersByRole[activeTab] || [];
+
+  const filterByQuery = (list) => {
+    const q = query.toLowerCase();
+    return list.filter((u) => {
+      const fullName = `${u.first_name} ${u.last_name}`.toLowerCase();
+      const email = (u.email ?? "").toLowerCase();
+      const username = (u.username ?? "").toLowerCase();
+      return fullName.includes(q) || email.includes(q) || username.includes(q);
+    });
+  };
 
   return (
     <div className="w-full">
-      <div className="mb-4 rounded-xl bg-white p-6 shadow text-center">
-        <div className="mb-4 text-3xl font-semibold text-[#E55B3C]">
+      {/* Header */}
+      <div className="mb-4 rounded-xl bg-white p-6 shadow">
+        <div className="mb-4 text-3xl font-semibold text-[#E55B3C] text-center">
           User Management
         </div>
-        <div className="flex justify-center">
-          <SearchBar
-            placeholder="Username | Email"
-            value={query}
-            onChange={setQuery}
-            onSearch={() => {}}
-          />
+
+        {/* Search and Tabs in same row */}
+        <div className="flex flex-wrap justify-between items-center gap-3">
+          <div className="flex flex-wrap gap-3">
+            {roles.map((r) => (
+              <button
+                key={r.key}
+                onClick={() => handleTabClick(r.key)}
+                className={`px-4 py-2 rounded-md font-semibold text-sm transition
+                  ${
+                    activeTab === r.key
+                      ? "bg-[#E55B3C] text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex justify-end">
+            <SearchBar
+              placeholder="Search by username or email"
+              value={query}
+              onChange={setQuery}
+              onSearch={() => {}}
+            />
+          </div>
         </div>
       </div>
 
-      {renderUserSection("Admins", admin, "Admin")}
-      {renderUserSection("Employers", employer, "Employer")}
-      {renderUserSection("Advisors", advisor, "Advisor")}
-      {renderUserSection("Normal Users", normal, "Member")}
+      {/* Section */}
+      <Section title={roles.find((r) => r.key === activeTab)?.label}>
+        {filterByQuery(currentList).length === 0 ? (
+          <PlaceholderCard
+            title={`No ${activeTab}s found`}
+            description="Try another search."
+          />
+        ) : (
+          <div className="h-[700px] overflow-y-auto pr-2">
+            {filterByQuery(currentList).map((u) => (
+              <UserRow
+                key={u.id}
+                id={u.id}
+                name={`${u.first_name} ${u.last_name}`}
+                subtitle={`${u.username ?? ""} | ${u.email ?? ""}`}
+                status={u.status}
+                onMessage={() => openMessage(u.id)}
+                onDetails={() =>
+                  showDetails(u, roles.find((r) => r.key === activeTab)?.label)
+                }
+                onStatusChange={(updated) =>
+                  updateUserStatus(u.id, updated.status)
+                }
+              />
+            ))}
+          </div>
+        )}
+      </Section>
 
+      {/* Chat Window */}
       {openChat && (
         <ChatWindow
           recipient={chatTo}
