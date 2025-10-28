@@ -28,9 +28,9 @@ export default function DiscussionBoard() {
     const [showCommentModal, setShowCommentModal] = useState(false);
     const [showEditPostModal, setShowEditPostModal] = useState(false);
 
-    const [newPost, setNewPost] = useState({ author_id: userID, author_name: userName, title: "", content: "" });
+    const [newPost, setNewPost] = useState({ author_id: userID, author_name: userName, title: "", content: "", tags: "", });
     const [newComment, setNewComment] = useState({ author_id: userID, author_name: userName, content: "" });
-    const [editPost, setEditPost] = useState({ id: null, title: "", content: "" });
+    const [editPost, setEditPost] = useState({ id: null, title: "", content: "", tags: "" });
 
 
     // Loads all posts into the frontend on page load
@@ -69,6 +69,10 @@ export default function DiscussionBoard() {
                 author_name: userName,
                 title: newPost.title.trim(),
                 content: newPost.content.trim(),
+                tags: newPost.tags
+                    .split(",")
+                    .map((t) => t.trim())
+                    .filter((t) => t !== ""),
             };
 
             console.log("Creating post with payload:", postPayload);
@@ -229,9 +233,10 @@ export default function DiscussionBoard() {
                                 {...selectedPost}
                                 onEdit={(post) => {
                                     setEditPost({
-                                    id: post.id,
-                                    title: post.title,
-                                    content: post.content,
+                                        id: post.id,
+                                        title: post.title,
+                                        content: post.content,
+                                        tags: (post.tags || []).join(", "),
                                     });
                                     setShowEditPostModal(true);
                                 }}
@@ -285,6 +290,14 @@ export default function DiscussionBoard() {
                             onChange={(e) =>
                             setNewPost({ ...newPost, title: e.target.value })
                             }
+                        />
+                        {/* Tags */}
+                        <input
+                            type="text"
+                            className="border border-gray-300 focus:ring-2 focus:ring-[#E55B3C] w-full px-3 py-2 rounded-lg"
+                            placeholder="Enter tags, separated by commas (e.g. react,nextjs,frontend)"
+                            value={newPost.tags}
+                            onChange={(e) => setNewPost({ ...newPost, tags: e.target.value })}
                         />
 
                         {/* Quill Editor */}
