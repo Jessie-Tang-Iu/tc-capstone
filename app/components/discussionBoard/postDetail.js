@@ -12,6 +12,10 @@ export default function PostDetail({ id, title, author_id, first_name, last_name
 
   const dummyTags = "Tag1,Tag2,Tag3"; // Placeholder for tags
 
+  const formatTags = (tagsString) => {
+    return tagsString.split(",").map((tag) => tag.trim());
+  }
+
   const displayName =
     first_name && last_name
       ? `${first_name} ${last_name}`
@@ -45,8 +49,15 @@ export default function PostDetail({ id, title, author_id, first_name, last_name
         By {displayName} on {formattedDate}
       </p>
 
-      <div>
-        Tags: 
+      <div className="text-sm text-gray-500 mb-4">
+        Tags: {formatTags(dummyTags).map((tag, index) => (
+          <span
+            key={index}
+            className="inline-block bg-gray-200 text-gray-700 rounded-full px-3 py-1 text-sm font-semibold mr-3"
+          >
+            #{tag}
+          </span>
+        ))} 
       </div>
 
       {/* Allows the content to render the HTML output from quill, TO-DO: Sanitize input to prevent XSS */}
