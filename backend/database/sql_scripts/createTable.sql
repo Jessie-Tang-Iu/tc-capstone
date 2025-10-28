@@ -186,24 +186,26 @@ CREATE TABLE cover_letter (
 );
 
 CREATE TABLE application (
-  id                  BIGSERIAL PRIMARY KEY,
-  job_id              BIGINT NOT NULL,
-  user_id             VARCHAR(255) NOT NULL,
-  resume_name         VARCHAR(500),
-  resume_data         BYTEA,
-  cover_letter_name   VARCHAR(500),
-  cover_letter_data   BYTEA,
-  status              CHAR(1) NOT NULL DEFAULT 'S', -- S: Submitted, U: Under Reviewed, I: Interview Scheduled, R: Rejected, O: Offer, D: Withdrawn
-  applied_at          TIMESTAMP NOT NULL DEFAULT now(),
-  relative_first_name  TEXT,
-  relative_last_name  TEXT,
-  relative_email      TEXT,
-  relative_phone      TEXT,
-  answers             TEXT[],
-  CONSTRAINT chk_status CHECK (status IN ('S', 'U', 'I', 'R', 'O', 'D')),
-  CONSTRAINT fk_job_user UNIQUE (job_id, user_id),
-  CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(clerk_id) ON DELETE CASCADE,
-  CONSTRAINT fk_job FOREIGN KEY (job_id) REFERENCES job(id) ON DELETE CASCADE
+    id                  BIGSERIAL PRIMARY KEY,
+    job_id              BIGINT NOT NULL,
+    user_id             VARCHAR(255) NOT NULL,
+    resume_name         VARCHAR(500),
+    resume_data         BYTEA,
+    resume_iv           VARCHAR(32),
+    cover_letter_name   VARCHAR(500),
+    cover_letter_data   BYTEA,
+    cover_letter_iv     VARCHAR(32),
+    status              CHAR(1) NOT NULL DEFAULT 'S', -- S: Submitted, U: Under Reviewed, I: Interview Scheduled, R: Rejected, O: Offer, D: Withdrawn
+    applied_at          TIMESTAMP NOT NULL DEFAULT now(),
+    relative_first_name  TEXT,
+    relative_last_name  TEXT,
+    relative_email      TEXT,
+    relative_phone      TEXT,
+    answers             TEXT[],
+    CONSTRAINT chk_status CHECK (status IN ('S', 'U', 'I', 'R', 'O', 'D')),
+    CONSTRAINT fk_job_user UNIQUE (job_id, user_id),
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(clerk_id) ON DELETE CASCADE,
+    CONSTRAINT fk_job FOREIGN KEY (job_id) REFERENCES job(id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_app_user   ON application (user_id);

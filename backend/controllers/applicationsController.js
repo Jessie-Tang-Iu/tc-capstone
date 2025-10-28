@@ -14,7 +14,7 @@ export async function getApplicationById(id) {
 export async function createApplication(app) {
     if (!app.user_id || !app.job_id || !app.answers)
         throw new Error("Missing required information");
-    console.log(app);
+    // console.log("application controller: ", app);
     return await apps.createApplication(app);
 }
 
