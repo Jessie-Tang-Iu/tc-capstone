@@ -15,25 +15,24 @@ export async function getAllPosts() {
 }
 
 // Create a new post
-export async function createPost(author_id, title, content) {
+export async function createPost(author_id, title, content, tags = []) {
   const result = await query(
-    `INSERT INTO posts (author_id, title, content)
-     VALUES ($1, $2, $3)
+    `INSERT INTO posts (author_id, title, content, tags)
+     VALUES ($1, $2, $3, $4)
      RETURNING *`,
-    [author_id, title, content]
+    [author_id, title, content, tags]
   );
   return result.rows[0];
 }
 
 // Update a Post
-
-export async function updatePost(id, author_id, title, content) {
+export async function updatePost(id, author_id, title, content, tags = []) {
   const result = await query(
     `UPDATE posts
-     SET title = $3, content = $4
+     SET title = $3, content = $4, tags = $5
      WHERE id = $1 AND author_id = $2
      RETURNING *`,
-    [id, author_id, title, content]
+    [id, author_id, title, content, tags]
   );
   return result.rows[0];
 }

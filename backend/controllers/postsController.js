@@ -13,17 +13,16 @@ export async function getPostsController() {
 
 // Create a new post
 export async function createPostController(body) {
-  const { author_id, title, content } = body;
+  const { author_id, title, content, tags } = body;
   if (!author_id || !title || !content)
     throw new Error("Missing required fields");
-  return await posts.createPost(author_id, title, content);
+  return await posts.createPost(author_id, title, content, tags || []);
 }
 
 // Edit an existing post
 export async function updatePostController(body) {
-  const { id, author_id, title, content } = body;
-  if (!id || !author_id || !title || !content){
+  const { id, author_id, title, content, tags } = body;
+  if (!id || !author_id || !title || !content)
     throw new Error("Missing required fields");
-  }
-  return await posts.updatePost(id, author_id, title, content);
+  return await posts.updatePost(id, author_id, title, content, tags || []);
 }
