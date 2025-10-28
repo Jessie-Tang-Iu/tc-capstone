@@ -394,6 +394,14 @@ export default function DiscussionBoard() {
                             }
                         />
 
+                        <input
+                            type="text"
+                            className="border border-gray-300 focus:ring-2 focus:ring-[#E55B3C] w-full px-3 py-2 rounded-lg"
+                            placeholder="Enter tags separated by commas (e.g. react,nextjs,frontend)"
+                            value={editPost.tags}
+                            onChange={(e) => setEditPost({ ...editPost, tags: e.target.value })}
+                        />
+
                         <ReactQuill
                             theme="snow"
                             modules={quillModules}

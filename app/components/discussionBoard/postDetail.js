@@ -6,22 +6,23 @@ import { useUser } from "@clerk/nextjs";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-export default function PostDetail({ id, title, author_id, first_name, last_name, username, content, created_at, onEdit }) {
+export default function PostDetail({ id, title, author_id, first_name, last_name, username, content, created_at, onEdit, tags }) {
   const { user } = useUser();
   const userID = user?.id;
-
-  const dummyTags = "Tag1,Tag2,Tag3"; // Placeholder for tags
-
-  const formatTags = (tagsString) => {
-    return tagsString.split(",").map((tag) => tag.trim());
-  }
-
+  
   const displayName =
     first_name && last_name
       ? `${first_name} ${last_name}`
       : username || "Unknown";
 
   const formattedDate = new Date(created_at).toLocaleString();
+
+  const formattedTags =
+    typeof tags === "string"
+      ? tags.split(",").map((t) => t.trim()).filter((t) => t)
+      : Array.isArray(tags)
+      ? tags
+      : [];
 
   return (
     <div className="p-4 mb-10">
@@ -38,6 +39,7 @@ export default function PostDetail({ id, title, author_id, first_name, last_name
                   id,
                   title,
                   content,
+                  tags,
                 })
               }
             />
@@ -49,16 +51,18 @@ export default function PostDetail({ id, title, author_id, first_name, last_name
         By {displayName} on {formattedDate}
       </p>
 
-      <div className="text-sm text-gray-500 mb-4">
-        Tags: {formatTags(dummyTags).map((tag, index) => (
-          <span
-            key={index}
-            className="inline-block bg-gray-200 text-gray-700 rounded-full px-3 py-1 text-sm font-semibold mr-3"
-          >
-            #{tag}
-          </span>
-        ))} 
-      </div>
+      {formattedTags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-4">
+          {formattedTags.map((tag, index) => (
+            <span
+              key={index}
+              className="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded-full"
+            >
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
 
       {/* Allows the content to render the HTML output from quill, TO-DO: Sanitize input to prevent XSS */}
       <div
