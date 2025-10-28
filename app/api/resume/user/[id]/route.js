@@ -5,11 +5,14 @@ import { getResumeByUser, updateResumeByUser } from "@/backend/controllers/resum
 export async function GET(_req, { params }) {
   const { id } = await params;
   try {
-    const rs = await getResumeByUser(id);
-    return NextResponse.json(rs);
+    const result = await getResumeByUser(id);
+    if (!result) {
+      return NextResponse.json({ error: "Resume not create" }, { status: 404 })
+    }
+    return NextResponse.json(result, { status: 200});
   } catch (e) {
     console.error("GET /api/resume/user/[id] failed: ", e);
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
 

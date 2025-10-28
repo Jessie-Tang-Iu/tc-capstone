@@ -5,7 +5,7 @@ import { createApplication } from "@/backend/controllers/applicationsController"
 export async function POST(req) {
   try {
     const body = await req.json();
-    // console.log()
+    // console.log("POST api: ", body);
     const newApp = await createApplication(body);
     return NextResponse.json(newApp, { status: 201 });
   } catch (e) {

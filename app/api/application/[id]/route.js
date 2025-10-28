@@ -8,7 +8,7 @@ export async function GET(_req, { params }) {
     return NextResponse.json(apps);
   } catch (e) {
     console.error("GET /api/application/[id] failed: ", e);
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
 

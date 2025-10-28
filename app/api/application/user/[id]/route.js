@@ -8,6 +8,6 @@ export async function GET(_req, { params }) {
     const apps = await getApplicationsByUser(id);
     return NextResponse.json(apps);
   } catch (e) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
