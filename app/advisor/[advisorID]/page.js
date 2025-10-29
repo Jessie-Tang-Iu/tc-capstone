@@ -48,7 +48,7 @@ export default function AdvisorPage({ params }) {
     
       }, []);
 
-    console.log("Advisor: ", advisor);
+    // console.log("Advisor: ", advisor);
 
     if (!advisor) {
     return (
