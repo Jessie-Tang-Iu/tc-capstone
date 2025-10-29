@@ -16,6 +16,8 @@ export default function AdvisorPage({ params }) {
         role: null,
         company_name: null,
         company_role: null,
+        education: null,
+        experience: null,
     });
 
     const router = useRouter();
@@ -46,7 +48,7 @@ export default function AdvisorPage({ params }) {
     
       }, []);
 
-    // console.log("Advisor: ", advisor);
+    console.log("Advisor: ", advisor);
 
     if (!advisor) {
     return (
@@ -85,6 +87,11 @@ export default function AdvisorPage({ params }) {
                     
                     <div className='mb-10'>
                         <h1 className="text-2xl text-black font-bold mb-2">Experience</h1>
+                        <p>{advisor.experience || "No experience information available."}</p>
+                    </div>
+                    <div className='mb-10'>
+                        <h1 className="text-2xl text-black font-bold mb-2">Education</h1>
+                        <p>{advisor.education || "No education information available."}</p> 
                     </div>
                     <div className='mb-10'>
                         <h1 className="text-2xl text-black font-bold mb-2">Contact Information</h1>
