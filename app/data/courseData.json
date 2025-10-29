@@ -3,127 +3,85 @@
     "lessons": [
       {
         "id": 1,
+        "course_id": 1,
+        "title": "Getting Started with HTML",
+        "content": "<p>Learn how to structure webpages using HTML elements.</p>",
+        "video_url": "",
         "type": "lesson",
-        "title": "What is Python?",
-        "content": "Python is a high-level, interpreted programming language that emphasizes readability and simplicity.",
-        "video": null
+        "position": 1
       },
       {
         "id": 2,
+        "course_id": 1,
+        "title": "Styling with CSS",
+        "content": "<p>Understand how to make your webpages look great with CSS.</p>",
+        "video_url": "",
         "type": "lesson",
-        "title": "Installing Python",
-        "content": "Learn how to install Python and set up your development environment.",
-        "video": null
+        "position": 2
       },
       {
         "id": 3,
-        "type": "quiz",
-        "title": "Quiz: Python Basics",
-        "questions": [
-          {
-            "question": "What type of language is Python?",
-            "answers": ["Compiled", "Interpreted", "Assembly", "Machine code"],
-            "correctAnswer": "Interpreted"
-          },
-          {
-            "question": "Which of these is a valid Python print statement?",
-            "answers": ["print 'Hello'", "echo('Hello')", "print('Hello')", "printf('Hello')"],
-            "correctAnswer": "print('Hello')"
-          }
-        ]
+        "course_id": 1,
+        "title": "JavaScript Basics",
+        "content": "<p>Write interactive scripts for your webpages.</p>",
+        "video_url": "",
+        "type": "lesson",
+        "position": 3
       },
       {
         "id": 4,
-        "type": "lesson",
-        "title": "Variables and Data Types",
-        "content": "In Python, variables are dynamically typed and can hold different types of data.",
-        "video": null
-      },
-      {
-        "id": 5,
+        "course_id": 1,
+        "title": "Quiz: HTML & CSS",
         "type": "quiz",
-        "title": "Quiz: Variables",
+        "position": 4,
         "questions": [
           {
-            "question": "Which keyword is used to assign a value in Python?",
-            "answers": ["let", "var", "=", ":"],
-            "correctAnswer": "="
+            "question": "What tag is used to define a hyperlink in HTML?",
+            "answers": ["<a>", "<link>", "<href>", "<url>"],
+            "correctAnswer": "<a>"
           },
           {
-            "question": "What data type is 3.14 in Python?",
-            "answers": ["int", "float", "string", "bool"],
-            "correctAnswer": "float"
+            "question": "Which property changes text color in CSS?",
+            "answers": ["font-color", "color", "text-style", "font-style"],
+            "correctAnswer": "color"
           }
         ]
-      },
+      }
+    ]
+  },
+  "2": {
+    "lessons": [
       {
-        "id": 6,
+        "id": 1,
+        "course_id": 2,
+        "title": "Python Memory Model",
+        "content": "<p>Learn how Python manages objects in memory.</p>",
+        "video_url": "",
         "type": "lesson",
-        "title": "Control Structures: if Statements",
-        "content": "The if statement allows conditional execution of code blocks in Python.",
-        "video": null
+        "position": 1
       },
       {
-        "id": 7,
+        "id": 2,
+        "course_id": 2,
+        "title": "Asynchronous Programming",
+        "content": "<p>Master asyncio and concurrency patterns.</p>",
+        "video_url": "",
         "type": "lesson",
-        "title": "Loops in Python",
-        "content": "Python provides while and for loops for iteration.",
-        "video": null
+        "position": 2
       },
       {
-        "id": 8,
+        "id": 3,
+        "course_id": 2,
+        "title": "Quiz: Python Advanced",
         "type": "quiz",
-        "title": "Quiz: Loops",
+        "position": 3,
         "questions": [
           {
-            "question": "Which keyword is used for a loop in Python?",
-            "answers": ["loop", "repeat", "for", "iterate"],
-            "correctAnswer": "for"
-          },
-          {
-            "question": "What will `while True:` do?",
-            "answers": ["Run once", "Run until False", "Infinite loop", "Error"],
-            "correctAnswer": "Infinite loop"
+            "question": "Which module provides async support in Python?",
+            "answers": ["async", "asyncio", "concurrent", "multiprocessing"],
+            "correctAnswer": "asyncio"
           }
         ]
-      },
-      {
-        "id": 9,
-        "type": "lesson",
-        "title": "Functions",
-        "content": "Functions in Python are defined using the def keyword and can take arguments.",
-        "video": null
-      },
-      {
-        "id": 10,
-        "type": "lesson",
-        "title": "Lists and Tuples",
-        "content": "Lists are mutable collections, while tuples are immutable collections in Python.",
-        "video": null
-      },
-      {
-        "id": 11,
-        "type": "quiz",
-        "title": "Quiz: Data Structures",
-        "questions": [
-          {
-            "question": "Which of these is immutable?",
-            "answers": ["List", "Tuple", "Dictionary", "Set"],
-            "correctAnswer": "Tuple"
-          },
-          {
-            "question": "How do you access the first element of a list in Python?",
-            "answers": ["list[0]", "list(1)", "list.first()", "list.get(0)"],
-            "correctAnswer": "list[0]"
-          }
-        ]
-      },
-      {
-        "id": 12,
-        "type": "lesson",
-        "title": "Wrap Up and Next Steps",
-        "content": "Congratulations! You’ve learned the basics of Python. Practice writing small programs to reinforce your knowledge.",
-        "video": null
       }
     ]
   }

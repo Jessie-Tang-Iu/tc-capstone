@@ -5,7 +5,6 @@ import AppDetail from "@/app/components/application/AppDetail";
 import MemberNavBar from "@/app/components/MemberNavBar";
 import PopupMessage from "@/app/components/ui/PopupMessage";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 const statusOptions = {
@@ -18,8 +17,7 @@ const statusOptions = {
 };
 
 export default function Applications() {
-  const { user, isLoaded } = useUser();
-  const router = useRouter();
+  const { user, isLoaded, isSignedIn } = useUser();
   // console.log("User: ", user);
 
 
@@ -43,37 +41,37 @@ export default function Applications() {
   const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
-    if (!isLoaded || !user) return;
+    if (user) {
+      // Fetch applications by user_id
+      fetch(`/api/application/user/${user.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setApplications(data);
+          // console.log("Fetched applications:", data);
+        })
+        .catch((error) => {
+          console.error("Error fetching applications:", error);
+        });
 
-    // Fetch applications by user_id
-    fetch(`/api/application/user/${user.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setApplications(data);
-        // console.log("Fetched applications:", data);
-      })
-      .catch((error) => {
-        console.error("Error fetching applications:", error);
-      });
+      // Fetch resume by user_id
+      fetch(`/api/resume/user/${user.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setResume(data);
+          // console.log("Resume: ", data);
+        })
+        .catch((error) => console.error("Error fetching resume:", error));
 
-    // Fetch resume by user_id
-    fetch(`/api/resume/user/${user.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setResume(data);
-        // console.log("Resume: ", data);
-      })
-      .catch((error) => console.error("Error fetching resume:", error));
-
-    // Fetch cover letter by user_id
-    fetch(`/api/cover_letter/user/${user.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setCoverLetter(data);
-        // console.log("CV: ", data);
-      })
-      .catch((error) => console.error("Error fetching cover letter: ", error));
-  }, [userId]);
+      // Fetch cover letter by user_id
+      fetch(`/api/cover_letter/user/${user.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setCoverLetter(data);
+          // console.log("CV: ", data);
+        })
+        .catch((error) => console.error("Error fetching cover letter: ", error));
+    }
+  }, [user]);
 
 
   // Fetch the information of selected application
@@ -147,6 +145,15 @@ export default function Applications() {
     setShowAppDetail(false);
   };
 
+  if (!isLoaded) {
+    return <p>Loading...</p>;
+  }
+
+  if (!isSignedIn) {
+    // Don’t render anything while redirecting
+    return null;
+  }
+
   return (
     <>
       <div className="min-h-screen bg-gray-100">
@@ -159,9 +166,11 @@ export default function Applications() {
           <p className="text-sm md:text-base text-gray-600 mt-1">
             Track the jobs you have applied for.
           </p>
+          
         </div>
 
         {/* Main Content */}
+        {applications.length > 0 && (
         <div className="flex flex-col md:flex-row ml-2">
           {/* Job Listings Sidebar */}
           <div
@@ -206,7 +215,7 @@ export default function Applications() {
               />
             </div>
           </div>
-        </div>
+        </div>)}
       </div>
       {/* {showConfirm && (
       <PopupMessage

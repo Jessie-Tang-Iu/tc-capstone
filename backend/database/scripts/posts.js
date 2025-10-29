@@ -1,16 +1,38 @@
 import { query } from "../db.js";
 
-// Gets all posts ordered by most recently creates
+// Get all posts with author details using JOIN
 export async function getAllPosts() {
-  const result = await query("SELECT * FROM posts ORDER BY created_at DESC");
+  const result = await query(`
+    SELECT p.*, 
+           u.username, 
+           u.first_name, 
+           u.last_name
+    FROM posts p
+    JOIN users u ON p.author_id = u.clerk_id
+    ORDER BY p.created_at DESC
+  `);
   return result.rows;
 }
 
-// Creates a new post with the given author, title and content from the creation function.
-export async function createPost(user_id, author, title, content) {
+// Create a new post
+export async function createPost(author_id, title, content, tags = []) {
   const result = await query(
-    "INSERT INTO posts (user_id, author, title, content) VALUES ($1, $2, $3, $4) RETURNING *",
-    [user_id, author, title, content]
+    `INSERT INTO posts (author_id, title, content, tags)
+     VALUES ($1, $2, $3, $4)
+     RETURNING *`,
+    [author_id, title, content, tags]
+  );
+  return result.rows[0];
+}
+
+// Update a Post
+export async function updatePost(id, author_id, title, content, tags = []) {
+  const result = await query(
+    `UPDATE posts
+     SET title = $3, content = $4, tags = $5
+     WHERE id = $1 AND author_id = $2
+     RETURNING *`,
+    [id, author_id, title, content, tags]
   );
   return result.rows[0];
 }

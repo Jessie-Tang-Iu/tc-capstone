@@ -8,12 +8,10 @@ import JobCard from "../components/job/JobCard";
 import JobDetail from "../components/job/JobDetail";
 import AdvancedSearch from "../components/job/AdvancedSearch";
 import ApplyForm from "../components/application/ApplyForm";
-import { useRouter } from "next/navigation";
 
 export default function JobBoardPage() {
 
     const { user } = useUser();
-    const router = useRouter();
 
     const [jobs, setJobs] = useState([]);
     const [selectedJobId, setSelectedJobId] = useState();
@@ -71,7 +69,7 @@ export default function JobBoardPage() {
       setSelectedJobId(jobId);
       setShowJobDetail(true);
       let job = jobs.find((job) => job.id === jobId);
-      console.log("Selected Job:", job);
+      // console.log("Selected Job:", job);
     };
   
     const handleBackToList = () => {
@@ -99,9 +97,9 @@ export default function JobBoardPage() {
     }
 
     const handleApplySubmit = async () => {
-      // console.log(formData);
+      console.log("application submit: ", formData);
       try{
-        const res = await fetch(`/api/application/user/${user.id}`, {
+        const res = await fetch(`/api/application`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
