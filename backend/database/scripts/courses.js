@@ -8,9 +8,11 @@ export async function getAllCourses() {
 
 // Get a specific course with lessons
 export async function getCourseById(courseId) {
+  courseId = parseInt(courseId, 10);
+  console.log("Fetching course with ID:", courseId);
   const course = await query(`SELECT * FROM courses WHERE id = $1`, [courseId]);
   const lessons = await query(
-    `SELECT * FROM lessons WHERE course_id = $1 ORDER BY order_index ASC`,
+    `SELECT * FROM lessons WHERE course_id = $1 ORDER BY position ASC`,
     [courseId]
   );
 

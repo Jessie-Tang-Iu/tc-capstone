@@ -11,9 +11,11 @@ export async function getAllCoursesController(req, res) {
 
 export async function getCourseByIdController(req, res) {
   try {
+    console.log("Backend received ID:", req.params.id);
     const data = await getCourseById(req.params.id);
     res.status(200).json(data);
   } catch (err) {
+    console.error("Error fetching course:", err);
     res.status(500).json({ error: err.message });
   }
 }

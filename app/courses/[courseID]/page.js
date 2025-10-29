@@ -1,25 +1,27 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import Navbar from "../../components/MemberNavBar";
 import CourseContent from "../../components/courses/CourseContent";
 import CourseQuiz from "../../components/courses/CourseQuiz";
 
-export default function CoursePage({ params }) {
-  const courseID = params.courseID;
+export default function CoursePage() {
+  const params = useParams(); // get route params
+  const courseID = params.courseID; // this matches your [courseID] folder
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
   const [view, setView] = useState("home");
   const [selectedLesson, setSelectedLesson] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Needs fixing, fetch fails due to invalid courseID
   useEffect(() => {
-    async function fetchCourse() {
+    if (!courseID) return; // don't fetch if no ID
+
+    const fetchCourse = async () => {
       try {
         const res = await fetch(`/api/course/${courseID}`);
         if (!res.ok) throw new Error("Failed to fetch course");
-        console.log(res);
         const data = await res.json();
         setCourse(data);
         setLessons(data.lessons || []);
@@ -28,7 +30,8 @@ export default function CoursePage({ params }) {
       } finally {
         setLoading(false);
       }
-    }
+    };
+
     fetchCourse();
   }, [courseID]);
 
