@@ -18,6 +18,7 @@ export default function CoursePage({ params }) {
       try {
         const res = await fetch(`/api/course/${courseID}`);
         if (!res.ok) throw new Error("Failed to fetch course");
+        console.log(res);
         const data = await res.json();
         setCourse(data);
         setLessons(data.lessons || []);
