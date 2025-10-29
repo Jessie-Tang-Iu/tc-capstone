@@ -26,30 +26,72 @@ export default function Profile() {
     useEffect(() => {
         if (!ME) return;
 
-        (async () => {
-            try {
-                const res = await fetch(`/api/advisor_list`, {
+       fetchAdvisor(ME);
+    }, [ME]);
+
+    const fetchAdvisor = async (advisorId) => {
+        try {
+            const res = await fetch(`/api/advisor_list`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ advisorId: ME })}
-                );
-                if (!res.ok) {console.error("Failed to advisor"); return;}
-        
-                const data = await res.json();
+                body: JSON.stringify({ advisorId: advisorId })}
+            );
+            if (!res.ok) {console.error("Failed to fetch advisor"); return;}
 
-                setAdvisor(data);
-            } catch (error) {
-                console.error("Fetch error: ", error);
-            }
-        })();
-    }, [ME]);
+            const data = await res.json();
+            setAdvisor(data);
+        } catch (error) {
+            console.error("Fetch error: ", error);
+        }
+    };
 
-    console.log("Advisor: ", advisor)
+    // console.log("Advisor: ", advisor)
 
-    const handleProfileSubmit = (e) => {
+    const handleProfileSubmit = async (e) => {
         e.preventDefault();
+
+        // advisor personal info
+        const newAdvisor = {
+            clerk_id: advisor.clerk_id,
+            first_name: advisor.first_name,
+            last_name: advisor.last_name,
+            email: advisor.email,
+            phone: advisor.phone,
+            company_name: advisor.company_name,
+            company_role: advisor.company_role,
+        }
+
+        // advisor profile info
+        const newAdvisorProfile = {
+            advisorId: advisor.clerk_id,
+            education: advisor.education,
+            experience: advisor.experience,
+        }
+
+        console.log("Submitting advisor profile: ", newAdvisorProfile);
+
+        try {
+            const res = await fetch(`/api/advisor_list`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ advisorId: advisor.clerk_id,
+                    education: advisor.education,
+                    experience: advisor.experience, })}
+                );
+            if (!res.ok) {console.error("Failed to update profile"); return;}
+        
+            console.log("Profile updated successfully");
+
+            fetchAdvisor(ME); // refresh data
+            
+        } catch (error) {
+            console.error("Error submitting profile: ", error);
+        }
+        
     }
 
     return(
@@ -158,6 +200,8 @@ export default function Profile() {
                             <textarea
                             className="w-full min-h-100 border rounded border-black mb-6 p-3 text-black"
                             placeholder={"2022/8 - Present\nFront-end Developer"}
+                            value={advisor.experience || ""}
+                            onChange={(e) => setAdvisor({...advisor, experience: e.target.value})}
                             />
                         </div>
 
@@ -166,6 +210,8 @@ export default function Profile() {
                             <textarea
                             className="w-full min-h-60 border rounded border-black mb-6 p-3 text-black"
                             placeholder={"University of Toronto\nMaster of ComputerScience\nSep 2020 - Jun 2022 \n\n\nUniversity of Calgary\nBachelor of Computer Science\nSep 2017 - Jun 2020"}
+                            value={advisor.education || ""}
+                            onChange={(e) => setAdvisor({...advisor, education: e.target.value})}
                             />
                         </div>
 

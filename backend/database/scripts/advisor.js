@@ -19,3 +19,31 @@ export async function getAdvisorById(id) {
   if (!result.rows.length) throw new Error("Not found");
   return result.rows[0];
 }
+
+export async function updateAdvisorProfile(advisorProfile) {
+    const { advisorId, education, experience } = advisorProfile;
+
+    const existingProfile = await query(
+        `SELECT * FROM advisory_profile WHERE advisor_id = $1`,
+        [advisorId]
+    );
+    if (existingProfile.rows.length) {
+        const result = await query(
+            `UPDATE advisory_profile 
+            SET education = $1, experience = $2
+            WHERE advisor_id = $3
+            RETURNING *;`,
+            [education, experience, advisorId]
+        );    
+        return result.rows[0];
+    } else {
+        const result = await query(
+          `INSERT INTO advisory_profile (advisor_id, education, experience)
+          VALUES ($1, $2, $3)
+          RETURNING *;`,
+          [advisorId, education, experience]
+        );
+        return result.rows[0];
+    }
+}
+    
