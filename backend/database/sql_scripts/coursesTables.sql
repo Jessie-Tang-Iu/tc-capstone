@@ -28,7 +28,7 @@ CREATE TABLE lessons (
   position INT                -- order in course
 );
 
--- QUIZ QUESTIONS (optional, only for quizzes)
+-- QUIZ QUESTIONS (expanded table only for quizzes)
 CREATE TABLE quiz_questions (
   id SERIAL PRIMARY KEY,
   lesson_id INT REFERENCES lessons(id) ON DELETE CASCADE,
