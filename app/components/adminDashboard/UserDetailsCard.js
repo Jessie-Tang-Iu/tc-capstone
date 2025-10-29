@@ -7,7 +7,7 @@ export default function UserDetailsCard({ user, roleLabel, onClose }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.clerk_id) return;
     setLoading(true);
     setError(null);
 
@@ -27,7 +27,7 @@ export default function UserDetailsCard({ user, roleLabel, onClose }) {
         setLoading(false);
       }
     })();
-  }, [user?.id]);
+  }, [user?.clerk_id]);
 
   if (!user) return null;
   const data = details || {};
