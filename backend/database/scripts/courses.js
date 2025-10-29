@@ -1,15 +1,15 @@
-import pool from "../db.js";
+import { query } from "../db.js";
 
 /** Get all courses */
 export async function getAllCourses() {
-  const result = await pool.query(`SELECT * FROM courses ORDER BY created_at DESC`);
+  const result = await query(`SELECT * FROM courses ORDER BY created_at DESC`);
   return result.rows;
 }
 
 /** Get a specific course with lessons */
 export async function getCourseById(courseId) {
-  const course = await pool.query(`SELECT * FROM courses WHERE id = $1`, [courseId]);
-  const lessons = await pool.query(
+  const course = await query(`SELECT * FROM courses WHERE id = $1`, [courseId]);
+  const lessons = await query(
     `SELECT * FROM lessons WHERE course_id = $1 ORDER BY order_index ASC`,
     [courseId]
   );
@@ -19,7 +19,7 @@ export async function getCourseById(courseId) {
 
 /** Create a new course */
 export async function createCourse(title, description, category, difficulty) {
-  const result = await pool.query(
+  const result = await query(
     `INSERT INTO courses (title, description, category, difficulty)
      VALUES ($1, $2, $3, $4)
      RETURNING *`,
@@ -30,7 +30,7 @@ export async function createCourse(title, description, category, difficulty) {
 
 /** Add a lesson to a course */
 export async function addLesson(courseId, title, content, videoUrl, orderIndex = 1) {
-  const result = await pool.query(
+  const result = await query(
     `INSERT INTO lessons (course_id, title, content, video_url, order_index)
      VALUES ($1, $2, $3, $4, $5)
      RETURNING *`,
@@ -41,7 +41,7 @@ export async function addLesson(courseId, title, content, videoUrl, orderIndex =
 
 /** Track or update user course progress */
 export async function updateUserCourseProgress(userId, courseId, progressPercent, completed = false) {
-  const result = await pool.query(
+  const result = await query(
     `INSERT INTO user_course_progress (user_id, course_id, progress_percent, completed)
      VALUES ($1, $2, $3, $4)
      ON CONFLICT (user_id, course_id)
@@ -54,7 +54,7 @@ export async function updateUserCourseProgress(userId, courseId, progressPercent
 
 /** Mark lesson as completed */
 export async function markLessonComplete(userId, lessonId) {
-  const result = await pool.query(
+  const result = await query(
     `INSERT INTO user_lesson_progress (user_id, lesson_id, completed)
      VALUES ($1, $2, true)
      ON CONFLICT (user_id, lesson_id)

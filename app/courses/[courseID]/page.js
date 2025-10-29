@@ -1,20 +1,37 @@
 "use client";
 
-import React, { useState } from "react";
-import courses from "../../data/courses.json";
-import courseContent from "../../data/courseData.json";
-import Navbar from "../../../components/MemberNavBar";
-import CourseContent from "../../components/CourseContent";
-import CourseQuiz from "../../components/CourseQuiz";
+import React, { useState, useEffect } from "react";
+import Navbar from "../../components/MemberNavBar";
+import CourseContent from "../../components/courses/CourseContent";
+import CourseQuiz from "../../components/courses/CourseQuiz";
 
 export default function CoursePage({ params }) {
-  const id = Number(params.courseID);
-  const course = courses.find((c) => c.courseID === id);
-  const lessons = courseContent[id]?.lessons || [];
-
+  const [course, setCourse] = useState(null);
+  const [lessons, setLessons] = useState([]);
   const [view, setView] = useState("home");
   const [selectedLesson, setSelectedLesson] = useState(null);
+  const [loading, setLoading] = useState(true);
 
+  const courseID = params.courseID;
+
+  useEffect(() => {
+    async function fetchCourse() {
+      try {
+        const res = await fetch(`/api/course/${courseID}`);
+        if (!res.ok) throw new Error("Failed to fetch course");
+        const data = await res.json();
+        setCourse(data);
+        setLessons(data.lessons || []);
+      } catch (err) {
+        console.error("Error loading course:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchCourse();
+  }, [courseID]);
+
+  if (loading) return <div className="p-6 text-black">Loading course...</div>;
   if (!course) return <div className="p-6 text-black">Course not found</div>;
 
   const openLesson = (index) => {
@@ -29,7 +46,6 @@ export default function CoursePage({ params }) {
       <Navbar />
 
       <div className="flex">
-        {/* Sidebar */}
         <div className="w-1/5 border-r border-gray-300 min-h-screen bg-white">
           <div className="p-4 border-b font-semibold text-lg text-[#E55B3C]">
             {course.title}
@@ -59,7 +75,6 @@ export default function CoursePage({ params }) {
           ))}
         </div>
 
-        {/* Main content */}
         <div className="flex-1 p-6">
           {view === "home" && (
             <div className="bg-white rounded-xl shadow p-6">
@@ -68,7 +83,7 @@ export default function CoursePage({ params }) {
               <div className="flex gap-6 mb-6 text-sm text-gray-600">
                 <p>Level: {course.level}</p>
                 <p>Type: {course.type}</p>
-                <p>Lessons: {course.lessonCount}</p>
+                <p>Lessons: {course.lesson_count}</p>
                 <p>Duration: {course.duration}</p>
                 {course.certificate && <p>🎓 Certificate Available</p>}
               </div>
