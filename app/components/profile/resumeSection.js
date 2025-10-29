@@ -195,7 +195,7 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
     
             {resumeData.education.map((edu, idx) => (
               <EducationCard 
-                key={idx} 
+                key={`${idx} - ${edu}`} 
                 index={idx}
                 edu={edu}
                 setNewEdu={setNewEdu}
@@ -220,7 +220,7 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
     
             {resumeData.experience.map((exp, idx) => (
               <ExperienceCard
-                key={idx}
+                key={`${idx} - ${exp}`}
                 index={idx}
                 exp={exp}
                 setNewExp={setNewExp}
@@ -245,7 +245,7 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
     
             {resumeData.skills.map((skill, idx) => (
               <SkillCard 
-                key={idx}
+                key={`${idx} - ${skill}`}
                 index={idx}
                 skill={skill}
                 setNewSkill={setNewSkill}
@@ -270,7 +270,7 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
     
             {resumeData.certifications.map((cert, idx) => (
               <CertificationCard 
-                key={idx}
+                key={`${idx} - ${cert}`}
                 index={idx}
                 cert={cert}
                 setNewCert={setNewCert}

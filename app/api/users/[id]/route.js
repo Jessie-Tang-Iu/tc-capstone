@@ -77,19 +77,3 @@ export async function PATCH(req, { params }) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
-
-// === GET (fetch single user details) ===
-export async function GET(req, { params }) {
-  try {
-    const { id } = params;
-    const result = await query("SELECT * FROM users WHERE id = $1", [id]);
-
-    if (result.rowCount === 0)
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-
-    return NextResponse.json(result.rows[0], { status: 200 });
-  } catch (err) {
-    console.error("GET /api/users/[id] error:", err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
-  }
-}
