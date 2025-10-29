@@ -16,41 +16,24 @@ export default function MyClientPage({ currentUserId }) {
   const [clients, setClients] = useState([]);
 
   // fetch the clients for advisor by advisorId
-
   useEffect(() => {
-    setClients([
-      {
-        session_id: "S001",
-        first_name: "Alice",
-        last_name: "Wong",
-        email: "alice.wong@example.com",
-        message: "Hi, I’d like to discuss my career options.",
-        status: "active",
-        created_at: "2025-10-10T14:00:00Z",
-        client_id: "C001",
-      },
-      {
-        session_id: "S002",
-        first_name: "Brian",
-        last_name: "Lee",
-        email: "brian.lee@example.com",
-        message: "Can we schedule a follow-up meeting?",
-        status: "pending",
-        created_at: "2025-10-12T18:30:00Z",
-        client_id: "C002",
-      },
-      {
-        session_id: "S003",
-        first_name: "Cathy",
-        last_name: "Ng",
-        email: "cathy.ng@example.com",
-        message: "Thanks for your previous advice!",
-        status: "closed",
-        created_at: "2025-10-05T09:15:00Z",
-        client_id: "C003",
-      },
-    ]);
-  }, []);
+    console.log("Fetching with advisorId:", currentUserId); 
+      (async () => {
+          try {
+              const res = await fetch(
+                  `/api/advisory_sessions/advisor?advisorId=${currentUserId}`
+              );
+              if (!res.ok) {console.error("Failed to fetch events"); return;}
+        
+              const data = await res.json();
+
+              console.log("Fetched data:", data);
+              setClients(data);
+          } catch(error) {
+              console.error("Fetch error: ", error);
+          }
+      })();
+  }, [currentUserId])
 
   const openMessage = (e) => {
     setChatTo(e);
