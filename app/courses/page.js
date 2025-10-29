@@ -7,9 +7,11 @@ import CourseCard from "../components/courseCard/courseCard.js";
 import courses from "../data/courses.json";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { RxCross2 } from "react-icons/rx";
+import Button from "../components/ui/Button";
+
 
 export default function PageContent() {
-
     const [searchQuery, setSearchQuery] = useState("");
     const [filters, setFilters] = useState({
         beginner: false,
@@ -20,6 +22,18 @@ export default function PageContent() {
         online: false,
         inPerson: false,
         workshop: false,
+    });
+
+    // Temporary states for creating a new course
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [newCourse, setNewCourse] = useState({
+    title: "",
+    description: "",
+    type: "Online",
+    certificate: false,
+    level: "Beginner",
+    lessonCount: 0,
+    duration: "",
     });
 
     const [filteredCourses, setFilteredCourses] = useState(courses);
@@ -42,6 +56,28 @@ export default function PageContent() {
         // Don’t render anything while redirecting
         return null;
     }
+
+    const handleAddCourse = () => {
+        if (!newCourse.title.trim() || !newCourse.description.trim()) return;
+
+        const nextCourse = {
+            ...newCourse,
+            courseID: filteredCourses.length + 1,
+        };
+
+        setFilteredCourses((prev) => [nextCourse, ...prev]);
+        setNewCourse({
+            title: "",
+            description: "",
+            type: "Online",
+            certificate: false,
+            level: "Beginner",
+            lessonCount: 0,
+            duration: "",
+        });
+        setShowCreateModal(false);
+    };
+
 
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value.toLowerCase());
@@ -130,6 +166,14 @@ export default function PageContent() {
                         Search
                     </button>
                 </div>
+
+                
+                <button
+                    className="ml-6 bg-[#E55B3C] text-white px-4 py-2 rounded-lg font-semibold"
+                    onClick={() => setShowCreateModal(true)}
+                >
+                    + New Course
+                </button>
             </header>
 
             {/* Course Filters and Course Cards */}
@@ -238,6 +282,95 @@ export default function PageContent() {
                 )}
                 </div>
             </main>
+            {showCreateModal && (
+                <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-auto text-black">
+                    <div className="flex justify-between items-center px-6 py-4 border-b bg-gray-50">
+                        <h1 className="text-2xl font-bold text-[#E55B3C]">Create New Course</h1>
+                        <RxCross2
+                        onClick={() => setShowCreateModal(false)}
+                        className="cursor-pointer text-gray-600 hover:text-black"
+                        size={22}
+                        />
+                    </div>
+
+                    <div className="p-6 space-y-5">
+                        <input
+                        type="text"
+                        className="border border-gray-300 w-full px-3 py-2 rounded-lg"
+                        placeholder="Course Title"
+                        value={newCourse.title}
+                        onChange={(e) => setNewCourse({ ...newCourse, title: e.target.value })}
+                        />
+
+                        <textarea
+                        className="border border-gray-300 w-full px-3 py-2 rounded-lg min-h-[5em]"
+                        placeholder="Course Description"
+                        value={newCourse.description}
+                        onChange={(e) => setNewCourse({ ...newCourse, description: e.target.value })}
+                        />
+
+                        <div className="flex gap-4">
+                        <select
+                            className="border border-gray-300 rounded-lg p-2"
+                            value={newCourse.type}
+                            onChange={(e) => setNewCourse({ ...newCourse, type: e.target.value })}
+                        >
+                            <option>Online</option>
+                            <option>In Person</option>
+                            <option>Workshop</option>
+                        </select>
+
+                        <select
+                            className="border border-gray-300 rounded-lg p-2"
+                            value={newCourse.level}
+                            onChange={(e) => setNewCourse({ ...newCourse, level: e.target.value })}
+                        >
+                            <option>Beginner</option>
+                            <option>Intermediate</option>
+                            <option>Advanced</option>
+                        </select>
+
+                        <label className="flex items-center gap-2 text-sm">
+                            <input
+                            type="checkbox"
+                            checked={newCourse.certificate}
+                            onChange={(e) => setNewCourse({ ...newCourse, certificate: e.target.checked })}
+                            />
+                            Certificate
+                        </label>
+                        </div>
+
+                        <div className="flex gap-4">
+                        <input
+                            type="number"
+                            placeholder="Lessons"
+                            className="border border-gray-300 w-1/2 px-3 py-2 rounded-lg"
+                            value={newCourse.lessonCount}
+                            onChange={(e) => setNewCourse({ ...newCourse, lessonCount: Number(e.target.value) })}
+                        />
+                        <input
+                            type="text"
+                            placeholder="Duration (e.g. 2 weeks)"
+                            className="border border-gray-300 w-1/2 px-3 py-2 rounded-lg"
+                            value={newCourse.duration}
+                            onChange={(e) => setNewCourse({ ...newCourse, duration: e.target.value })}
+                        />
+                        </div>
+                    </div>
+
+                    <div className="flex justify-end gap-4 px-6 py-4 border-t bg-gray-50">
+                        <button
+                        onClick={() => setShowCreateModal(false)}
+                        className="px-4 py-2 bg-gray-200 rounded-md font-semibold hover:bg-gray-300"
+                        >
+                        Cancel
+                        </button>
+                        <Button onClick={handleAddCourse} text="Create" />
+                    </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
