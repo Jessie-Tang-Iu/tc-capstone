@@ -16,3 +16,13 @@ export async function getAdvisorByIdController(advisorId) {
     if(!advisorId) throw new Error("advisorId required");
     return await advisor.getAdvisorById(advisorId);
 }
+
+// call this function to update an advisor profile
+export async function updateAdvisorProfile(body) {
+    if(!body.advisorId) throw new Error("advisorId required");
+    return await advisor.updateAdvisorProfile({
+        advisorId: body.advisorId,
+        education: body.education,
+        experience: body.experience,
+    });
+}
