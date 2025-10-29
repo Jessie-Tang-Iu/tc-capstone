@@ -3,6 +3,12 @@ BEGIN;
 -- =========================================
 -- DROP (FK-safe order)
 -- =========================================
+
+-- workshop table is not longer available, its replaced by event table
+DROP TABLE IF EXISTS workshop_booking CASCADE;
+DROP TABLE IF EXISTS workshop CASCADE;
+
+
 DROP TABLE IF EXISTS
   reports,
   comments,
@@ -18,8 +24,7 @@ DROP TABLE IF EXISTS
   job_type,
   job_industry,
   message,
-  workshop_booking,
-  workshop,
+  events, 
   event_user,
   users,
   employers,
@@ -57,41 +62,43 @@ CREATE TABLE advisors (
 
 
 -- =========================================
--- WORKSHOPS
+-- Events
 -- =========================================
-CREATE TABLE workshop (
-  id                     SERIAL PRIMARY KEY,
-  title                  TEXT NOT NULL,
-  date                   DATE NOT NULL,
-  start_time             TIME,
-  end_time               TIME,          -- added 15/09/2025
-  status                 TEXT NOT NULL DEFAULT 'active',
-  location               TEXT,
-  description            TEXT,
-  image_url              TEXT,
-  "maxCapacity"          INTEGER,
-  "currentCapacity"      INTEGER NOT NULL DEFAULT 0,
-  "registrationDeadline" TIMESTAMP,
-  highlight              TEXT,          -- added 15/09/2025
-  price                  NUMERIC,       -- added 15/09/2025
-  supabase_id            TEXT,
-  CONSTRAINT chk_capacity_nonneg  CHECK ("currentCapacity" >= 0),
-  CONSTRAINT chk_capacity_bounds  CHECK ("maxCapacity" IS NULL OR "currentCapacity" <= "maxCapacity"),
-  CONSTRAINT chk_price_nonneg     CHECK (price IS NULL OR price >= 0)
+CREATE TABLE events (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  date DATE NOT NULL,
+  start_time TIME,
+  end_time TIME,
+  status TEXT NOT NULL DEFAULT 'active',
+  location TEXT,
+  description TEXT,
+  image_url TEXT,
+  max_capacity INTEGER,
+  current_capacity INTEGER NOT NULL DEFAULT 0,
+  registration_deadline TIMESTAMP,
+  highlight TEXT,
+  price NUMERIC,
+  CONSTRAINT chk_capacity_nonneg CHECK (current_capacity >= 0),
+  CONSTRAINT chk_capacity_bounds CHECK (max_capacity IS NULL OR current_capacity <= max_capacity),
+  CONSTRAINT chk_price_nonneg CHECK (price IS NULL OR price >= 0)
+);
+CREATE INDEX idx_event_date ON events (date, start_time);
+
+-- =========================================
+-- event_user
+-- =========================================
+CREATE TABLE event_user (
+  id SERIAL PRIMARY KEY,
+  event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+  status TEXT NOT NULL DEFAULT 'registered',
+  registered_at TIMESTAMP NOT NULL DEFAULT now(),
+  CONSTRAINT uq_event_user UNIQUE (event_id, user_id)
 );
 
-CREATE TABLE workshop_booking (
-  id           SERIAL PRIMARY KEY,
-  "userID"     INTEGER REFERENCES users(clerk_id) ON DELETE SET NULL,
-  "workshopID" INTEGER REFERENCES workshop(id) ON DELETE CASCADE,
-  status       TEXT NOT NULL DEFAULT 'active',
-  supabase_id  TEXT,
-  CONSTRAINT uq_booking UNIQUE ("userID","workshopID")
-);
-
-CREATE INDEX idx_workshop_date ON workshop (date, start_time);
-CREATE INDEX idx_booking_user ON workshop_booking ("userID");
-CREATE INDEX idx_booking_ws   ON workshop_booking ("workshopID");
+CREATE INDEX idx_event_user_event ON event_user (event_id);
+CREATE INDEX idx_event_user_user ON event_user (user_id);
 
 -- =========================================
 -- MESSAGING
@@ -139,28 +146,32 @@ CREATE TABLE job_workplace (
 );
 
 CREATE TABLE job (
-  id                BIGSERIAL PRIMARY KEY,
-  -- employer_id     UUID,
-  title             TEXT NOT NULL,
-  company           TEXT NOT NULL,
-  company_info      TEXT,
-  location          TEXT NOT NULL,
-  industry_id       INT  REFERENCES job_industry(id),
-  workplace_id      INT  REFERENCES job_workplace(id),
-  type_id           INT  REFERENCES job_type(id),
-  experience_id     INT  REFERENCES job_experience(id),
-  status            CHAR(1) NOT NULL DEFAULT 'A', -- A/I
-  salary_per_hour   NUMERIC(5,2),
-  link              TEXT,
-  description       TEXT,
-  responsibilities  TEXT,
-  requirements      TEXT,
-  details           TEXT,
-  benefits          TEXT,
-  questions         TEXT[],
-  posted_at         TIMESTAMP NOT NULL DEFAULT now(),
-  CONSTRAINT chk_job_status  CHECK (status IN ('A','I')),
-  CONSTRAINT chk_job_salary  CHECK (salary_per_hour IS NULL OR salary_per_hour >= 0)
+    id                  BIGSERIAL PRIMARY KEY,
+    employer_id         VARCHAR(255) NOT NULL,
+    title               TEXT NOT NULL,
+    company_info        TEXT,
+    location            TEXT NOT NULL,
+    industry_id         INT,
+    workplace_id        INT,
+    type_id             INT,
+    experience_id       INT,
+    status              CHAR(1) NOT NULL DEFAULT 'A', -- A: Active, I: Inactive
+    salary_per_hour     NUMERIC(5, 2),
+    link                TEXT,
+    description         TEXT,
+    responsibilities    TEXT,
+    requirements        TEXT,
+    details             TEXT,
+    benefits            TEXT,
+    questions           TEXT[],
+    posted_at           TIMESTAMP NOT NULL DEFAULT now(),
+    CONSTRAINT chk_status CHECK (status IN ('A', 'I')),
+    CONSTRAINT chk_salary CHECK (salary_per_hour >= 0),
+    CONSTRAINT fk_employer FOREIGN KEY (employer_id) REFERENCES employers(clerk_id),
+    CONSTRAINT fk_industry FOREIGN KEY (industry_id) REFERENCES job_industry(id),
+    CONSTRAINT fk_workplace FOREIGN KEY (workplace_id) REFERENCES job_workplace(id),
+    CONSTRAINT fk_type FOREIGN KEY (type_id) REFERENCES job_type(id),
+    CONSTRAINT fk_experience FOREIGN KEY (experience_id) REFERENCES job_experience(id)
 );
 
 CREATE INDEX idx_job_lookup     ON job (industry_id, workplace_id, type_id, experience_id);
@@ -171,40 +182,46 @@ CREATE INDEX idx_job_posted_at  ON job (posted_at DESC);
 -- =========================================
 CREATE TABLE resume (
   id              BIGSERIAL PRIMARY KEY,
-  user_id         INT NOT NULL UNIQUE
-                   REFERENCES users(clerk_id) ON DELETE CASCADE,
+  user_id         VARCHAR(255) UNIQUE NOT NULL,
   uploaded_at     TIMESTAMP NOT NULL DEFAULT now(),
   summary         TEXT,
-  skills          TEXT,
-  experience      TEXT,
-  education       TEXT,
-  certifications  TEXT,
-  additional_info TEXT
+  skills          TEXT[],
+  experience      TEXT[],
+  education       TEXT[],
+  certifications  TEXT[],
+  additional_info TEXT,
+  CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES "users"(clerk_id) ON DELETE CASCADE
 );
 
 CREATE TABLE cover_letter (
-  id          BIGSERIAL PRIMARY KEY,
-  user_id     INT NOT NULL UNIQUE
-               REFERENCES users(id) ON DELETE CASCADE,
-  uploaded_at TIMESTAMP NOT NULL DEFAULT now(),
-  content     TEXT
+  id              BIGSERIAL PRIMARY KEY,
+  user_id         VARCHAR(255) NOT NULL UNIQUE,
+  uploaded_at     TIMESTAMP NOT NULL DEFAULT now(),
+  content         TEXT,
+  CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES "users"(clerk_id) ON DELETE CASCADE
 );
 
 CREATE TABLE application (
-  id                  BIGSERIAL PRIMARY KEY,
-  job_id              BIGINT NOT NULL REFERENCES job(id) ON DELETE CASCADE,
-  user_id             INT    NOT NULL REFERENCES users(clerk_id) ON DELETE CASCADE,
-  resume              BYTEA,
-  cover_letter        BYTEA,
-  status              CHAR(1) NOT NULL DEFAULT 'S', -- S/U/I/R/O/D
-  applied_at          TIMESTAMP NOT NULL DEFAULT now(),
-  relative_first_name TEXT,
-  relative_last_name  TEXT,
-  relative_email      TEXT,
-  relative_phone      TEXT,
-  answers             TEXT[],
-  CONSTRAINT chk_app_status CHECK (status IN ('S','U','I','R','O','D')),
-  CONSTRAINT uq_app_job_user UNIQUE (job_id, user_id)
+    id                  BIGSERIAL PRIMARY KEY,
+    job_id              BIGINT NOT NULL,
+    user_id             VARCHAR(255) NOT NULL,
+    resume_name         VARCHAR(500),
+    resume_data         BYTEA,
+    resume_iv           VARCHAR(32),
+    cover_letter_name   VARCHAR(500),
+    cover_letter_data   BYTEA,
+    cover_letter_iv     VARCHAR(32),
+    status              CHAR(1) NOT NULL DEFAULT 'S', -- S: Submitted, U: Under Reviewed, I: Interview Scheduled, R: Rejected, O: Offer, D: Withdrawn
+    applied_at          TIMESTAMP NOT NULL DEFAULT now(),
+    relative_first_name  TEXT,
+    relative_last_name  TEXT,
+    relative_email      TEXT,
+    relative_phone      TEXT,
+    answers             TEXT[],
+    CONSTRAINT chk_status CHECK (status IN ('S', 'U', 'I', 'R', 'O', 'D')),
+    CONSTRAINT fk_job_user UNIQUE (job_id, user_id),
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(clerk_id) ON DELETE CASCADE,
+    CONSTRAINT fk_job FOREIGN KEY (job_id) REFERENCES job(id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_app_user   ON application (user_id);
@@ -237,7 +254,18 @@ CREATE TABLE advisory_sessions (
   session_id SERIAL PRIMARY KEY,
   advisor_id TEXT NOT NULL,
   client_id  TEXT NOT NULL,
+  message    TEXT,
   status     TEXT
+);
+
+-- =========================================
+-- ADVISORY Profile
+-- (kept TEXT ids to match your current usage; add FKs later if needed)
+-- =========================================
+CREATE TABLE advisory_profile (
+  advisor_id TEXT  PRIMARY KEY,
+  experience TEXT,
+  education  TEXT
 );
 
 -- =========================================
@@ -314,6 +342,9 @@ CREATE INDEX idx_reports_reason ON reports (reason);
 CREATE INDEX idx_reports_is_removed ON reports (is_removed);
 CREATE INDEX idx_reports_is_banned ON reports (is_banned);
 
+
+COMMIT;
+
 ----event booking 
 CREATE TABLE event_user (
   id SERIAL PRIMARY KEY,
@@ -326,5 +357,3 @@ CREATE TABLE event_user (
 
 CREATE INDEX idx_event_user_event ON event_user (event_id);
 CREATE INDEX idx_event_user_user ON event_user (user_id);
-
-COMMIT;

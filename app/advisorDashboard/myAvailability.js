@@ -45,7 +45,7 @@ export default function MyAvailability({advisorId}) {
                     }));
     
                     setEvents(mappedEvents);
-                    console.log(mappedEvents);
+                    console.log("Mapped Event: ", mappedEvents);
                 } catch (error) {
                     console.error("Fetch error: ", error);
                 }
@@ -293,7 +293,7 @@ export default function MyAvailability({advisorId}) {
     
 
     return(
-        <main>
+        <main className="px-10 py-7 rounded-xl bg-white shadow">
             <h1 className="text-3xl font-bold text-center text-[#E55B3C] mb-2">
                 My Availability
             </h1>

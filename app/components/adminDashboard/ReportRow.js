@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Button from "../ui/Button";
 
 function formatDate(dateString) {
@@ -21,14 +21,9 @@ function formatDate(dateString) {
     hour12: true,
   });
 
-  if (isToday) {
-    return `Today, ${timePart}`;
-  } else if (isYesterday) {
-    return `Yesterday, ${timePart}`;
-  } else {
-    const datePart = d.toLocaleDateString("en-GB"); // 15/09/2025
-    return `${datePart}, ${timePart}`;
-  }
+  if (isToday) return `Today, ${timePart}`;
+  if (isYesterday) return `Yesterday, ${timePart}`;
+  return `${d.toLocaleDateString("en-GB")}, ${timePart}`;
 }
 
 export default function ReportRow({
@@ -40,7 +35,30 @@ export default function ReportRow({
   isRemoved,
   isBanned,
   onDetails,
+  onDelete, // callback from parent to update list
 }) {
+  const [loading, setLoading] = useState(false);
+
+  const handleDelete = async () => {
+    if (loading) return;
+    const confirmDelete = confirm(`Delete report #${reportId}?`);
+    if (!confirmDelete) return;
+
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/reports/${reportId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error(`Delete failed (${res.status})`);
+      onDelete?.(reportId);
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("Failed to delete report. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex items-stretch gap-4 bg-white border-b border-black py-3">
       {/* Left mini card */}
@@ -77,9 +95,25 @@ export default function ReportRow({
         </div>
       </div>
 
-      {/* Right action */}
-      <div className="flex items-center">
-        <Button text="Details" onClick={onDetails} />
+      {/* Right actions */}
+      <div className="flex items-center gap-2">
+        <Button
+          text="Details"
+          onClick={onDetails}
+          className="h-9 px-4 text-sm font-semibold"
+        />
+        <button
+          onClick={handleDelete}
+          disabled={loading}
+          className={`h-9 px-4 rounded-md text-sm font-semibold text-white transition active:scale-[0.98] shadow-sm 
+            ${
+              loading
+                ? "bg-red-400 cursor-not-allowed"
+                : "bg-red-500 hover:bg-red-600"
+            }`}
+        >
+          {loading ? "Deleting..." : "Delete"}
+        </button>
       </div>
     </div>
   );

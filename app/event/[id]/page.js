@@ -18,43 +18,56 @@ export default async function EventDetailPage(props) {
   if (!res.ok) return notFound();
   const event = await res.json();
 
-  const convertNewlinesAndLinks = (text = "") => {
-    const safe = text
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
-    const withLinks = safe.replace(
-      /((https?:\/\/)[^\s<]+)/g,
-      (m) =>
-        `<a href="${m}" class="text-blue-600 underline" target="_blank" rel="noopener noreferrer">${m}</a>`
-    );
-    return withLinks.replace(/\n/g, "<br />");
-  };
-
   return (
     <main className="bg-gray-100 min-h-screen text-black flex flex-col">
       <Navbar />
       <BackToOrigin />
+
       <div className="max-w-5xl mx-auto px-4 pt-8 pb-40 flex-grow">
         <div className="rounded-md mt-4 mb-6 flex justify-center">
-          <SafeImage
+          {/* <SafeImage
             srcBase={`https://mvxperspoentcqazciyx.supabase.co/storage/v1/object/public/eventbanner/${event.id}`}
             fallbackSrc="/fallback.png"
             alt={event.title}
             width={600}
             height={400}
             className="rounded-md border"
-          />
+          /> */}
         </div>
 
+        {/* Event Title */}
         <h1 className="text-2xl font-bold mb-4">{event.title}</h1>
 
-        <div
-          className="mb-6 leading-relaxed prose prose-sm prose-a:text-blue-600 prose-a:underline"
-          dangerouslySetInnerHTML={{
-            __html: convertNewlinesAndLinks(event.description || ""),
-          }}
-        />
+        {/* Description Section (scoped styling) */}
+        <div className="event-description">
+          <style>{`
+            .event-description h1 {
+              font-size: 1.75rem;
+              font-weight: bold;
+              margin-bottom: 1rem;
+            }
+            .event-description ul {
+              list-style-type: disc;
+              margin-left: 1.5rem;
+            }
+            .event-description ol {
+              list-style-type: decimal;
+              margin-left: 1.5rem;
+            }
+            .event-description a {
+              color: #2563eb;
+              text-decoration: underline;
+            }
+            .event-description a:hover {
+              color: #1d4ed8;
+            }
+          `}</style>
+
+          <div
+            style={{ color: "black", fontSize: "1rem", lineHeight: "1.6" }}
+            dangerouslySetInnerHTML={{ __html: event.description || "" }}
+          ></div>
+        </div>
       </div>
 
       <EventDetailClient event={event} />

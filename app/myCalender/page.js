@@ -10,7 +10,6 @@ import Button from "../components/ui/Button";
 import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
 import CalendarBigEvent from "../components/myCalender/calenderBig";
 import { deleteBookingByWorkshopId } from "@/lib/workshop_booking_crud";
-import { supabase } from "@/lib/supabaseClient";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
@@ -26,6 +25,8 @@ const MyCalendarPage = () => {
 
   const { isLoaded, isSignedIn } = useUser();
   const router = useRouter();
+
+  const { user } = useUser();
 
   // Redirect if not signed in
   useEffect(() => {
@@ -44,33 +45,30 @@ const MyCalendarPage = () => {
     const fetchBookings = async () => {
       try {
         setLoading(true);
-        const {
-          data: { user },
-          error: authErr,
-        } = await supabase.auth.getUser();
-        if (authErr || !user) throw new Error("Not signed in.");
 
-        const { data: bookings, error } = await supabase
-          .from("workshop_booking")
-          .select(`
-            id,
-            userID,
-            workshopID,
-            status,
-            workshop:workshopID (id, title, date, start_time)
-          `);
+        if (!user) throw new Error("User not signed in.");
 
-        if (error) throw error;
+        const res = await fetch(`/api/event_user/${user.id}`, {
+          cache: "no-store",
+        });
+        if (!res.ok) throw new Error("Failed to fetch event registrations.");
 
-        const formatted = (bookings ?? [])
-          .filter((b) => b.workshop?.date && b.workshop?.start_time)
-          .map((b) => ({
-            title: b.workshop.title ?? "Workshop",
-            start: `${b.workshop.date}T${b.workshop.start_time}`,
-          }));
+        const data = await res.json();
+
+        const formatted = data.map((row) => {
+          const localDate = row.date.split("T")[0];
+          const start = `${localDate}T${row.start_time}`;
+          const end = row.end_time ? `${localDate}T${row.end_time}` : null;
+
+          return {
+            title: row.title,
+            start,
+            end,
+          };
+        });
 
         setEvents(formatted);
-        setBookingData(bookings ?? []);
+        setBookingData(data);
       } catch (err) {
         console.error("Error loading bookings:", err.message || err);
       } finally {
@@ -78,8 +76,8 @@ const MyCalendarPage = () => {
       }
     };
 
-    fetchBookings();
-  }, []);
+    if (user) fetchBookings();
+  }, [user]);
 
   // Set title and check today's button state
   const updateTitle = () => {
@@ -104,20 +102,20 @@ const MyCalendarPage = () => {
   const handleEventClick = (eventInfo) => {
     const clicked = bookingData.find((item) => {
       const bookingStart = DateTime.fromISO(
-        `${item.workshop?.date}T${item.workshop?.start_time}`
+        `${item.date.split("T")[0]}T${item.start_time}`
       );
       const eventStart = DateTime.fromISO(eventInfo.event.startStr);
       return (
-        item.workshop?.title === eventInfo.event.title &&
+        item.title === eventInfo.event.title &&
         bookingStart.toISO() === eventStart.toISO()
       );
     });
 
-    if (clicked?.workshop) {
-      setSelectedEvent(clicked.workshop);
+    if (clicked) {
+      setSelectedEvent(clicked);
       setShowModal(true);
     } else {
-      console.warn("No matching workshop found for event click");
+      console.warn("No matching event found for click");
     }
   };
 
@@ -134,24 +132,31 @@ const MyCalendarPage = () => {
     updateTitle();
   };
 
-  // Show loading screen until Clerk finishes loading state
-  if (!isLoaded || !isSignedIn) {
-    return (
-      <div className="bg-gray-100 min-h-screen">
-        <MemberNavbar />
-        <p className="text-center mt-10 text-lg text-gray-700">Loading...</p>
-      </div>
-    );
-  }
-
   // Main content
   return (
     <div className="bg-gray-100 min-h-screen">
       <MemberNavbar />
 
-      <h1 className="text-3xl font-bold text-center text-[#E55B3C] mt-6 mb-2">
+      <h1 className="text-3xl font-bold text-center text-[#E55B3C] mt-6 mb-2 mr-15">
         My Calendar
       </h1>
+
+      {/* just to check if really logined , data is fetched*/}
+      {/* {isLoaded && isSignedIn && (
+        <div className="text-center mb-4">
+          <p className="text-gray-700">User ID: {user?.id}</p>
+
+          {bookingData && bookingData.length > 0 ? (
+            <pre className="text-xs text-gray-600 mt-2 text-left mx-auto max-w-lg bg-gray-100 p-2 rounded overflow-x-auto">
+              {JSON.stringify(bookingData, null, 2)}
+            </pre>
+          ) : (
+            <p className="text-gray-500 text-sm mt-1">
+              (No booking data found)
+            </p>
+          )}
+        </div>
+      )} */}
 
       {/* Toolbar */}
       <div className="max-w-screen-lg mx-auto px-4 flex justify-between items-center mb-4">
@@ -186,47 +191,78 @@ const MyCalendarPage = () => {
           contentHeight="auto"
           eventClick={handleEventClick}
           eventContent={({ event }) => {
+            let startTime = "";
+            let endTime = "";
+
             try {
-              const dateTime = DateTime.fromISO(event.startStr);
-              const timeStr = dateTime.toFormat("h:mm a");
-              return <CalenderSmallEvent time={timeStr} title={event.title} />;
-            } catch {
-              return <div>{event.title}</div>;
-            }
+              const start = DateTime.fromISO(event.startStr);
+              if (start.isValid) startTime = start.toFormat("h:mm a");
+
+              if (event.end) {
+                const end = DateTime.fromISO(event.end);
+                if (end.isValid) endTime = end.toFormat("h:mm a");
+              }
+            } catch {}
+
+            const displayTime = endTime
+              ? `${startTime} - ${endTime}`
+              : startTime || "End time TBD";
+
+            return (
+              <CalenderSmallEvent time={displayTime} title={event.title} />
+            );
           }}
         />
         {loading && <p className="text-gray-600 mt-2">Loading…</p>}
       </div>
 
-      {/* Modal */}
       {showModal && selectedEvent && (
         <div
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50"
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex justify-center items-center"
           onClick={() => setShowModal(false)}
         >
-          <div className="w-full max-w-lg" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="bg-transparent flex justify-center items-center"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "720px",
+              minWidth: "720px",
+              maxWidth: "720px",
+              flexShrink: 0,
+              flexGrow: 0,
+            }}
+          >
             <CalendarBigEvent
               workshop={selectedEvent}
               onClose={() => setShowModal(false)}
-              onDelete={() => {
+              onDelete={async () => {
                 if (!selectedEvent) return;
-                deleteBookingByWorkshopId(selectedEvent.id)
-                  .then(() => {
-                    setEvents((prev) =>
-                      prev.filter(
-                        (e) =>
-                          !(
-                            e.title === selectedEvent.title &&
-                            e.start ===
-                              `${selectedEvent.date}T${selectedEvent.start_time}`
-                          )
-                      )
-                    );
-                    setShowModal(false);
-                  })
-                  .catch((err) =>
-                    alert("Failed to delete booking: " + err.message)
-                  );
+
+                const confirmed = confirm(
+                  "Are you sure you want to unregister from this event?"
+                );
+                if (!confirmed) return;
+
+                try {
+                  const res = await fetch("/api/event_user", {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      eventId: selectedEvent.id,
+                      clerkId: user.id,
+                    }),
+                  });
+
+                  if (!res.ok) {
+                    const data = await res.json();
+                    throw new Error(data.error || "Failed to unregister");
+                  }
+
+                  alert("You have successfully unregistered from this event.");
+                  window.location.reload();
+                } catch (err) {
+                  alert("Error: " + err.message);
+                }
               }}
             />
           </div>

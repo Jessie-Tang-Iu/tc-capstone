@@ -8,7 +8,10 @@ export async function getAllBookings() {
 
 // Get all bookings by advisoryId
 export async function getBookingsByAdvisorId(id) {
-  const result = await query(`SELECT * FROM advisory_bookings WHERE advisor_id = $1`, 
+  const result = await query(`SELECT a.*, u.clerk_id, u.username, u.first_name, u.last_name, u.email, u.phone, u.role FROM advisory_bookings a 
+                              LEFT OUTER JOIN public.users u
+                              ON a.client_id = u.clerk_id
+                              WHERE advisor_id = $1`, 
     [id]
   );
   if (!result.rows.length) throw new Error("Not found");
@@ -77,12 +80,56 @@ export async function updateAvailability(booking) {
   return result.rows[0];
 }
 
+export async function getAdvisorySessionsByAdvisorId(advisorId) {
+  const result = await query(`SELECT a.*, u.clerk_id, u.username, u.first_name, u.last_name, u.email, u.phone, u.role FROM advisory_sessions a 
+                                JOIN users u
+                                ON a.client_id = u.clerk_id
+                                WHERE a.advisor_id = $1`, [
+    advisorId,
+  ]);
+  console.log("Query result:", result.rows);
+  return result.rows;
+}
+
+export async function changeClientStatus(sessionId, status) {
+  const result = await query(`UPDATE advisory_sessions SET status = $2 WHERE session_id = $1 RETURNING *`,[
+    sessionId,
+    status
+  ]);
+  return result.rows[0];
+}
+
 export async function getMyAdvisorySessions(clientId) {
-  const result = await query(`SELECT * FROM advisory_sessions WHERE client_id = $1 AND status = $2`, [
+  const result = await query(`SELECT a.session_id, a.advisor_id, a.client_id, a.message, a.status, u.first_name, u.last_name, u.email, ad.company_role, ad.company_name
+                              FROM advisory_sessions a
+                              LEFT OUTER JOIN users u
+                              ON a.advisor_id = u.clerk_id
+                              LEFT OUTER JOIN advisors ad
+                              ON ad.clerk_id = a.advisor_id
+                              WHERE a.client_id = $1`, [
     clientId,
-    'active',
   ]);
   return result.rows;
+}
+
+export async function registerAdvisorySession(session) {
+  const sql = `
+    INSERT INTO advisory_sessions
+      (advisor_id, client_id, message, status)
+    VALUES
+      ($1, $2, $3, $4)
+    RETURNING *;
+  `;
+
+  const values = [
+    session.advisorId,
+    session.clientId,
+    session.message,
+    session.status,
+  ];
+
+  const result = await query(sql, values);
+  return result.rows[0];
 }
 
 export async function makeBooking(booking)  {

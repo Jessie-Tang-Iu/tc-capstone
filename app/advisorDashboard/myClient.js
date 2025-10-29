@@ -1,80 +1,136 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchBar from "../components/ui/SearchBar";
-import usersData from "@/app/data/userForAdminPage.json" assert { type: "json" };
 import PlaceholderCard from "../components/adminDashboard/PlaceholderCard";
 import ClientRow from "./clientRow";
 import ChatWindow from "../components/ChatWindow";
 
+export default function MyClientPage({ currentUserId }) {
+  // Client Page Feature status
+  const [query, setQuery] = useState("");
+  const [openChat, setOpenChat] = useState(false);
+  const [chatTo, setChatTo] = useState("");
 
+  // client status
+  const [clients, setClients] = useState([]);
 
-export default function MyClientPage() {
+  // fetch the clients for advisor by advisorId
 
-    const [query, setQuery] = useState("");
-    const [openChat, setOpenChat] = useState(false);
-    const [chatTo, setChatTo] = useState("");
+  useEffect(() => {
+    setClients([
+      {
+        session_id: "S001",
+        first_name: "Alice",
+        last_name: "Wong",
+        email: "alice.wong@example.com",
+        message: "Hi, I’d like to discuss my career options.",
+        status: "active",
+        created_at: "2025-10-10T14:00:00Z",
+        client_id: "C001",
+      },
+      {
+        session_id: "S002",
+        first_name: "Brian",
+        last_name: "Lee",
+        email: "brian.lee@example.com",
+        message: "Can we schedule a follow-up meeting?",
+        status: "pending",
+        created_at: "2025-10-12T18:30:00Z",
+        client_id: "C002",
+      },
+      {
+        session_id: "S003",
+        first_name: "Cathy",
+        last_name: "Ng",
+        email: "cathy.ng@example.com",
+        message: "Thanks for your previous advice!",
+        status: "closed",
+        created_at: "2025-10-05T09:15:00Z",
+        client_id: "C003",
+      },
+    ]);
+  }, []);
 
-    // initialize from JSON
-    const [clients, setClients] = useState(usersData.normal || []);
+  const openMessage = (e) => {
+    setChatTo(e);
+    setOpenChat(true);
+  };
 
-    const filteredClient = clients.filter((u) =>
-        u.name.toLowerCase().includes(query.toLowerCase())
-    );
+  // filter clients by search input
+  const filteredClients = clients.filter(
+    (u) =>
+      u.first_name.toLowerCase().includes(query.toLowerCase()) ||
+      u.last_name.toLowerCase().includes(query.toLowerCase()) ||
+      String(u.session_id).includes(query.toLowerCase()) ||
+      u.status.toLowerCase().includes(query.toLowerCase())
+  );
 
-    const openMessage = (name) => {
-        setChatTo(name);
-        setOpenChat(true);
-    };
+  // sorting clients list by status
+  const statusOrder = {
+    active: 1,
+    pending: 2,
+    closed: 3,
+  };
 
-    return(
-        <main>
-            {/* Header: centered title, search on its own row */}
-            <div className="mb-4 rounded-xl bg-white p-6 shadow text-center">
-                <div className="mb-4 text-4xl font-semibold text-[#E55B3C]">
-                    Client Management
-                </div>
-                <div className="flex justify-center">
-                    <SearchBar
-                        value={query}
-                        onChange={setQuery}
-                        onSearch={() => {}}
-                        placeholder="Client Name"
-                    />
-                </div>
-            </div>
+  const sortedClients = [...filteredClients].sort((a, b) => {
+    return (statusOrder[a.status] || 999) - (statusOrder[b.status] || 999);
+  });
 
-            {/* My Client */}
-            <div className="mb-4 rounded-xl bg-white shadow text-center">
-                <p className="flex items-start border-b px-4 py-3 text-2xl font-semibold text-black">Client List</p>
-                <div className="p-4">
-                    {filteredClient.length === 0 ? (
-                        <PlaceholderCard
-                            title="No clients found"
-                            description="Try again"
-                        />
-                    ) : (
-                        <div className="h-140 overflow-y-auto pr-2">
-                            {filteredClient.map((u) => ( 
-                                <ClientRow
-                                key={u.id}
-                                name={u.name}
-                                subtitle={u.subtitle}
-                                onMessage={() => openMessage(u.name)}
-                                />
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </div>
+  return (
+    <main>
+      {/* Header: centered title, search on its own row */}
+      <div className="mb-4 rounded-xl bg-white p-6 shadow text-center">
+        <div className="mb-4 text-4xl font-semibold text-[#E55B3C]">
+          Client Management
+        </div>
+        <div className="flex justify-center">
+          <SearchBar
+            value={query}
+            onChange={setQuery}
+            onSearch={() => {}}
+            placeholder="Client Name | Session ID | Status"
+          />
+        </div>
+      </div>
 
-            {openChat && (
-                <ChatWindow
-                    recipient={chatTo}
-                    onClose={() => setOpenChat(false)}
-                    onSend={(text) => console.log("send:", { to: chatTo, text })}
+      {/* My Client */}
+      <div className="mb-4 rounded-xl bg-white shadow text-center">
+        <div className="flex flex-row border-b rounded-t-xl text-white font-bold justify-between bg-[#E55B3C] px-4 py-3 text-1xl text-start">
+          <p className="w-1/12 px-2 py-1">Session ID</p>
+          <p className="w-1/12 px-2 py-1">Name</p>
+          <p className="w-2/12 px-2 py-1">Email</p>
+          <p className="w-4/12 px-2 py-1">Request</p>
+          <p className="w-1/12 px-2 py-1">Status</p>
+          <p className="w-2/12 px-2 py-1">Created Date</p>
+          <p className="w-1/12 px-2 py-1">Actions</p>
+        </div>
+
+        <div className="p-4">
+          {clients.length === 0 ? (
+            <PlaceholderCard title="No clients found" description="Try again" />
+          ) : (
+            <div className="max-h-140 overflow-y-auto">
+              {sortedClients.map((u) => (
+                <ClientRow
+                  key={u.session_id}
+                  client={u}
+                  onMessage={() => openMessage(u.client_id)}
                 />
-            )}
-        </main>
-    );
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {openChat && (
+        <ChatWindow
+          me={currentUserId}
+          recipient={chatTo}
+          onClose={() => setOpenChat(false)}
+          onSend={(text) => console.log("send:", { to: chatTo, text })}
+        />
+      )}
+    </main>
+  );
 }
