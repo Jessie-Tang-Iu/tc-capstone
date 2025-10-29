@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useEffect } from "react";
 import ChatWindow from "./ChatWindow";
+import SearchBar from "@/app/components/ui/SearchBar";
 
 // icons
 const IconRefresh = () => (
@@ -43,15 +44,16 @@ export default function MessagePage({ currentUserId }) {
   const [rows, setRows] = useState([]); // inbox rows
   const [openChat, setOpenChat] = useState(false);
   const [chatRecipient, setChatRecipient] = useState(""); // peer user id (string)
-
-  // selection
   const [selected, setSelected] = useState(new Set());
+  const [query, setQuery] = useState("");
+
+  // selection logic
   const allIdsInView = useMemo(() => {
     const start = (page - 1) * pageSize;
     return rows.slice(start, start + pageSize).map((r) => r.id);
   }, [rows, page]);
 
-  // Fetch inbox (simple version: last N messages; you can group by peer later)
+  // Fetch inbox
   useEffect(() => {
     if (!currentUserId) return;
     (async () => {
@@ -82,15 +84,15 @@ export default function MessagePage({ currentUserId }) {
   }, [currentUserId]);
 
   const handleRowClick = (row) => {
-    setChatRecipient(row.name); // peer user id
+    setChatRecipient(row.name);
     setOpenChat(true);
   };
 
   const toggleAll = () => {
     const next = new Set(selected);
     const allChecked = allIdsInView.every((id) => next.has(id));
-    (allChecked ? allIdsInView : []).forEach((id) => next.delete(id));
-    if (!allChecked) allIdsInView.forEach((id) => next.add(id));
+    if (allChecked) allIdsInView.forEach((id) => next.delete(id));
+    else allIdsInView.forEach((id) => next.add(id));
     setSelected(next);
   };
 
@@ -102,7 +104,6 @@ export default function MessagePage({ currentUserId }) {
 
   const removeSelected = async () => {
     if (selected.size === 0) return;
-
     try {
       await Promise.all(
         Array.from(selected).map((conversationId) =>
@@ -111,7 +112,6 @@ export default function MessagePage({ currentUserId }) {
           })
         )
       );
-
       setRows((prev) => prev.filter((r) => !selected.has(r.id)));
       setSelected(new Set());
     } catch (err) {
@@ -143,14 +143,40 @@ export default function MessagePage({ currentUserId }) {
     }
   };
 
-  const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+  // search filter
+  const filteredRows = useMemo(() => {
+    const q = query.toLowerCase().trim();
+    if (!q) return rows;
+    return rows.filter(
+      (r) =>
+        r.name.toLowerCase().includes(q) || r.message.toLowerCase().includes(q)
+    );
+  }, [rows, query]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
   const start = (page - 1) * pageSize;
-  const pageRows = rows.slice(start, start + pageSize);
+  const pageRows = filteredRows.slice(start, start + pageSize);
 
   return (
     <main>
+      {/* --- Header with search bar --- */}
+      <div className="mb-6 rounded-xl bg-white p-6 shadow">
+        <div className="mb-4 text-3xl font-semibold text-[#E55B3C] text-center">
+          Message Management
+        </div>
+        <div className="flex justify-center">
+          <SearchBar
+            placeholder="Search by username or message"
+            value={query}
+            onChange={setQuery}
+            onSearch={() => {}}
+          />
+        </div>
+      </div>
+
+      {/* --- Table section --- */}
       <section className="flex-1 rounded-xl bg-white shadow">
-        {/* Header row above table */}
+        {/* Header row */}
         <div className="flex items-center justify-between border-b px-4 py-3">
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 text-sm text-black">
@@ -176,11 +202,14 @@ export default function MessagePage({ currentUserId }) {
 
           <div className="flex items-center gap-2 text-sm text-black">
             <span>
-              {rows.length === 0
+              {filteredRows.length === 0
                 ? "0"
-                : `${start + 1}-${Math.min(start + pageSize, rows.length)}`}
+                : `${start + 1}-${Math.min(
+                    start + pageSize,
+                    filteredRows.length
+                  )}`}
             </span>
-            <span>/ {rows.length}</span>
+            <span>/ {filteredRows.length}</span>
             <button
               className="rounded-md p-2 hover:bg-gray-100"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -259,13 +288,13 @@ export default function MessagePage({ currentUserId }) {
                 );
               })}
 
-              {rows.length === 0 && (
+              {filteredRows.length === 0 && (
                 <tr>
                   <td
                     colSpan={4}
                     className="px-4 py-10 text-center text-gray-500"
                   >
-                    No messages yet.
+                    No messages found.
                   </td>
                 </tr>
               )}
@@ -279,7 +308,7 @@ export default function MessagePage({ currentUserId }) {
           me={currentUserId}
           recipient={chatRecipient}
           onClose={() => setOpenChat(false)}
-          onSent={() => refresh()} // refresh inbox after sending
+          onSent={() => refresh()}
         />
       )}
     </main>
