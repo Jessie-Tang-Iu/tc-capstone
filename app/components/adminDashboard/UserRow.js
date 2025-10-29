@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ChatWindow from "../ChatWindow";
 
 export default function UserRow({
   id,
   name,
   subtitle,
-  status, // <-- pass the DB status string
+  status, 
   onMessage,
   onDetails,
   onStatusChange,
@@ -15,15 +15,26 @@ export default function UserRow({
   const [loading, setLoading] = useState(false);
   const [openChat, setOpenChat] = useState(false);
   const [chatRecipient, setChatRecipient] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState(status);
+  const [statusStyle, setStatusStyle] = useState("");
   const ME = "11111111-1111-1111-1111-111111111111"; // same admin ID as main panel
 
-  const handleBanToggle = async () => {
-    if (loading) return;
+  useEffect(() => {
+    if (selectedStatus === "active") {
+      setStatusStyle("bg-blue-100 text-blue-700");
+    } else if (selectedStatus === "banned") {
+      setStatusStyle("bg-red-100 text-red-700");
+    } else {
+      setStatusStyle("bg-gray-100 text-gray-700");
+    }
+  }, [selectedStatus]);
+
+  const handleStatusChange = async (newStatus) => {
+    if (loading || newStatus === selectedStatus) return;
+    const confirmChange = confirm(`Change ${name}'s status to: ${newStatus}?`);
+    if (!confirmChange) return;
+
     setLoading(true);
-
-    // toggle active ↔ banned
-    const newStatus = status === "banned" ? "active" : "banned";
-
     try {
       const res = await fetch(`/api/users/${id}`, {
         method: "PATCH",
@@ -33,18 +44,17 @@ export default function UserRow({
 
       if (!res.ok) throw new Error("Failed to update status");
       const updated = await res.json();
-
-      // push back to parent
+      setSelectedStatus(updated.status);
       onStatusChange?.(updated);
     } catch (err) {
-      console.error("Ban/Unban failed:", err);
+      console.error("Status update failed:", err);
       alert("Failed to update user status");
     } finally {
       setLoading(false);
     }
   };
 
-  const isBanned = status === "banned";
+  const isBanned = selectedStatus === "banned";
 
   return (
     <div className="mb-3 rounded-xl bg-[#F7EAE2] px-4 py-4">
@@ -71,19 +81,23 @@ export default function UserRow({
             Details
           </button>
 
-          <button
-            onClick={handleBanToggle}
+          <select
             disabled={loading}
-            className={`w-28 rounded-md py-2 text-sm font-semibold text-white text-center transition
-              ${isBanned ? "bg-[#2E7D32]" : "bg-[#D32F2F]"}
-              ${
-                loading
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:opacity-90 active:scale-[0.98]"
-              }`}
+            value={selectedStatus}
+            onChange={(e) => handleStatusChange(e.target.value)}
+            className={`w-28 h-9 rounded-md text-sm font-semibold border text-center ${statusStyle} ${
+              loading
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:opacity-90 active:scale-[0.98]"
+            }`}
           >
-            {loading ? "Updating..." : isBanned ? "Unban User" : "Ban User"}
-          </button>
+            <option value="active" className="bg-blue-100 text-blue-700">
+              Active
+            </option>
+            <option value="banned" className="bg-red-100 text-red-700">
+              Banned
+            </option>
+          </select>
         </div>
       </div>
     </div>

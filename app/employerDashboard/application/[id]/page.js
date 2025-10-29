@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import Navbar from "../../../components/NavBarBeforeSignIn";
+import Navbar from "../../../components/BlankNavBar";
 import EmployerSidebar from "../../../components/employerDashboard/EmployerSideBar";
 import applications from "../../../data/applications.json";
 import ChatWindow from "@/app/components/ChatWindow";
@@ -49,7 +49,7 @@ export default function ApplicationDetailsPage({}) {
   }, [numericId]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
       <Navbar />
 
       <main className="mx-auto w-full px-6 py-8">

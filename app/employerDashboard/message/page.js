@@ -21,7 +21,7 @@ const MOCK_MESSAGES = [
 
 export default function EmployerMessagePage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
       <Navbar />
 
       <main className="mx-auto w-full px-6 py-8">
