@@ -7,7 +7,18 @@ import { useRouter } from 'next/navigation';
 
 export default function AdvisorPage({ params }) {
 
-    const [advisorList, setAdvisorList] = useState([]);
+    const [advisor, setAdvisor] = useState({
+        username: null, 
+        first_name: null, 
+        last_name: null,
+        email: null,
+        phone: null,
+        role: null,
+        company_name: null,
+        company_role: null,
+        education: null,
+        experience: null,
+    });
 
     const router = useRouter();
 
@@ -17,23 +28,18 @@ export default function AdvisorPage({ params }) {
     
         (async() => {
           try {
-          const res = await fetch(
-              `/api/advisor_list`
-          ); // fetch all advisors from the backend
+          const res = await fetch(`/api/advisor_list`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ advisorId: advisorID })}
+                );
           if (!res.ok) throw new Error("Failed to fetch advisors");
     
           const data = await res.json();
-    
-          const advisorArray = data.map(advisor => ({
-            advisorID: advisor.clerk_id,
-            username: advisor.username,
-            first_name: advisor.first_name,
-            last_name: advisor.last_name,
-            email: advisor.email,
-            phone: advisor.phone,
-            role: advisor.role}));
-    
-          setAdvisorList(advisorArray);
+
+          setAdvisor(data);
     
           } catch (error) {
             console.error("Fetch error: ", error);
@@ -42,8 +48,7 @@ export default function AdvisorPage({ params }) {
     
       }, []);
 
-    const advisor = advisorList.find((c) => c.advisorID == advisorID);
-    console.log("Advisor: ", advisor);
+    // console.log("Advisor: ", advisor);
 
     if (!advisor) {
     return (
@@ -74,8 +79,20 @@ export default function AdvisorPage({ params }) {
 
                 {/* Advisor Details */}                
                 <div className="my-8 p-6 bg-white rounded-lg shadow-md text-black">
-                    <h1 className="text-2xl text-black font-bold mb-8">{advisor.first_name} {advisor.last_name}</h1>
-                    <h1 className="text-2xl text-black font-bold mb-2">Experience</h1>
+                    <div className='mb-10'>
+                        <h1 className="text-2xl text-black font-bold">{advisor.first_name} {advisor.last_name}</h1>
+                        <p>{advisor.company_role}</p>
+                        <p className="text-gray-600">{advisor.company_name}</p>
+                    </div>
+                    
+                    <div className='mb-10'>
+                        <h1 className="text-2xl text-black font-bold mb-2">Experience</h1>
+                        <p>{advisor.experience || "No experience information available."}</p>
+                    </div>
+                    <div className='mb-10'>
+                        <h1 className="text-2xl text-black font-bold mb-2">Education</h1>
+                        <p>{advisor.education || "No education information available."}</p> 
+                    </div>
                     <div className='mb-10'>
                         <h1 className="text-2xl text-black font-bold mb-2">Contact Information</h1>
                         <p>Phone: {advisor.phone}</p>

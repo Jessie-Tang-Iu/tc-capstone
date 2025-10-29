@@ -3,9 +3,9 @@
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { useEffect, useState } from "react";
-import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
 import { DateTime } from "luxon";
-import CalendarBigEvent from "../components/myCalender/calenderBig";
+import SessionSmallEvent from "../components/advisorDashboard/sessionSmallEvent";
+import SessionBigEvent from "../components/advisorDashboard/sessionBigEvent";
 
 
 
@@ -13,7 +13,7 @@ export default function MyBookingPage({advisorId}) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [events, setEvents] = useState([]);
-    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [selectedEvent, setSelectedEvent] = useState({ id: null, title: null, date: null , start_time: null, end_time: null, description: null, clientName: null, advisorId: null});
 
     useEffect(() => {
         if (!advisorId) return;
@@ -37,10 +37,12 @@ export default function MyBookingPage({advisorId}) {
                     start_time: event.starttime,
                     end_time: event.endtime,
                     description: event.description,
+                    clientName: (event.first_name || '') + ((' ' + event.last_name) || ''),
+                    advisorId: event.advisor_id,
                 }));
 
                 setEvents(mappedEvents);
-                console.log(mappedEvents);
+                // console.log(mappedEvents);
             } catch (error) {
                 console.error("Fetch error: ", error);
             }
@@ -48,7 +50,19 @@ export default function MyBookingPage({advisorId}) {
       }, [advisorId]);
 
     const handleEventClick = (e) => {
-        setSelectedEvent(e);
+        const event = e.event;
+
+        const selected = {
+            id: event.id,
+            title: event.title,
+            date: event.start?.toISOString().split("T")[0],
+            start_time: event.start?.toISOString().split("T")[1]?.slice(0,5),
+            end_time: event.end?.toISOString().split("T")[1]?.slice(0,5),
+            description: event.extendedProps.description || "",
+            clientName: event.extendedProps.clientName,
+            advisorId: event.extendedProps.advisorId,
+        }
+        setSelectedEvent(selected);
         setIsOpen(true);
     }
 
@@ -78,9 +92,10 @@ export default function MyBookingPage({advisorId}) {
                         try {
                             const startTime = DateTime.fromJSDate(eventInfo.event.start).toFormat("h:mm a");
                         return (
-                            <CalenderSmallEvent
+                            <SessionSmallEvent
                                 time={startTime}
                                 title={eventInfo.event.title}
+                                client={eventInfo.event.extendedProps.clientName}
                             />
                         );
                         } catch (error) {
@@ -96,8 +111,8 @@ export default function MyBookingPage({advisorId}) {
                     className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50"
                 >
                     <div className="w-full max-w-lg" onClick={(e) => e.stopPropagation()}>
-                        <CalendarBigEvent
-                            workshop={selectedEvent}
+                        <SessionBigEvent
+                            session={selectedEvent}
                             onClose={() => setIsOpen(false)}
                         />
                         {console.log("Selected Event: ", selectedEvent)}
