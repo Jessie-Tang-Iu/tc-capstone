@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS
   posts,
   advisory_bookings,
   advisory_sessions,
+  advisory_profile,
   application,
   cover_letter,
   resume,
