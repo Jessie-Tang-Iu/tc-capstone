@@ -3,21 +3,21 @@ import { useEffect, useRef, useState } from "react";
 import PopupMessage from "@/app/components/ui/PopupMessage";
 import { useRouter } from "next/navigation";
 
-
 export default function ApplyForm({ job, formData, setFormData, currentStep, setCurrentStep, errorMessage, setErrorMessage, onSubmit, onClose }) {
 
   const router = useRouter();
 
-  const [resume, setResume] = useState();
-  const [coverLetter, setCoverLetter] = useState();
+  const [resume, setResume] = useState(null);
+  const [coverLetter, setCoverLetter] = useState(null);
 
   useEffect(() => {
+    if (formData.user_id) {
       // Fetch resume in database
       fetch(`/api/resume/user/${formData.user_id}`)
         .then((res) => res.json())
         .then((data) => {
             setResume(data);
-            console.log(" Resume: ", data);
+            // console.log("Resume: ", data);
         })
         .catch((error) => console.error('Error fetching resume:', error));
       
@@ -26,14 +26,33 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
         .then((res) => res.json())
         .then((data) => {
             setCoverLetter(data);
-            console.log(" CV: ", data);
+            // console.log(" CV: ", data);
         })
         .catch((error) => console.error('Error fetching cover letter: ', error));
-    
-    }, [formData.user_id]);
+    }
+  }, [formData.user_id]);
 
   const handleNext = () => {
     let error = false;
+
+    // Check resume and cover letter in step 1 
+    if (currentStep == 1) {
+      if (resume.error && !formData.resume_name) {
+        setErrorMessage("Resume is required");
+        return;
+      }
+      if (coverLetter.error && !formData.cover_letter_name) {
+        setErrorMessage("Cover letter is required");
+        return;
+      }
+    }
+
+    // Check the job questions
+    if (currentStep == 2) {
+      if (job.questions) setCurrentStep(3);
+      else setCurrentStep(4);
+      return;
+    }
 
     // Check answers in step 3
     if (currentStep == 3) {
@@ -44,10 +63,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
           return;
         }
       })
-    }
-
-    // Display uploaded file after step 1
-    if (currentStep == 1) console.log(formData);
+    } 
 
     if ((currentStep < 5) && !error) {
       setCurrentStep(currentStep + 1);
@@ -113,11 +129,10 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
 
   const ResumeCard = ({ type = "resume", file }) => {
     if (type == "cover_letter") { const cvContent = file.content.split('\\n'); }
-    return (
+    return (file && !file.error) && (
     <div className="w-full h-130 max-w-sm border border-black rounded-2xl p-4 bg-white">
-      <div className="text-[#E55B3C] text-base font-bold mb-3">Previous {type == "resume" ? "Resume" : "Cover Letter"}</div>
+      <div className="text-[#E55B3C] text-base font-bold mb-3">Database {type == "resume" ? "Resume" : "Cover Letter"}</div>
       <hr className="border-gray-200 mb-3" />
-      {file && !file.error ? (
         <div>
           <div className="text-center">
             <div className="text-base font-bold text-black">
@@ -125,7 +140,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
             </div>
             <p className="text-sm text-black mb-2">{file.email}</p>
           </div>
-          <div className="text-sm text-gray-500 leading-relaxed h-85">
+          <div className="text-sm text-gray-500 leading-relaxed h-85 overflow-auto">
               {type === "resume" ? (
                 <>
                   <b>Summary: </b>
@@ -157,12 +172,9 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
             )}
           </div>
         </div>
-      ) : (
-        <div className="text-center text-base font-bold text-black h-65">Empty in database</div>
-      )}
       <button 
         className="w-full bg-[#E55B3C] text-white py-2 rounded text-sm font-normal hover:bg-[#E55B3C]/90 transition-colors mt-4"
-        onClick={() => router.push(`/profile?tab=profile`)}
+        onClick={() => router.push(`/profile`)}
       >
         {type === "resume" ? "Edit Resume" : "Edit Cover Letter"}
       </button>
@@ -171,28 +183,39 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
 
   const UploadArea = ({ type }) => {
     const localFileInputRef = useRef(null);
+
+    const handleFileChange = (e) => {
+      const uploadedFile = e.target.files?.[0] || null;
+      if (uploadedFile) {
+        const reader = new FileReader();
+        reader.readAsDataURL(uploadedFile);
+        // Run file reader
+        reader.onload = (event) => {
+          const base64Data = event.target.result.split(',')[1]; // Get only the Base64 part
+          setFormData({ ...formData, [`${type}_name`]: uploadedFile.name, [`${type}_data`]: base64Data});
+        }
+      }
+    }
+
     return (
     <div 
-      className="w-full max-w-sm border border-gray-300 rounded-2xl p-4 bg-white  cursor-pointer"
+      className="w-full h-30 max-w-sm border border-gray-300 rounded-2xl p-4 bg-white cursor-pointer"
       onClick={() => localFileInputRef.current.click() }
     >
       <div className="text-center">
         <div className="text-[#E55B3C] text-base font-bold mb-2">
           Upload New {type == "resume" ? "Resume" : "Cover Letter"}
         </div>
-        <div className="text-sm text-gray-500">File types: PDF, DOCS, TXT</div>
+        {!formData[`${type}_name`] && <div className="text-sm text-gray-500">File types: PDF, DOCS, TXT</div>}
       </div>
       <input 
         type="file"
         ref={localFileInputRef}
-        onChange={(e) => {
-          const uploadedFile = e.target.files?.[0] || null;
-          setFormData({ ...formData, [`${type}_name`]: uploadedFile.name, [`${type}_data`]: uploadedFile });
-        }}
+        onChange={handleFileChange}
         className="hidden"
         accept=".pdf,.doc,.docx"
       />
-      {formData[`${type}_name`] && formData[`${type}_data`]  && formData[`${type}_data`] instanceof File && (
+      {formData[`${type}_name`] && formData[`${type}_data`] && (
         <div className="mt-4 text-center text-sm text-gray-700">
           Selected File: <span className="font-bold">{formData[`${type}_name`]}</span>
         </div>
@@ -222,7 +245,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                 {/* Resume Section */}
                 <div className="flex justify-center">
                   <div className="space-y-6">
-                    {resume && <ResumeCard type="resume" file={resume} />}
+                    <ResumeCard type="resume" file={resume} />
                     <UploadArea type="resume" />
                   </div>
                 </div>
@@ -300,7 +323,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
             }
 
             {/* Step 3: Additional Questions */}
-            {currentStep === 3 && 
+            {currentStep === 3 && job.questions && 
               <div className="max-w-4xl mx-auto">
                 <h1 className="text-2xl font-bold text-black mb-8">Additional Questions</h1>
                 <div className="space-y-6">
@@ -336,7 +359,10 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                 <div>
                   <div className="flex justify-between items-center mb-4">
                     <h2 className="text-lg font-bold text-black">Resume</h2>
-                    { !formData.resume_name && <button className="text-[#E55B3C] text-base font-bold hover:underline">Edit</button> }
+                    <button 
+                      className="text-[#E55B3C] text-base font-bold hover:underline"
+                      onClick={() => setCurrentStep(1)}
+                    >Edit</button> 
                   </div>
                   <div className="flex justify-center">
                     { !formData.resume_name ?
@@ -351,7 +377,10 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                 <div>
                   <div className="flex justify-between items-center mb-4">
                     <h2 className="text-lg font-bold text-black">Cover Letter</h2>
-                    { !formData.cover_letter_name && <button className="text-[#E55B3C] text-base font-bold hover:underline">Edit</button>}
+                    <button 
+                      className="text-[#E55B3C] text-base font-bold hover:underline"
+                      onClick={() => setCurrentStep(1)}
+                    >Edit</button>
                   </div>
                   <div className="flex justify-center">
                     { !formData.cover_letter_name ?
@@ -392,8 +421,15 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                 </div>}
 
                 {/* Additional Questions */}
+                {job.questions && (
                 <div>
-                  <h2 className="text-lg font-bold text-black mb-4">Additional Questions</h2>
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-lg font-bold text-black">Additional Questions</h2>
+                    <button 
+                        className="text-[#E55B3C] text-base font-bold hover:underline"
+                        onClick={() => setCurrentStep(2)}
+                    >Edit</button>
+                  </div>
                   <div className="space-y-4 bg-white p-6 rounded-lg border border-gray-200">
                     {job.questions.map((question, index) => (
                         <div key={index}>
@@ -402,7 +438,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                         </div>
                     ))}
                   </div>
-                </div>
+                </div>)}
               </div>
             </div>
             }
