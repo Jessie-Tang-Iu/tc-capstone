@@ -1,23 +1,30 @@
 import { NextResponse } from "next/server";
-import { getResumeByUser } from "@/backend/controllers/applicationsController";
+import { getResumeByUser, updateResumeByUser } from "@/backend/controllers/resumesController";
 
 // GET /api/resume/user/:id
-export async function GET(req, { params }) {
+export async function GET(_req, { params }) {
   const { id } = await params;
   try {
-    const rs = await getResumeByUser(id);
-    return NextResponse.json(rs);
+    const result = await getResumeByUser(id);
+    if (!result) {
+      return NextResponse.json({ error: "Resume not create" }, { status: 404 })
+    }
+    return NextResponse.json(result, { status: 200});
   } catch (e) {
     console.error("GET /api/resume/user/[id] failed: ", e);
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
 
-export async function POST(req) {
+// PUT /api/resume/user/:id -> update the user's resume
+export async function PUT(req, { params }) {
+  const { id } = await params;
   try {
     const body = await req.json();
-    
-  } catch (e) {
-    
+    const updatedResume = await updateResumeByUser(id, body);
+    return NextResponse.json(updatedResume, { status: 200 })
+  } catch (err) {
+    console.error("PUT /api/resume/user/[id] failed: ", err);
+    return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }
