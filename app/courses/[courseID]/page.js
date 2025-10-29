@@ -6,13 +6,12 @@ import CourseContent from "../../components/courses/CourseContent";
 import CourseQuiz from "../../components/courses/CourseQuiz";
 
 export default function CoursePage({ params }) {
+  const courseID = params.courseID;
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
   const [view, setView] = useState("home");
   const [selectedLesson, setSelectedLesson] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const courseID = params.courseID;
 
   useEffect(() => {
     async function fetchCourse() {
