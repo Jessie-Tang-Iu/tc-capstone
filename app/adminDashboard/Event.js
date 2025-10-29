@@ -284,20 +284,18 @@ export default function EventsPanel() {
               onSearch={() => {}}
             />
           </div>
-          <div className="flex items-center gap-2">
-            <label htmlFor="sort" className="text-sm font-medium text-gray-700">
-              Sort:
-            </label>
-
-            <select
-              id="sort"
-              value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
-              className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C] focus:border-[#E55B3C] transition"
+          <div className="flex justify-end w-[120px]">
+            <button
+              onClick={() =>
+                setSortOrder((prev) =>
+                  prev === "newest" ? "oldest" : "newest"
+                )
+              }
+              className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 
+               hover:border-[#E55B3C] focus:outline-none focus:ring-2 focus:ring-[#E55B3C] transition"
             >
-              <option value="newest">Newest first</option>
-              <option value="oldest">Oldest first</option>
-            </select>
+              Sort: {sortOrder === "newest" ? "Newest" : "Oldest"}
+            </button>
           </div>
         </div>
       </div>
