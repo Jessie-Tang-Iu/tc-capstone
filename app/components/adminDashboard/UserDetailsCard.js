@@ -13,7 +13,9 @@ export default function UserDetailsCard({ user, roleLabel, onClose }) {
 
     (async () => {
       try {
-        const res = await fetch(`/api/users/${user.id}`, { cache: "no-store" });
+        const res = await fetch(`/api/users/${user.clerk_id}`, {
+          cache: "no-store",
+        });
         if (!res.ok) throw new Error("Failed to fetch user details");
         const data = await res.json();
         setDetails(data);

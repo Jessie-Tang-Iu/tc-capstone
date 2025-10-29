@@ -51,7 +51,7 @@ export default function UsersPanel({ onShowDetails }) {
 
   const updateUserStatus = async (id, newStatus) => {
     try {
-      const res = await fetch(`/api/users/${id}`, {
+      const res = await fetch(`/api/users/${clerk_id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
