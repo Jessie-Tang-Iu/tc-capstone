@@ -13,6 +13,7 @@ export default function CoursePage({ params }) {
   const [selectedLesson, setSelectedLesson] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Needs fixing, fetch fails due to invalid courseID
   useEffect(() => {
     async function fetchCourse() {
       try {

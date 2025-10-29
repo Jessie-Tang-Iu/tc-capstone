@@ -7,14 +7,16 @@ export default function CourseQuiz({ lesson, backToContent }) {
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  const handleSelect = (qIndex, answer) => {
-    setUserAnswers((prev) => ({ ...prev, [qIndex]: answer }));
+  const handleSelect = (questionNum, answer) => {
+    setUserAnswers((prev) => ({ ...prev, [questionNum]: answer }));
   };
 
+  // Q is the question object
   const handleSubmit = () => {
     const total = lesson.questions.length;
     let correct = 0;
     lesson.questions.forEach((q, i) => {
+       // When the user Answer for that specific question matches the same questions correct answer add one to the correct variable
       if (userAnswers[i] === q.correctAnswer) correct++;
     });
     setScore(Math.round((correct / total) * 100));
