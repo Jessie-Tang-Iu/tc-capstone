@@ -7,7 +7,7 @@ export default function UserRow({
   id,
   name,
   subtitle,
-  status, // <-- pass the DB status string
+  status, 
   onMessage,
   onDetails,
   onStatusChange,
