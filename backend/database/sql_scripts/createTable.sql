@@ -241,6 +241,16 @@ CREATE TABLE advisory_sessions (
 );
 
 -- =========================================
+-- ADVISORY Profile
+-- (kept TEXT ids to match your current usage; add FKs later if needed)
+-- =========================================
+CREATE TABLE advisory_profile (
+  advisor_id TEXT  PRIMARY KEY,
+  experience TEXT,
+  education  TEXT
+);
+
+-- =========================================
 -- DISCUSSION BOARD
 -- (authorId kept INT as provided; wired to user for integrity)
 -- =========================================

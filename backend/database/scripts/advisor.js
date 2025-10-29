@@ -11,6 +11,8 @@ export async function getAdvisorById(id) {
   const result = await query(`SELECT * FROM public.users u
                               JOIN advisors a
                               ON u.clerk_id = a.clerk_id
+                              LEFT OUTER JOIN advisory_profile ap
+                              ON u.clerk_id = ap.advisor_id
                               WHERE u.clerk_id = $1 AND role = 'advisor'`, 
     [id]
 );
