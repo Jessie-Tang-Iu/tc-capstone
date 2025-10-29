@@ -17,6 +17,8 @@ export default function Profile() {
         role: null,
         company_name: null,
         company_role: null,
+        education: null,
+        experience: null,
     });
 
     const ME = "testAdvisor1"; // for testing without login
