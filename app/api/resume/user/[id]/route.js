@@ -21,18 +21,8 @@ export async function PUT(req, { params }) {
   const { id } = await params;
   try {
     const body = await req.json();
-
-    if (!body.status) {
-      return NextResponse.json({ error: "Missing information "}, { status: 400 })
-    }
-
     const updatedResume = await updateResumeByUser(id, body);
-
-    if (updatedResume.rowCount === 0) {
-      return NextResponse.json({ error: "Resume not create" }, { status: 404 })
-    }
-
-    return NextResponse.json(updateResume.rows[0], { status: 200 })
+    return NextResponse.json(updatedResume, { status: 200 })
   } catch (err) {
     console.error("PUT /api/resume/user/[id] failed: ", err);
     return NextResponse.json({ error: err.message }, { status: 500 })
