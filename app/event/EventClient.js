@@ -21,6 +21,7 @@ export default function EventClient({ initialEvents = [] }) {
     initialEvents.map((e) => ({
       ...e,
       id: typeof e.id === "string" ? Number(e.id) || e.id : e.id,
+      //                             string + No  || string + NaN : number
     }))
   );
   const [view, setView] = useState("list");
