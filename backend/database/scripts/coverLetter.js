@@ -1,4 +1,4 @@
-import { query } from "../../database/db.js";
+import { query } from "@/backend/database/db.js";
 
 // Get function
 export async function getCoverLetterByUser(id) {
@@ -24,13 +24,13 @@ export async function createCoverLetter(coverLetter) {
 
 // Update function
 export async function updateCoverLetterByUser(id, coverLetter) {
-  const query = `
-    UPDATE cover_letter SET upload_at = NOW(), content = $1
-     WHERE user_id = $2 RETURNING *`;
-  const values = [
+  // console.log("cover letter script: ", coverLetter);
+  const { rows } = await query(`
+    UPDATE cover_letter SET content = $1
+     WHERE user_id = $2 RETURNING *`, 
+  [
     coverLetter.content,
     id
-  ];
-  const { rows } = await query(query, values);
+  ]);
   return rows[0];
 }
