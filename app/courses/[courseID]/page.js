@@ -1,91 +1,151 @@
 "use client";
 
-import React from "react";
-import { useState } from "react";
-
-import courses from "../../data/courses.json";
-import courseContent from "../../data/courseData.json";
+import React, { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import Navbar from "../../components/MemberNavBar";
+import CourseContent from "../../components/courses/CourseContent";
+import CourseQuiz from "../../components/courses/CourseQuiz";
 
-export default function CoursePage({ params }) {
-  const { courseID } = React.use(params);
-
-  const id = Number(courseID);
-  const course = courses.find((c) => c.courseID === id);
-  const content = courseContent[id]?.lessons || [];
-
+export default function CoursePage() {
+  const params = useParams(); // get route params
+  const courseID = params.courseID; // this matches your [courseID] folder
+  const [course, setCourse] = useState(null);
+  const [lessons, setLessons] = useState([]);
+  const [view, setView] = useState("home");
   const [selectedLesson, setSelectedLesson] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!course) {
-    return <div className="p-6">Course not found</div>;
-  }
+  useEffect(() => {
+    if (!courseID) return; // don't fetch if no ID
 
-  const lesson = selectedLesson !== null ? content[selectedLesson] : null;
+    const fetchCourse = async () => {
+      try {
+        const res = await fetch(`/api/course/${courseID}`);
+        if (!res.ok) throw new Error("Failed to fetch course");
+        const data = await res.json();
+        setCourse(data);
+        setLessons(data.lessons || []);
+      } catch (err) {
+        console.error("Error loading course:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourse();
+  }, [courseID]);
+
+  if (loading) return <div className="p-6 text-black">Loading course...</div>;
+  if (!course) return <div className="p-6 text-black">Course not found</div>;
+
+  const openLesson = (index) => {
+    setSelectedLesson(index);
+    setView("lesson");
+  };
+
+  const lesson = selectedLesson !== null ? lessons[selectedLesson] : null;
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-gray-100 min-h-screen text-black">
       <Navbar />
 
       <div className="flex">
-        {/* Sidebar */}
-        <div className="w-1/6 border-r border-black min-h-screen text-black my-5">
-          {content.map((lesson, index) => (
+        <div className="w-1/5 border-r border-gray-300 min-h-screen bg-white">
+          <div className="p-4 border-b font-semibold text-lg text-[#E55B3C]">
+            {course.title}
+          </div>
+          <div
+            className={`p-4 cursor-pointer ${view === "home" ? "bg-gray-200" : ""}`}
+            onClick={() => setView("home")}
+          >
+            🏠 Course Home
+          </div>
+          <div
+            className={`p-4 cursor-pointer ${view === "content" ? "bg-gray-200" : ""}`}
+            onClick={() => setView("content")}
+          >
+            📘 Lessons & Quizzes
+          </div>
+          {lessons.map((l, i) => (
             <div
-              key={lesson.id}
-              className={`p-4 cursor-pointer ${
-                selectedLesson === index ? "bg-gray-300" : "bg-white"
+              key={l.id}
+              className={`pl-8 pr-4 py-2 cursor-pointer ${
+                selectedLesson === i && view === "lesson" ? "bg-gray-300" : "bg-white"
               }`}
-              onClick={() => setSelectedLesson(index)}
+              onClick={() => openLesson(i)}
             >
-              <span className="font-semibold">{index + 1}.</span>{" "}
-              {lesson.type === "quiz" ? "Quiz" : "Lesson"} - {lesson.title}
+              {l.type === "quiz" ? "📝 Quiz" : "📖 Lesson"} {i + 1}: {l.title}
             </div>
           ))}
         </div>
 
-        {/* Main content */}
         <div className="flex-1 p-6">
-          {lesson ? (
+          {view === "home" && (
             <div className="bg-white rounded-xl shadow p-6">
-              <h2 className="text-2xl font-bold mb-4 text-black">{lesson.title}</h2>
+              <h1 className="text-3xl font-bold mb-4">{course.title}</h1>
+              <p className="mb-4 text-gray-700">{course.description}</p>
+              <div className="flex gap-6 mb-6 text-sm text-gray-600">
+                <p>Level: {course.level}</p>
+                <p>Type: {course.type}</p>
+                <p>Lessons: {course.lesson_count}</p>
+                <p>Duration: {course.duration}</p>
+                {course.certificate && <p>🎓 Certificate Available</p>}
+              </div>
+              <button
+                onClick={() => setView("content")}
+                className="bg-[#E55B3C] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#c94b2d]"
+              >
+                View Course Content
+              </button>
+            </div>
+          )}
+
+          {view === "content" && (
+            <CourseContent lessons={lessons} openLesson={openLesson} />
+          )}
+
+          {view === "lesson" && lesson && (
+            <div className="bg-white rounded-xl shadow p-6">
+              <h2 className="text-2xl font-bold mb-4">{lesson.title}</h2>
 
               {lesson.type === "lesson" && (
                 <>
-                  <p className="text-gray-700 mb-4">{lesson.content}</p>
-                  {lesson.video && (
+                  <div
+                    className="text-gray-700 mb-4"
+                    dangerouslySetInnerHTML={{ __html: lesson.content }}
+                  />
+                  {lesson.video_url && (
                     <iframe
-                      className="rounded-lg"
-                      width="560"
-                      height="315"
-                      src={lesson.video}
+                      className="rounded-lg w-full h-64"
+                      src={lesson.video_url}
                       title={lesson.title}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                     ></iframe>
                   )}
+                  <div className="mt-6 flex gap-4">
+                    <button
+                      onClick={() => setView("content")}
+                      className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300"
+                    >
+                      Back to Content
+                    </button>
+                    <button
+                      onClick={() => setView("home")}
+                      className="bg-[#E55B3C] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#c94b2d]"
+                    >
+                      Course Home
+                    </button>
+                  </div>
                 </>
               )}
 
               {lesson.type === "quiz" && (
-                <div>
-                  {lesson.questions.map((q, i) => (
-                    <div key={i} className="mb-6">
-                      <p className="font-medium text-black">{q.question}</p>
-                      <ul className="ml-6 mt-2 list-disc text-black">
-                        {q.answers.map((ans, j) => (
-                          <li key={j}>{ans}</li>
-                        ))}
-                      </ul>
-                      <p className="mt-1 text-sm text-green-600">
-                        Correct Answer: {q.correctAnswer}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                <CourseQuiz
+                  lesson={lesson}
+                  backToContent={() => setView("content")}
+                />
               )}
             </div>
-          ) : (
-            <p className="text-gray-500">Select a lesson or quiz from the left.</p>
           )}
         </div>
       </div>
