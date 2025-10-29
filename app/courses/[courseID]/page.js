@@ -23,6 +23,7 @@ export default function CoursePage() {
         const res = await fetch(`/api/course/${courseID}`);
         if (!res.ok) throw new Error("Failed to fetch course");
         const data = await res.json();
+        console.log("Fetched course data:", data);
         setCourse(data);
         setLessons(data.lessons || []);
       } catch (err) {
@@ -58,13 +59,13 @@ export default function CoursePage() {
             className={`p-4 cursor-pointer ${view === "home" ? "bg-gray-200" : ""}`}
             onClick={() => setView("home")}
           >
-            🏠 Course Home
+            Course Home
           </div>
           <div
             className={`p-4 cursor-pointer ${view === "content" ? "bg-gray-200" : ""}`}
             onClick={() => setView("content")}
           >
-            📘 Lessons & Quizzes
+            Lessons & Quizzes
           </div>
           {lessons.map((l, i) => (
             <div
@@ -74,7 +75,7 @@ export default function CoursePage() {
               }`}
               onClick={() => openLesson(i)}
             >
-              {l.type === "quiz" ? "📝 Quiz" : "📖 Lesson"} {i + 1}: {l.title}
+              {l.type === "quiz" ? "Quiz" : "Lesson"} {i + 1}: {l.title}
             </div>
           ))}
         </div>
