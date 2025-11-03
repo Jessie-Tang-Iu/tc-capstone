@@ -7,19 +7,19 @@ export default function CourseQuiz({ lesson, backToContent }) {
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
+  const questions = lesson?.questions || [];
+
   const handleSelect = (questionNum, answer) => {
     setUserAnswers((prev) => ({ ...prev, [questionNum]: answer }));
   };
 
-  // Q is the question object
   const handleSubmit = () => {
-    const total = lesson.questions.length;
+    const total = questions.length;
     let correct = 0;
-    lesson.questions.forEach((q, i) => {
-       // When the user Answer for that specific question matches the same questions correct answer add one to the correct variable
+    questions.forEach((q, i) => {
       if (userAnswers[i] === q.correctAnswer) correct++;
     });
-    setScore(Math.round((correct / total) * 100));
+    setScore(total > 0 ? Math.round((correct / total) * 100) : 0);
     setSubmitted(true);
   };
 
@@ -33,13 +33,13 @@ export default function CourseQuiz({ lesson, backToContent }) {
     <div>
       {!submitted ? (
         <>
-          {lesson.questions.map((q, i) => (
+          {questions.map((q, i) => (
             <div key={i} className="mb-6 border-b pb-4">
               <p className="font-medium mb-2">
                 {i + 1}. {q.question}
               </p>
               <div className="ml-6">
-                {q.answers.map((ans, j) => (
+                {(q.answers || []).map((ans, j) => (
                   <label key={j} className="block mb-1">
                     <input
                       type="radio"
@@ -69,7 +69,7 @@ export default function CourseQuiz({ lesson, backToContent }) {
             Score: {score}%
           </p>
 
-          {lesson.questions.map((q, i) => {
+          {questions.map((q, i) => {
             const correct = userAnswers[i] === q.correctAnswer;
             return (
               <div

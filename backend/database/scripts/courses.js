@@ -10,13 +10,37 @@ export async function getAllCourses() {
 export async function getCourseById(courseId) {
   courseId = parseInt(courseId, 10);
   console.log("Fetching course with ID:", courseId);
-  const course = await query(`SELECT * FROM courses WHERE id = $1`, [courseId]);
-  const lessons = await query(
+
+  // Fetch course
+  const courseRes = await query(`SELECT * FROM courses WHERE id = $1`, [courseId]);
+  const course = courseRes.rows[0];
+
+  // Fetch lessons
+  const lessonsRes = await query(
     `SELECT * FROM lessons WHERE course_id = $1 ORDER BY position ASC`,
     [courseId]
   );
+  const lessons = lessonsRes.rows;
 
-  return { ...course.rows[0], lessons: lessons.rows };
+  // For each quiz lesson, fetch its questions
+  for (let lesson of lessons) {
+    if (lesson.type === "quiz") {
+      const questionsRes = await query(
+        `SELECT id, lesson_id, question, answers, correct_answer
+         FROM quiz_questions
+         WHERE lesson_id = $1
+         ORDER BY id ASC`,
+        [lesson.id]
+      );
+      lesson.questions = questionsRes.rows.map(q => ({
+        question: q.question,
+        answers: q.answers,
+        correctAnswer: q.correct_answer
+      }));
+    }
+  }
+
+  return { ...course, lessons };
 }
 
 // Create a new course

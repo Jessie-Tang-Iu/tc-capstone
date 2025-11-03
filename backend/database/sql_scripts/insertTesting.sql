@@ -1,21 +1,4 @@
--- Insert fake posts
-INSERT INTO posts (user_id, author, title, content) VALUES
-('99999999-9999-9999-9999-999999999999', 'Alice', 'How to learn React?', 'I am new to React and want to know the best resources to get started.'),
-('99999999-9999-9999-9999-999999999999', 'Bob', 'Best PostgreSQL tips?', 'Share your favorite tips and tricks for optimizing queries in Postgres.'),
-('22222222-2222-2222-2222-222222222222', 'Charlie', 'Next.js vs Express?', 'When would you choose Next.js over a traditional Express backend?'),
-('22222222-2222-2222-2222-222222222222', 'Dana', 'Tailwind CSS worth it?', 'I see Tailwind CSS everywhere—what are the pros and cons compared to plain CSS or Bootstrap?');
- 
--- Insert fake comments (referencing posts by ID)
-INSERT INTO comments (post_id, user_id, author, content) VALUES
-(1, '99999999-9999-9999-9999-999999999999', 'Eve', 'I recommend the official React docs—they are super well written!'),
-(1, '99999999-9999-9999-9999-999999999999', 'Frank', 'Try Scrimba or Frontend Mentor, very interactive.'),
-(2, '99999999-9999-9999-9999-999999999999', 'Grace', 'Use EXPLAIN ANALYZE to understand query performance.'),
-(2, '99999999-9999-9999-9999-999999999999', 'Heidi', 'Don’t forget to index frequently used columns.'),
-(3, '22222222-2222-2222-2222-222222222222', 'Ivan', 'Next.js is great if you need SSR, otherwise Express is simpler.'),
-(4, '22222222-2222-2222-2222-222222222222', 'Judy', 'Tailwind is amazing once you get used to utility classes.'),
-(4, '22222222-2222-2222-2222-222222222222', 'Karl', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
 
--- test data
 --members
 INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES
 ('user_33TltDhWmKiEGfSs7DJk6b1HlI1', 'Jessie', 'Jessie', 'Tang', 'gmail.com', '123-456-7890', 'member');
@@ -33,6 +16,28 @@ INSERT INTO advisors (clerk_id, company_name, company_role) VALUES
 ('testAdvisor3', 'ABC Company', 'Front-end Developer'),
 ('testAdvisor4', 'BCD Company', 'Full Stack Developer'),
 ('testAdvisor5', 'AAB Tech', 'Project Manager');
+
+-- Add placeholder users so posts/comments have valid references
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES
+('99999999-9999-9999-9999-999999999999', 'fakeuser1', 'Alice', 'Example', 'alice@example.com', '000-000-0000', 'member'),
+('22222222-2222-2222-2222-222222222222', 'fakeuser2', 'Bob', 'Example', 'bob@example.com', '000-000-0000', 'member');
+
+-- Insert fake posts
+INSERT INTO posts (author_id, title, content) VALUES
+('99999999-9999-9999-9999-999999999999', 'How to learn React?', 'I am new to React and want to know the best resources to get started.'),
+('99999999-9999-9999-9999-999999999999', 'Best PostgreSQL tips?', 'Share your favorite tips and tricks for optimizing queries in Postgres.'),
+('22222222-2222-2222-2222-222222222222', 'Next.js vs Express?', 'When would you choose Next.js over a traditional Express backend?'),
+('22222222-2222-2222-2222-222222222222', 'Tailwind CSS worth it?', 'I see Tailwind CSS everywhere—what are the pros and cons compared to plain CSS or Bootstrap?');
+-- Insert fake comments (referencing posts by ID)
+INSERT INTO comments (post_id, author_id, content) VALUES
+(1, '99999999-9999-9999-9999-999999999999', 'I recommend the official React docs—they are super well written!'),
+(1, '99999999-9999-9999-9999-999999999999', 'Try Scrimba or Frontend Mentor, very interactive.'),
+(2, '99999999-9999-9999-9999-999999999999', 'Use EXPLAIN ANALYZE to understand query performance.'),
+(2, '99999999-9999-9999-9999-999999999999', 'Don’t forget to index frequently used columns.'),
+(3, '22222222-2222-2222-2222-222222222222', 'Next.js is great if you need SSR, otherwise Express is simpler.'),
+(4, '22222222-2222-2222-2222-222222222222', 'Tailwind is amazing once you get used to utility classes.'),
+(4, '22222222-2222-2222-2222-222222222222', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
+-- test data
 
 --booked slots
 INSERT INTO advisory_bookings (advisor_id, client_id, date, startTime, description, endTime, status) VALUES 

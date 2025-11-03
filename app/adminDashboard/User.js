@@ -30,7 +30,7 @@ export default function UsersPanel({ onShowDetails }) {
       if (!res.ok) throw new Error("Failed to fetch users");
       const data = await res.json();
       const filtered = data.filter(
-        (u) => u.status !== "underreview" && u.role === roleKey
+        (u) => u.status !== "underreview" && (u.role === roleKey || !u.role)
       );
       setUsersByRole((prev) => ({ ...prev, [roleKey]: filtered }));
       setFetchedRoles((prev) => ({ ...prev, [roleKey]: true }));
@@ -61,7 +61,7 @@ export default function UsersPanel({ onShowDetails }) {
       setUsersByRole((prev) => ({
         ...prev,
         [activeTab]: prev[activeTab].map((u) =>
-          u.id === updated.id ? updated : u
+          u.clerk_id === updated.clerk_id ? updated : u
         ),
       }));
     } catch (err) {
@@ -140,17 +140,17 @@ export default function UsersPanel({ onShowDetails }) {
             {filterByQuery(currentList).map((u) => (
               <UserRow
                 {...u}
-                key={u.id}
-                id={u.id}
+                key={u.clerk_id}
+                id={u.clerk_id}
                 name={`${u.first_name} ${u.last_name}`}
                 subtitle={`${u.username ?? ""} | ${u.email ?? ""}`}
                 status={u.status}
-                onMessage={() => openMessage(u.id)}
+                onMessage={() => openMessage(u.clerk_id)}
                 onDetails={() =>
                   showDetails(u, roles.find((r) => r.key === activeTab)?.label)
                 }
                 onStatusChange={(updated) =>
-                  updateUserStatus(u.id, updated.status)
+                  updateUserStatus(u.clerk_id, updated.status)
                 }
               />
             ))}
