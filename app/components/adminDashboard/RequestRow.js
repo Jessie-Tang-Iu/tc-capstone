@@ -20,19 +20,19 @@ export default function RequestRow({
         <div className="flex items-center gap-3">
           <button
             onClick={onDetails}
-            className="w-[92px] rounded-md bg-[#C58E2C] px-3 py-2 text-sm font-semibold text-white hover:brightness-95"
+            className="w-[92px] cursor-pointer rounded-md bg-[#C58E2C] px-3 py-2 text-sm font-semibold text-white hover:brightness-95 hover:scale-105 transition-transform"
           >
             Details
           </button>
           <button
             onClick={onAccept}
-            className="w-[92px] rounded-md bg-[#3B82F6] px-3 py-2 text-sm font-semibold text-white hover:brightness-95"
+            className="w-[92px] cursor-pointer rounded-md bg-[#3B82F6] px-3 py-2 text-sm font-semibold text-white hover:brightness-95 hover:scale-105 transition-transform"
           >
             Accept
           </button>
           <button
             onClick={onRefuse}
-            className="w-[92px] rounded-md bg-[#E11D48] px-3 py-2 text-sm font-semibold text-white hover:brightness-95"
+            className="w-[92px] cursor-pointer rounded-md bg-[#E11D48] px-3 py-2 text-sm font-semibold text-white hover:brightness-95 hover:scale-105 transition-transform"
           >
             Refuse
           </button>
