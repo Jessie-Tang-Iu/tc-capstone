@@ -1,3 +1,4 @@
+
 BEGIN;
 
 -- =========================================
@@ -42,7 +43,7 @@ CREATE TABLE users (
     last_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     phone VARCHAR(20),
-    status VARCHAR(20) NOT NULL DEFAULT 'active',
+    status VARCHAR(20) NOT NULL DEFAULT 'under_review',
     role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'member', 'advisor', 'employer'))
 );
 
@@ -341,6 +342,7 @@ CREATE INDEX idx_reports_created_at ON reports (created_at);
 CREATE INDEX idx_reports_reason ON reports (reason);
 CREATE INDEX idx_reports_is_removed ON reports (is_removed);
 CREATE INDEX idx_reports_is_banned ON reports (is_banned);
+
 
 
 COMMIT;

@@ -20,14 +20,16 @@ export default function RequestsPanel({ onShowDetails }) {
   // --- Fetch logic ---
   const fetchRequestsByRole = async (roleKey) => {
     try {
-      const res = await fetch(`/api/users?status=underreview&role=${roleKey}`, {
-        cache: "no-store",
-      });
+      const res = await fetch(
+        `/api/users?status=under_review&role=${roleKey}`,
+        {
+          cache: "no-store",
+        }
+      );
       if (!res.ok) throw new Error("Failed to fetch requests");
       const data = await res.json();
       const filtered = data.filter(
-        (u) =>
-          u.role === roleKey && u.status !== "active" && u.status !== "banned"
+        (u) => u.status !== "active" && u.status !== "banned"
       );
       setRequestsByRole((prev) => ({ ...prev, [roleKey]: filtered }));
       setFetchedRoles((prev) => ({ ...prev, [roleKey]: true }));
