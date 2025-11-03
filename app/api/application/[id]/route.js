@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getApplicationById, updateApplicationStatus } from "@/backend/controllers/applicationsController";
 
 export async function GET(_req, { params }) {
-  const { id } = await params;
+  const { id } = params;
   try {
     const apps = await getApplicationById(Number(id));
     return NextResponse.json(apps);
@@ -14,7 +14,7 @@ export async function GET(_req, { params }) {
 
 // PATCH /api/application/:id -> update the application's status
 export async function PATCH(req, { params }) {
-  const { id } = await params;
+  const { id } = params;
   try {
     const body = await req.json();
     const updated = await updateApplicationStatus(Number(id),body);

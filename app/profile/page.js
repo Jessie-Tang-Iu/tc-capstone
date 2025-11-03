@@ -9,6 +9,7 @@ import Notification from "./notification";
 import { useUser } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import PopupMessage from "@/app/components/ui/PopupMessage";
+import { IoNuclearOutline } from "react-icons/io5";
 
 function ProfileDashboardContent() {
 
@@ -21,12 +22,8 @@ function ProfileDashboardContent() {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  const [profile, setProfile] = useState();
-
   const [formData, setFormData] = useState();
-
-  const [resumeData, setResumeData] = useState();
-  const [coverLetterData, setCoverLetterData] = useState();
+  const [profile, setProfile] = useState(null);
 
   const [notificationData, setNotificationData] = useState({
     notifications: {
@@ -46,8 +43,6 @@ function ProfileDashboardContent() {
 
   useEffect(() => {
     if (user) {
-      // console.log(user);
-
       setFormData((prev) => ({
         emails: [
           { email: user?.emailAddresses[0].emailAddress || "#######@gmail.com", isPrimary: true },
@@ -63,46 +58,13 @@ function ProfileDashboardContent() {
 
       // Fetch user data
       fetch(`/api/users/${user.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        // console.log("Profile: ", data);
-        setProfile(data);
-      })
-      .catch((error) => console.error('Error fetching profile: ', error))
-
-      // Fetch user resume
-      fetch(`/api/resume/user/${user.id}`)
         .then((res) => res.json())
         .then((data) => {
-          if (data.error) {
-            setResumeData({
-              isNew: true,
-              user_id: user.id,
-              summary: "",
-              education: [],
-              experience: [],
-              certifications: [],
-              skills: [],
-              additional_info: "",
-            })
-          } else setResumeData(data);
-          // console.log(" Resume: ", data);
+          // console.log("Profile: ", data);
+          setProfile(data);
         })
-        .catch((error) => console.error('Error fetching resume: ', error));
+        .catch((error) => console.error('Error fetching profile: ', error));
 
-      // Fetch user cover letter
-      fetch(`/api/cover_letter/user/${user.id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.error) {
-            setCoverLetterData({
-              isNew: true,
-              content: "",
-            })
-          } else setCoverLetterData(data);
-          console.log("Cover letter profile page : ", data);
-        })
-        .catch((error) => console.error('Error fetching cover letter: ', error));
     }
   }, [user]);
 
@@ -124,73 +86,6 @@ function ProfileDashboardContent() {
   );
 
   const handleBackToList = () => setShowDetail(false);
-
-  const handleSaveProfile = async () => {
-    if (!profile.first_name) { setErrorMessage("First name is required"); return; }
-    if (!profile.last_name) { setErrorMessage("Last name is required"); return; }
-    if (!profile.email) { setErrorMessage("Email is required"); return; }
-    console.log("Saved profile: ", profile); 
-    try {
-      const res = await fetch(`/api/users/${user.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(profile),
-      })
-      if (!res.ok) {
-        setErrorMessage("Saving profile error: ", res.status, await res.text());
-        return;
-      }
-      setSuccessMessage("User information is saved")
-    } catch (err) {
-      setErrorMessage("Saving profile failed: ", err.message);
-    }
-  }
-
-  const handleSaveResume =  async () => {
-    if (!resumeData.summary) { 
-      setErrorMessage("Summary is required"); 
-      return; 
-    }
-    console.log("Main profile page - saved resume: ", resumeData);
-    let fetchURL = resumeData.isNew ? `/api/resume` : `/api/resume/user/${user.id}`;
-    let fetchMethod = resumeData.isNew ? "POST" : "PUT";
-    try {
-      const res = await fetch(fetchURL, {
-        method: fetchMethod,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(resumeData),
-      })
-      if (!res.ok) {
-        throw new Error (res.status, await res.text());
-      }
-      setSuccessMessage("Resume is saved");
-    } catch (err) {
-      setErrorMessage("Saving resume failed\n", err.message);
-    }
-  }
-
-  const handleSaveCoverLetter = async () => {
-    if (!coverLetterData.content) { 
-      setErrorMessage("Content of cover letter is required"); 
-      return; 
-    }
-    console.log("Main profile page - saved cover letter: ", coverLetterData);
-    let fetchURL = coverLetterData.isNew ? `/api/cover_letter` : `/api/cover_letter/user/${user.id}`;
-    let fetchMethod = coverLetterData.isNew ? `POST` : "PUT";
-    try {
-      const res = await fetch(fetchURL, {
-        method: fetchMethod,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(coverLetterData)
-      })
-      if (!res.ok) {
-        throw new Error (res.status, await res.text());
-      }
-      setSuccessMessage("Cover letter is saved");
-    } catch (err) {
-      setErrorMessage("Saving cover letter failed\n", err.message);
-    }
-  }
 
   if (!isLoaded) {
     return <p>Loading...</p>;
@@ -236,19 +131,8 @@ function ProfileDashboardContent() {
             {tab === "profile" && (
               // user.role === "member" && 
               <ProfileSection 
-                formData={profile} 
-                setFormData={setProfile}
-                resumeData={resumeData}
-                setResumeData={setResumeData}
-                isNewResume={resumeData?.isNew ? true : false}
-                coverLetterData={coverLetterData}
-                setCoverLetterData={setCoverLetterData}
-                isNewCoverLetter={coverLetterData?.isNew ? true : false}
                 setSuccessMessage={setSuccessMessage}
                 setErrorMessage={setErrorMessage}
-                onProfileSave={handleSaveProfile}
-                onResumeSave={handleSaveResume}
-                onCoverLetterSave={handleSaveCoverLetter}
               />
             )}
             
