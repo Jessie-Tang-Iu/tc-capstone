@@ -2,10 +2,12 @@
 
 import React, { useState } from "react";
 
-export default function CourseQuiz({ lesson, backToContent }) {
+export default function CourseQuiz({ lesson, backToContent, userId }) {
   const [userAnswers, setUserAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   const questions = lesson?.questions || [];
 
@@ -23,10 +25,31 @@ export default function CourseQuiz({ lesson, backToContent }) {
     setSubmitted(true);
   };
 
+  const handleSaveProgress = async () => {
+    if (score < 50) return;
+    setSaving(true);
+    try {
+      const res = await fetch("/api/course/progress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, lessonId: lesson.id }),
+      });
+      if (!res.ok) throw new Error("Failed to save quiz progress");
+      const data = await res.json();
+      console.log("Quiz completion saved:", data);
+      setSaved(true);
+    } catch (err) {
+      console.error("Error saving quiz progress:", err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const resetQuiz = () => {
     setUserAnswers({});
     setSubmitted(false);
     setScore(0);
+    setSaved(false);
   };
 
   return (
@@ -94,13 +117,32 @@ export default function CourseQuiz({ lesson, backToContent }) {
             );
           })}
 
-          <div className="mt-6 flex gap-4">
+          <div className="mt-6 flex flex-wrap gap-4">
             <button
               onClick={resetQuiz}
               className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300"
             >
               Retake Quiz
             </button>
+
+            {score >= 50 && !saved && (
+              <button
+                onClick={handleSaveProgress}
+                disabled={saving}
+                className={`${
+                  saving ? "bg-gray-400" : "bg-green-500 hover:bg-green-600"
+                } text-white px-4 py-2 rounded-lg font-semibold`}
+              >
+                {saving ? "Saving..." : "Save Progress"}
+              </button>
+            )}
+
+            {saved && (
+              <span className="text-green-700 font-medium mt-2">
+                ✓ Progress Saved
+              </span>
+            )}
+
             <button
               onClick={backToContent}
               className="bg-[#E55B3C] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#c94b2d]"
