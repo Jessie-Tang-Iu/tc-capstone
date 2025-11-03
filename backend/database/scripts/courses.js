@@ -6,13 +6,13 @@ export async function getAllCourses() {
   return result.rows;
 }
 
-// Get a specific course with lessons
-export async function getCourseById(courseId) {
+export async function getCourseById(courseId, userId) {
   courseId = parseInt(courseId, 10);
-  console.log("Fetching course with ID:", courseId);
+  console.log("Fetching course with ID:", courseId, "for user:", userId);
 
   // Fetch course
   const courseRes = await query(`SELECT * FROM courses WHERE id = $1`, [courseId]);
+  if (courseRes.rows.length === 0) return null;
   const course = courseRes.rows[0];
 
   // Fetch lessons
@@ -22,26 +22,57 @@ export async function getCourseById(courseId) {
   );
   const lessons = lessonsRes.rows;
 
-  // For each quiz lesson, fetch its questions
+  // Fetch user lesson progress
+  const progressRes = await query(
+    `SELECT lesson_id, completed
+     FROM user_lesson_progress
+     WHERE user_id = $1
+       AND lesson_id IN (SELECT id FROM lessons WHERE course_id = $2)`,
+    [userId, courseId]
+  );
+
+  const progressMap = Object.fromEntries(
+    progressRes.rows.map((p) => [p.lesson_id, p.completed])
+  );
+
+  // Attach completion status and quiz data
   for (let lesson of lessons) {
+    lesson.completed = !!progressMap[lesson.id];
+
     if (lesson.type === "quiz") {
       const questionsRes = await query(
-        `SELECT id, lesson_id, question, answers, correct_answer
+        `SELECT question, answers, correct_answer
          FROM quiz_questions
          WHERE lesson_id = $1
          ORDER BY id ASC`,
         [lesson.id]
       );
-      lesson.questions = questionsRes.rows.map(q => ({
+
+      lesson.questions = questionsRes.rows.map((q) => ({
         question: q.question,
         answers: q.answers,
-        correctAnswer: q.correct_answer
+        correctAnswer: q.correct_answer,
       }));
     }
   }
 
+  // Fetch user course progress summary
+  const courseProgressRes = await query(
+    `SELECT completed_lessons, total_lessons, completed
+     FROM user_course_progress
+     WHERE user_id = $1 AND course_id = $2`,
+    [userId, courseId]
+  );
+
+  course.user_progress = courseProgressRes.rows[0] || {
+    completed_lessons: 0,
+    total_lessons: lessons.length,
+    completed: false,
+  };
+
   return { ...course, lessons };
 }
+
 
 // Create a new course
 export async function createCourse(title, description, category, difficulty) {
