@@ -3,7 +3,15 @@ import crypto from 'crypto';
 
 // --- ENCRYPTION CONFIG & UTILITIES ---
 const algorithm = 'aes-256-cbc';
+
+if (!process.env.ENCRYPTION_SECRET) {
+  // This will throw a specific error during build if the variable is missing,
+  // making it clear what needs to be fixed in the Vercel configuration.
+  throw new Error('Missing ENCRYPTION_SECRET environment variable.');
+}
+
 const secretKey = Buffer.from(process.env.ENCRYPTION_SECRET, 'base64');
+
 if (secretKey.length != 32) {
   throw new Error('ENCRYPTION_SECRET must be 32 bytes (256 bits) long after Base64 decoding.');
 }

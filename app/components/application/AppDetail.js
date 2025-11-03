@@ -172,10 +172,26 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
               <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">TC Alberta Resume</div>
               <div className="p-4 grid gap-3">
                 <LabelValue label="Summary" value={resume.summary} />
-                <LabelValue label="Education" value={resume.education} />
                 <LabelValue label="Certificate" value={resume.certifications} />
                 <LabelValue label="Skills" value={resume.skills} />
-                <LabelValue label="Experience" value={resume.experience} />
+                {resume.education.map((edu, idx) => {
+                  let eduSplit = edu.split(' | ');
+                  return (
+                    <LabelValue key={idx + edu} label={`Education ${idx+1}`} value={`${eduSplit[1]} in ${eduSplit[2]} from ${eduSplit[0]} (${eduSplit[3]}-${eduSplit[4]})`} />
+                  );
+                })}
+                {resume.experience.map((exp, idx) => {
+                  let expSplit = exp.split(' | ');
+                  let experience = "";
+                  if (expSplit[5] == "" && expSplit[6] == "") {
+                    experience = `${expSplit[0]} (${expSplit[2]}) at ${expSplit[1]} (from ${expSplit[3]}-${expSplit[4]})`
+                  } else {
+                    experience = `${expSplit[0]} (${expSplit[2]}) at ${expSplit[1]} (from ${expSplit[3]}-${expSplit[4]} to ${expSplit[5]}-${expSplit[6]})`
+                  }
+                  return (
+                    <LabelValue key={idx + exp} label={`Experience ${idx+1}`} value={experience} />
+                  );
+                })}
                 <LabelValue label="Additional Information" value={resume.additional_info} />
               </div>
             </div>
@@ -207,7 +223,7 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
             <div className="border border-gray-200 rounded-lg bg-white">
               <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">TC Alberta Cover Letter</div>
                 <div className="px-5 pt-5 pb-2 text-sm text-black break-words">
-                  {coverLetter.content.split('\\n').map((line, idx) => ( <p key={idx} className="mb-3">{line}</p> ))}
+                  {coverLetter.content.split('\n').map((line, idx) => ( <p key={idx} className="mb-3">{line}</p> ))}
                 </div>
             </div>
           )}

@@ -54,8 +54,9 @@ export default function JobBoardPage() {
       fetch('/api/job')
         .then((res) => res.json())
         .then((data) => {
-          setJobs(data)}
-        )
+          setJobs(data);
+          // console.log(data);
+        })
         .catch((error) => console.error('Error fetching jobs:', error));
     }, []);
 
