@@ -6,24 +6,23 @@ import Navbar from "../../components/MemberNavBar";
 import CourseContent from "../../components/courses/CourseContent";
 import CourseQuiz from "../../components/courses/CourseQuiz";
 
-export default function CoursePage() {
-  const params = useParams(); // get route params
-  const courseID = params.courseID; // this matches your [courseID] folder
+export default function CoursePage({ userId }) {
+  const params = useParams();
+  const courseID = params.courseID;
+
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
-  const [view, setView] = useState("home");
-  const [selectedLesson, setSelectedLesson] = useState(null);
+  const [selectedLessonIndex, setSelectedLessonIndex] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!courseID) return; // don't fetch if no ID
+    if (!courseID) return;
 
     const fetchCourse = async () => {
       try {
         const res = await fetch(`/api/course/${courseID}`);
         if (!res.ok) throw new Error("Failed to fetch course");
         const data = await res.json();
-        console.log("Fetched course data:", data);
         setCourse(data);
         setLessons(data.lessons || []);
       } catch (err) {
@@ -39,51 +38,42 @@ export default function CoursePage() {
   if (loading) return <div className="p-6 text-black">Loading course...</div>;
   if (!course) return <div className="p-6 text-black">Course not found</div>;
 
-  const openLesson = (index) => {
-    setSelectedLesson(index);
-    setView("lesson");
-  };
-
-  const lesson = selectedLesson !== null ? lessons[selectedLesson] : null;
+  const selectedLesson = selectedLessonIndex !== null ? lessons[selectedLessonIndex] : null;
 
   return (
     <div className="bg-gray-100 min-h-screen text-black">
       <Navbar />
 
       <div className="flex">
+        {/* Sidebar with lessons */}
         <div className="w-1/5 border-r border-gray-300 min-h-screen bg-white">
           <div className="p-4 border-b font-semibold text-lg text-[#E55B3C]">
             {course.title}
           </div>
-          <div
-            className={`p-4 cursor-pointer ${view === "home" ? "bg-gray-200" : ""}`}
-            onClick={() => setView("home")}
-          >
+          <div className="p-4 cursor-pointer" onClick={() => setSelectedLessonIndex(null)}>
             Course Home
           </div>
-          <div
-            className={`p-4 cursor-pointer ${view === "content" ? "bg-gray-200" : ""}`}
-            onClick={() => setView("content")}
-          >
-            Lessons & Quizzes
-          </div>
-          {lessons.map((l, i) => (
-            <div key={l.id} className="pl-8 pr-4 py-2 flex items-center">
-              <span
-                className={`cursor-pointer flex-1 ${
-                  l.completed ? "text-green-600" : "text-gray-800"
-                }`}
-                onClick={() => openLesson(i)}
-              >
-                {l.type === "quiz" ? "Quiz" : "Lesson"} {i + 1}: {l.title}
+          <div className="p-4 cursor-pointer font-semibold">Lessons & Quizzes</div>
+
+          {lessons.map((lesson, i) => (
+            <div
+              key={lesson.id}
+              className={`pl-8 pr-4 py-2 flex items-center cursor-pointer ${
+                selectedLessonIndex === i ? "bg-gray-200" : ""
+              }`}
+              onClick={() => setSelectedLessonIndex(i)}
+            >
+              <span className={`flex-1 ${lesson.completed ? "text-green-600" : ""}`}>
+                {lesson.type === "quiz" ? "Quiz" : "Lesson"} {i + 1}: {lesson.title}
               </span>
-              {l.completed && <span>Done</span>}
+              {lesson.completed && <span>✓ Done</span>}
             </div>
           ))}
         </div>
 
+        {/* Main content area */}
         <div className="flex-1 p-6">
-          {view === "home" && (
+          {!selectedLesson && (
             <div className="bg-white rounded-xl shadow p-6">
               <h1 className="text-3xl font-bold mb-4">{course.title}</h1>
               <p className="mb-4 text-gray-700">{course.description}</p>
@@ -92,63 +82,17 @@ export default function CoursePage() {
                 <p>Type: {course.type}</p>
                 <p>Lessons: {course.lesson_count}</p>
                 <p>Duration: {course.duration}</p>
-                {course.certificate && <p>🎓 Certificate Available</p>}
+                {course.certificate && <p>Certificate Available</p>}
               </div>
-              <button
-                onClick={() => setView("content")}
-                className="bg-[#E55B3C] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#c94b2d]"
-              >
-                View Course Content
-              </button>
             </div>
           )}
 
-          {view === "content" && (
-            <CourseContent lessons={lessons} openLesson={openLesson} />
+          {selectedLesson && selectedLesson.type === "lesson" && (
+            <CourseContent lesson={selectedLesson} userId={userId} />
           )}
 
-          {view === "lesson" && lesson && (
-            <div className="bg-white rounded-xl shadow p-6">
-              <h2 className="text-2xl font-bold mb-4">{lesson.title}</h2>
-
-              {lesson.type === "lesson" && (
-                <>
-                  <div
-                    className="text-gray-700 mb-4"
-                    dangerouslySetInnerHTML={{ __html: lesson.content }}
-                  />
-                  {lesson.video_url && (
-                    <iframe
-                      className="rounded-lg w-full h-64"
-                      src={lesson.video_url}
-                      title={lesson.title}
-                      allowFullScreen
-                    ></iframe>
-                  )}
-                  <div className="mt-6 flex gap-4">
-                    <button
-                      onClick={() => setView("content")}
-                      className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300"
-                    >
-                      Back to Content
-                    </button>
-                    <button
-                      onClick={() => setView("home")}
-                      className="bg-[#E55B3C] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#c94b2d]"
-                    >
-                      Course Home
-                    </button>
-                  </div>
-                </>
-              )}
-
-              {lesson.type === "quiz" && (
-                <CourseQuiz
-                  lesson={lesson}
-                  backToContent={() => setView("content")}
-                />
-              )}
-            </div>
+          {selectedLesson && selectedLesson.type === "quiz" && (
+            <CourseQuiz lesson={selectedLesson} backToContent={() => setSelectedLessonIndex(null)} userId={userId} />
           )}
         </div>
       </div>
