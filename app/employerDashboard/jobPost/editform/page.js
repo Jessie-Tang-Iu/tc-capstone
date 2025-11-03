@@ -83,7 +83,7 @@ export default function JobPostEditForm() {
           fetch("/api/job/types").then((r) => r.json()),
           fetch("/api/job/workplaces").then((r) => r.json()),
         ]);
-        // console.log("Industries:", ind);
+        console.log("Dropdown results:", { ind, exp, typ, work }); // <--
         setIndustries(ind);
         setExperiences(exp);
         setTypes(typ);
@@ -115,6 +115,26 @@ export default function JobPostEditForm() {
     };
     fetchJob();
   }, [isEdit, jobId]);
+
+  useEffect(() => {
+    if (isEdit && jobData?.title) {
+      setTitle(jobData.title || "");
+      setCompany(jobData.company || jobData.company_name || ""); // ← key fix
+      setLocation(jobData.location || "Calgary, Alberta");
+      setIndustryId(jobData.industry_id || "");
+      setWorkplaceId(jobData.workplace_id || "");
+      setTypeId(jobData.type_id || "");
+      setExperienceId(jobData.experience_id || "");
+      setSalary(jobData.salary_per_hour || "");
+      setLink(jobData.link || "");
+      setAboutCompany(jobData.company_info || "");
+      setAboutJob(jobData.description || "");
+      setBringToTeam(jobData.responsibilities || "");
+      setSkillsNeed(jobData.requirements || "");
+      setMoreDetails(jobData.details || "");
+      setBenefits(jobData.benefits || "");
+    }
+  }, [jobData, isEdit]);
 
   /* ======= Form fields ======= */
   const [title, setTitle] = useState("");
@@ -189,6 +209,7 @@ export default function JobPostEditForm() {
       experienceId: Number(experienceId),
       salaryPerHour: Number(salary),
       link,
+      aboutCompany,
       description: aboutJob,
       responsibilities: bringToTeam,
       requirements: skillsNeed,

@@ -26,7 +26,8 @@ export default function RequestsPanel({ onShowDetails }) {
       if (!res.ok) throw new Error("Failed to fetch requests");
       const data = await res.json();
       const filtered = data.filter(
-        (u) => u.role === roleKey && u.status === "underreview"
+        (u) =>
+          u.role === roleKey && u.status !== "active" && u.status !== "banned"
       );
       setRequestsByRole((prev) => ({ ...prev, [roleKey]: filtered }));
       setFetchedRoles((prev) => ({ ...prev, [roleKey]: true }));
@@ -134,7 +135,7 @@ export default function RequestsPanel({ onShowDetails }) {
         {/* List or Placeholder */}
         {filterByQuery(currentList).length === 0 ? (
           <PlaceholderCard
-            title={`No ${activeTab} requests`}
+            title={`No pending ${activeTab} requests`}
             description="Nothing to review here."
           />
         ) : (
