@@ -145,11 +145,11 @@ export default function RequestsPanel({ onShowDetails }) {
             {filterByQuery(currentList).map((r) => (
               <RequestRow
                 {...r}
-                key={r.id}
+                key={r.clerk_id}
                 name={`${r.first_name} ${r.last_name}`}
                 subtitle={r.email}
-                onAccept={() => acceptRequest(activeTab, r.id)}
-                onRefuse={() => refuseRequest(activeTab, r.id)}
+                onAccept={() => acceptRequest(activeTab, r.clerk_id)}
+                onRefuse={() => refuseRequest(activeTab, r.clerk_id)}
                 onDetails={() => onShowDetails?.(r)}
               />
             ))}

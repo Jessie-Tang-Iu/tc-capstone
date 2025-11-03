@@ -30,7 +30,9 @@ export default function UsersPanel({ onShowDetails }) {
       if (!res.ok) throw new Error("Failed to fetch users");
       const data = await res.json();
       const filtered = data.filter(
-        (u) => u.status !== "underreview" && (u.role === roleKey || !u.role)
+        (u) =>
+          (u.status === "active" || u.status === "banned") &&
+          (u.role === roleKey || !u.role)
       );
       setUsersByRole((prev) => ({ ...prev, [roleKey]: filtered }));
       setFetchedRoles((prev) => ({ ...prev, [roleKey]: true }));
