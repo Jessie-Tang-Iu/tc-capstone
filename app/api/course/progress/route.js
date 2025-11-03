@@ -2,7 +2,7 @@ export async function POST(req) {
   try {
     const body = await req.json();
 
-    const res = await fetch(`${process.env.BACKEND_URL}/courses/complete`, {
+    const res = await fetch(`${process.env.BACKEND_URL}/courses/progress`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),

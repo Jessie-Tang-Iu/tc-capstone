@@ -1,8 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
+import { useUser } from "@clerk/nextjs";
 
-export default function CourseQuiz({ lesson, backToContent, userId }) {
+export default function CourseQuiz({ lesson, backToContent }) {
+  const { user } = useUser();
+  const userId = user?.id; // Clerk user ID used for saving progress
+
   const [userAnswers, setUserAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
@@ -29,13 +33,15 @@ export default function CourseQuiz({ lesson, backToContent, userId }) {
     if (score < 50) return;
     setSaving(true);
     try {
+      console.log("Submitting progress:", { userId, lessonId: lesson.id, score });
       const res = await fetch("/api/course/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, lessonId: lesson.id }),
+        body: JSON.stringify({ userId, lessonId: lesson.id, score }),
       });
       if (!res.ok) throw new Error("Failed to save quiz progress");
       const data = await res.json();
+      console.log("Response:", res.status, data);
       console.log("Quiz completion saved:", data);
       setSaved(true);
     } catch (err) {

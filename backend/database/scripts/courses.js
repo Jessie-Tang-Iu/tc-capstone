@@ -73,7 +73,6 @@ export async function getCourseById(courseId, userId) {
   return { ...course, lessons };
 }
 
-
 /** Mark a lesson as completed and update course progress */
 export async function markLessonComplete(userId, lessonId) {
   // Mark this lesson as complete

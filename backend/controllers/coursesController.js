@@ -22,6 +22,7 @@ export async function getCourseByIdController(req, res) {
 
 /** Mark a lesson as completed and update course progress */
 export async function markLessonCompleteController(req, res) {
+  console.log("Progress endpoint hit:", req.body);
   try {
     const { userId, lessonId } = req.body;
     if (!userId || !lessonId)
