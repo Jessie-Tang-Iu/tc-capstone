@@ -35,10 +35,10 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
   // Update Education 
   
   const handleEducationChange = (idx) => {
-    console.log("Education change: ", idx, " - ", newEdu);
+    console.log("Resume - Education change: ", idx, " - ", newEdu);
     let updatedEdu = resumeData.education;
     updatedEdu[idx] = `${newEdu.school} | ${newEdu.degree} | ${newEdu.fieldOfStudy} | ${newEdu.startYear} | ${newEdu.endYear}`;
-    console.log(updatedEdu);
+    // console.log(updatedEdu);
     handleResumeChange("education", updatedEdu);
     setNewEdu({school: "", degree: "", fieldOfStudy: "", startYear: "", endYear: ""});
     setIsEduLoading(false);
@@ -49,7 +49,7 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
     else {
       setIsEduLoading(true);
       let updatedEdu = resumeData.education;
-      console.log("length of education: ", updatedEdu.length);
+      // console.log("length of education: ", updatedEdu.length);
       if (updatedEdu.length == 5) return;
       updatedEdu.push("");
       handleResumeChange("education", updatedEdu);
@@ -57,20 +57,20 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
   };
   
   const handleRemoveEducation = (index) => {
-    console.log("remove index: ", index);
+    // console.log("remove index: ", index);
     let updatedEdu = [];
     resumeData.education.map((edu, idx) => {if (idx != index) updatedEdu.push(edu);});
-    console.log(updatedEdu);
+    // console.log(updatedEdu);
     handleResumeChange("education", updatedEdu);
   };
   
   // Update Experience 
   
   const handleExperienceChange = (idx) => {
-    console.log("Experience change: ", idx, " - ", newExp);
+    // console.log("Experience change: ", idx, " - ", newExp);
     let updatedExp = resumeData.experience;
     updatedExp[idx] = `${newExp.title} | ${newExp.company} | ${newExp.type} | ${newExp.startMonth} | ${newExp.startYear} | ${newExp.endMonth} | ${newExp.endYear} | ${newExp.description}`;
-    console.log(updatedExp);
+    // console.log(updatedExp);
     handleResumeChange("experience", updatedExp);
     setNewExp({title: "", company: "", type: "", startMonth: "", startYear: "", endMonth: "", endYear: "", description: ""})
     setIsExpLoading(false);
@@ -81,7 +81,7 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
     else {
       setIsExpLoading(true);
       let updatedExp = resumeData.experience;
-      console.log("length of experience: ", updatedExp.length);
+      // console.log("length of experience: ", updatedExp.length);
       if (updatedExp.length == 5) return;
       updatedExp.push("");
       handleResumeChange("experience", updatedExp);
@@ -91,7 +91,7 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
   const handleRemoveExperience = (index) => {
     let updatedExp = [];
     resumeData.experience.map((exp, idx) => { if (idx != index) updatedExp.push(exp) });
-    console.log(updatedExp);
+    // console.log(updatedExp);
     handleResumeChange("experience", updatedExp);
   };
 
@@ -100,7 +100,7 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
   const handleCertChange = (index) => {
     let updatedCerts = resumeData.certifications;
     updatedCerts[index] = newCert;
-    console.log("Certification change: ", updatedCerts);
+    // console.log("Certification change: ", updatedCerts);
     handleResumeChange("certifications", updatedCerts);
     setNewCert("");
     setIsCertLoading(false);
@@ -127,7 +127,7 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
   const handleSkillChange = (index) => {
     let updatedSkills = resumeData.skills;
     updatedSkills[index] = newSkill;
-    console.log("Skill change: ", updatedSkills);
+    // console.log("Skill change: ", updatedSkills);
     handleResumeChange("skills", updatedSkills);
     setNewSkill("");
     setIsSkillLoading(false);

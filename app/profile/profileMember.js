@@ -18,7 +18,7 @@ export default function ProfileSection({ setSuccessMessage, setErrorMessage }) {
       fetch(`/api/users/${user.id}`)
         .then((res) => res.json())
         .then((data) => {
-          console.log("Profile: ", data);
+          // console.log("Profile: ", data);
           setProfile(data);
         })
         .catch((error) => console.error('Error fetching profile: ', error))
