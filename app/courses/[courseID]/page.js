@@ -68,14 +68,16 @@ export default function CoursePage() {
             Lessons & Quizzes
           </div>
           {lessons.map((l, i) => (
-            <div
-              key={l.id}
-              className={`pl-8 pr-4 py-2 cursor-pointer ${
-                selectedLesson === i && view === "lesson" ? "bg-gray-300" : "bg-white"
-              }`}
-              onClick={() => openLesson(i)}
-            >
-              {l.type === "quiz" ? "Quiz" : "Lesson"} {i + 1}: {l.title}
+            <div key={l.id} className="pl-8 pr-4 py-2 flex items-center">
+              <span
+                className={`cursor-pointer flex-1 ${
+                  l.completed ? "text-green-600" : "text-gray-800"
+                }`}
+                onClick={() => openLesson(i)}
+              >
+                {l.type === "quiz" ? "Quiz" : "Lesson"} {i + 1}: {l.title}
+              </span>
+              {l.completed && <span>Done</span>}
             </div>
           ))}
         </div>

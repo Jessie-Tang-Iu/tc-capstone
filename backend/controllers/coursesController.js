@@ -1,4 +1,4 @@
-import { getAllCourses, getCourseById, } from "../database/scripts/courses.js";
+import { getAllCourses, getCourseById, markLessonComplete, updateCourseProgress } from "../database/scripts/courses.js";
 
 export async function getAllCoursesController(req, res) {
   try {
@@ -16,6 +16,36 @@ export async function getCourseByIdController(req, res) {
     res.status(200).json(data);
   } catch (err) {
     console.error("Error fetching course:", err);
+    res.status(500).json({ error: err.message });
+  }
+}
+
+/** Mark a lesson as completed and update course progress */
+export async function markLessonCompleteController(req, res) {
+  try {
+    const { userId, lessonId } = req.body;
+    if (!userId || !lessonId)
+      return res.status(400).json({ error: "Missing userId or lessonId" });
+
+    const progress = await markLessonComplete(userId, lessonId);
+    res.status(200).json({ message: "Lesson marked complete", progress });
+  } catch (err) {
+    console.error("Error updating progress:", err);
+    res.status(500).json({ error: err.message });
+  }
+}
+
+/** Update course progress manually (optional for quiz completion) */
+export async function updateCourseProgressController(req, res) {
+  try {
+    const { userId, courseId } = req.body;
+    if (!userId || !courseId)
+      return res.status(400).json({ error: "Missing userId or courseId" });
+
+    const progress = await updateCourseProgress(userId, courseId);
+    res.status(200).json({ message: "Course progress updated", progress });
+  } catch (err) {
+    console.error("Error updating course progress:", err);
     res.status(500).json({ error: err.message });
   }
 }

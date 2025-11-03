@@ -3,6 +3,11 @@
 import React from "react";
 
 export default function CourseContent({ lessons, openLesson }) {
+
+  const handleCompletion = async () => {
+    
+  }
+
   return (
     <div className="bg-white rounded-xl shadow p-6">
       <h2 className="text-2xl font-semibold mb-4">Course Content</h2>
@@ -20,6 +25,12 @@ export default function CourseContent({ lessons, openLesson }) {
           </li>
         ))}
       </ul>
+      <button
+        onClick={ handleCompletion() }
+        className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+      >
+        Mark Complete
+      </button>
     </div>
   );
 }
