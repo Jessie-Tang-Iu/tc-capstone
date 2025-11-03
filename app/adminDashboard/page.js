@@ -22,6 +22,7 @@ import EventPanel from "@/app/adminDashboard/Event";
 import Navbar from "@/app/components/BlankNavBar";
 import RequestDetailsCard from "../components/adminDashboard/RequestDetailsCard";
 import ReportDetailsCard from "../components/adminDashboard/ReportDetailsCard";
+import CoursePage from "@/app/adminDashboard/Courses";
 
 const ME = "11111111-1111-1111-1111-111111111111";
 
@@ -158,6 +159,7 @@ function AdminDashboardCore() {
             <TabBtn v="requests">Requests</TabBtn>
             <TabBtn v="reports">Reports</TabBtn>
             <TabBtn v="events">Events</TabBtn>
+            <TabBtn v="courses">Courses</TabBtn>
           </div>
 
           {/* Main area */}
@@ -167,6 +169,7 @@ function AdminDashboardCore() {
             {tab === "requests" && renderRequests()}
             {tab === "reports" && renderReports()}
             {tab === "events" && <EventPanel />}
+            {tab === "courses" && <CoursePage />}
           </div>
         </div>
       </div>
