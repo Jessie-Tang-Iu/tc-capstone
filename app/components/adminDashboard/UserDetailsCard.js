@@ -7,13 +7,15 @@ export default function UserDetailsCard({ user, roleLabel, onClose }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.clerk_id) return;
     setLoading(true);
     setError(null);
 
     (async () => {
       try {
-        const res = await fetch(`/api/users/${user.id}`, { cache: "no-store" });
+        const res = await fetch(`/api/users/${user.clerk_id}`, {
+          cache: "no-store",
+        });
         if (!res.ok) throw new Error("Failed to fetch user details");
         const data = await res.json();
         setDetails(data);
@@ -25,7 +27,7 @@ export default function UserDetailsCard({ user, roleLabel, onClose }) {
         setLoading(false);
       }
     })();
-  }, [user?.id]);
+  }, [user?.clerk_id]);
 
   if (!user) return null;
   const data = details || {};

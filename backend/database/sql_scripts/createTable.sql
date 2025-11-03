@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS
   posts,
   advisory_bookings,
   advisory_sessions,
+  advisory_profile,
   application,
   cover_letter,
   resume,
@@ -26,23 +27,40 @@ DROP TABLE IF EXISTS
   message,
   events, 
   event_user,
-  "user"
+  users,
+  employers,
+  advisors
 CASCADE;
 
 -- =========================================
 -- CORE: Users
 -- =========================================
-CREATE TABLE "user" (
-  id            SERIAL PRIMARY KEY,
-  email         TEXT UNIQUE NOT NULL,
-  firstname     TEXT,
-  lastname      TEXT,
-  username      TEXT,
-  status        TEXT NOT NULL DEFAULT 'active',
-  role          TEXT,
-  supabase_id   TEXT,
-  clerk_id      TEXT UNIQUE
+CREATE TABLE users (
+    clerk_id VARCHAR(255) PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    status VARCHAR(20) NOT NULL DEFAULT 'active',
+    role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'member', 'advisor', 'employer'))
 );
+
+CREATE TABLE employers (
+    clerk_id VARCHAR(255) PRIMARY KEY,
+    company_name VARCHAR(255) NOT NULL,
+    company_role VARCHAR(100) NOT NULL,
+    company_id VARCHAR(100),
+    CONSTRAINT fk_employer_user FOREIGN KEY (clerk_id) REFERENCES users(clerk_id) ON DELETE CASCADE
+);
+
+CREATE TABLE advisors (
+    clerk_id VARCHAR(255) PRIMARY KEY,
+    company_name VARCHAR(255) NOT NULL,
+    company_role VARCHAR(100) NOT NULL,
+    CONSTRAINT fk_advisor_user FOREIGN KEY (clerk_id) REFERENCES users(clerk_id) ON DELETE CASCADE
+);
+
 
 -- =========================================
 -- Events
@@ -66,7 +84,6 @@ CREATE TABLE events (
   CONSTRAINT chk_capacity_bounds CHECK (max_capacity IS NULL OR current_capacity <= max_capacity),
   CONSTRAINT chk_price_nonneg CHECK (price IS NULL OR price >= 0)
 );
-
 CREATE INDEX idx_event_date ON events (date, start_time);
 
 -- =========================================
@@ -75,15 +92,14 @@ CREATE INDEX idx_event_date ON events (date, start_time);
 CREATE TABLE event_user (
   id SERIAL PRIMARY KEY,
   event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
-  user_id INTEGER NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
-  status TEXT NOT NULL DEFAULT 'registered',
+  user_id VARCHAR(255) NOT NULL REFERENCES users(clerk_id) ON DELETE CASCADE,
+  status TEXT NOT NULL DEFAULT 'registered',  -- could be 'registered', 'cancelled', 'attended'
   registered_at TIMESTAMP NOT NULL DEFAULT now(),
   CONSTRAINT uq_event_user UNIQUE (event_id, user_id)
 );
 
 CREATE INDEX idx_event_user_event ON event_user (event_id);
 CREATE INDEX idx_event_user_user ON event_user (user_id);
-
 -- =========================================
 -- MESSAGING
 -- =========================================
@@ -258,25 +274,23 @@ CREATE TABLE advisory_profile (
 -- =========================================
 CREATE TABLE posts (
     id SERIAL PRIMARY KEY,
-    user_id TEXT NOT NULL,
-    author VARCHAR(100) NOT NULL,
+    author_id VARCHAR(255) REFERENCES users(clerk_id) ON DELETE CASCADE,
     title TEXT NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
- 
+
 CREATE TABLE comments (
     id SERIAL PRIMARY KEY,
     post_id INT REFERENCES posts(id) ON DELETE CASCADE,
-    user_id TEXT NOT NULL,
-    author VARCHAR(100) NOT NULL,
+    author_id VARCHAR(255) REFERENCES users(clerk_id) ON DELETE CASCADE,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE INDEX idx_posts_author     ON posts (author, created_at DESC);
+CREATE INDEX idx_posts_author     ON posts (author_id, created_at DESC);
 CREATE INDEX idx_comments_post    ON comments (post_id, created_at);
-CREATE INDEX idx_comments_author  ON comments (author, created_at DESC);
+CREATE INDEX idx_comments_author  ON comments (author_id, created_at DESC);
 
 CREATE TABLE reports (
   report_id           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,   -- internal PK
@@ -330,19 +344,3 @@ CREATE INDEX idx_reports_is_banned ON reports (is_banned);
 
 
 COMMIT;
-
-----event booking 
-CREATE TABLE event_user (
-  id SERIAL PRIMARY KEY,
-  event_id INTEGER NOT NULL REFERENCES workshop(id) ON DELETE CASCADE,
-  user_id INTEGER NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
-  status TEXT NOT NULL DEFAULT 'registered',  -- could be 'registered', 'cancelled', 'attended'
-  registered_at TIMESTAMP NOT NULL DEFAULT now(),
-  CONSTRAINT uq_event_user UNIQUE (event_id, user_id)
-);
-
-ALTER TABLE "user"
-ADD COLUMN clerk_id TEXT UNIQUE;
-
-CREATE INDEX idx_event_user_event ON event_user (event_id);
-CREATE INDEX idx_event_user_user ON event_user (user_id);
