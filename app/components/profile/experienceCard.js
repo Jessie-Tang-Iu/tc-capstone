@@ -3,22 +3,22 @@ import { useEffect, useState } from "react";
 const monthOptions = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const yearOptions = Array.from({ length: 50 }, (_, i) => new Date().getFullYear() - i);
 
-export default function ExperienceCard({ index, exp, setNewExp, onSave, onRemove}) {
+export default function ExperienceCard({ index, exp, setNewExp, isLoading, setIsLoading, setErrorMessage, onSave, onRemove}) {
 
+  const [error, setError] = useState(null);
   const [editingExp, setEditingExp] = useState(null);
-  const expSplit = exp ? exp.split(' | '): [];
   // console.log("exp card: ", expSplit);
 
   const [experience, setExperience] = useState({
-    title: expSplit[0] || "",
-    company: expSplit[1] || "",
-    type: expSplit[2] || "",
-    startMonth: expSplit[3] || "",
-    startYear: expSplit[4] || "",
-    endMonth: expSplit[5] || "",
-    endYear: expSplit[6] || "",
-    description: expSplit[7] || "",
-  })
+    title: "",
+    company: "",
+    type: "",
+    startMonth: "",
+    startYear: "",
+    endMonth: "",
+    endYear: "",
+    description: "",
+  });
 
   const [typeOptions, setTypeOptions] = useState([]);
 
@@ -35,7 +35,22 @@ export default function ExperienceCard({ index, exp, setNewExp, onSave, onRemove
 
   useEffect(() => {
     setNewExp(experience);
-  }, [experience])
+  }, [experience]);
+  
+  useEffect(() => {
+    let expSplit = editingExp ? editingExp.split(' | '): exp.split(' | ');
+
+    setExperience({
+      title: expSplit[0] || "",
+      company: expSplit[1] || "",
+      type: expSplit[2] || "",
+      startMonth: expSplit[3] || "",
+      startYear: expSplit[4] || "",
+      endMonth: expSplit[5] || "",
+      endYear: expSplit[6] || "",
+      description: expSplit[7] || "",
+    })
+  }, [])
 
   return (
     <div 
@@ -46,8 +61,17 @@ export default function ExperienceCard({ index, exp, setNewExp, onSave, onRemove
       {/* View */}
       {(!editingExp && exp) && (
       <div className="w-full flex justify-center">
-        <h2 className="flex-3 text-base md:text-lg font-bold text-black">{`${experience.title} - ${experience.company}`}</h2>
-        <button className="text-[#E55B3C] text-base font-bold hover:underline ml-5" onClick={() => setEditingExp(exp) }>Edit</button>
+        <h2 className="flex-3 text-base font-bold text-black">{`${experience.title} - ${experience.company}`}</h2>
+        <button 
+          className="text-[#E55B3C] text-base font-bold hover:underline ml-5" 
+          onClick={() => {
+            if (isLoading) setErrorMessage("Experience must be saved to continue");
+            else {
+              setEditingExp(exp);
+              setIsLoading(true);
+            }
+          }}
+        >Edit</button>
         <button className="text-[#E55B3C] text-base font-bold hover:underline ml-5" 
           onClick={() => onRemove(index)}
         >Remove</button>
@@ -55,11 +79,11 @@ export default function ExperienceCard({ index, exp, setNewExp, onSave, onRemove
 
       {/* Click to edit   */}
       {(editingExp === exp || !exp) && (
-      <form onSubmit={() => { onSave(index); setEditingExp(null); }}>
+      <div>
+        {error && <p className="text-red-600 font-base">{error}</p>}
         <div className="mb-3">
           <label className="block text-base md:text-lg font-normal text-black mb-2">Company or organization*</label>
           <input
-            required
             type="text"
             value={experience.company}
             onChange={(e) => handleExperienceChange('company', e.target.value)}
@@ -72,7 +96,6 @@ export default function ExperienceCard({ index, exp, setNewExp, onSave, onRemove
           <div>
             <label className="block text-base md:text-lg font-normal text-black mb-2">Title*</label>
             <input
-              required
               type="text"
               value={experience.title}
               onChange={(e) => handleExperienceChange('title', e.target.value)}
@@ -87,7 +110,7 @@ export default function ExperienceCard({ index, exp, setNewExp, onSave, onRemove
               onChange={(e) => handleExperienceChange('type', e.target.value)}
               className="w-full h-10 px-4 py-2 text-black bg-white rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
             >
-              <option key={0} disabled>Select a job type</option>
+              <option key={0} value="" disabled>Select a job type</option>
               {typeOptions.map((type) => (
                 <option key={type.id} value={type.name}>{type.name}</option>
               ))}
@@ -109,24 +132,24 @@ export default function ExperienceCard({ index, exp, setNewExp, onSave, onRemove
           <div>
             <label className="block text-base md:text-lg font-normal text-black mb-2">Start month*</label>
             <select
-              required
               value={experience.startMonth}
               onChange={(e) => handleExperienceChange('startMonth', e.target.value)}
               className="w-full h-10 px-4 py-2 text-black bg-white rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
             >
+              <option key={0} value={""} disabled>Select a month</option>
               {monthOptions.map((month) => (
                 <option key={month} value={month}>{month}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-[#E55B3C] text-base md:text-lg mb-2">Start year*</label>
+            <label className="block text-black text-base md:text-lg mb-2">Start year*</label>
             <select
-              required
               value={experience.startYear}
               onChange={(e) => handleExperienceChange('startYear', e.target.value)}
               className="w-full h-10 px-4 py-2 text-black bg-white rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
             >
+              <option key={0} value={""} disabled>Select a year</option>
               {yearOptions.map((year) => (
                 <option key={year} value={year}>{year}</option>
               ))}
@@ -141,19 +164,20 @@ export default function ExperienceCard({ index, exp, setNewExp, onSave, onRemove
               onChange={(e) => handleExperienceChange('endMonth', e.target.value)}
               className="w-full h-10 px-4 py-2 text-black bg-white rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
             >
+              <option key={0} value={""} disabled>Select a month</option>
               {monthOptions.map((month) => (
                 <option key={month} value={month}>{month}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-[#E55B3C] text-base md:text-lg mb-2">End year</label>
+            <label className="block text-black text-base md:text-lg mb-2">End year</label>
             <select
               value={experience.endYear}
               onChange={(e) => handleExperienceChange('endYear', e.target.value)}
               className="w-full h-10 px-4 py-2 text-black bg-white rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
             >
-              <option key={0} value={""}>Select a year</option>
+              <option key={0} value={""} disabled>Select a year</option>
               {yearOptions.map((year) => (
                 <option key={year} value={year}>{year}</option>
               ))}
@@ -176,12 +200,23 @@ export default function ExperienceCard({ index, exp, setNewExp, onSave, onRemove
         </div>
         <div className="w-full flex justify-center">
           <button 
-            type="submit"
             className="text-[#E55B3C] text-base font-bold hover:underline mt-2"
-            // onClick={() =>}
+            onClick={() => {
+              let errorMessage = "";
+              if (experience.company == "" || experience.title == "" || experience.startMonth == "" || experience.startYear == "")
+                errorMessage = "Missing required information";
+              if (experience.endYear != "" && experience.startYear > experience.endYear)
+                errorMessage = "Time is invalid";
+              if (errorMessage != "") {
+                setError(errorMessage);
+              } else {
+                onSave(index);
+                setEditingExp(null);
+              }
+            }}
           >Save</button>
         </div>
-      </form>)}
+      </div>)}
     </div>
   );
 }

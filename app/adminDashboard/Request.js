@@ -20,13 +20,16 @@ export default function RequestsPanel({ onShowDetails }) {
   // --- Fetch logic ---
   const fetchRequestsByRole = async (roleKey) => {
     try {
-      const res = await fetch(`/api/users?status=underreview&role=${roleKey}`, {
-        cache: "no-store",
-      });
+      const res = await fetch(
+        `/api/users?status=under_review&role=${roleKey}`,
+        {
+          cache: "no-store",
+        }
+      );
       if (!res.ok) throw new Error("Failed to fetch requests");
       const data = await res.json();
       const filtered = data.filter(
-        (u) => u.role === roleKey && u.status === "underreview"
+        (u) => u.status !== "active" && u.status !== "banned"
       );
       setRequestsByRole((prev) => ({ ...prev, [roleKey]: filtered }));
       setFetchedRoles((prev) => ({ ...prev, [roleKey]: true }));
@@ -134,7 +137,7 @@ export default function RequestsPanel({ onShowDetails }) {
         {/* List or Placeholder */}
         {filterByQuery(currentList).length === 0 ? (
           <PlaceholderCard
-            title={`No ${activeTab} requests`}
+            title={`No pending ${activeTab} requests`}
             description="Nothing to review here."
           />
         ) : (
@@ -142,11 +145,11 @@ export default function RequestsPanel({ onShowDetails }) {
             {filterByQuery(currentList).map((r) => (
               <RequestRow
                 {...r}
-                key={r.id}
+                key={r.clerk_id}
                 name={`${r.first_name} ${r.last_name}`}
                 subtitle={r.email}
-                onAccept={() => acceptRequest(activeTab, r.id)}
-                onRefuse={() => refuseRequest(activeTab, r.id)}
+                onAccept={() => acceptRequest(activeTab, r.clerk_id)}
+                onRefuse={() => refuseRequest(activeTab, r.clerk_id)}
                 onDetails={() => onShowDetails?.(r)}
               />
             ))}

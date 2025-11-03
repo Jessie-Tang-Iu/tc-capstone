@@ -1,21 +1,4 @@
--- Insert fake posts
-INSERT INTO posts (user_id, author, title, content) VALUES
-('99999999-9999-9999-9999-999999999999', 'Alice', 'How to learn React?', 'I am new to React and want to know the best resources to get started.'),
-('99999999-9999-9999-9999-999999999999', 'Bob', 'Best PostgreSQL tips?', 'Share your favorite tips and tricks for optimizing queries in Postgres.'),
-('22222222-2222-2222-2222-222222222222', 'Charlie', 'Next.js vs Express?', 'When would you choose Next.js over a traditional Express backend?'),
-('22222222-2222-2222-2222-222222222222', 'Dana', 'Tailwind CSS worth it?', 'I see Tailwind CSS everywhere—what are the pros and cons compared to plain CSS or Bootstrap?');
- 
--- Insert fake comments (referencing posts by ID)
-INSERT INTO comments (post_id, user_id, author, content) VALUES
-(1, '99999999-9999-9999-9999-999999999999', 'Eve', 'I recommend the official React docs—they are super well written!'),
-(1, '99999999-9999-9999-9999-999999999999', 'Frank', 'Try Scrimba or Frontend Mentor, very interactive.'),
-(2, '99999999-9999-9999-9999-999999999999', 'Grace', 'Use EXPLAIN ANALYZE to understand query performance.'),
-(2, '99999999-9999-9999-9999-999999999999', 'Heidi', 'Don’t forget to index frequently used columns.'),
-(3, '22222222-2222-2222-2222-222222222222', 'Ivan', 'Next.js is great if you need SSR, otherwise Express is simpler.'),
-(4, '22222222-2222-2222-2222-222222222222', 'Judy', 'Tailwind is amazing once you get used to utility classes.'),
-(4, '22222222-2222-2222-2222-222222222222', 'Karl', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
 
--- test data
 --members
 INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES
 ('user_33TltDhWmKiEGfSs7DJk6b1HlI1', 'Jessie', 'Jessie', 'Tang', 'gmail.com', '123-456-7890', 'member');
@@ -33,6 +16,28 @@ INSERT INTO advisors (clerk_id, company_name, company_role) VALUES
 ('testAdvisor3', 'ABC Company', 'Front-end Developer'),
 ('testAdvisor4', 'BCD Company', 'Full Stack Developer'),
 ('testAdvisor5', 'AAB Tech', 'Project Manager');
+
+-- Add placeholder users so posts/comments have valid references
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES
+('99999999-9999-9999-9999-999999999999', 'fakeuser1', 'Alice', 'Example', 'alice@example.com', '000-000-0000', 'member'),
+('22222222-2222-2222-2222-222222222222', 'fakeuser2', 'Bob', 'Example', 'bob@example.com', '000-000-0000', 'member');
+
+-- Insert fake posts
+INSERT INTO posts (author_id, title, content) VALUES
+('99999999-9999-9999-9999-999999999999', 'How to learn React?', 'I am new to React and want to know the best resources to get started.'),
+('99999999-9999-9999-9999-999999999999', 'Best PostgreSQL tips?', 'Share your favorite tips and tricks for optimizing queries in Postgres.'),
+('22222222-2222-2222-2222-222222222222', 'Next.js vs Express?', 'When would you choose Next.js over a traditional Express backend?'),
+('22222222-2222-2222-2222-222222222222', 'Tailwind CSS worth it?', 'I see Tailwind CSS everywhere—what are the pros and cons compared to plain CSS or Bootstrap?');
+-- Insert fake comments (referencing posts by ID)
+INSERT INTO comments (post_id, author_id, content) VALUES
+(1, '99999999-9999-9999-9999-999999999999', 'I recommend the official React docs—they are super well written!'),
+(1, '99999999-9999-9999-9999-999999999999', 'Try Scrimba or Frontend Mentor, very interactive.'),
+(2, '99999999-9999-9999-9999-999999999999', 'Use EXPLAIN ANALYZE to understand query performance.'),
+(2, '99999999-9999-9999-9999-999999999999', 'Don’t forget to index frequently used columns.'),
+(3, '22222222-2222-2222-2222-222222222222', 'Next.js is great if you need SSR, otherwise Express is simpler.'),
+(4, '22222222-2222-2222-2222-222222222222', 'Tailwind is amazing once you get used to utility classes.'),
+(4, '22222222-2222-2222-2222-222222222222', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
+-- test data
 
 --booked slots
 INSERT INTO advisory_bookings (advisor_id, client_id, date, startTime, description, endTime, status) VALUES 
@@ -65,19 +70,21 @@ INSERT INTO advisory_sessions (advisor_id, client_id, message, status) VALUES
 -- Test data for applications
 -- members
 INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES 
-('testMember1', 'johnsmith', 'John', 'Smith', 'JohnS@sample.com', '403-555-1034', 'member'),
-('testMember2', 'janenguyen', 'Jane', 'Nguyen', 'JaneNg@sample.com', '587-555-5078', 'member'),
-('user_33TygiU42yjY3nfWxD5cEPCACv7', 'lamdao', 'Lam', 'Dao', 'lam.dao@edu.sait.ca', '403-304-3344', 'member')
+('testMember1', 'johnsmith', 'John', 'Smith', 'JohnS@sample.com', '403-555-1934', 'member'),
+('testMember2', 'janenguyen', 'Jane', 'Nguyen', 'JaneNg@sample.com', '587-555-5078', 'member')
 ON CONFLICT (clerk_id) DO NOTHING;
 
 -- resume
 INSERT INTO resume (user_id, summary, skills, experience, education, certifications, additional_info) VALUES
 ('testMember1', 'Experienced software developer with a passion for creating innovative solutions.', ARRAY['JavaScript, Python, SQL'], ARRAY['Full Stack Developer | TechCorp | Contract | April | 2013 | June | 2018'], ARRAY['University X | Bachelor | Computer Science | 2010 | 2014'], ARRAY['Certified Scrum Master'], 'Open to relocation.'),
-('testMember2', 'Detail-oriented data analyst with expertise in data visualization and statistical analysis.', ARRAY['R, Python, Tableau'], ARRAY['Data Analyst | Data Insights | Full-time | January | 2020 | August | 2022'], ARRAY['University Y | Master | Data Science | 2012 | 2016'], ARRAY['Certified Data Analyst'], 'Looking for remote opportunities.');
+('testMember2', 'Detail-oriented data analyst with expertise in data visualization and statistical analysis.', ARRAY['R, Python, Tableau'], ARRAY['Data Analyst | Data Insights | Full-time | January | 2020 | August | 2022'], ARRAY['University Y | Master | Data Science | 2012 | 2016'], ARRAY['Certified Data Analyst'], 'Looking for remote opportunities.')
+ON CONFLICT (user_id) DO NOTHING;
+
 -- cover letter
 INSERT INTO cover_letter (user_id, content) VALUES
 ('testMember1', 'Dear Hiring Manager,\n\nI am writing to express my interest in the Software Developer position at your esteemed company. With over 5 years of experience in full stack development and a strong background in JavaScript and Python, I am confident in my ability to contribute effectively to your team.\n\nI have attached my resume for your review and would welcome the opportunity to discuss how my skills and experiences align with your needs.\n\nThank you for considering my application.\n\nSincerely,\nJohn Doe'),
-('testMember2', 'Dear Hiring Manager,\n\nI am excited to apply for the Data Analyst position at your organization. With a Master degree in Data Science and 3 years of hands-on experience in data analysis and visualization, I am eager to bring my expertise to your team.\n\nPlease find my resume attached for your consideration. I look forward to the possibility of discussing how I can contribute to your company success.\n\nThank you for your time and consideration.\n\nBest regards,\nJane Smith');
+('testMember2', 'Dear Hiring Manager,\n\nI am excited to apply for the Data Analyst position at your organization. With a Master degree in Data Science and 3 years of hands-on experience in data analysis and visualization, I am eager to bring my expertise to your team.\n\nPlease find my resume attached for your consideration. I look forward to the possibility of discussing how I can contribute to your company success.\n\nThank you for your time and consideration.\n\nBest regards,\nJane Smith')
+ON CONFLICT (user_id) DO NOTHING;
 
 -- TEST DATA FOR JOB BOARD
 
@@ -438,3 +445,47 @@ VALUES
  300, 0, '2025-12-03 23:59:00',
  'Formal gala celebrating student innovation',
  40.00);
+
+
+-- under reivew user
+-- 7 new advisors
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role, status)
+VALUES
+('testAdvisor6', 'adv6', 'Liam', 'Wong', 'liam.wong@sample.com', '403-555-6001', 'advisor', 'under_review'),
+('testAdvisor7', 'adv7', 'Chloe', 'Park', 'chloe.park@sample.com', '403-555-6002', 'advisor', 'under_review'),
+('testAdvisor8', 'adv8', 'Noah', 'Chan', 'noah.chan@sample.com', '403-555-6003', 'advisor', 'under_review'),
+('testAdvisor9', 'adv9', 'Emma', 'Lee', 'emma.lee@sample.com', '403-555-6004', 'advisor', 'under_review'),
+('testAdvisor10', 'adv10', 'Mason', 'Ng', 'mason.ng@sample.com', '403-555-6005', 'advisor', 'under_review'),
+('testAdvisor11', 'adv11', 'Sophia', 'Lam', 'sophia.lam@sample.com', '403-555-6006', 'advisor', 'under_review'),
+('testAdvisor12', 'adv12', 'Ethan', 'Ho', 'ethan.ho@sample.com', '403-555-6007', 'advisor', 'under_review');
+
+INSERT INTO advisors (clerk_id, company_name, company_role)
+VALUES
+('testAdvisor6', 'MindBridge Analytics', 'Data Analyst'),
+('testAdvisor7', 'Aurora Systems', 'Tech Consultant'),
+('testAdvisor8', 'NovaSoft', 'Product Designer'),
+('testAdvisor9', 'CloudWave', 'Full Stack Engineer'),
+('testAdvisor10', 'NextEdge', 'Project Manager'),
+('testAdvisor11', 'PrimeWorks', 'Software Engineer'),
+('testAdvisor12', 'Orbit Tech', 'UX Lead');
+
+-- 7 new employers
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role, status)
+VALUES
+('testEmployer6', 'emp6', 'Ella', 'Kim', 'ella.kim@sample.com', '403-555-7001', 'employer', 'under_review'),
+('testEmployer7', 'emp7', 'Jack', 'Wu', 'jack.wu@sample.com', '403-555-7002', 'employer', 'under_review'),
+('testEmployer8', 'emp8', 'Olivia', 'Tran', 'olivia.tran@sample.com', '403-555-7003', 'employer', 'under_review'),
+('testEmployer9', 'emp9', 'Lucas', 'Zhao', 'lucas.zhao@sample.com', '403-555-7004', 'employer', 'under_review'),
+('testEmployer10', 'emp10', 'Mia', 'Cheung', 'mia.cheung@sample.com', '403-555-7005', 'employer', 'under_review'),
+('testEmployer11', 'emp11', 'Benjamin', 'Leung', 'benjamin.leung@sample.com', '403-555-7006', 'employer', 'under_review'),
+('testEmployer12', 'emp12', 'Isabella', 'Kwan', 'isabella.kwan@sample.com', '403-555-7007', 'employer', 'under_review');
+
+INSERT INTO employers (clerk_id, company_name, company_role)
+VALUES
+('testEmployer6', 'DataForge Inc', 'HR Lead'),
+('testEmployer7', 'Zenith Labs', 'Operations Manager'),
+('testEmployer8', 'TechNova Ltd', 'HR Assistant'),
+('testEmployer9', 'EcoStream Energy', 'Recruitment Lead'),
+('testEmployer10', 'BluePeak Digital', 'People Manager'),
+('testEmployer11', 'CoreByte Systems', 'HR Specialist'),
+('testEmployer12', 'HoloView Media', 'HR Coordinator');

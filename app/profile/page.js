@@ -8,7 +8,8 @@ import Privacy from "./privacy";
 import Notification from "./notification";
 import { useUser } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
-import { resume } from "react-dom/server";
+import PopupMessage from "@/app/components/ui/PopupMessage";
+import { IoNuclearOutline } from "react-icons/io5";
 
 function ProfileDashboardContent() {
 
@@ -16,39 +17,13 @@ function ProfileDashboardContent() {
   const tab = searchParams.get("tab") || "";
   
   const { user, isLoaded, isSignedIn } = useUser();
-
   const router = useRouter();
 
-  const [formData, setFormData] = useState({
-    // Basic Information
-    user_id: user?.id || "",
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    preferredName: "",
-    pronouns: "She/Her/Hers",
-    website: "",
-    address: "",
-    countryRegion: "",
-    city: "",
-    email: user?.email || "",
-    phoneNumber: user?.phone || "",
-    showEmailInProfile: false,
-    showPhoneInProfile: false,
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-    // Sign & Security
-    emails: [
-      { email: user?.email || "#######@gmail.com", isPrimary: false },
-      { email: "#######@gmail.com", isPrimary: false },
-      { email: "#######@gmail.com", isPrimary: false },
-    ],
-    phones: [
-      { phone: "US +1 (519) XXX-XXX", isPrimary: false },
-      { phone: "US +1 (519) XXX-XXX", isPrimary: false },
-      { phone: "US +1 (519) XXX-XXX", isPrimary: false },
-    ],
-  });
-
-  const [resumeData, setResumeData] = useState();
+  const [formData, setFormData] = useState();
+  const [profile, setProfile] = useState(null);
 
   const [notificationData, setNotificationData] = useState({
     notifications: {
@@ -65,17 +40,12 @@ function ProfileDashboardContent() {
     },
   });
 
+
   useEffect(() => {
     if (user) {
-      // console.log(user);
       setFormData((prev) => ({
-        ...prev,
-        firstName: user?.firstName || "",
-        lastName: user?.lastName || "",
-        email: user?.emailAddresses[0].emailAddress || "",
-        phoneNumber: user?.phoneNumbers.length > 0 ? user?.phoneNumbers[0].phoneNumber : "",
         emails: [
-          { email: user?.email || "#######@gmail.com", isPrimary: true },
+          { email: user?.emailAddresses[0].emailAddress || "#######@gmail.com", isPrimary: true },
           { email: "#######@gmail.com", isPrimary: false },
           { email: "#######@gmail.com", isPrimary: false },
         ],
@@ -86,13 +56,15 @@ function ProfileDashboardContent() {
         ],
       }));
 
-      fetch(`/api/resume/user/${user.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setResumeData(data);
-        console.log(" Resume: ", data);
-      })
-      .catch((error) => console.error('Error fetching resume:', error));
+      // Fetch user data
+      fetch(`/api/users/${user.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          // console.log("Profile: ", data);
+          setProfile(data);
+        })
+        .catch((error) => console.error('Error fetching profile: ', error));
+
     }
   }, [user]);
 
@@ -125,6 +97,7 @@ function ProfileDashboardContent() {
   }
 
   return (
+    <>
     <main className="bg-gray-100 min-h-screen w-full">
       <MemberNavbar />
       <div className="pt-7 mb-3 md:mb-8 mx-5 md:mx-8">
@@ -152,16 +125,14 @@ function ProfileDashboardContent() {
             onClick={handleBackToList}
             className="md:hidden top-4 z-10 pl-5 text-black rounded-lg text-sm font-normal cursor-pointer transition-colors"
           >
-            ← Back to Setting
+            {"< Back to Setting"}
           </button>
           <div className="mt-5 md:mt-0 h-full">
-            {tab === "profile" && 
+            {tab === "profile" && (
               // user.role === "member" && 
-              (<ProfileSection 
-                formData={formData} 
-                setFormData={setFormData}
-                resumeData={resumeData}
-                setResumeData={setResumeData}
+              <ProfileSection 
+                setSuccessMessage={setSuccessMessage}
+                setErrorMessage={setErrorMessage}
               />
             )}
             
@@ -172,12 +143,33 @@ function ProfileDashboardContent() {
             {tab === "privacy" && <Privacy />}
             
             {tab === "notifications" && (
-              <Notification formData={formData} setFormData={setFormData} />
+              <Notification formData={notificationData} setFormData={setNotificationData} />
             )}
           </div>
         </div>
       </div>
     </main>
+    {errorMessage && (
+      <PopupMessage
+        type="error"
+        title={
+        errorMessage.includes("required")
+          ? "Missing information"
+          : "Update Failed"
+        }
+        description={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
+    )}
+    {successMessage && (
+      <PopupMessage
+        type="success"
+        title="Successfully Update"
+        description={successMessage}
+        onClose={() => setSuccessMessage("")}
+      />
+    )}
+    </>
   );
 }
 
