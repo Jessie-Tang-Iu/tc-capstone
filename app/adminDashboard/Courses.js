@@ -12,21 +12,22 @@ export default function AdminDashboard() {
     const [editCourseId, setEditCourseId] = useState(null);
 
   useEffect(() => {
-    async function fetchCourses() {
-      try {
-        const res = await fetch("/api/course");
-        if (!res.ok) throw new Error("Failed to fetch courses");
-        const data = await res.json();
-        setCourses(data);
-        setFilteredCourses(data);
-      } catch (err) {
-        console.error("Error loading courses:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchCourses();
   }, []);
+
+  async function fetchCourses() {
+    try {
+      const res = await fetch("/api/course");
+      if (!res.ok) throw new Error("Failed to fetch courses");
+      const data = await res.json();
+      setCourses(data);
+      setFilteredCourses(data);
+    } catch (err) {
+      console.error("Error loading courses:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const handleEditClick = (courseId) => {
     setEditCourseId(courseId);

@@ -134,6 +134,7 @@ export default function AdminCourseEdit({ courseId, onCancel }) {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to update course");
         alert("Course updated successfully");
+        onCancel();
         } catch (err) {
         console.error(err);
         alert("Error updating course");
