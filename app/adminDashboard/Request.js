@@ -56,7 +56,9 @@ export default function RequestsPanel({ onShowDetails }) {
         body: JSON.stringify({ status: newStatus }),
       });
       if (!res.ok) throw new Error("Failed to update user status");
-      return await res.json();
+      const data = await res.json();
+      console.log("Status updated:", data); // helpful for debugging
+      return data;
     } catch (err) {
       console.error("Update status error:", err);
       return null;
@@ -64,22 +66,34 @@ export default function RequestsPanel({ onShowDetails }) {
   };
 
   const acceptRequest = async (roleKey, id) => {
+    const confirmAccept = window.confirm("Approve this request?");
+    if (!confirmAccept) return;
+
     const updated = await updateUserStatus(id, "active");
     if (updated) {
+      alert("User approved successfully");
       setRequestsByRole((prev) => ({
         ...prev,
-        [roleKey]: prev[roleKey].filter((u) => u.id !== id),
+        [roleKey]: prev[roleKey].filter((u) => u.clerk_id !== id),
       }));
+    } else {
+      alert("Failed to update user status");
     }
   };
 
   const refuseRequest = async (roleKey, id) => {
+    const confirmRefuse = window.confirm("Reject this request?");
+    if (!confirmRefuse) return;
+
     const updated = await updateUserStatus(id, "banned");
     if (updated) {
+      alert("User rejected successfully");
       setRequestsByRole((prev) => ({
         ...prev,
-        [roleKey]: prev[roleKey].filter((u) => u.id !== id),
+        [roleKey]: prev[roleKey].filter((u) => u.clerk_id !== id),
       }));
+    } else {
+      alert("Failed to update user status");
     }
   };
 
