@@ -136,7 +136,7 @@ export async function updateCourseProgress(userId, courseId) {
 }
 
 export async function createCourse(coursePayload) {
-  const { course, lessons } = payload;
+  const { course, lessons } = coursePayload;
   const { title, description, level, duration, type } = course;
   
   console.log(course);
