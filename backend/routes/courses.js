@@ -10,6 +10,10 @@ router.get("/", getAllCoursesController);
 // Example: /api/course/1?userId=USER123
 router.get("/:id", getCourseByIdController);
 
+// POST new course
+// Example body: { "title": "New Course", "description": "Course description", "lessons": [...] }
+router.post("/", createCourseController);
+
 // POST lesson completion
 // Example body: { "userId": "USER123", "lessonId": 5 }
 router.post("/progress", markLessonCompleteController);

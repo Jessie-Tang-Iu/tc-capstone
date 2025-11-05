@@ -20,6 +20,15 @@ export async function getCourseByIdController(req, res) {
   }
 }
 
+export const createCourseController = async (req, res) => {
+  try {
+    const newCourse = await createCourse(req.body);
+    res.status(201).json(newCourse);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 /** Mark a lesson as completed and update course progress */
 export async function markLessonCompleteController(req, res) {
   console.log("Progress endpoint hit:", req.body);
