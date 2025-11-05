@@ -147,11 +147,13 @@ export async function createCourse(coursePayload) {
     throw new Error("Title and description are required");
   }
 
+  const lessonCount = lessons.length;
+
   const insertRes = await query(
-    `INSERT INTO courses (title, description, level, duration, type)
-     VALUES ($1, $2, $3, $4, $5)
+    `INSERT INTO courses (title, description, level, duration, type, lessonCount)
+     VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING *`,
-    [title, description, level, duration, type]
+    [title, description, level, duration, type, lessonCount]
   );
 
   const newCourse = insertRes.rows[0];
@@ -184,4 +186,15 @@ export async function createCourse(coursePayload) {
   }
 
   return newCourse;
+}
+
+export async function deleteCourseById(courseId) {
+  if (!courseId) throw new Error("Course ID is required");
+
+  await query(
+    `DELETE FROM courses WHERE id = $1`,
+    [courseId]
+  );
+
+  console.log(`Course ${courseId} and all related data deleted.`);
 }
