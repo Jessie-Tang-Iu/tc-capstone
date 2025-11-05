@@ -36,8 +36,8 @@ export default function CoursePage({ userId }) {
     fetchCourse();
   }, [courseID]);
 
-  if (loading) return <div className="p-6 text-black">Loading course...</div>;
-  if (!course) return <div className="p-6 text-black">Course not found</div>;
+  if (loading) return <div className="p-6 text-black bg-white">Loading course...</div>;
+  if (!course) return <div className="p-6 text-black bg-white">Course not found</div>;
 
   const selectedLesson = selectedLessonIndex !== null ? lessons[selectedLessonIndex] : null;
 

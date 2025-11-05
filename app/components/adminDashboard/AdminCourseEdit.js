@@ -160,7 +160,7 @@ export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
         }
     };
 
-    if (loading) return <div className="p-6 text-black">Loading course...</div>;
+    if (loading) return <div className="p-6 text-black bg-white">Loading course...</div>;
 
     return (
         <div className="bg-white rounded-xl shadow p-6 w-4/5 mx-auto">
