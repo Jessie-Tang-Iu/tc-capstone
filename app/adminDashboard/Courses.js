@@ -11,9 +11,9 @@ export default function AdminDashboard() {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [level, setLevel] = useState("");
+  const [level, setLevel] = useState("Beginner");
   const [duration, setDuration] = useState("");
-  const [type, setType] = useState("");
+  const [type, setType] = useState("Online");
 
   useEffect(() => {
     async function fetchCourses() {
@@ -105,38 +105,73 @@ export default function AdminDashboard() {
             Create New Course
           </h2>
           <form onSubmit={handleCreateCourse} className="space-y-4">
-            <input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Course Title"
-              required
-              className="w-full border border-gray-300 rounded p-2 text-black"
-            />
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Course Description"
-              required
-              className="w-full border border-gray-300 rounded p-2 text-black"
-            />
-            <input
-              value={level}
-              onChange={(e) => setLevel(e.target.value)}
-              placeholder="Course Level (e.g. Beginner)"
-              className="w-full border border-gray-300 rounded p-2 text-black"
-            />
-            <input
-              value={duration}
-              onChange={(e) => setDuration(e.target.value)}
-              placeholder="Duration (e.g. 2 Weeks / 7 Days)"
-              className="w-full border border-gray-300 rounded p-2 text-black"
-            />
-            <input
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              placeholder="Type (e.g. Online, In-Person)"
-              className="w-full border border-gray-300 rounded p-2 text-black"
-            />
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">
+                Course Title
+              </label>
+              <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter course title"
+                required
+                className="w-full border border-gray-300 rounded p-2 text-black"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">
+                Course Description
+              </label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter course description"
+                required
+                className="w-full border border-gray-300 rounded p-2 text-black"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">
+                Course Level
+              </label>
+              <select
+                value={level}
+                onChange={(e) => setLevel(e.target.value)}
+                className="w-full border border-gray-300 rounded p-2 text-black"
+              >
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">
+                Duration
+              </label>
+              <input
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+                placeholder="e.g. 2 Weeks / 7 Days"
+                className="w-full border border-gray-300 rounded p-2 text-black"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">
+                Course Type
+              </label>
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                className="w-full border border-gray-300 rounded p-2 text-black"
+              >
+                <option value="Online">Online</option>
+                <option value="In Person">In Person</option>
+                <option value="Workshop">Workshop</option>
+              </select>
+            </div>
 
             <div className="flex justify-between mt-6">
               <button
