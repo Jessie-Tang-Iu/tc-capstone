@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Navbar from "../../components/MemberNavBar";
 import CourseContent from "../../components/courses/CourseContent";
 import CourseQuiz from "../../components/courses/CourseQuiz";
 
 export default function CoursePage({ userId }) {
   const params = useParams();
+  const router = useRouter();
   const courseID = params.courseID;
 
   const [course, setCourse] = useState(null);
@@ -46,10 +47,18 @@ export default function CoursePage({ userId }) {
 
       <div className="flex">
         {/* Sidebar with lessons */}
-        <div className="w-1/5 border-r border-gray-300 min-h-screen bg-white">
+        <div className="fixed left-0 top-0 w-1/5 h-screen border-r border-gray-300 bg-white overflow-y-auto">
           <div className="p-4 border-b font-semibold text-lg text-[#E55B3C]">
             {course.title}
           </div>
+
+          <div
+            className="p-4 cursor-pointer text-blue-600 hover:underline"
+            onClick={() => router.push("/courses")}
+          >
+            ← Back to Courses
+          </div>
+
           <div className="p-4 cursor-pointer" onClick={() => setSelectedLessonIndex(null)}>
             Course Home
           </div>
@@ -72,7 +81,7 @@ export default function CoursePage({ userId }) {
         </div>
 
         {/* Main content area */}
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-6 ml-[20%]">
           {!selectedLesson && (
             <div className="bg-white rounded-xl shadow p-6">
               <h1 className="text-3xl font-bold mb-4">{course.title}</h1>

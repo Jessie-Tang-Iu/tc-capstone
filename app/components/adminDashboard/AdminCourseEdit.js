@@ -151,11 +151,12 @@ export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
         try {
         const res = await fetch(`/api/course/${courseId}`, { method: "DELETE" });
         if (!res.ok) throw new Error("Failed to delete course");
-        alert("Course deleted successfully");
-        onCancel();
+            alert("Course deleted successfully");
+            onCancel();
+            onRefresh();
         } catch (err) {
         console.error(err);
-        alert("Error deleting course");
+            alert("Error deleting course");
         }
     };
 
