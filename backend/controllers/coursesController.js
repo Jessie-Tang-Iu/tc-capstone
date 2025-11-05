@@ -1,4 +1,4 @@
-import { getAllCourses, getCourseById, markLessonComplete, updateCourseProgress } from "../database/scripts/courses.js";
+import { getAllCourses, getCourseById, createCourse, markLessonComplete, updateCourseProgress } from "../database/scripts/courses.js";
 
 export async function getAllCoursesController(req, res) {
   try {

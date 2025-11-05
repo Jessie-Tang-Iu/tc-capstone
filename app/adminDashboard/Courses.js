@@ -9,6 +9,12 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState("list"); // "list" or "create"
 
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [level, setLevel] = useState("");
+  const [duration, setDuration] = useState("");
+  const [type, setType] = useState("");
+
   useEffect(() => {
     async function fetchCourses() {
       try {
@@ -28,19 +34,37 @@ export default function AdminDashboard() {
 
   const handleCreateCourse = async (e) => {
     e.preventDefault();
-    const form = new FormData(e.target);
-    const body = Object.fromEntries(form.entries());
+
+    const coursePayload = {
+      title,
+      description,
+      level,
+      duration,
+      type,
+    };
 
     try {
       const res = await fetch("/api/course", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify(coursePayload),
       });
       if (!res.ok) throw new Error("Failed to create course");
+
       alert("Course created successfully");
+
+      // reset form + refresh list
+      setTitle("");
+      setDescription("");
+      setLevel("");
+      setDuration("");
+      setType("");
       setView("list");
-      e.target.reset();
+
+      const updated = await fetch("/api/course");
+      const data = await updated.json();
+      setCourses(data);
+      setFilteredCourses(data);
     } catch (err) {
       console.error(err);
       alert("Error creating course");
@@ -82,30 +106,35 @@ export default function AdminDashboard() {
           </h2>
           <form onSubmit={handleCreateCourse} className="space-y-4">
             <input
-              name="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
               placeholder="Course Title"
               required
               className="w-full border border-gray-300 rounded p-2 text-black"
             />
             <textarea
-              name="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               placeholder="Course Description"
               required
               className="w-full border border-gray-300 rounded p-2 text-black"
             />
             <input
-              name="level"
+              value={level}
+              onChange={(e) => setLevel(e.target.value)}
               placeholder="Course Level (e.g. Beginner)"
               className="w-full border border-gray-300 rounded p-2 text-black"
             />
             <input
-              name="duration"
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
               placeholder="Duration (e.g. 2 Weeks / 7 Days)"
               className="w-full border border-gray-300 rounded p-2 text-black"
             />
             <input
-              name="type"
-              placeholder="Type (e.g. Online, In-Person, etc.)"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              placeholder="Type (e.g. Online, In-Person)"
               className="w-full border border-gray-300 rounded p-2 text-black"
             />
 
@@ -113,7 +142,7 @@ export default function AdminDashboard() {
               <button
                 type="button"
                 onClick={() => setView("list")}
-                className="bg-gray-700 px-4 py-2 rounded hover:bg-red-400 transition"
+                className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600"
               >
                 Cancel
               </button>

@@ -134,3 +134,16 @@ export async function updateCourseProgress(userId, courseId) {
 
   return { courseId, completedLessons, totalLessons };
 }
+
+export async function createCourse(course) {
+  const { title, description, level, lesson_count, duration, type } = course;
+
+  const [result] = await pool.query(
+    `INSERT INTO courses (title, description, level, duration, type)
+     VALUES ($1, $2, $3, $4, $5)`,
+    [title, description, level, duration, type]
+  );
+
+  const [newCourse] = await pool.query(`SELECT * FROM courses WHERE id = ?`, [result.insertId]);
+  return newCourse[0];
+}
