@@ -41,9 +41,9 @@ export default function EducationCard({ index, edu, setNewEdu, isLoading, setIsL
 
   return (
     <div 
-      className={`w-full border border-gray-300 rounded-lg p-4 mb-3 
+      className={`w-full border border-gray-400 rounded-lg p-4 mb-3 
                   ${(!editingEdu && edu) && 'bg-white'} 
-                  ${(editingEdu != edu) && 'bg-gray-100'}`}
+                  ${(editingEdu != edu) && 'bg-gray-300'}`}
     >
       {/* Edit & Remove option  */}
       {(!editingEdu && edu) && (

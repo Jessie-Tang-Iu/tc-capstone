@@ -240,7 +240,7 @@ export default function JobBoardPage() {
   
         {/* Main Content */}
         {filteredJobs.length === 0 ? (
-          <div className="text-center text-gray-500 py-10">No jobs found.</div>
+          <div className="text-center text-gray-500 py-10">No jobs found</div>
         ) : (
           <div className="flex flex-col md:flex-row">
             {/* Job Listings Sidebar */}

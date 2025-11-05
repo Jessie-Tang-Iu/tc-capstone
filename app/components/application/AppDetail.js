@@ -33,21 +33,29 @@ const LabelValue = ({ label, value }) => (
     {/* if value is an array */}
     {typeof value == 'object' && (
       <div className="flex flex-wrap gap-2">
-        {value.map((tag, index) => (
+        {value.map((tag, index) => {
+          let information = tag;
+          if (label == "Education") {
+            let eduSplit = tag.split(' | ');
+            information = `${eduSplit[1]} in ${eduSplit[2]} from ${eduSplit[0]} (${eduSplit[3]}-${eduSplit[4]})`;
+          }
+          if (label == "Experience") {
+            let expSplit = tag.split(' | ');
+            if (expSplit[5] == "" && expSplit[6] == "") {
+              information = `${expSplit[0]} (${expSplit[2]}) at ${expSplit[1]} (from ${expSplit[3]}-${expSplit[4]})`
+            } else {
+              information = `${expSplit[0]} (${expSplit[2]}) at ${expSplit[1]} (from ${expSplit[3]}-${expSplit[4]} to ${expSplit[5]}-${expSplit[6]})`
+            }
+          }
+          return (
           <span
             key={index}
-            className="px-2 py-1 bg-gray-200 rounded text-sm font-normal text-black"
-          >{tag}</span>
-        ))}
+            className="px-2 py-1 bg-gray-200 rounded text-sm font-bold text-black"
+          >{information}</span>
+          );
+        })}
       </div>
     )}
-  </div>
-);
-
-const QAItem = ({ q, a }) => (
-  <div className="border-b last:border-b-0 border-gray-200 py-3">
-    <div className="text-xs text-gray-600 mb-1">{q}</div>
-    <div className="text-sm font-bold text-black whitespace-pre-wrap break-words">{a || "—"}</div>
   </div>
 );
 
@@ -164,9 +172,9 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
 
         {/* Resume */}
         <section className="space-y-3">
-          <div className="flex items-center justify-between">
+          {/* <div className="flex items-center justify-between">
             <h2 className="text-base md:text-lg font-bold text-black">Resume</h2>
-          </div>
+          </div> */}
           {(!resume.error && !app.resume_data) && (
             <div className="border border-gray-200 rounded-lg bg-white">
               <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">TC Alberta Resume</div>
@@ -174,24 +182,8 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
                 <LabelValue label="Summary" value={resume.summary} />
                 <LabelValue label="Certificate" value={resume.certifications} />
                 <LabelValue label="Skills" value={resume.skills} />
-                {resume.education.map((edu, idx) => {
-                  let eduSplit = edu.split(' | ');
-                  return (
-                    <LabelValue key={idx + edu} label={`Education ${idx+1}`} value={`${eduSplit[1]} in ${eduSplit[2]} from ${eduSplit[0]} (${eduSplit[3]}-${eduSplit[4]})`} />
-                  );
-                })}
-                {resume.experience.map((exp, idx) => {
-                  let expSplit = exp.split(' | ');
-                  let experience = "";
-                  if (expSplit[5] == "" && expSplit[6] == "") {
-                    experience = `${expSplit[0]} (${expSplit[2]}) at ${expSplit[1]} (from ${expSplit[3]}-${expSplit[4]})`
-                  } else {
-                    experience = `${expSplit[0]} (${expSplit[2]}) at ${expSplit[1]} (from ${expSplit[3]}-${expSplit[4]} to ${expSplit[5]}-${expSplit[6]})`
-                  }
-                  return (
-                    <LabelValue key={idx + exp} label={`Experience ${idx+1}`} value={experience} />
-                  );
-                })}
+                <LabelValue label="Education" value={resume.education} />
+                <LabelValue label="Experience" value={resume.experience} />
                 <LabelValue label="Additional Information" value={resume.additional_info} />
               </div>
             </div>
@@ -217,8 +209,6 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
 
         {/* Cover Letter */}
         <section className="space-y-3">
-          <h2 className="text-base md:text-lg font-bold text-black">Cover letter</h2>
-
           {(!coverLetter.error && !app.cover_letter_name) && (
             <div className="border border-gray-200 rounded-lg bg-white">
               <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">TC Alberta Cover Letter</div>
@@ -250,16 +240,15 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
 
         {/* Employer questions */}
         <section className="space-y-3">
-          <h2 className="text-base md:text-lg font-bold text-black">Employer questions</h2>
           <div className="border border-gray-200 rounded-lg bg-white">
-            <div className="p-4">
+            <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">Employer questions</div>
+            <div className="p-4 grid gap-3">
               {(app && app.questions?.length > 0) ? (
                 app.questions.map((qa, idx) => (
-                  
-                  <QAItem key={idx} q={qa} a={app.answers[idx]} />
+                  <LabelValue key={idx} label={qa} value={app.answers[idx]} />
                 ))
               ) : (
-                <div className="text-sm text-gray-600">No questions provided.</div>
+                <div className="border border-gray-200 rounded-md p-3 bg-white text-sm font-bold text-black">No questions provided.</div>
               )}
             </div>
           </div>

@@ -10,9 +10,9 @@ export default function CertificationCard({ index, cert, setNewCert, isLoading, 
 
   return (
     <div 
-      className={`w-full border border-gray-300 rounded-lg p-4 mb-3 
+      className={`w-full border border-gray-400 rounded-lg p-4 mb-3 
                   ${(!selectedCert && cert) && 'bg-white'} 
-                  ${(selectedCert != cert) && 'bg-gray-100'}`}
+                  ${(selectedCert != cert) && 'bg-gray-300'}`}
     >
       {/* View */}
       {(!selectedCert && cert) && (
