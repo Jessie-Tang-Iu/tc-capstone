@@ -22,10 +22,10 @@ CREATE TABLE lessons (
   id SERIAL PRIMARY KEY,
   course_id INT REFERENCES courses(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
-  content TEXT,               -- Quill HTML content
+  content TEXT, -- Quill HTML content
   video_url TEXT,
   type TEXT CHECK (type IN ('lesson', 'quiz')),
-  position INT                -- order in course
+  position INT -- order in course
 );
 
 -- QUIZ QUESTIONS (expanded table only for quizzes)

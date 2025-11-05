@@ -39,11 +39,11 @@ export const createCourseController = async (req, res) => {
 
 export async function editCourseController(req, res) {
   try {
-    const courseId = req.params.id;
-    if (!courseId) return res.status(400).json({ error: "Missing course ID" });
+    const { id } = req.params;
+    const coursePayload = req.body;
 
-    const updatedCourse = await editCourse(courseId, req.body);
-    res.status(200).json(updatedCourse);
+    const updatedCourse = await editCourse(id, coursePayload);
+    res.json(updatedCourse);
   } catch (err) {
     console.error("Error editing course:", err);
     res.status(500).json({ error: err.message });

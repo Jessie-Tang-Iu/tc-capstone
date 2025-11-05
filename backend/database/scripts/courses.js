@@ -150,7 +150,7 @@ export async function createCourse(coursePayload) {
   const lessonCount = lessons.length;
 
   const insertRes = await query(
-    `INSERT INTO courses (title, description, level, duration, type, lessonCount)
+    `INSERT INTO courses (title, description, level, duration, type, lesson_count)
      VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING *`,
     [title, description, level, duration, type, lessonCount]
@@ -192,42 +192,56 @@ export async function editCourse(courseId, coursePayload) {
   const { course, lessons } = coursePayload;
   const { title, description, level, duration, type } = course;
 
-  if (!title || !description) throw new Error("Title and description are required");
+  if (!title || !description) {
+    throw new Error("Title and description are required");
+  }
 
-  // Update main course record
-  await query(
+  const lessonCount = lessons.length;
+
+  // 1. Update course details
+  const updateRes = await query(
     `UPDATE courses
-     SET title = $1, description = $2, level = $3, duration = $4, type = $5, lesson_count = $6, updated_at = NOW()
-     WHERE id = $7`,
-    [title, description, level, duration, type, lessons.length, courseId]
+     SET title = $1,
+         description = $2,
+         level = $3,
+         duration = $4,
+         type = $5,
+         lesson_count = $6
+     WHERE id = $7
+     RETURNING *`,
+    [title, description, level, duration, type, lessonCount, courseId]
   );
 
-  // Clear existing lessons and related quiz questions
-  const existingLessons = await query(`SELECT id FROM lessons WHERE course_id = $1`, [courseId]);
-  const lessonIds = existingLessons.rows.map((r) => r.id);
-  if (lessonIds.length > 0) {
-    await query(`DELETE FROM quiz_questions WHERE lesson_id = ANY($1)`, [lessonIds]);
-  }
+  const updatedCourse = updateRes.rows[0];
+  if (!updatedCourse) throw new Error("Course not found");
+
+  // 2. Remove old lessons and related quiz questions
+  await query(`DELETE FROM quiz_questions WHERE lesson_id IN (SELECT id FROM lessons WHERE course_id = $1)`, [courseId]);
   await query(`DELETE FROM lessons WHERE course_id = $1`, [courseId]);
 
-  // Reinsert updated lessons and quizzes
+  // 3. Re-insert lessons and quizzes
   for (let i = 0; i < lessons.length; i++) {
     const lesson = lessons[i];
+
     if (lesson.type === "lesson") {
       await query(
         `INSERT INTO lessons (course_id, title, content, video_url, type, position)
          VALUES ($1, $2, $3, $4, $5, $6)`,
         [courseId, lesson.title, lesson.content || "", lesson.video_url || "", "lesson", lesson.position]
       );
-    } else if (lesson.type === "quiz") {
-      const quizInsert = await query(
+    }
+
+    if (lesson.type === "quiz") {
+      const quizRes = await query(
         `INSERT INTO lessons (course_id, title, content, type, position)
-         VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+         VALUES ($1, $2, $3, $4, $5)
+         RETURNING id`,
         [courseId, lesson.title, lesson.description || "", "quiz", lesson.position]
       );
-      const quizLessonId = quizInsert.rows[0].id;
 
-      for (const q of lesson.questions || []) {
+      const quizLessonId = quizRes.rows[0].id;
+
+      for (const q of lesson.questions) {
         await query(
           `INSERT INTO quiz_questions (lesson_id, question, answers, correct_answer)
            VALUES ($1, $2, $3, $4)`,
@@ -237,9 +251,9 @@ export async function editCourse(courseId, coursePayload) {
     }
   }
 
-  console.log(`Course ${courseId} updated successfully.`);
-  return { message: "Course updated successfully", courseId };
+  return updatedCourse;
 }
+
 
 export async function deleteCourseById(courseId) {
   if (!courseId) throw new Error("Course ID is required");

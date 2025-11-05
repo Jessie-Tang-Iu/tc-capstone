@@ -73,9 +73,9 @@ export default function CourseQuizBlock({ index, quiz, onChange, onRemove }) {
             <div key={aIndex} className="flex items-center gap-2 mb-1">
               <input
                 type="radio"
-                checked={q.correctAnswer === aIndex}
+                checked={q.correctAnswer === ans}
                 onChange={() =>
-                  updateQuestion(qIndex, { ...q, correctAnswer: aIndex })
+                  updateQuestion(qIndex, { ...q, correctAnswer: ans })
                 }
               />
               <input
