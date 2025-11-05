@@ -31,12 +31,14 @@ export default function CourseContent({ lesson }) {
         dangerouslySetInnerHTML={{ __html: lesson.content }}
       />
       {lesson.video_url && (
-        <iframe
-          className="rounded-lg w-full h-64"
-          src={lesson.video_url}
-          title={lesson.title}
-          allowFullScreen
-        ></iframe>
+        <div className="relative w-full pb-[56.25%]">
+          <iframe
+            className="absolute top-0 left-0 w-full h-full rounded-lg"
+            src={lesson.video_url}
+            title={lesson.title}
+            allowFullScreen
+          ></iframe>
+        </div>
       )}
       <button
         onClick={handleCompletion}
