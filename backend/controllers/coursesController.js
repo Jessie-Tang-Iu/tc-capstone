@@ -1,4 +1,12 @@
-import { getAllCourses, getCourseById, createCourse, markLessonComplete, updateCourseProgress } from "../database/scripts/courses.js";
+import { 
+  getAllCourses, 
+  getCourseById, 
+  createCourse, 
+  markLessonComplete, 
+  updateCourseProgress, 
+  deleteCourseById,
+  editCourse
+} from "../database/scripts/courses.js";
 
 export async function getAllCoursesController(req, res) {
   try {
@@ -28,6 +36,32 @@ export const createCourseController = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+export async function editCourseController(req, res) {
+  try {
+    const courseId = req.params.id;
+    if (!courseId) return res.status(400).json({ error: "Missing course ID" });
+
+    const updatedCourse = await editCourse(courseId, req.body);
+    res.status(200).json(updatedCourse);
+  } catch (err) {
+    console.error("Error editing course:", err);
+    res.status(500).json({ error: err.message });
+  }
+}
+
+export async function deleteCourseController(req, res) {
+  try {
+    const courseId = req.params.id;
+    if (!courseId) return res.status(400).json({ error: "Course ID required" });
+
+    await deleteCourseById(courseId);
+    res.status(200).json({ message: "Course deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting course:", err);
+    res.status(500).json({ error: err.message });
+  }
+}
 
 /** Mark a lesson as completed and update course progress */
 export async function markLessonCompleteController(req, res) {

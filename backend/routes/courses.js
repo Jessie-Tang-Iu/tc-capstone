@@ -1,5 +1,13 @@
 import express from "express";
-import { getAllCoursesController, getCourseByIdController, createCourseController, markLessonCompleteController, updateCourseProgressController } from "../controllers/coursesController.js";
+import { 
+    getAllCoursesController, 
+    getCourseByIdController, 
+    createCourseController, 
+    markLessonCompleteController, 
+    updateCourseProgressController,
+    deleteCourseController,
+    editCourseController,
+} from "../controllers/coursesController.js";
 
 const router = express.Router();
 
@@ -13,6 +21,13 @@ router.get("/:id", getCourseByIdController);
 // POST new course
 // Example body: { title, description, level, duration, type, contentBlocks: [...] }
 router.post("/", createCourseController);
+
+// PUT update course by ID
+// Same as creating but just updates an existing course
+router.put("/:id", editCourseController);
+
+// DELETE a course by ID
+router.delete("/:id", deleteCourseController);
 
 // POST lesson completion
 // Example body: { "userId": "USER123", "lessonId": 5 }
