@@ -1,21 +1,26 @@
 
 --members
 INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES
-('user_33TltDhWmKiEGfSs7DJk6b1HlI1', 'Jessie', 'Jessie', 'Tang', 'gmail.com', '123-456-7890', 'member');
+('user_33TltDhWmKiEGfSs7DJk6b1HlI1', 'Jessie', 'Jessie', 'Tang', 'gmail.com', '123-456-7890', 'member')
+ON CONFLICT (clerk_id) DO NOTHING;
+
 --advisors
 INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES 
 ('testAdvisor1', 'Mary', 'Mary', 'White', 'mary.w@gmail.com', '403-555-1234', 'advisor'),
 ('testAdvisor2', 'James', 'James', 'Brown', 'jb@hotmail.com', '587-555-5678', 'advisor'),
 ('testAdvisor3', 'Harry', 'Harry', 'Potter', 'hp@gmail.com', '123-456-7890', 'advisor'),
 ('testAdvisor4', 'Lily', 'Lily', 'Potter', 'lily.p@gmail.com', '123-456-7890', 'advisor'),
-('testAdvisor5', 'John', 'John', 'Doe', 'john.doe@gmail.com', '123-456-7890', 'advisor');
+('testAdvisor5', 'John', 'John', 'Doe', 'john.doe@gmail.com', '123-456-7890', 'advisor')
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'advisoracc123', 'Advisor', 'Account', 'Advisor@gmail.com', '1234567890', 'advisor');
+
 
 INSERT INTO advisors (clerk_id, company_name, company_role) VALUES 
 ('testAdvisor1', 'Tech Solutions', 'Senior Developer'),
 ('testAdvisor2', 'Innovatech', 'Project Manager'),
 ('testAdvisor3', 'ABC Company', 'Front-end Developer'),
 ('testAdvisor4', 'BCD Company', 'Full Stack Developer'),
-('testAdvisor5', 'AAB Tech', 'Project Manager');
+('testAdvisor5', 'AAB Tech', 'Project Manager'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'XYZ Tech Inc.', 'Career Advisor');
 
 -- Add placeholder users so posts/comments have valid references
 INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES
@@ -41,19 +46,19 @@ INSERT INTO comments (post_id, author_id, content) VALUES
 
 --booked slots
 INSERT INTO advisory_bookings (advisor_id, client_id, date, startTime, description, endTime, status) VALUES 
-('testAdvisor1', 'testAdvisor2', '2025-10-16', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('testAdvisor1', 'testAdvisor2', '2025-10-15', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', '2025-10-16', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', '2025-10-15', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
 ('testAdvisor2', 'testAdvisor1', '2025-10-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked');
 
 --open slots
 INSERT INTO advisory_bookings (advisor_id, date, startTime, endTime, status) VALUES 
-('testAdvisor1', '2025-10-13', '10:00:00', '12:00:00', 'open'),
-('testAdvisor1', '2025-10-14', '12:00:00', '14:00:00', 'open'),
-('testAdvisor1', '2025-10-15', '12:00:00', '14:00:00', 'open'),
-('testAdvisor1', '2025-10-15', '14:00:00', '16:00:00', 'open'),
-('testAdvisor1', '2025-10-16', '11:00:00', '13:00:00', 'open'),
-('testAdvisor1', '2025-10-17', '10:00:00', '12:00:00', 'open'),
-('testAdvisor2', '2025-10-13', '10:00:00', '12:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-3', '10:00:00', '12:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-4', '12:00:00', '14:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-5', '12:00:00', '14:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-5', '14:00:00', '16:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-6', '11:00:00', '13:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-7', '10:00:00', '12:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-3', '10:00:00', '12:00:00', 'open'),
 ('testAdvisor2', '2025-10-13', '12:00:00', '14:00:00', 'open'),
 ('testAdvisor2', '2025-10-14', '12:00:00', '14:00:00', 'open'),
 ('testAdvisor2', '2025-10-15', '12:00:00', '14:00:00', 'open'),
@@ -62,9 +67,9 @@ INSERT INTO advisory_bookings (advisor_id, date, startTime, endTime, status) VAL
 
 -- test data for advisory session
 INSERT INTO advisory_sessions (advisor_id, client_id, message, status) VALUES 
-('testAdvisor1', 'testAdvisor2', 'I need help with front-end', 'active'),
-('testAdvisor1', 'testAdvisor2', 'I need help with backend', 'pending'),
-('testAdvisor1', 'testAdvisor2', null, 'closed'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', 'I need help with front-end', 'active'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', 'I need help with backend', 'pending'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', null, 'closed'),
 ('testAdvisor2', 'testAdvisor1', 'I need help with front-end', 'active');
 
 -- Test data for applications
