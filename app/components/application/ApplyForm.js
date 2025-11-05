@@ -57,10 +57,13 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
     // Check answers in step 3
     if (currentStep == 3) {
       formData.answers.forEach(a => {
-        if (a == "") {
+        const stripHtml = (html) => html.replace(/<[^>]*>/g, "").trim();
+        if (stripHtml(a) == "") {
           setErrorMessage("Question is required to answer");
           error = true;
           return;
+        } else {
+          a = stripHtml(a);
         }
       })
     } 
@@ -148,7 +151,12 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
 
                   <b>Education: </b>
                   <ul className="pl-5">
-                    {file.education.map((edu, index) => (<li key={index}>{edu}</li>))}
+                    {file.education.map((edu, index) => {
+                      let eduSplit = edu.split(' | ');
+                      return(
+                        <li key={index}>{`${eduSplit[1]} in ${eduSplit[2]} from ${eduSplit[0]} (${eduSplit[3]}-${eduSplit[4]})`}</li>
+                      );
+                    })}
                   </ul>
 
                   <b>Certification: </b>
@@ -159,7 +167,16 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
 
                   <b>Experience: </b>
                   <ul className="pl-5">                   
-                    {file.experience.map((exp, index) => <li key={index}>{exp}</li>)}
+                    {file.experience.map((exp, index) => {
+                      let expSplit = exp.split(' | ');
+                      let experience = "";
+                      if (expSplit[5] == "" && expSplit[6] == "") {
+                        experience = `${expSplit[0]} (${expSplit[2]}) at ${expSplit[1]} (from ${expSplit[3]}-${expSplit[4]})`
+                      } else {
+                        experience = `${expSplit[0]} (${expSplit[2]}) at ${expSplit[1]} (from ${expSplit[3]}-${expSplit[4]} to ${expSplit[5]}-${expSplit[6]})`
+                      }
+                      return (<li key={index}>{experience}</li>);
+                    })}
                   </ul> 
 
                   <b>Additional information: </b>
@@ -167,7 +184,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                 </>
             ) : (
               <>
-                {file.content.split('\\n').map((line, idx) => ( <p key={idx} className="mt-2">{line}</p> ))}
+                {file.content.split('\n').map((line, idx) => ( <p key={idx} className="mt-2">{line}</p> ))}
               </>
             )}
           </div>

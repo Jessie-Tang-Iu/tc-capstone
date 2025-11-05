@@ -54,9 +54,9 @@ export default function ExperienceCard({ index, exp, setNewExp, isLoading, setIs
 
   return (
     <div 
-      className={`w-full border border-gray-300 rounded-lg p-4 mb-6
+      className={`w-full border border-gray-400 rounded-lg p-4 mb-6
                   ${(!editingExp && exp) && 'bg-white'}
-                  ${(editingExp != exp && 'bg-gray-100')}`}
+                  ${(editingExp != exp && 'bg-gray-300')}`}
     >
       {/* View */}
       {(!editingExp && exp) && (
@@ -92,7 +92,7 @@ export default function ExperienceCard({ index, exp, setNewExp, isLoading, setIs
           />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-x-6 gap-y-3 mb-1">
+        <div className="grid md:grid-cols-2 gap-x-6 gap-y-3 mb-3">
           <div>
             <label className="block text-base md:text-lg font-normal text-black mb-2">Title*</label>
             <input
@@ -128,7 +128,7 @@ export default function ExperienceCard({ index, exp, setNewExp, isLoading, setIs
             <label className="text-sm text-black">Currently working in this role</label>
         </div> */}
 
-        <div className="grid md:grid-cols-2 gap-x-6 gap-y-3 mb-1">
+        <div className="grid md:grid-cols-2 gap-x-6 gap-y-3 mb-3">
           <div>
             <label className="block text-base md:text-lg font-normal text-black mb-2">Start month*</label>
             <select
@@ -156,7 +156,7 @@ export default function ExperienceCard({ index, exp, setNewExp, isLoading, setIs
             </select>
           </div>
         </div>
-        <div className="grid md:grid-cols-2 gap-x-6 gap-y-3 mb-1">
+        <div className="grid md:grid-cols-2 gap-x-6 gap-y-3 mb-3">
           <div>
             <label className="block text-base md:text-lg font-normal text-black mb-2">End month</label>
             <select
