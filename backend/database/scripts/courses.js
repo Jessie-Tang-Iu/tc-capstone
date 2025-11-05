@@ -197,7 +197,7 @@ export async function editCourse(courseId, coursePayload) {
   // Update main course record
   await query(
     `UPDATE courses
-     SET title = $1, description = $2, level = $3, duration = $4, type = $5, lessonCount = $6, updated_at = NOW()
+     SET title = $1, description = $2, level = $3, duration = $4, type = $5, lesson_count = $6, updated_at = NOW()
      WHERE id = $7`,
     [title, description, level, duration, type, lessons.length, courseId]
   );
