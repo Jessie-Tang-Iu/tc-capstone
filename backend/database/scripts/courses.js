@@ -198,7 +198,7 @@ export async function editCourse(courseId, coursePayload) {
 
   const lessonCount = lessons.length;
 
-  // 1. Update course details
+  // Update course details
   const updateRes = await query(
     `UPDATE courses
      SET title = $1,
@@ -215,14 +215,15 @@ export async function editCourse(courseId, coursePayload) {
   const updatedCourse = updateRes.rows[0];
   if (!updatedCourse) throw new Error("Course not found");
 
-  // 2. Remove old lessons and related quiz questions
+  // Remove old lessons and related quiz questions
   await query(`DELETE FROM quiz_questions WHERE lesson_id IN (SELECT id FROM lessons WHERE course_id = $1)`, [courseId]);
   await query(`DELETE FROM lessons WHERE course_id = $1`, [courseId]);
 
-  // 3. Re-insert lessons and quizzes
+  // Re-insert lessons and quizzes by looping through the new lessons
   for (let i = 0; i < lessons.length; i++) {
     const lesson = lessons[i];
 
+    // Inserts a lesson normally.
     if (lesson.type === "lesson") {
       await query(
         `INSERT INTO lessons (course_id, title, content, video_url, type, position)
@@ -231,6 +232,7 @@ export async function editCourse(courseId, coursePayload) {
       );
     }
 
+    // When inserting quizzes, we still need to create a lesson but also questions linked to the lesson
     if (lesson.type === "quiz") {
       const quizRes = await query(
         `INSERT INTO lessons (course_id, title, content, type, position)
