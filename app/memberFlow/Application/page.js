@@ -204,7 +204,7 @@ export default function Applications() {
               onClick={handleBackToList}
               className="md:hidden top-4 ml-5 z-10 text-black rounded-lg text-sm font-normal hover:underline transition-colors"
             >
-              {"< Back to Jobs"}
+              {"< Back to Applications"}
             </button>
             <div className="mt-5 md:mt-0 h-full">
               <AppDetail

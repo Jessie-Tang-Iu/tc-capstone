@@ -50,9 +50,12 @@ export default function JobBoardPage() {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    fetch("/api/job", { cache: "no-store" })
+    fetch("/api/job")
       .then((res) => res.json())
-      .then(setJobs)
+      .then((data) => {
+        const activeJobs = data.filter((job) => job.status === "A"); // ✅ only active
+        setJobs(activeJobs);
+      })
       .catch((error) => console.error("Error fetching jobs:", error));
   }, []);
 
@@ -256,7 +259,7 @@ export default function JobBoardPage() {
 
       {/* Main Content */}
       {filteredJobs.length === 0 ? (
-        <div className="text-center text-gray-500 py-10">No jobs found.</div>
+        <div className="text-center text-gray-500 py-10">No jobs found</div>
       ) : (
         <div className="flex flex-col md:flex-row">
           {/* Job Listings Sidebar */}
