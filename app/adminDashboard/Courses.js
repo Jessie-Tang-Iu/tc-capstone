@@ -73,6 +73,7 @@ export default function AdminDashboard() {
       {view === "create" && (
         <AdminCourseCreate
           onCancel={() => setView("list")}
+          onRefresh={fetchCourses}
         />
       )}
 
@@ -80,6 +81,7 @@ export default function AdminDashboard() {
         <AdminCourseEdit
           courseId={editCourseId}
           onCancel={() => setView("list")}
+          onRefresh={fetchCourses}
         />
       )}
     </main>

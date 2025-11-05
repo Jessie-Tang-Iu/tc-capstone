@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import CourseLessonBlock from "./CourseLessonBlock";
 import CourseQuizBlock from "./CourseQuizBlock";
 
-export default function AdminCourseEdit({ courseId, onCancel }) {
+export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
     const [loading, setLoading] = useState(true);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -135,6 +135,7 @@ export default function AdminCourseEdit({ courseId, onCancel }) {
         if (!res.ok) throw new Error(data.error || "Failed to update course");
         alert("Course updated successfully");
         onCancel();
+        onRefresh();
         } catch (err) {
         console.error(err);
         alert("Error updating course");

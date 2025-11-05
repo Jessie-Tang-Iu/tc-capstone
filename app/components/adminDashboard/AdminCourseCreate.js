@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import CourseLessonBlock from "./CourseLessonBlock";
 import CourseQuizBlock from "./CourseQuizBlock";
 
-export default function AdminCourseCreate({ onCancel }) {
+export default function AdminCourseCreate({ onCancel, onRefresh }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [level, setLevel] = useState("Beginner");
@@ -89,6 +89,7 @@ export default function AdminCourseCreate({ onCancel }) {
 
       alert("Course created successfully");
       onCancel();
+      onRefresh();
     } catch (err) {
       console.error("Error creating course:", err);
       alert("Error creating course: " + err.message);
