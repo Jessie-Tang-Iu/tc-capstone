@@ -25,7 +25,7 @@ export default function AdminCourseCreate({ onCancel }) {
                 id: Date.now() + 1,
                 question: "",
                 answers: ["", "", "", ""],
-                correctAnswer: null,
+                correct_answer: null,
               },
             ],
           };
@@ -67,7 +67,7 @@ export default function AdminCourseCreate({ onCancel }) {
           questions: block.questions.map((q) => ({
             question: q.question,
             answers: q.answers,
-            correctAnswer: q.correctAnswer,
+            correct_answer: q.correct_answer,
           })),
         };
       }

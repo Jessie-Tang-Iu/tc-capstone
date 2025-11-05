@@ -51,7 +51,7 @@ export async function getCourseById(courseId, userId) {
       lesson.questions = questionsRes.rows.map((q) => ({
         question: q.question,
         answers: q.answers,
-        correctAnswer: q.correct_answer,
+        correct_answer: q.correct_answer,
       }));
     }
   }

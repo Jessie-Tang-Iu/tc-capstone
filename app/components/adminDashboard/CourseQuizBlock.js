@@ -8,6 +8,14 @@ export default function CourseQuizBlock({ index, quiz, onChange, onRemove }) {
     onChange(updatedQuiz);
   };
 
+  const handleCorrectAnswerSelect = (qIndex, selectedAnswer) => {
+    const updatedQuestion = {
+      ...quiz.questions[qIndex],
+      correctAnswer: selectedAnswer,
+    };
+    updateQuestion(qIndex, updatedQuestion);
+  };
+
   return (
     <div className="border-2 border-[#6C63FF] bg-[#f4f3ff] rounded-xl p-4">
       <div className="flex justify-between items-center mb-3">
@@ -73,17 +81,25 @@ export default function CourseQuizBlock({ index, quiz, onChange, onRemove }) {
             <div key={aIndex} className="flex items-center gap-2 mb-1">
               <input
                 type="radio"
-                checked={q.correctAnswer === ans}
-                onChange={() =>
-                  updateQuestion(qIndex, { ...q, correctAnswer: ans })
-                }
+                checked={q.correct_answer === ans}
+                onChange={() => handleCorrectAnswerSelect(qIndex, ans)}
               />
               <input
                 value={ans}
                 onChange={(e) => {
                   const updatedAnswers = [...q.answers];
                   updatedAnswers[aIndex] = e.target.value;
-                  updateQuestion(qIndex, { ...q, answers: updatedAnswers });
+
+                  let updatedCorrect = q.correctAnswer;
+                  if (q.correct_answer === ans) {
+                    updatedCorrect = e.target.value;
+                  }
+
+                  updateQuestion(qIndex, {
+                    ...q,
+                    answers: updatedAnswers,
+                    correctAnswer: updatedCorrect,
+                  });
                 }}
                 className="flex-1 border border-gray-300 rounded p-2 text-sm text-black"
                 placeholder={`Answer ${aIndex + 1}`}
