@@ -96,7 +96,7 @@ export default function AdvisorPage() {
           <Button onClick={handleNewAdvisor} text="Register New Advisor" />
         </div>
 
-        <div className="flex flex-wrap lg:justify-start sm:justify-between my-4 lg:space-x-6 sm:space-x-5 space-y-10 text-center text-black">
+        <div className="flex flex-wrap justify-between my-4 lg:space-x-6 sm:space-x-5 space-y-10 text-center text-black">
           {filteredAdvisors.length > 0 ? (
             filteredAdvisors.map((advisor) => { 
               return(<ContactedAdvisorCard key={advisor.session_id} advisor={advisor} />)
