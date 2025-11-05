@@ -179,7 +179,7 @@ export async function createCourse(coursePayload) {
         await query(
           `INSERT INTO quiz_questions (lesson_id, question, answers, correct_answer)
            VALUES ($1, $2, $3, $4)`,
-          [lessonId, q.question, q.answers, q.correctAnswer]
+          [lessonId, q.question, q.answers, q.correct_answer]
         );
       }
     }
@@ -245,7 +245,7 @@ export async function editCourse(courseId, coursePayload) {
         await query(
           `INSERT INTO quiz_questions (lesson_id, question, answers, correct_answer)
            VALUES ($1, $2, $3, $4)`,
-          [quizLessonId, q.question, q.answers, q.correctAnswer]
+          [quizLessonId, q.question, q.answers, q.correct_answer]
         );
       }
     }

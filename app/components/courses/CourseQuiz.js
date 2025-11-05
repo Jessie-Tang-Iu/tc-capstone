@@ -23,7 +23,7 @@ export default function CourseQuiz({ lesson, backToContent }) {
     const total = questions.length;
     let correct = 0;
     questions.forEach((q, i) => {
-      if (userAnswers[i] === q.correctAnswer) correct++;
+      if (userAnswers[i] === q.correct_answer) correct++;
     });
     setScore(total > 0 ? Math.round((correct / total) * 100) : 0);
     setSubmitted(true);
@@ -99,7 +99,7 @@ export default function CourseQuiz({ lesson, backToContent }) {
           </p>
 
           {questions.map((q, i) => {
-            const correct = userAnswers[i] === q.correctAnswer;
+            const correct = userAnswers[i] === q.correct_answer;
             return (
               <div
                 key={i}
@@ -116,7 +116,7 @@ export default function CourseQuiz({ lesson, backToContent }) {
                 </p>
                 {!correct && (
                   <p className="text-sm text-gray-700">
-                    Correct answer: {q.correctAnswer}
+                    Correct answer: {q.correct_answer}
                   </p>
                 )}
               </div>

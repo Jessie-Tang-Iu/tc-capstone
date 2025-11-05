@@ -11,7 +11,7 @@ export default function CourseQuizBlock({ index, quiz, onChange, onRemove }) {
   const handleCorrectAnswerSelect = (qIndex, selectedAnswer) => {
     const updatedQuestion = {
       ...quiz.questions[qIndex],
-      correctAnswer: selectedAnswer,
+      correct_answer: selectedAnswer,
     };
     updateQuestion(qIndex, updatedQuestion);
   };
@@ -46,7 +46,7 @@ export default function CourseQuizBlock({ index, quiz, onChange, onRemove }) {
 
       {quiz.questions.map((q, qIndex) => (
         <div
-          key={q.id}
+          key={q.id ?? `q-${qIndex}`}
           className="border border-gray-300 bg-white rounded-lg p-3 mb-3"
         >
           <div className="flex justify-between items-center mb-2">
@@ -90,7 +90,7 @@ export default function CourseQuizBlock({ index, quiz, onChange, onRemove }) {
                   const updatedAnswers = [...q.answers];
                   updatedAnswers[aIndex] = e.target.value;
 
-                  let updatedCorrect = q.correctAnswer;
+                  let updatedCorrect = q.correct_answer;
                   if (q.correct_answer === ans) {
                     updatedCorrect = e.target.value;
                   }
@@ -98,7 +98,7 @@ export default function CourseQuizBlock({ index, quiz, onChange, onRemove }) {
                   updateQuestion(qIndex, {
                     ...q,
                     answers: updatedAnswers,
-                    correctAnswer: updatedCorrect,
+                    correct_answer: updatedCorrect,
                   });
                 }}
                 className="flex-1 border border-gray-300 rounded p-2 text-sm text-black"
@@ -129,7 +129,7 @@ export default function CourseQuizBlock({ index, quiz, onChange, onRemove }) {
             id: Date.now(),
             question: "",
             answers: ["", "", "", ""],
-            correctAnswer: null,
+            correct_answer: null,
           };
           onChange({ ...quiz, questions: [...quiz.questions, newQuestion] });
         }}
