@@ -1,6 +1,6 @@
-import Profile from "../components/profile/profileSection";
-import Resume from "../components/profile/resumeSection";
-import CoverLetter from "../components/profile/coverLetterSection";
+import Profile from "../../components/profile/profileSection";
+import Resume from "../../components/profile/resumeSection";
+import CoverLetter from "../../components/profile/coverLetterSection";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 

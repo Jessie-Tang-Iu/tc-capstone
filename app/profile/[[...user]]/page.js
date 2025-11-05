@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import MemberNavbar from "../components/MemberNavBar";
+import MemberNavbar from "../../components/MemberNavBar";
 import ProfileSection from "./profileMember";
 import Security from "./security";
 import Privacy from "./privacy";
 import Notification from "./notification";
-import { useUser } from "@clerk/nextjs";
+import { useUser, UserProfile } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import PopupMessage from "@/app/components/ui/PopupMessage";
 import { IoNuclearOutline } from "react-icons/io5";
@@ -15,6 +15,8 @@ function ProfileDashboardContent() {
 
   const searchParams = useSearchParams();
   const tab = searchParams.get("tab") || "";
+  const initialPath = (tab === 'security') ? '/security' : '/profile?tab=security';
+  console.log("initial path: ", initialPath);
   
   const { user, isLoaded, isSignedIn } = useUser();
   const router = useRouter();
@@ -22,7 +24,6 @@ function ProfileDashboardContent() {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  const [formData, setFormData] = useState();
   const [profile, setProfile] = useState(null);
 
   const [notificationData, setNotificationData] = useState({
@@ -43,19 +44,6 @@ function ProfileDashboardContent() {
 
   useEffect(() => {
     if (user) {
-      setFormData((prev) => ({
-        emails: [
-          { email: user?.emailAddresses[0].emailAddress || "#######@gmail.com", isPrimary: true },
-          { email: "#######@gmail.com", isPrimary: false },
-          { email: "#######@gmail.com", isPrimary: false },
-        ],
-        phones: [
-          { phone: user?.phoneNumbers.length > 0 ? user?.phoneNumbers[0].phoneNumber : "US +1 (519) XXX-XXX", isPrimary: true },
-          { phone: "US +1 (519) XXX-XXX", isPrimary: false },
-          { phone: "US +1 (519) XXX-XXX", isPrimary: false },
-        ],
-      }));
-
       // Fetch user data
       fetch(`/api/users/${user.id}`)
         .then((res) => res.json())
@@ -64,7 +52,6 @@ function ProfileDashboardContent() {
           setProfile(data);
         })
         .catch((error) => console.error('Error fetching profile: ', error));
-
     }
   }, [user]);
 
@@ -129,7 +116,7 @@ function ProfileDashboardContent() {
           </button>
           <div className="mt-5 md:mt-0 h-full">
             {tab === "profile" && (
-              // user.role === "member" && 
+              // user.role === "member" &&
               <ProfileSection 
                 setSuccessMessage={setSuccessMessage}
                 setErrorMessage={setErrorMessage}
@@ -137,7 +124,44 @@ function ProfileDashboardContent() {
             )}
             
             {tab === "security" && (
-              <Security formData={formData} setFormData={setFormData} />
+              <div className="px-5 w-full h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto">
+                <UserProfile 
+                  path="/profile"
+                  routing="path"
+                  initialPath={initialPath}
+                  className="w-full"
+                  appearance={{
+                    elements: {
+                      rootBox: {
+                        width: 'auto',
+                        maxWidth: '600px',
+                        boxShadow: 'none', 
+                      },
+                      card: {
+                        width: '80%',
+                        maxWidth: '80%',
+                        boxShadow: 'none',
+                        padding: '24px', // Remove internal padding if needed
+                      },
+                      profilePage: {
+                        width: '100%',
+                        maxWidth: '100%',
+                      },
+                      profilePageContainer: { 
+                        padding: '16px',
+                      }
+                    },
+                    variables: {
+                      colorPrimary: '#E55B3C', 
+                      colorPrimaryForeground: 'white', 
+                      colorMutedForeground: 'black',
+                      colorForeground: 'black',
+                      colorBorder: '#E55B3C',
+                    }
+                    // --- END COLOR CUSTOMIZATION ---
+                  }}
+                />
+              </div>
             )}
             
             {tab === "privacy" && <Privacy />}

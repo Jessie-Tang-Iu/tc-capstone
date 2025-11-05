@@ -1,5 +1,6 @@
 import { User, Lock, Shield, Bell, ChevronDown } from "lucide-react";
 import { useState } from "react";
+import ClerkProfile from "../../components/profile/clerkProfile";
 
 export default function Security({ formData, setFormData }) {
 
@@ -34,7 +35,8 @@ export default function Security({ formData, setFormData }) {
     return (
         <div className="space-y-8 px-5 h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto">
             {/* Email Accesses */}
-            <section>
+            <ClerkProfile />
+            {/* <section>
                 <h2 className="text-xl md:text-2xl font-bold text-black mb-6">Email accesses</h2>
                 <div className="space-y-4">
                     {formData.emails.map((item, index) => (
@@ -64,7 +66,7 @@ export default function Security({ formData, setFormData }) {
                 <button className="mt-4 px-6 py-2 bg-orange-200 text-black rounded-lg text-sm font-normal hover:bg-orange-300 transition-colors">
                     Add new email
                 </button>
-            </section>
+            </section> */}
 
             <hr className="border-gray-300" />
 
