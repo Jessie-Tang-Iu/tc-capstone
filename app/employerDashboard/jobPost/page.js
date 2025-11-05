@@ -37,7 +37,7 @@ export default function JobPostsPage() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await fetch("/api/job", { cache: "no-store" });
+        const res = await fetch("/api/job/public", { cache: "no-store" });
         if (!res.ok) throw new Error("Failed to fetch jobs");
         const data = await res.json();
         setJobs(data);

@@ -445,3 +445,47 @@ VALUES
  300, 0, '2025-12-03 23:59:00',
  'Formal gala celebrating student innovation',
  40.00);
+
+
+-- under reivew user
+-- 7 new advisors
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role, status)
+VALUES
+('testAdvisor6', 'adv6', 'Liam', 'Wong', 'liam.wong@sample.com', '403-555-6001', 'advisor', 'under_review'),
+('testAdvisor7', 'adv7', 'Chloe', 'Park', 'chloe.park@sample.com', '403-555-6002', 'advisor', 'under_review'),
+('testAdvisor8', 'adv8', 'Noah', 'Chan', 'noah.chan@sample.com', '403-555-6003', 'advisor', 'under_review'),
+('testAdvisor9', 'adv9', 'Emma', 'Lee', 'emma.lee@sample.com', '403-555-6004', 'advisor', 'under_review'),
+('testAdvisor10', 'adv10', 'Mason', 'Ng', 'mason.ng@sample.com', '403-555-6005', 'advisor', 'under_review'),
+('testAdvisor11', 'adv11', 'Sophia', 'Lam', 'sophia.lam@sample.com', '403-555-6006', 'advisor', 'under_review'),
+('testAdvisor12', 'adv12', 'Ethan', 'Ho', 'ethan.ho@sample.com', '403-555-6007', 'advisor', 'under_review');
+
+INSERT INTO advisors (clerk_id, company_name, company_role)
+VALUES
+('testAdvisor6', 'MindBridge Analytics', 'Data Analyst'),
+('testAdvisor7', 'Aurora Systems', 'Tech Consultant'),
+('testAdvisor8', 'NovaSoft', 'Product Designer'),
+('testAdvisor9', 'CloudWave', 'Full Stack Engineer'),
+('testAdvisor10', 'NextEdge', 'Project Manager'),
+('testAdvisor11', 'PrimeWorks', 'Software Engineer'),
+('testAdvisor12', 'Orbit Tech', 'UX Lead');
+
+-- 7 new employers
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role, status)
+VALUES
+('testEmployer6', 'emp6', 'Ella', 'Kim', 'ella.kim@sample.com', '403-555-7001', 'employer', 'under_review'),
+('testEmployer7', 'emp7', 'Jack', 'Wu', 'jack.wu@sample.com', '403-555-7002', 'employer', 'under_review'),
+('testEmployer8', 'emp8', 'Olivia', 'Tran', 'olivia.tran@sample.com', '403-555-7003', 'employer', 'under_review'),
+('testEmployer9', 'emp9', 'Lucas', 'Zhao', 'lucas.zhao@sample.com', '403-555-7004', 'employer', 'under_review'),
+('testEmployer10', 'emp10', 'Mia', 'Cheung', 'mia.cheung@sample.com', '403-555-7005', 'employer', 'under_review'),
+('testEmployer11', 'emp11', 'Benjamin', 'Leung', 'benjamin.leung@sample.com', '403-555-7006', 'employer', 'under_review'),
+('testEmployer12', 'emp12', 'Isabella', 'Kwan', 'isabella.kwan@sample.com', '403-555-7007', 'employer', 'under_review');
+
+INSERT INTO employers (clerk_id, company_name, company_role)
+VALUES
+('testEmployer6', 'DataForge Inc', 'HR Lead'),
+('testEmployer7', 'Zenith Labs', 'Operations Manager'),
+('testEmployer8', 'TechNova Ltd', 'HR Assistant'),
+('testEmployer9', 'EcoStream Energy', 'Recruitment Lead'),
+('testEmployer10', 'BluePeak Digital', 'People Manager'),
+('testEmployer11', 'CoreByte Systems', 'HR Specialist'),
+('testEmployer12', 'HoloView Media', 'HR Coordinator');

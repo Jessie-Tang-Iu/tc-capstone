@@ -47,3 +47,14 @@ export async function createJobPost(post) {
 
   return await jobs.createJobPost(post);
 }
+
+// Call the updateJobPost function
+export async function updateJobController(id, body) {
+  if (!id) throw new Error("Job ID required");
+  return await jobs.updateJobPost(id, body);
+}
+
+// Get all job posts (public - no employer filter)
+export async function getAllJobPostsPublicController() {
+  return await jobs.getAllJobPostsPublic();
+}
