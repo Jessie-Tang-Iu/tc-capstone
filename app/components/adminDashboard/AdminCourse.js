@@ -6,13 +6,8 @@ export default function AdminCourse({ course }) {
   const router = useRouter();
   if (!course) return null;
 
-  const handleClick = () => {
-    router.push(`/adminDashboard/course/${course.id}`);
-  };
-
   return (
     <div
-      onClick={handleClick}
       className="w-full bg-white rounded-lg shadow-md mb-4 p-4 hover:shadow-lg transition-shadow cursor-pointer"
     >
       <div className="flex justify-between items-start">
