@@ -136,54 +136,48 @@ export async function updateCourseProgress(userId, courseId) {
 }
 
 export async function createCourse(coursePayload) {
-  const { title, description, level, duration, type, contentBlocks = [] } = coursePayload;
+  const { course, lessons } = payload;
+  const { title, description, level, duration, type } = course;
+  
+  console.log(course);
+
+  console.log("Creating course with lessons:", lessons);
 
   if (!title || !description) {
     throw new Error("Title and description are required");
   }
 
-  // 1. Insert the main course
-  const insertCourseRes = await query(
+  const insertRes = await query(
     `INSERT INTO courses (title, description, level, duration, type)
      VALUES ($1, $2, $3, $4, $5)
      RETURNING *`,
     [title, description, level, duration, type]
   );
-  const newCourse = insertCourseRes.rows[0];
 
-  // 2. Insert lessons / quizzes
-  for (let i = 0; i < contentBlocks.length; i++) {
-    const block = contentBlocks[i];
+  const newCourse = insertRes.rows[0];
 
-    // Insert lesson or quiz as a "lesson"
-    const insertLessonRes = await query(
-      `INSERT INTO lessons (course_id, title, content, video_url, type, position)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING *`,
-      [
-        newCourse.id,
-        block.title || "",
-        block.description || null,
-        block.videoUrl || null,
-        block.type,
-        i + 1 // position in course
-      ]
-    );
+  // Now loop through lessons and add them
+  for (let i = 0; i < lessons.length; i++) {
+    const lesson = lessons[i];
+    if (lesson.type === "lesson") {
+      await query(
+        `INSERT INTO lessons (course_id, title, content, video_url, type, position)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        [newCourse.id, lesson.title, lesson.content || "", lesson.video_url || "", "lesson", lesson.position]
+      );
+    } else if (lesson.type === "quiz") {
+      const lessonRes = await query(
+        `INSERT INTO lessons (course_id, title, content, type, position)
+         VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+        [newCourse.id, lesson.title, lesson.description || "", "quiz", lesson.position]
+      );
+      const lessonId = lessonRes.rows[0].id;
 
-    const newLesson = insertLessonRes.rows[0];
-
-    // If this is a quiz, insert the quiz questions
-    if (block.type === "quiz" && Array.isArray(block.questions)) {
-      for (let question of block.questions) {
+      for (const q of lesson.questions) {
         await query(
           `INSERT INTO quiz_questions (lesson_id, question, answers, correct_answer)
            VALUES ($1, $2, $3, $4)`,
-          [
-            newLesson.id,
-            question.question || "",
-            question.answers || [],
-            question.correctAnswer || ""
-          ]
+          [lessonId, q.question, q.answers, q.correctAnswer]
         );
       }
     }
