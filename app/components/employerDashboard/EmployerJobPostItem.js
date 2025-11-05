@@ -6,7 +6,7 @@ export default function EmployerJobPostItem({
   title,
   company,
   location,
-  workplace, // could be joined from job_workplace table (e.g., "On-site")
+  workplace,
   status = "A", // A = Active, I = Inactive
   salary_per_hour,
   posted_at,
@@ -14,11 +14,10 @@ export default function EmployerJobPostItem({
   onClick,
   onManage,
 }) {
-  // derive readable fields
   const isActive = status === "A";
   const statusText = isActive ? "Active" : "Inactive";
 
-  // compute weeks ago from posted_at
+  // compute how long ago it was posted
   const weeksAgo = posted_at
     ? Math.floor((Date.now() - new Date(posted_at)) / (1000 * 60 * 60 * 24 * 7))
     : 0;
@@ -32,16 +31,29 @@ export default function EmployerJobPostItem({
     >
       {/* Job Info */}
       <div className="flex min-w-0 flex-col">
-        <div className="truncate text-base font-semibold text-black">
-          {title}
+        <div className="flex items-center gap-2">
+          <div className="truncate text-base font-semibold text-black">
+            {title}
+          </div>
+
+          {/* Status badge */}
+          <span
+            className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
+              isActive
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700"
+            }`}
+          >
+            {statusText}
+          </span>
         </div>
 
         <div className="mt-1 truncate text-sm text-black">
           {company} | {location} | {workplace}
         </div>
 
-        <div className="mt-2 text-sm text-gray-700 font-semibold">
-          {statusText} | Posted {weeksAgo} week{weeksAgo !== 1 ? "s" : ""} ago
+        <div className="mt-1 text-xs text-gray-600">
+          Posted {weeksAgo} week{weeksAgo !== 1 ? "s" : ""} ago
         </div>
 
         {salary_per_hour != null &&
