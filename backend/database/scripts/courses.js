@@ -135,19 +135,59 @@ export async function updateCourseProgress(userId, courseId) {
   return { courseId, completedLessons, totalLessons };
 }
 
-export async function createCourse(course) {
-  const { title, description, level, duration, type } = course;
+export async function createCourse(coursePayload) {
+  const { title, description, level, duration, type, contentBlocks = [] } = coursePayload;
 
   if (!title || !description) {
     throw new Error("Title and description are required");
   }
 
-  const insertRes = await query(
+  // 1. Insert the main course
+  const insertCourseRes = await query(
     `INSERT INTO courses (title, description, level, duration, type)
      VALUES ($1, $2, $3, $4, $5)
      RETURNING *`,
     [title, description, level, duration, type]
   );
+  const newCourse = insertCourseRes.rows[0];
 
-  return insertRes.rows[0];
+  // 2. Insert lessons / quizzes
+  for (let i = 0; i < contentBlocks.length; i++) {
+    const block = contentBlocks[i];
+
+    // Insert lesson or quiz as a "lesson"
+    const insertLessonRes = await query(
+      `INSERT INTO lessons (course_id, title, content, video_url, type, position)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING *`,
+      [
+        newCourse.id,
+        block.title || "",
+        block.description || null,
+        block.videoUrl || null,
+        block.type,
+        i + 1 // position in course
+      ]
+    );
+
+    const newLesson = insertLessonRes.rows[0];
+
+    // If this is a quiz, insert the quiz questions
+    if (block.type === "quiz" && Array.isArray(block.questions)) {
+      for (let question of block.questions) {
+        await query(
+          `INSERT INTO quiz_questions (lesson_id, question, answers, correct_answer)
+           VALUES ($1, $2, $3, $4)`,
+          [
+            newLesson.id,
+            question.question || "",
+            question.answers || [],
+            question.correctAnswer || ""
+          ]
+        );
+      }
+    }
+  }
+
+  return newCourse;
 }

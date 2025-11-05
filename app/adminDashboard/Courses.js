@@ -1,19 +1,13 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import AdminCourse from "../components/adminDashboard/AdminCourse";
+import AdminCourseCreate from "../components/adminDashboard/AdminCourseCreate";
 
 export default function AdminDashboard() {
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState("list"); // "list" or "create"
-
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [level, setLevel] = useState("Beginner");
-  const [duration, setDuration] = useState("");
-  const [type, setType] = useState("Online");
+  const [view, setView] = useState("list");
 
   useEffect(() => {
     async function fetchCourses() {
@@ -32,53 +26,16 @@ export default function AdminDashboard() {
     fetchCourses();
   }, []);
 
-  const handleCreateCourse = async (e) => {
-    e.preventDefault();
-
-    const coursePayload = {
-      title,
-      description,
-      level,
-      duration,
-      type,
-    };
-
-    try {
-      const res = await fetch("/api/course", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(coursePayload),
-      });
-      if (!res.ok) throw new Error("Failed to create course");
-
-      alert("Course created successfully");
-
-      // reset form + refresh list
-      setTitle("");
-      setDescription("");
-      setLevel("");
-      setDuration("");
-      setType("");
-      setView("list");
-
-      const updated = await fetch("/api/course");
-      const data = await updated.json();
-      setCourses(data);
-      setFilteredCourses(data);
-    } catch (err) {
-      console.error(err);
-      alert("Error creating course");
-    }
-  };
-
-  if (loading) return <div className="p-6">Loading...</div>;
+  if (loading) return <div className="p-6 text-black">Loading...</div>;
 
   return (
     <main className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white p-6">
       {view === "list" && (
         <>
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-[#E55B3C]">Courses Dashboard</h1>
+            <h1 className="text-3xl font-bold text-[#E55B3C]">
+              Courses Dashboard
+            </h1>
             <button
               onClick={() => setView("create")}
               className="bg-[#E55B3C] text-white px-4 py-2 rounded-lg hover:bg-[#c94b2d]"
@@ -90,7 +47,7 @@ export default function AdminDashboard() {
           <div className="w-full">
             {filteredCourses.length > 0 ? (
               filteredCourses.map((course) => (
-                <AdminCourse key={course.id} course={course} />
+                <AdminCourse key={course.id || course._id} course={course} />
               ))
             ) : (
               <p className="text-gray-600 p-4">No courses found.</p>
@@ -100,96 +57,9 @@ export default function AdminDashboard() {
       )}
 
       {view === "create" && (
-        <div className="bg-white rounded-lg shadow p-6 w-2/3 mx-auto">
-          <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">
-            Create New Course
-          </h2>
-          <form onSubmit={handleCreateCourse} className="space-y-4">
-            <div>
-              <label className="block text-gray-700 font-medium mb-1">
-                Course Title
-              </label>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter course title"
-                required
-                className="w-full border border-gray-300 rounded p-2 text-black"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-700 font-medium mb-1">
-                Course Description
-              </label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter course description"
-                required
-                className="w-full border border-gray-300 rounded p-2 text-black"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-700 font-medium mb-1">
-                Course Level
-              </label>
-              <select
-                value={level}
-                onChange={(e) => setLevel(e.target.value)}
-                className="w-full border border-gray-300 rounded p-2 text-black"
-              >
-                <option value="Beginner">Beginner</option>
-                <option value="Intermediate">Intermediate</option>
-                <option value="Advanced">Advanced</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-gray-700 font-medium mb-1">
-                Duration
-              </label>
-              <input
-                value={duration}
-                onChange={(e) => setDuration(e.target.value)}
-                placeholder="e.g. 2 Weeks / 7 Days"
-                className="w-full border border-gray-300 rounded p-2 text-black"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-700 font-medium mb-1">
-                Course Type
-              </label>
-              <select
-                value={type}
-                onChange={(e) => setType(e.target.value)}
-                className="w-full border border-gray-300 rounded p-2 text-black"
-              >
-                <option value="Online">Online</option>
-                <option value="In Person">In Person</option>
-                <option value="Workshop">Workshop</option>
-              </select>
-            </div>
-
-            <div className="flex justify-between mt-6">
-              <button
-                type="button"
-                onClick={() => setView("list")}
-                className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="bg-[#E55B3C] text-white px-4 py-2 rounded-lg hover:bg-[#c94b2d]"
-              >
-                Save Course
-              </button>
-            </div>
-          </form>
-        </div>
+        <AdminCourseCreate
+          onCancel={() => setView("list")}
+        />
       )}
     </main>
   );

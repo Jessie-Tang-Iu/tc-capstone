@@ -11,7 +11,7 @@ router.get("/", getAllCoursesController);
 router.get("/:id", getCourseByIdController);
 
 // POST new course
-// Example body: { "title": "New Course", "description": "Course description", "lessons": [...] }
+// Example body: { title, description, level, duration, type, contentBlocks: [...] }
 router.post("/", createCourseController);
 
 // POST lesson completion

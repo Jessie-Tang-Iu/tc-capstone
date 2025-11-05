@@ -1,11 +1,20 @@
 "use client";
 import React from "react";
+import { useRouter } from "next/navigation";
 
 export default function AdminCourse({ course }) {
+  const router = useRouter();
   if (!course) return null;
 
+  const handleClick = () => {
+    router.push(`/adminDashboard/course/${course.id}`);
+  };
+
   return (
-    <div className="w-full bg-white rounded-lg shadow-md mb-4 p-4 hover:shadow-lg transition-shadow cursor-pointer">
+    <div
+      onClick={handleClick}
+      className="w-full bg-white rounded-lg shadow-md mb-4 p-4 hover:shadow-lg transition-shadow cursor-pointer"
+    >
       <div className="flex justify-between items-start">
         <div>
           <h2 className="text-xl font-semibold text-[#E55B3C]">{course.title}</h2>
