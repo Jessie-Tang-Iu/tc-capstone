@@ -13,8 +13,9 @@ function PageContent() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!sessionId && window.location.pathname !== "/") {
-      router.replace("/");
+
+    if (sessionId) {
+      router.replace("/post-login");
     }
   }, [isLoaded, sessionId, router]);
 
