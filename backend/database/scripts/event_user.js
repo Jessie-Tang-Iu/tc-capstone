@@ -26,19 +26,16 @@ export async function getEventsByUser(userId) {
   return result.rows;
 }
 
-// -------------------------------
 // Register a user for an event
-// -------------------------------
 export async function registerEventUser(eventId, clerkId) {
-  const userRes = await query(`SELECT id FROM "user" WHERE clerk_id = $1`, [
-    clerkId,
-  ]);
+  const userRes = await query(
+    `SELECT clerk_id FROM users WHERE clerk_id = $1`,
+    [clerkId]
+  );
 
   if (userRes.rows.length === 0) {
-    throw new Error("User not found in local user table.");
+    throw new Error("User not found in local users table.");
   }
-
-  const internalUserId = userRes.rows[0].id;
 
   const result = await query(
     `INSERT INTO event_user (event_id, user_id, status)
@@ -46,47 +43,33 @@ export async function registerEventUser(eventId, clerkId) {
      ON CONFLICT (event_id, user_id)
      DO UPDATE SET status = 'registered', registered_at = now()
      RETURNING *`,
-    [eventId, internalUserId]
+    [eventId, clerkId]
   );
 
   return result.rows[0];
 }
 
-// -------------------------------
 // Cancel a registration
-// -------------------------------
 export async function cancelEventUser(eventId, clerkId) {
-  // Step 1: map Clerk ID to numeric ID
-  const userRes = await query(`SELECT id FROM "user" WHERE clerk_id = $1`, [
-    clerkId,
-  ]);
-
-  if (userRes.rows.length === 0) {
-    throw new Error("User not found in local user table.");
-  }
-
-  const internalUserId = userRes.rows[0].id;
-
-  // Step 2: update record
   const result = await query(
     `UPDATE event_user
      SET status = 'cancelled'
      WHERE event_id = $1 AND user_id = $2
      RETURNING *`,
-    [eventId, internalUserId]
+    [eventId, clerkId]
   );
-
   return result.rows[0];
 }
 
+// Get all events by clerk_id
 export async function getEventsByClerkId(clerkId) {
-  const userRes = await query(`SELECT id FROM "user" WHERE clerk_id = $1`, [
-    clerkId,
-  ]);
+  const userRes = await query(
+    `SELECT clerk_id FROM users WHERE clerk_id = $1`,
+    [clerkId]
+  );
   if (userRes.rows.length === 0) {
-    throw new Error("User not found in local user table.");
+    throw new Error("User not found in local users table.");
   }
-  const internalUserId = userRes.rows[0].id;
 
   const result = await query(
     `
@@ -96,23 +79,23 @@ export async function getEventsByClerkId(clerkId) {
     WHERE eu.user_id = $1 AND eu.status = 'registered'
     ORDER BY e.date, e.start_time
     `,
-    [internalUserId]
+    [clerkId]
   );
 
   return result.rows;
 }
 
+// Get one event_user record
 export async function getEventUser(eventId, clerkId) {
-  const userRes = await query(`SELECT id FROM "user" WHERE clerk_id = $1`, [
-    clerkId,
-  ]);
+  const userRes = await query(
+    `SELECT clerk_id FROM users WHERE clerk_id = $1`,
+    [clerkId]
+  );
   if (userRes.rows.length === 0) return null;
-
-  const internalUserId = userRes.rows[0].id;
 
   const result = await query(
     `SELECT * FROM event_user WHERE event_id = $1 AND user_id = $2`,
-    [eventId, internalUserId]
+    [eventId, clerkId]
   );
 
   return result.rows[0] || null;

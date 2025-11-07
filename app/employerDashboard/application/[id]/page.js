@@ -1,232 +1,210 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import Navbar from "../../../components/BlankNavBar";
 import EmployerSidebar from "../../../components/employerDashboard/EmployerSideBar";
-import applications from "../../../data/applications.json";
 import ChatWindow from "@/app/components/ChatWindow";
 import PopupMessage from "@/app/components/ui/PopupMessage";
 import SavedDocCard from "@/app/components/employerDashboard/SavedDocCard";
-import { useParams } from "next/navigation";
-
-/* UI bits */
-const Pill = ({ children, variant = "solid", onClick }) => {
-  const base = "rounded-md px-4 py-2 text-sm font-medium transition";
-  const solid = "bg-[#EE7D5E] text-white hover:opacity-90";
-  const ghost = "bg-[#F3E1D5] text-black hover:opacity-90";
-  return (
-    <button
-      onClick={onClick}
-      className={`${base} ${variant === "solid" ? solid : ghost}`}
-    >
-      {children}
-    </button>
-  );
-};
+import UserDetailsCard from "@/app/components/adminDashboard/UserDetailsCard";
 
 const SectionTitle = ({ children }) => (
   <h3 className="mb-3 mt-6 text-base font-semibold text-black">{children}</h3>
 );
 
-const Panel = ({ label, children }) => (
-  <div className="rounded-xl bg-[#F3E1D5] px-4 py-4">
-    <div className="mb-3 text-sm font-semibold underline underline-offset-4">
-      {label}
-    </div>
-    {children}
-  </div>
-);
+export default function ApplicationDetailsPage() {
+  const { id } = useParams();
+  const router = useRouter();
+  const numericId = Number(id);
 
-export default function ApplicationDetailsPage({}) {
-  const { id } = useParams(); // <-- safe in client components
-  const numericId = Number(id); // normalize to a number
-
+  const [app, setApp] = useState(null);
+  const [userDetails, setUserDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [openChat, setOpenChat] = useState(false);
   const [popup, setPopup] = useState(null);
+  const [statusStyle, setStatusStyle] = useState("");
+  const [showProfile, setShowProfile] = useState(false);
 
-  const app = useMemo(() => {
-    return applications.find((a) => a.id === numericId) || applications[0];
+  // Fetch application info
+  useEffect(() => {
+    const fetchApp = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`/api/application?employer_id=testEmployer1`);
+        const data = await res.json();
+        const found = data.find((a) => Number(a.id) === numericId);
+        if (!found) return setApp(null);
+
+        // Add clerk_id (map if stored under user_id)
+        found.clerk_id = found.user_id || found.clerk_id || null;
+        setApp(found);
+
+        // Fetch user details if we have clerk_id
+        if (found.clerk_id) {
+          const resUser = await fetch(`/api/users/${found.clerk_id}`);
+          if (resUser.ok) {
+            const user = await resUser.json();
+            setUserDetails(user);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching application:", err);
+        setApp(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchApp();
   }, [numericId]);
+
+  // Change badge color based on status
+  useEffect(() => {
+    if (!app) return;
+    switch (app.status) {
+      case "A":
+        setStatusStyle("bg-green-100 text-green-700");
+        break;
+      case "R":
+        setStatusStyle("bg-red-100 text-red-700");
+        break;
+      case "I":
+        setStatusStyle("bg-yellow-100 text-yellow-700");
+        break;
+      case "O":
+        setStatusStyle("bg-blue-100 text-blue-700");
+        break;
+      case "D":
+        setStatusStyle("bg-gray-300 text-gray-700");
+        break;
+      default:
+        setStatusStyle("bg-gray-100 text-gray-600");
+    }
+  }, [app?.status]);
+
+  // Update status dropdown
+  const updateStatus = async (newStatus) => {
+    try {
+      const res = await fetch(`/api/application/${app.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!res.ok) throw new Error("Failed to update status");
+      const data = await res.json();
+      setApp((prev) => ({ ...prev, status: data.status }));
+    } catch (err) {
+      console.error("Status update failed:", err);
+      alert("Failed to update application status");
+    }
+  };
+
+  if (loading)
+    return <div className="p-10 text-center text-black">Loading...</div>;
+
+  if (!app)
+    return (
+      <div className="p-10 text-center text-black">Application not found.</div>
+    );
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
       <Navbar />
-
       <main className="mx-auto w-full px-6 py-8">
         <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
-          Employer DashBoard
+          Employer Dashboard
         </h1>
 
         <div className="flex gap-6">
           <EmployerSidebar />
 
           <section className="flex-1 rounded-xl bg-white shadow">
-            {/* Top header */}
             <div className="flex items-center justify-between border-b px-4 py-3">
-              <div className="text-sm font-semibold text-black">
-                Application:{" "}
-                {String(app.applicationNo).replace(/\d{3}$/, "###")}
+              <div className="flex items-center text-sm font-semibold text-black">
+                Application: {String(app.id).padStart(3, "0")}
               </div>
-              <div className="flex items-center gap-3">
-                <Pill
-                  variant="ghost"
-                  onClick={() =>
-                    setPopup({
-                      type: "confirm",
-                      title: "Reject Application",
-                      description:
-                        "Are you sure you want to reject this application?",
-                      buttonText: "Reject",
-                      onConfirm: () => {
-                        console.log("Rejected", app.id);
-                        setPopup({
-                          type: "success",
-                          title: "Application Rejected",
-                          description: "The applicant has been rejected.",
-                          buttonText: "OK",
-                        });
-                      },
-                    })
-                  }
-                >
-                  Reject
-                </Pill>
 
-                <Pill
-                  onClick={() =>
-                    setPopup({
-                      type: "confirm",
-                      title: "Approve Application",
-                      description:
-                        "Are you sure you want to approve this application?",
-                      buttonText: "Approve",
-                      onConfirm: () => {
-                        console.log("Approved", app.id);
-                        setPopup({
-                          type: "success",
-                          title: "Application Approved",
-                          description: "The applicant has been approved.",
-                          buttonText: "OK",
-                        });
-                      },
-                    })
-                  }
+              <div className="flex items-center gap-3">
+                <select
+                  disabled={loading}
+                  value={app.status}
+                  onChange={(e) => updateStatus(e.target.value)}
+                  className={`w-32 h-9 rounded-md text-sm font-semibold border text-center ${statusStyle} ${
+                    loading
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:opacity-90 active:scale-[0.98] transition"
+                  }`}
                 >
-                  Approve
-                </Pill>
+                  <option value="S">Submitted</option>
+                  <option value="U">Under Review</option>
+                  <option value="I">Interview</option>
+                  <option value="R">Rejected</option>
+                  <option value="O">Offer</option>
+                  <option value="D">Withdrawn</option>
+                  <option value="A">Approved</option>
+                </select>
+
+                <button
+                  onClick={() => router.push("/employerDashboard/application")}
+                  className="rounded-md bg-[#F3E1D5] px-4 py-2 text-sm font-semibold text-black hover:opacity-90 active:scale-[0.98] transition"
+                >
+                  Cancel
+                </button>
               </div>
             </div>
 
-            {/* Applicant summary */}
             <div className="flex items-start justify-between gap-4 px-4 py-4">
               <div className="flex-1 text-sm text-black">
-                <div className="text-xl font-semibold">{app.applicant}</div>
-                {app.headline && <div className="mt-1">{app.headline}</div>}
-                {app.location && (
-                  <div className="mt-1 font-semibold">{app.location}</div>
-                )}
-                {app.appliedAgo && <div className="mt-1">{app.appliedAgo}</div>}
+                <div className="text-xl font-semibold">
+                  {app.first_name} {app.last_name}
+                </div>
+                <div className="mt-1 font-semibold">{app.location}</div>
+                <div className="mt-1">
+                  Applied: {new Date(app.appliedAt).toLocaleDateString()}
+                </div>
               </div>
               <div className="flex w-40 shrink-0 flex-col gap-2">
-                <Pill onClick={() => setOpenChat(true)}>Message</Pill>
-                <Pill onClick={() => console.log("View Profile", app.id)}>
+                <button
+                  onClick={() => setOpenChat(true)}
+                  className="rounded-md bg-[#EE7D5E] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+                >
+                  Message
+                </button>
+                <button
+                  onClick={() => setShowProfile(true)}
+                  className="rounded-md bg-[#F3E1D5] px-4 py-2 text-sm font-medium text-black hover:opacity-90"
+                >
                   View Profile
-                </Pill>
+                </button>
               </div>
             </div>
 
             <hr />
 
-            {/* Insights */}
             <div className="px-4 py-4 text-gray-700">
-              <h2 className="text-lg font-semibold text-black">
-                Insights from profile
-              </h2>
-
-              {Array.isArray(app.experience) && app.experience.length > 0 && (
-                <>
-                  <SectionTitle>Experience</SectionTitle>
-                  <Panel label="Experience">
-                    <div className="space-y-6 text-sm">
-                      {app.experience.map((e, idx) => (
-                        <div key={idx}>
-                          <div className="font-semibold">{e.title}</div>
-                          <div>{e.company}</div>
-                          <div className="text-gray-700">{e.date}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </Panel>
-                </>
-              )}
-
-              {Array.isArray(app.education) && app.education.length > 0 && (
-                <>
-                  <SectionTitle>Education</SectionTitle>
-                  <Panel label="Education">
-                    <div className="space-y-6 text-sm">
-                      {app.education.map((ed, idx) => (
-                        <div key={idx}>
-                          <div className="font-semibold">{ed.school}</div>
-                          <div>{ed.program}</div>
-                          <div className="text-gray-700">{ed.date}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </Panel>
-                </>
-              )}
-
-              {/* Resume */}
               <SectionTitle>Resume</SectionTitle>
               <div className="mb-6 flex justify-center">
-                <div className="mb-6 flex justify-center">
-                  <SavedDocCard
-                    title="Saved Resume"
-                    name={app.applicant}
-                    contact={[
-                      "joywong1228@gmail.com",
-                      "+1 (519) XXX XXXX",
-                      app.location || "Calgary, AB",
-                    ]}
-                    bullets={[
-                      "Project Manager | AAA Company",
-                      "Intern | BBB Limited Company",
-                      "XXX | XXXXX",
-                    ]}
-                    // If you have a working link, pass it:
-                    // downloadUrl={app.resumeUrl}
-                    // Otherwise omit it, and the popup will appear.
-                  />
-                </div>
+                <SavedDocCard
+                  title="Saved Resume"
+                  name={`${app.first_name} ${app.last_name}`}
+                  contact={[
+                    app.email || "no-email",
+                    app.phone || "no-phone",
+                    app.location || "N/A",
+                  ]}
+                  bullets={[
+                    "Professional experience and education details unavailable (placeholder)",
+                  ]}
+                />
               </div>
 
-              {/* Cover Letter */}
               <SectionTitle>Cover Letter</SectionTitle>
               <div className="mb-6 flex justify-center">
                 <SavedDocCard
                   title="Saved Cover Letter"
-                  name={app.applicant}
-                  body={`Dear Hiring Manager,
-
-I'm excited to apply for the Web Development Internship at ABC Company...`}
-                  // downloadUrl={app.coverLetterUrl}
+                  name={`${app.first_name} ${app.last_name}`}
+                  body={`Dear Hiring Manager,\n\nI'm excited to apply for the position at ${app.company}. I believe my background aligns with your requirements...`}
                 />
-              </div>
-
-              {/* Additional Questions */}
-              <SectionTitle>Additional Question</SectionTitle>
-              <div className="border-t pt-4">
-                {app.additionalQuestions?.map((qa, i) => (
-                  <div key={i} className="mb-6">
-                    <div className="text-sm text-gray-600">{qa.question}</div>
-                    <div className="mt-1 font-semibold">{qa.answer}</div>
-                  </div>
-                )) || (
-                  <div className="text-sm text-gray-700">
-                    No questions answered.
-                  </div>
-                )}
               </div>
             </div>
           </section>
@@ -234,7 +212,7 @@ I'm excited to apply for the Web Development Internship at ABC Company...`}
 
         {openChat && (
           <ChatWindow
-            recipient={app.applicant}
+            recipient={`${app.first_name} ${app.last_name}`}
             onClose={() => setOpenChat(false)}
             onSend={(text) => console.log("send:", text)}
           />
@@ -251,6 +229,18 @@ I'm excited to apply for the Web Development Internship at ABC Company...`}
           />
         )}
       </main>
+
+      {showProfile && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="max-w-3xl w-full mx-4">
+            <UserDetailsCard
+              user={userDetails || app}
+              roleLabel="Member"
+              onClose={() => setShowProfile(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
