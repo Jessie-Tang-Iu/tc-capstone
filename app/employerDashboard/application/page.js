@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "../../components/BlankNavBar";
 import EmployerSidebar from "../../components/employerDashboard/EmployerSideBar";
 import ApplicationItem from "../../components/employerDashboard/EmployerApplicationItem";
-import applications from "../../data/applications.json";
 
 const IconChevronLeft = () => (
   <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
@@ -26,34 +25,75 @@ const IconChevronRight = () => (
 
 export default function ApplicationsPage() {
   const router = useRouter();
+  const [applications, setApplications] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   const pageSize = 5;
   const total = applications.length;
-
-  const [page, setPage] = useState(1);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const start = (page - 1) * pageSize;
   const end = Math.min(start + pageSize, total);
 
-  const rows = useMemo(() => applications.slice(start, end), [page]);
+  useEffect(() => {
+    const fetchApps = async () => {
+      try {
+        setLoading(true);
+
+        const resApp = await fetch(
+          `/api/application?employer_id=testEmployer1`
+        );
+        const apps = await resApp.json();
+
+        const resJob = await fetch(`/api/job?employer_id=testEmployer1`);
+        const jobs = await resJob.json();
+
+        const merged = apps.map((a) => {
+          const job = jobs.find((j) => String(j.id) === String(a.job_id));
+          return { ...a, job_title: job?.title || "Unknown Job" };
+        });
+
+        setApplications(merged);
+      } catch (err) {
+        console.error("Error fetching applications:", err);
+        setApplications([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchApps();
+
+    const handleFocus = () => fetchApps();
+    window.addEventListener("focus", handleFocus);
+
+    return () => window.removeEventListener("focus", handleFocus);
+  }, []);
+
+  const rows = useMemo(
+    () => applications.slice(start, end),
+    [applications, page]
+  );
+
+  if (loading)
+    return <div className="p-10 text-center text-black">Loading...</div>;
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
       <Navbar />
 
-      <main className="mx-auto w-full px-6 py-8  rounded-xl">
+      <main className="mx-auto w-full px-6 py-8 rounded-xl">
         <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
-          Employer DashBoard
+          Employer Dashboard
         </h1>
 
         <div className="flex gap-6">
           <EmployerSidebar />
 
           <section className="flex-1 rounded-xl bg-white shadow">
-            {/* Header */}
             <div className="flex items-center justify-between border-b px-4 py-3">
               <div className="text-sm font-semibold text-black">
-                Total Application: {total}
+                Total Applications: {total}
               </div>
               <div className="flex items-center gap-3 text-sm text-black">
                 <span>
@@ -78,26 +118,31 @@ export default function ApplicationsPage() {
               </div>
             </div>
 
-            {/* List */}
-            <ul className="divide-y">
-              {rows.map((row) => (
-                <li key={row.id} className="px-4 py-3">
-                  <ApplicationItem
-                    jobTitle={row.jobTitle}
-                    applicationNo={row.applicationNo}
-                    applicant={row.applicant}
-                    headline={row.headline}
-                    location={row.location}
-                    appliedAgo={row.appliedAgo}
-                    onManage={() =>
-                      router.push(`/employerDashboard/application/${row.id}`)
-                    }
-                  />
-                </li>
-              ))}
-            </ul>
-
-            <div className="border-t" />
+            {total === 0 ? (
+              <div className="p-6 text-gray-500 text-center">
+                No applications found.
+              </div>
+            ) : (
+              <ul className="divide-y">
+                {rows.map((row) => (
+                  <li key={row.id} className="px-4 py-3">
+                    <ApplicationItem
+                      jobTitle={row.job_title}
+                      applicationNo={row.id}
+                      applicant={`${row.first_name ?? ""} ${
+                        row.last_name ?? ""
+                      }`}
+                      status={row.status}
+                      location={row.location}
+                      appliedAgo={new Date(row.appliedAt).toLocaleDateString()}
+                      onManage={() =>
+                        router.push(`/employerDashboard/application/${row.id}`)
+                      }
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
         </div>
       </main>

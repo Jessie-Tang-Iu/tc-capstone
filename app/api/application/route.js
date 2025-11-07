@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { createApplication } from "@/backend/controllers/applicationsController";
+import {
+  createApplication,
+  getAllApplicationsController,
+} from "@/backend/controllers/applicationsController";
 
 // POST /api/application/user -> create the application
 export async function POST(req) {
@@ -13,5 +16,26 @@ export async function POST(req) {
     let status = e.message.includes("required") ? 400 : 500;
     status = e.message.includes("constraint") ? 450 : 500;
     return NextResponse.json({ error: e.message }, { status });
+  }
+}
+
+// GET /api/application?employer_id=<clerkId>
+export async function GET(req) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const employerId = searchParams.get("employer_id");
+
+    if (!employerId) {
+      return NextResponse.json(
+        { error: "employer_id required" },
+        { status: 400 }
+      );
+    }
+
+    const apps = await getAllApplicationsController(employerId);
+    return NextResponse.json(apps, { status: 200 });
+  } catch (e) {
+    console.error("GET /api/application failed:", e);
+    return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
