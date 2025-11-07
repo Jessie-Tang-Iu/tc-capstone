@@ -72,7 +72,7 @@ export default function EducationCard({ index, edu, setNewEdu, isLoading, setIsL
         {error && <p className="text-red-600 font-base">{error}</p>}
         {/* School */}
         <div className="mb-3">
-          <label className="block text-base md:text-lg font-normal text-black mb-2">School*</label>
+          <label className="block text-base  font-normal text-black mb-2">School*</label>
           <input
             type="text"
             value={education.school}
@@ -84,7 +84,7 @@ export default function EducationCard({ index, edu, setNewEdu, isLoading, setIsL
 
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-3 mb-3">
           <div>
-            <label className="block text-base md:text-lg font-normal text-black mb-2">Degree*</label>
+            <label className="block text-base  font-normal text-black mb-2">Degree*</label>
             <select
               value={education.degree}
               onChange={(e) => handleEducationChange('degree', e.target.value)}
@@ -98,7 +98,7 @@ export default function EducationCard({ index, edu, setNewEdu, isLoading, setIsL
             </select>
           </div>
           <div>
-            <label className="block text-base md:text-lg font-normal text-black mb-2">Field of study*</label>
+            <label className="block text-base  font-normal text-black mb-2">Field of study*</label>
             <select
               value={education.fieldOfStudy}
               onChange={(e) => handleEducationChange('fieldOfStudy', e.target.value)}
@@ -114,7 +114,7 @@ export default function EducationCard({ index, edu, setNewEdu, isLoading, setIsL
 
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-3 mb-3">
           <div>
-            <label className="block text-base md:text-lg font-normal text-black mb-2">Start year*</label>
+            <label className="block text-base  font-normal text-black mb-2">Start year*</label>
             <select
               value={education.startYear}
               onChange={(e) => handleEducationChange('startYear', e.target.value)}
@@ -127,7 +127,7 @@ export default function EducationCard({ index, edu, setNewEdu, isLoading, setIsL
             </select>
           </div>
           <div>
-            <label className="block text-base md:text-lg font-normal text-black mb-2">End year (expected year)*</label>
+            <label className="block text-base  font-normal text-black mb-2">End year (expected year)*</label>
             <select
               value={education.endYear}
               onChange={(e) => handleEducationChange('endYear', e.target.value)}

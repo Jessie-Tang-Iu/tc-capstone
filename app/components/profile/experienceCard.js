@@ -82,7 +82,7 @@ export default function ExperienceCard({ index, exp, setNewExp, isLoading, setIs
       <div>
         {error && <p className="text-red-600 font-base">{error}</p>}
         <div className="mb-3">
-          <label className="block text-base md:text-lg font-normal text-black mb-2">Company or organization*</label>
+          <label className="block text-base  font-normal text-black mb-2">Company or organization*</label>
           <input
             type="text"
             value={experience.company}
@@ -94,7 +94,7 @@ export default function ExperienceCard({ index, exp, setNewExp, isLoading, setIs
 
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-3 mb-3">
           <div>
-            <label className="block text-base md:text-lg font-normal text-black mb-2">Title*</label>
+            <label className="block text-base  font-normal text-black mb-2">Title*</label>
             <input
               type="text"
               value={experience.title}
@@ -104,7 +104,7 @@ export default function ExperienceCard({ index, exp, setNewExp, isLoading, setIs
             />
           </div>
           <div>
-            <label className="block text-base md:text-lg font-normal text-black mb-2">Employment type</label>
+            <label className="block text-base  font-normal text-black mb-2">Employment type</label>
             <select
               value={experience.type}
               onChange={(e) => handleExperienceChange('type', e.target.value)}
@@ -130,7 +130,7 @@ export default function ExperienceCard({ index, exp, setNewExp, isLoading, setIs
 
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-3 mb-3">
           <div>
-            <label className="block text-base md:text-lg font-normal text-black mb-2">Start month*</label>
+            <label className="block text-base  font-normal text-black mb-2">Start month*</label>
             <select
               value={experience.startMonth}
               onChange={(e) => handleExperienceChange('startMonth', e.target.value)}
@@ -143,7 +143,7 @@ export default function ExperienceCard({ index, exp, setNewExp, isLoading, setIs
             </select>
           </div>
           <div>
-            <label className="block text-black text-base md:text-lg mb-2">Start year*</label>
+            <label className="block text-black text-base  mb-2">Start year*</label>
             <select
               value={experience.startYear}
               onChange={(e) => handleExperienceChange('startYear', e.target.value)}
@@ -158,7 +158,7 @@ export default function ExperienceCard({ index, exp, setNewExp, isLoading, setIs
         </div>
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-3 mb-3">
           <div>
-            <label className="block text-base md:text-lg font-normal text-black mb-2">End month</label>
+            <label className="block text-base  font-normal text-black mb-2">End month</label>
             <select
               value={experience.endMonth}
               onChange={(e) => handleExperienceChange('endMonth', e.target.value)}
@@ -171,7 +171,7 @@ export default function ExperienceCard({ index, exp, setNewExp, isLoading, setIs
             </select>
           </div>
           <div>
-            <label className="block text-black text-base md:text-lg mb-2">End year</label>
+            <label className="block text-black text-base  mb-2">End year</label>
             <select
               value={experience.endYear}
               onChange={(e) => handleExperienceChange('endYear', e.target.value)}
@@ -186,7 +186,7 @@ export default function ExperienceCard({ index, exp, setNewExp, isLoading, setIs
         </div>
 
         <div className="mb-2">
-          <label className="block text-base md:text-lg font-normal text-black mb-2">Description</label>
+          <label className="block text-base  font-normal text-black mb-2">Description</label>
           <textarea
             value={experience.description}
             onChange={(e) => handleExperienceChange('description', e.target.value)}

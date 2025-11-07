@@ -45,7 +45,7 @@ export default function CertificationCard({ index, cert, setNewCert, isLoading, 
             setSelectedCert(null); }}
         >
           <div className="flex-1">
-            <label className="inline-block w-25 text-base md:text-lg font-normal text-black">Name:</label>
+            <label className="inline-block w-25 text-base  font-normal text-black">Name:</label>
             <input
               required
               type="text"

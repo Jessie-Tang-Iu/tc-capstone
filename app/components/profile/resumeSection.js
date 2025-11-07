@@ -211,7 +211,7 @@ export default function Resume({
         <div>
           {/* Summary */}
           <div>
-            <label className="block text-base md:text-lg font-bold text-black mb-2">
+            <label className="block text-base  font-bold text-black mb-2">
               Summary
             </label>
             <textarea
@@ -229,7 +229,7 @@ export default function Resume({
           {/* Education */}
           <div>
             <div className="flex justify-between items-center mb-2">
-              <h2 className="block text-base md:text-lg font-bold text-black mb-3">
+              <h2 className="block text-base  font-bold text-black mb-3">
                 Education
               </h2>
               <button
@@ -258,7 +258,7 @@ export default function Resume({
           {/* Work Experience */}
           <div className="mt-10">
             <div className="flex justify-between items-center mb-2">
-              <h2 className="block text-base md:text-lg font-bold text-black mb-3">
+              <h2 className="block text-base  font-bold text-black mb-3">
                 Work Experience
               </h2>
               <button
@@ -287,7 +287,7 @@ export default function Resume({
           {/* Skills */}
           <div className="mt-10">
             <div className="flex justify-between items-center mb-2">
-              <h2 className="block text-base md:text-lg font-bold text-black mb-3">
+              <h2 className="block text-base  font-bold text-black mb-3">
                 Skill
               </h2>
               <button
@@ -316,7 +316,7 @@ export default function Resume({
           {/* Certification */}
           <div className="mt-10">
             <div className="flex justify-between items-center mb-2">
-              <h2 className="block text-base md:text-lg font-bold text-black mb-3">
+              <h2 className="block text-base  font-bold text-black mb-3">
                 Certifications
               </h2>
               <button
@@ -344,7 +344,7 @@ export default function Resume({
 
           {/* Additional information */}
           <div className="mt-10">
-            <label className="block text-base md:text-lg font-bold text-black mb-2">
+            <label className="block text-base  font-bold text-black mb-2">
               Additional Information
             </label>
             <textarea
