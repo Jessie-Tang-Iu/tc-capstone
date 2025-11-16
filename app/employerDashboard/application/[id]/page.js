@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import Navbar from "../../../components/BlankNavBar";
+import Navbar from "@/app/components/EmployerNavBar";
 import EmployerSidebar from "../../../components/employerDashboard/EmployerSideBar";
 import ChatWindow from "@/app/components/ChatWindow";
 import PopupMessage from "@/app/components/ui/PopupMessage";
