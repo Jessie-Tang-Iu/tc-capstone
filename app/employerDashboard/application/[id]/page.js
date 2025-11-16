@@ -148,7 +148,7 @@ export default function ApplicationDetailsPage() {
                   onClick={() => router.push("/employerDashboard/application")}
                   className="rounded-md bg-[#F3E1D5] px-4 py-2 text-sm font-semibold text-black hover:opacity-90 active:scale-[0.98] transition"
                 >
-                  Cancel
+                  Back
                 </button>
               </div>
             </div>

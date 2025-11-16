@@ -175,3 +175,30 @@ export async function getAllApplications(employerId) {
 
   return rows;
 }
+
+export async function getAllApplicationsbyEmployer(employerId) {
+  const { rows } = await query(
+    `
+    SELECT 
+      ap.id, 
+      ap.status, 
+      ap.applied_at AS "appliedAt",
+      u.first_name, 
+      u.last_name, 
+      u.email, 
+      u.phone,
+      jb.title AS job_title,
+      jb.location,
+      e.company_name AS company
+    FROM application ap
+    JOIN users u ON u.clerk_id = ap.user_id
+    JOIN job jb ON jb.id = ap.job_id
+    JOIN employers e ON e.clerk_id = jb.employer_id
+    WHERE jb.employer_id = $1
+    ORDER BY ap.applied_at DESC
+  `,
+    [employerId]
+  );
+
+  return rows;
+}
