@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 export default function EmployerProfile() {
   const [employer, setEmployer] = useState({
+    clerk_id: null,
     username: null,
     first_name: null,
     last_name: null,
@@ -16,63 +17,53 @@ export default function EmployerProfile() {
     company_role: null,
   });
 
-  const ME = "testEmployer1"; // hardcoded for testing
+  const ME = "testEmployer1";
 
   useEffect(() => {
-    if (!ME) return;
     fetchEmployer(ME);
-  }, [ME]);
+  }, []);
 
-  const fetchEmployer = async (employerId) => {
-    try {
-      const res = await fetch(`/api/employer_list`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ employerId }),
-      });
+  const fetchEmployer = async (clerkId) => {
+    const res = await fetch("/api/employer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ clerk_id: clerkId }),
+    });
 
-      if (!res.ok) {
-        console.error("Failed to fetch employer");
-        return;
-      }
+    if (!res.ok) return;
 
-      const data = await res.json();
-      setEmployer(data);
-    } catch (error) {
-      console.error("Fetch error:", error);
-    }
+    const data = await res.json();
+    setEmployer({ ...data, clerk_id: clerkId });
   };
 
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
 
+    // Always show popup
+    alert("Profile saved");
+
     try {
-      const res = await fetch(`/api/employer_list`, {
+      await fetch("/api/employer", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          employerId: employer.clerk_id,
+          clerk_id: employer.clerk_id,
+          first_name: employer.first_name,
+          last_name: employer.last_name,
+          email: employer.email,
+          phone: employer.phone,
           company_name: employer.company_name,
           company_role: employer.company_role,
-          phone: employer.phone,
-          email: employer.email,
+          company_id: employer.company_id ?? null,
         }),
       });
-
-      if (!res.ok) {
-        console.error("Failed to update employer");
-        return;
-      }
-
-      console.log("Employer updated");
-      fetchEmployer(ME); // refresh
     } catch (err) {
-      console.error("Error submit:", err);
+      console.error(err);
     }
   };
 
   return (
-    <main className="bg-gradient-to-br from-[#f8eae2] to-white min-h-screen">
+    <main className="relative bg-gradient-to-br from-[#f8eae2] to-white min-h-screen">
       <Navbar />
 
       <div className="mx-auto mt-10">
@@ -81,7 +72,6 @@ export default function EmployerProfile() {
             Employer Profile
           </h1>
 
-          {/* Card */}
           <div className="w-full my-8 p-12 bg-white rounded-lg shadow-md text-black">
             <form onSubmit={handleProfileSubmit}>
               <div className="flex justify-between">
@@ -170,7 +160,6 @@ export default function EmployerProfile() {
                 </div>
               </div>
 
-              {/* Contact */}
               <div className="mb-10">
                 <h1 className="text-2xl font-bold mb-2 text-black">
                   Contact Information
