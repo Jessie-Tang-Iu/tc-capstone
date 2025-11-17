@@ -27,3 +27,8 @@ export async function updateApplicationStatus(id, status) {
 export async function getAllApplicationsController(id) {
   return await apps.getAllApplications(id);
 }
+
+export async function getAllApplicationsbyEmployerController(id) {
+  if (!employerId) throw new Error("Missing employer ID");
+  return await apps.getAllApplicationsbyEmployer(id);
+}

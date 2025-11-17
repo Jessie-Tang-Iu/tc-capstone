@@ -2,20 +2,21 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import Navbar from "../../components/BlankNavBar";
+import Navbar from "@/app/components/EmployerNavBar";
 import EmployerSidebar from "../../components/employerDashboard/EmployerSideBar";
 import ApplicationItem from "../../components/employerDashboard/EmployerApplicationItem";
 
 const IconChevronLeft = () => (
-  <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
+  <svg viewBox="0 0 24 24" className="h-5 w-5">
     <path
       fill="currentColor"
       d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"
     />
   </svg>
 );
+
 const IconChevronRight = () => (
-  <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
+  <svg viewBox="0 0 24 24" className="h-5 w-5">
     <path
       fill="currentColor"
       d="M8.59 16.59 10 18l6-6-6-6-1.41 1.41L13.17 12z"
@@ -40,17 +41,27 @@ export default function ApplicationsPage() {
       try {
         setLoading(true);
 
+        const employerId = "testEmployer1";
+
+        // fetch applications
         const resApp = await fetch(
-          `/api/application?employer_id=testEmployer1`
+          `/api/application?employer_id=${employerId}`
         );
+        if (!resApp.ok) throw new Error("Failed to fetch applications");
         const apps = await resApp.json();
 
-        const resJob = await fetch(`/api/job?employer_id=testEmployer1`);
+        // fetch jobs
+        const resJob = await fetch(`/api/job?employer_id=${employerId}`);
+        if (!resJob.ok) throw new Error("Failed to fetch jobs");
         const jobs = await resJob.json();
 
+        // merge
         const merged = apps.map((a) => {
-          const job = jobs.find((j) => String(j.id) === String(a.job_id));
-          return { ...a, job_title: job?.title || "Unknown Job" };
+          const job = jobs.find((j) => Number(j.id) === Number(a.job_id));
+          return {
+            ...a,
+            job_title: job?.title || "Unknown Job",
+          };
         });
 
         setApplications(merged);
@@ -64,6 +75,7 @@ export default function ApplicationsPage() {
 
     fetchApps();
 
+    // Re-fetch when returning to tab
     const handleFocus = () => fetchApps();
     window.addEventListener("focus", handleFocus);
 
@@ -75,8 +87,9 @@ export default function ApplicationsPage() {
     [applications, page]
   );
 
-  if (loading)
+  if (loading) {
     return <div className="p-10 text-center text-black">Loading...</div>;
+  }
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
@@ -95,23 +108,24 @@ export default function ApplicationsPage() {
               <div className="text-sm font-semibold text-black">
                 Total Applications: {total}
               </div>
+
               <div className="flex items-center gap-3 text-sm text-black">
                 <span>
                   {start + 1} - {end}
                 </span>
+
                 <button
                   className="rounded-md p-1 hover:bg-gray-100"
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  aria-label="Previous page"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
                 >
                   <IconChevronLeft />
                 </button>
+
                 <button
                   className="rounded-md p-1 hover:bg-gray-100"
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  aria-label="Next page"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 >
                   <IconChevronRight />
                 </button>
@@ -134,7 +148,11 @@ export default function ApplicationsPage() {
                       }`}
                       status={row.status}
                       location={row.location}
-                      appliedAgo={new Date(row.appliedAt).toLocaleDateString()}
+                      appliedAgo={
+                        row.appliedAt
+                          ? new Date(row.appliedAt).toLocaleDateString()
+                          : "N/A"
+                      }
                       onManage={() =>
                         router.push(`/employerDashboard/application/${row.id}`)
                       }
