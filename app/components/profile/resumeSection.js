@@ -1,3 +1,4 @@
+import { Plus } from 'lucide-react';
 import { useState } from "react";
 import ExperienceCard from "./experienceCard";
 import SkillCard from "./skillCard";
@@ -186,32 +187,28 @@ export default function Resume({
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-2xl md:text-2xl font-bold text-black mb-6">
-          TC Alberta Resume
-        </h2>
-        {addResume ? (
+      {addResume && 
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-semibold text-[#E55B3C]">
+            TC Alberta Resume
+          </h2>
           <button
-            className="text-sm mb-6 px-6 py-2 bg-[#E55B3C] hover:bg-[#d14f32] font-semibold rounded-md transition duration-200 cursor-pointer focus:outline-none active:scale-95 text-white"
+            className="text-sm px-6 py-2 bg-[#E55B3C] hover:bg-[#d14f32] font-semibold rounded-md transition duration-200 cursor-pointer focus:outline-none active:scale-95 text-white"
             onClick={() => setAddResume(!addResume)}
           >
             Add
           </button>
-        ) : (
-          <button
-            className="text-sm mb-6 px-6 py-2 bg-[#E55B3C] hover:bg-[#d14f32] font-semibold rounded-md transition duration-200 cursor-pointer focus:outline-none active:scale-95 text-white"
-            onClick={onSave}
-          >
-            Save
-          </button>
-        )}
-      </div>
+        </div>
+      }
 
       {!addResume && (
         <div>
+          <div className="mb-4 text-2xl font-semibold text-[#E55B3C] text-center">
+            TC Alberta Resume
+          </div>
           {/* Summary */}
-          <div>
-            <label className="block text-base  font-bold text-black mb-2">
+          <div className="mb-4">
+            <label className="block text-xs text-gray-700 font-medium mb-1">
               Summary
             </label>
             <textarea
@@ -219,24 +216,25 @@ export default function Resume({
               onChange={(e) => handleResumeChange("summary", e.target.value)}
               placeholder="List your major duties and successes, highlighting specific projects"
               rows={3}
-              className="w-full px-4 py-2 text-black bg-white rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
             />
-            <div className="text-right text-sm text-gray-500 mt-1 w-full">
+            <div className="text-right text-xs text-gray-500 mr-1 w-full">
               {resumeData.summary.length} / 500
             </div>
           </div>
 
           {/* Education */}
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="block text-base  font-bold text-black mb-3">
+          <div className="mb-5">
+            <div className="flex justify-between items-center mb-1">
+              <h2 className="block text-xs text-gray-700 font-medium mt-2">
                 Education
               </h2>
-              <button
-                className="text-[#E55B3C] text-base font-bold hover:underline mr-1"
+              <button 
                 onClick={handleAddEducation}
+                className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-xs font-bold text-white rounded-md hover:bg-green-700 transition"
               >
-                Add
+                <Plus size={12} /> {/* The 'Plus' icon */}
+                <span>Add</span>
               </button>
             </div>
 
@@ -256,16 +254,17 @@ export default function Resume({
           </div>
 
           {/* Work Experience */}
-          <div className="mt-10">
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="block text-base  font-bold text-black mb-3">
+          <div className="mb-5">
+            <div className="flex justify-between items-center mb-1">
+              <h2 className="block text-xs text-gray-700 font-medium mt-2">
                 Work Experience
               </h2>
-              <button
-                className="text-[#E55B3C] text-base font-bold hover:underline mr-1"
+              <button 
                 onClick={handleAddExperience}
+                className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-xs font-bold text-white rounded-md hover:bg-green-700 transition"
               >
-                Add
+                <Plus size={12} /> {/* The 'Plus' icon */}
+                <span>Add</span>
               </button>
             </div>
 
@@ -285,16 +284,17 @@ export default function Resume({
           </div>
 
           {/* Skills */}
-          <div className="mt-10">
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="block text-base  font-bold text-black mb-3">
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-1">
+              <h2 className="block text-xs text-gray-700 font-medium mt-2">
                 Skill
               </h2>
-              <button
-                className="text-[#E55B3C] text-base font-bold hover:underline mr-1"
+              <button 
                 onClick={handleAddSkill}
+                className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-xs font-bold text-white rounded-md hover:bg-green-700 transition"
               >
-                Add
+                <Plus size={12} /> {/* The 'Plus' icon */}
+                <span>Add</span>
               </button>
             </div>
 
@@ -314,16 +314,17 @@ export default function Resume({
           </div>
 
           {/* Certification */}
-          <div className="mt-10">
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="block text-base  font-bold text-black mb-3">
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-1">
+              <h2 className="block text-xs text-gray-700 font-medium mt-2">
                 Certifications
               </h2>
-              <button
-                className="text-[#E55B3C] text-base font-bold hover:underline mr-1"
+              <button 
                 onClick={handleAddCert}
+                className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-xs font-bold text-white rounded-md hover:bg-green-700 transition"
               >
-                Add
+                <Plus size={12} /> {/* The 'Plus' icon */}
+                <span>Add</span>
               </button>
             </div>
 
@@ -343,8 +344,8 @@ export default function Resume({
           </div>
 
           {/* Additional information */}
-          <div className="mt-10">
-            <label className="block text-base  font-bold text-black mb-2">
+          <div className="mb-4">
+            <label className="block text-xs text-gray-700 font-medium mb-1">
               Additional Information
             </label>
             <textarea
@@ -354,11 +355,19 @@ export default function Resume({
               }
               placeholder="List your major duties and successes, highlighting specific projects"
               rows={3}
-              className="w-full px-4 py-2 text-black bg-white rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
             />
-            <div className="text-right text-sm text-gray-500 mt-1 w-full">
+            <div className="text-right text-xs text-gray-500 mr-1 w-full">
               {resumeData.additional_info.length} / 500
             </div>
+          </div>
+          <div className="flex justify-center">
+            <button
+              className="text-sm px-6 py-2 bg-[#E55B3C] hover:bg-[#d14f32] font-semibold rounded-md transition duration-200 cursor-pointer focus:outline-none active:scale-95 text-white"
+              onClick={onSave}
+            >
+              Save
+            </button>
           </div>
         </div>
       )}
