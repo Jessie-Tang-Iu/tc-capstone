@@ -6,6 +6,7 @@ import Section from "@/app/components/adminDashboard/Section";
 import UserRow from "@/app/components/adminDashboard/UserRow";
 import PlaceholderCard from "@/app/components/adminDashboard/PlaceholderCard";
 import ChatWindow from "@/app/components/ChatWindow";
+import { useRouter } from "next/navigation";
 
 export default function UsersPanel({ onShowDetails }) {
   const [query, setQuery] = useState("");
@@ -14,6 +15,8 @@ export default function UsersPanel({ onShowDetails }) {
   const [usersByRole, setUsersByRole] = useState({});
   const [activeTab, setActiveTab] = useState("admin");
   const [fetchedRoles, setFetchedRoles] = useState({});
+
+  const router = useRouter();
 
   const roles = [
     { key: "admin", label: "Admins" },
@@ -148,6 +151,8 @@ export default function UsersPanel({ onShowDetails }) {
                 subtitle={`${u.username ?? ""} | ${u.email ?? ""}`}
                 status={u.status}
                 onMessage={() => openMessage(u.clerk_id)}
+                role={activeTab}
+                onInvestigate={() => {router.push(`/advisorDashboard?advisorId=${u.clerk_id}`)}}
                 onDetails={() =>
                   showDetails(u, roles.find((r) => r.key === activeTab)?.label)
                 }
