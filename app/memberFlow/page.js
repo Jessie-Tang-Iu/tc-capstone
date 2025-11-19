@@ -26,6 +26,8 @@ function PageContent() {
     return null;
   }
 
+  const userID = user?.id;
+
   const MOCK_MESSAGES = [
     {
       id: 1,
@@ -69,7 +71,7 @@ function PageContent() {
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Your Messages
             </h2>
-            <MessagePage messageList={MOCK_MESSAGES} />
+            <MessagePage currentUserId={userID} />
           </section>
         </div>
       </main>
