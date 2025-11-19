@@ -1,7 +1,7 @@
 "use client";
 
 import { useSignUp } from "@clerk/nextjs";
-import { useAuth } from "@clerk/nextjs"
+import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
@@ -44,14 +44,14 @@ export default function ClerkSignUp() {
           await setActive({ session: result.createdSessionId });
         }
 
-        const token = await getToken({ template: "backend" }); 
+        const token = await getToken({ template: "backend" });
 
         await fetch("/api/users/metadata", {
           method: "POST",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-           },
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify({
             role: "member",
             username: username,
@@ -73,7 +73,6 @@ export default function ClerkSignUp() {
       setLoading(false);
     }
   };
-
 
   return (
     <div className="flex justify-center items-center">

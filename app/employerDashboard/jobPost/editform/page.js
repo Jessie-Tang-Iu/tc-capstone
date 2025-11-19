@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import Navbar from "@/app/components/BlankNavBar";
+import Navbar from "@/app/components/EmployerNavBar";
 import EmployerSidebar from "@/app/components/employerDashboard/EmployerSideBar";
 import PopupMessage from "@/app/components/ui/PopupMessage";
 
@@ -279,71 +279,77 @@ export default function JobPostEditForm() {
 
                 <HeaderButton onClick={handleSave}>Save</HeaderButton>
 
-                {/* Toggle Active / Inactive */}
-                {jobData?.status === "I" ? (
-                  <HeaderButton
-                    kind="solid"
-                    onClick={async () => {
-                      if (!confirm("Reopen this job post?")) return;
-                      try {
-                        const res = await fetch(`/api/job/${jobId}`, {
-                          method: "PATCH",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ status: "A" }),
-                        });
-                        if (!res.ok) throw new Error("Failed to reopen job");
-                        alert("Job reopened successfully");
-                        router.push("/employerDashboard/jobPost");
-                      } catch (err) {
-                        alert("Error reopening job: " + err.message);
-                      }
-                    }}
-                  >
-                    Reopen Job
-                  </HeaderButton>
-                ) : (
-                  <HeaderButton
-                    kind="ghost"
-                    onClick={async () => {
-                      if (!confirm("Are you sure you want to close this job?"))
-                        return;
-                      try {
-                        const res = await fetch(`/api/job/${jobId}`, {
-                          method: "PATCH",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ status: "I" }),
-                        });
-                        if (!res.ok) throw new Error("Failed to close job");
-                        alert("Job closed successfully");
-                        router.push("/employerDashboard/jobPost");
-                      } catch (err) {
-                        alert("Error closing job: " + err.message);
-                      }
-                    }}
-                  >
-                    Close Job
-                  </HeaderButton>
-                )}
+                {isEdit && (
+                  <>
+                    {jobData?.status === "I" ? (
+                      <HeaderButton
+                        kind="solid"
+                        onClick={async () => {
+                          if (!confirm("Reopen this job post?")) return;
+                          try {
+                            const res = await fetch(`/api/job/${jobId}`, {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ status: "A" }),
+                            });
+                            if (!res.ok)
+                              throw new Error("Failed to reopen job");
+                            alert("Job reopened successfully");
+                            router.push("/employerDashboard/jobPost");
+                          } catch (err) {
+                            alert("Error reopening job: " + err.message);
+                          }
+                        }}
+                      >
+                        Reopen Job
+                      </HeaderButton>
+                    ) : (
+                      <HeaderButton
+                        kind="ghost"
+                        onClick={async () => {
+                          if (
+                            !confirm("Are you sure you want to close this job?")
+                          )
+                            return;
+                          try {
+                            const res = await fetch(`/api/job/${jobId}`, {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ status: "I" }),
+                            });
+                            if (!res.ok) throw new Error("Failed to close job");
+                            alert("Job closed successfully");
+                            router.push("/employerDashboard/jobPost");
+                          } catch (err) {
+                            alert("Error closing job: " + err.message);
+                          }
+                        }}
+                      >
+                        Close Job
+                      </HeaderButton>
+                    )}
 
-                {/* Delete Job */}
-                <button
-                  className="px-6 py-2 rounded-md text-sm font-semibold bg-red-500 text-white hover:opacity-90 transition cursor-pointer"
-                  onClick={async () => {
-                    if (!confirm("Permanently delete this job post?")) return;
-                    try {
-                      const res = await fetch(`/api/job/${jobId}`, {
-                        method: "DELETE",
-                      });
-                      if (!res.ok) throw new Error("Failed to delete job");
-                      alert("Job deleted successfully");
-                      router.push("/employerDashboard/jobPost");
-                    } catch (err) {
-                      alert("Error deleting job: " + err.message);
-                    }
-                  }}
-                >
-                  Delete
-                </button>
+                    <button
+                      className="px-6 py-2 rounded-md text-sm font-semibold bg-red-500 text-white hover:opacity-90 transition cursor-pointer"
+                      onClick={async () => {
+                        if (!confirm("Permanently delete this job post?"))
+                          return;
+                        try {
+                          const res = await fetch(`/api/job/${jobId}`, {
+                            method: "DELETE",
+                          });
+                          if (!res.ok) throw new Error("Failed to delete job");
+                          alert("Job deleted successfully");
+                          router.push("/employerDashboard/jobPost");
+                        } catch (err) {
+                          alert("Error deleting job: " + err.message);
+                        }
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
               </div>
             </div>
 
