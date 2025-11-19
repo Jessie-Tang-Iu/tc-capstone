@@ -85,7 +85,7 @@ export default function UserRow({
               onClick={onInvestigate}
               className="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 active:scale-[0.98] transition"
             >
-              investigate
+              Investigate
             </button>
             )
           }
