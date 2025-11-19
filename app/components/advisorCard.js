@@ -31,7 +31,7 @@ export default function AdvisorCard({ advisor }) {
                     <div className="text-start">
                         <p className='font-bold text-[20px] mb-2'>{advisor.first_name} {advisor.last_name}</p>
                         <p className='text-gray-500'>{ advisor.company_role || "Front-end Developer" }</p>
-                        <p className='text-gray-500 mb-2'>10+ years experience</p>
+                        <p className='text-gray-500 mb-2'>{ advisor.company_name }</p>
                     </div>
                 </div>
                 
