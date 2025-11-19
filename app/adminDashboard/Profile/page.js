@@ -6,29 +6,32 @@ import { useEffect, useState } from "react";
 
 export default function AdminProfile() {
   const [admin, setAdmin] = useState({
+    clerk_id: null,
     username: null,
     first_name: null,
     last_name: null,
     email: null,
     phone: null,
-    role: "Admin",
+    role: "admin",
     office_location: null,
     department: null,
   });
 
-  const ME = "testAdmin1"; // testing without login
+  // TEMP hardcoded admin ID
+  const ME = "testAdmin1";
 
   useEffect(() => {
     if (!ME) return;
     fetchAdmin(ME);
   }, [ME]);
 
-  const fetchAdmin = async (adminId) => {
+  // Fetch admin data
+  const fetchAdmin = async (userId) => {
     try {
-      const res = await fetch(`/api/admin_list`, {
+      const res = await fetch(`/api/admin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ adminId }),
+        body: JSON.stringify({ userId }),
       });
 
       if (!res.ok) {
@@ -43,11 +46,14 @@ export default function AdminProfile() {
     }
   };
 
+  // Update admin profile
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
 
-    const profilePayload = {
-      adminId: admin.clerk_id,
+    alert("Profile saved");
+
+    const payload = {
+      userId: admin.clerk_id,
       first_name: admin.first_name,
       last_name: admin.last_name,
       email: admin.email,
@@ -57,10 +63,10 @@ export default function AdminProfile() {
     };
 
     try {
-      const res = await fetch(`/api/admin_list`, {
+      const res = await fetch(`/api/admin`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(profilePayload),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -68,7 +74,7 @@ export default function AdminProfile() {
         return;
       }
 
-      fetchAdmin(ME); // refresh
+      fetchAdmin(ME);
     } catch (err) {
       console.error("Update error:", err);
     }
@@ -91,12 +97,10 @@ export default function AdminProfile() {
                     Personal Information
                   </h1>
 
-                  {/* First / Last Name */}
+                  {/* First / Last */}
                   <div className="flex flex-row space-x-4">
                     <div className="flex flex-col">
-                      <label className="text-black font-bold">
-                        First Name: *
-                      </label>
+                      <label className="font-bold">First Name: *</label>
                       <input
                         required
                         className="border rounded border-black mb-6 p-1"
@@ -109,9 +113,7 @@ export default function AdminProfile() {
                     </div>
 
                     <div className="flex flex-col">
-                      <label className="text-black font-bold">
-                        Last Name: *
-                      </label>
+                      <label className="font-bold">Last Name: *</label>
                       <input
                         required
                         className="border rounded border-black mb-6 p-1"
@@ -126,9 +128,7 @@ export default function AdminProfile() {
 
                   {/* Department */}
                   <div className="flex flex-col">
-                    <label className="text-black font-bold">
-                      Department: *
-                    </label>
+                    <label className="font-bold">Department: *</label>
                     <input
                       required
                       className="border rounded border-black mb-6 p-1"
@@ -140,20 +140,15 @@ export default function AdminProfile() {
                     />
                   </div>
 
-                  {/* Office Location */}
+                  {/* Office */}
                   <div className="flex flex-col">
-                    <label className="text-black font-bold">
-                      Office Location:
-                    </label>
+                    <label className="font-bold">Office Location:</label>
                     <input
                       className="border rounded border-black mb-6 p-1"
                       type="text"
                       value={admin.office_location || ""}
                       onChange={(e) =>
-                        setAdmin({
-                          ...admin,
-                          office_location: e.target.value,
-                        })
+                        setAdmin({ ...admin, office_location: e.target.value })
                       }
                     />
                   </div>
@@ -165,14 +160,14 @@ export default function AdminProfile() {
                 </div>
               </div>
 
-              {/* Contact Info */}
+              {/* Contact */}
               <div className="mb-10">
                 <h1 className="text-2xl text-black font-bold mb-2">
                   Contact Information
                 </h1>
 
                 <div className="flex flex-row space-x-2 mb-6 items-center">
-                  <label className="text-black">Phone:</label>
+                  <label className="">Phone:</label>
                   <input
                     className="border rounded border-black p-1"
                     type="text"
@@ -184,7 +179,7 @@ export default function AdminProfile() {
                 </div>
 
                 <div className="flex flex-row space-x-2 mb-6 items-center">
-                  <label className="text-black">Email: *</label>
+                  <label>Email: *</label>
                   <input
                     required
                     className="border rounded border-black p-1"
