@@ -147,7 +147,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
     if (type == "cover_letter") { const cvContent = file.content.split('\\n'); }
     return (file && !file.error) && (
     <div className="w-full h-115 max-w-sm rounded-2xl bg-white">
-      <div className="w-full flex px-2 py-2 justify-center bg-[#E55B3C] rounded-t-2xl">
+      <div className="w-full flex px-2 py-2 justify-center bg-[#E55B3C]/90 rounded-t-2xl">
         <div className="text-white text-base font-bold mt-2 ml-2 flex-3">Database {type == "resume" ? "Resume" : "Cover Letter"}</div>
         <button  
           className="text-white hover:bg-[#d14f32] py-2 px-2 rounded-full transition-colors"
@@ -425,7 +425,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                     {formData.resume_name && (
                       <div className="flex-1 items-center gap-2 mr-4">
                         <span className="inline-flex items-center justify-center py-1 mr-2 px-2 rounded bg-orange-100 text-[#E55B3C] text-xs font-bold">{formData.resume_name.split('.').pop().toUpperCase()}</span>
-                        <span className="text-xs bg-white px-2 py-1 font-bold rounded truncate">{formData.resume_name}</span>
+                        <span className="text-xs text-black bg-white px-2 py-1 font-bold rounded truncate">{formData.resume_name}</span>
                       </div>
                     )} 
                     <button 
@@ -447,7 +447,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                     {formData.cover_letter_name && (
                       <div className="flex-1 items-center gap-2 mr-4">
                         <span className="inline-flex items-center justify-center py-1 mr-2 px-2 rounded bg-orange-100 text-[#E55B3C] text-xs font-bold">{formData.cover_letter_name.split('.').pop().toUpperCase()}</span>
-                        <span className="text-xs bg-white px-2 py-1 font-bold rounded truncate">{formData.cover_letter_name}</span>
+                        <span className="text-xs text-black bg-white px-2 py-1 font-bold rounded truncate">{formData.cover_letter_name}</span>
                       </div>
                     )}
                     <button 
