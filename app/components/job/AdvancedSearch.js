@@ -1,35 +1,11 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { X } from "lucide-react";
 import jobFilters from "../../data/filterForJob.json";
 
-export default function AdvancedSearch({ filters, setFilters, onClose }) {
+export default function AdvancedSearch({ experience, industries, types, workplaces, filters, setFilters, onClose }) {
     const formRef = useRef(null);
-
-    const [experience, setExperience] = useState([]);
-    const [types, setTypes] = useState([]);
-    const [industries, setIndustries] = useState([]);
-    const [workplaces, setWorkplaces] = useState([]);
-
-    useEffect(() => {
-        fetch('api/job/experience')
-            .then((res) => res.json())
-            .then((data) => setExperience(data))
-            .catch((err) => console.log("Failed to fetch job experience: ", err));
-        fetch('api/job/industries')
-            .then((res) => res.json())
-            .then((data) => setIndustries(data))
-            .catch((err) => console.log("Failed to fetch job industries: ", err));
-        fetch('api/job/types')
-            .then((res) => res.json())
-            .then((data) => setTypes(data))
-            .catch((err) => console.log("Failed to fetch job types: ", err));
-        fetch('api/job/workplaces')
-            .then((res) => res.json())
-            .then((data) => setWorkplaces(data))
-            .catch((err) => console.log("Failed to fetch job workplaces: ", err));
-    }, [])
 
     const clearAll = () => {
         const form = formRef.current;
