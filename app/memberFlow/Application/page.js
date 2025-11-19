@@ -178,7 +178,7 @@ export default function Applications() {
                         ${showAppDetail ? "hidden md:block" : "block"}
                         h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto`}
           >
-            <div className="px-2 md:px-4 py-2">
+            <div className="px-2 py-1 space-y-2">
               {applications.map((app) => (
                 <ApplyCard
                   key={app.id}
@@ -195,18 +195,18 @@ export default function Applications() {
 
           {/* Job Detail Panel */}
           <div
-            className={`flex-1 py-2
-                                ${showAppDetail ? "block" : "hidden md:block"}
-                                h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] relative`}
+            className={`flex-1 pl-2 py-1
+                        ${showAppDetail ? "block" : "hidden md:block"}
+                        h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] relative`}
           >
             {/* Mobile Back Button */}
             <button
               onClick={handleBackToList}
               className="md:hidden top-4 ml-5 z-10 text-black rounded-lg text-sm font-normal hover:underline transition-colors"
             >
-              {"< Back to Applications"}
+              ← Back to Applications
             </button>
-            <div className="mt-5 md:mt-0 h-full">
+            <div className="mt-5 md:mt-0 h-full rounded-lg">
               <AppDetail
                 app={selectedApp}
                 resume={resume}

@@ -21,11 +21,11 @@ const statusOptions = {
 
 const LabelValue = ({ label, value }) => (
   <div className="border border-gray-200 rounded-md p-3 bg-white">
-    <div className="text-xs text-gray-600 mb-1">{label}</div>
+    <div className="text-xs font-bold text-gray-600 mb-1">{label}</div>
 
     {/* if value is a string */}
     {typeof value == 'string' && (
-      <div className="text-sm font-bold text-black break-words">
+      <div className="text-sm font-medium text-black break-words">
         {value ? `${value}` : "—"}
       </div>
     )}
@@ -50,7 +50,7 @@ const LabelValue = ({ label, value }) => (
           return (
           <span
             key={index}
-            className="px-2 py-1 bg-gray-200 rounded text-sm font-bold text-black"
+            className="px-2 py-1 bg-gray-200 rounded text-sm font-medium text-black"
           >{information}</span>
           );
         })}
@@ -142,11 +142,10 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
       <div className="p-4 md:p-6 space-y-6">
         {/* Application details */}
         <section className="space-y-3">
-          <h2 className="text-base md:text-lg font-bold text-black">Application details</h2>
 
           {/* Contact Information */}
           <div className="border border-gray-200 rounded-lg bg-white">
-            <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">Contact Information</div>
+            <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">Contact Information</div>
             <div className="p-4 grid md:grid-cols-2 gap-3">
               <LabelValue label="First Name" value={app.first_name} />
               <LabelValue label="Last Name" value={app.last_name} />
@@ -158,7 +157,7 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
           {/* Relative Information */}
           {(app.relative_first_name != "" || app.relative_last_name != "") && (
           <div className="border border-gray-200 rounded-lg bg-white">
-            <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">Relative Information</div>
+            <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">Relative Information</div>
             <div className="p-4 grid md:grid-cols-2 gap-3">
               <LabelValue label="First Name" value={app.relative_first_name} />
               <LabelValue label="Last Name" value={app.relative_last_name} />
@@ -171,12 +170,10 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
 
         {/* Resume */}
         <section className="space-y-3">
-          {/* <div className="flex items-center justify-between">
-            <h2 className="text-base md:text-lg font-bold text-black">Resume</h2>
-          </div> */}
-          {(!resume.error && !app.resume_data) && (
-            <div className="border border-gray-200 rounded-lg bg-white">
-              <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">TC Alberta Resume</div>
+          <div className="border border-gray-200 rounded-lg bg-white">
+            <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">TC Alberta Resume</div>
+              
+            {(!resume.error && !app.resume_data) && (
               <div className="p-4 grid gap-3">
                 <LabelValue label="Summary" value={resume.summary} />
                 <LabelValue label="Certificate" value={resume.certifications} />
@@ -185,35 +182,36 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
                 <LabelValue label="Experience" value={resume.experience} />
                 <LabelValue label="Additional Information" value={resume.additional_info} />
               </div>
-            </div>
-          )}
-          {app.resume_data && (
-            <div className="items-center gap-2 text-sm text-black">
-              <span className="inline-flex items-center justify-center h-6 mr-3 rounded bg-orange-100 text-[#E55B3C] text-xs font-bold">{app.resume_name.split('.').pop().toUpperCase()}</span>
-              <span className="font-bold truncate">{app.resume_name}</span>
-              <div className="mt-3 rounded-md border border-orange-200 bg-orange-50 p-3">
-                <div className="text-sm text-[#E55B3C]">
-                  {"We can't load a preview of your resume right now, but it will be submitted as part of your application. Download your resume to make sure everything is correct before you submit your application."}
+            )}
+            {app.resume_data && (
+              <div className="p-4 items-center gap-2 text-sm text-black">
+                <span className="inline-flex items-center justify-center px-2 py-1 mr-3 rounded bg-orange-100 text-[#E55B3C] text-xs font-bold">{app.resume_name.split('.').pop().toUpperCase()}</span>
+                <span className="font-bold truncate">{app.resume_name}</span>
+                <div className="mt-3">
+                  <div className="text-sm text-black">
+                    {"We can't load a preview of your resume right now, but it will be submitted as part of your application. Download your resume to make sure everything is correct before you submit your application."}
+                  </div>
+                  <button
+                    onClick={() => downloadFile(app.resume_data, app.resume_name)}
+                    className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded bg-[#E55B3C]/80 text-white text-xs font-bold hover:bg-[#E55B3C]/90 transition-colors"
+                  >
+                    <Download className="w-4 h-4" /> Download Resume
+                  </button>
                 </div>
-                <button
-                  onClick={() => downloadFile(app.resume_data, app.resume_name)}
-                  className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded bg-[#E55B3C]/80 text-white text-xs font-bold hover:bg-[#E55B3C]/90 transition-colors"
-                >
-                  <Download className="w-4 h-4" /> Download Resume
-                </button>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </section>
 
         {/* Cover Letter */}
         <section className="space-y-3">
           {(!coverLetter.error && !app.cover_letter_name) && (
             <div className="border border-gray-200 rounded-lg bg-white">
-              <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">TC Alberta Cover Letter</div>
-                <div className="px-5 pt-5 pb-2 text-sm text-black break-words">
-                  {coverLetter.content.split('\n').map((line, idx) => ( <p key={idx} className="mb-3">{line}</p> ))}
-                </div>
+              <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">TC Alberta Cover Letter</div>
+              <div 
+                dangerouslySetInnerHTML={{ __html: coverLetter.content }} 
+                className="px-5 py-3 text-sm font-medium text-black break-words leading-relaxed"
+              />
             </div>
           )}
           {app.cover_letter_name && (
@@ -240,7 +238,7 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
         {/* Employer questions */}
         <section className="space-y-3">
           <div className="border border-gray-200 rounded-lg bg-white">
-            <div className="px-4 py-3 border-b border-gray-200 text-sm font-bold text-black">Employer questions</div>
+            <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">Employer questions</div>
             <div className="p-4 grid gap-3">
               {(app && app.questions?.length > 0) ? (
                 app.questions.map((qa, idx) => (

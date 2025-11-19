@@ -26,7 +26,7 @@ export default function ApplyCard({ app, status, setStatus, isSelected = false, 
 
   return (
     <div
-     className={`w-full bg-white rounded-lg px-6 py-4 mb-4 space-y-1 text-black cursor-pointer transition ${
+     className={`w-full bg-white rounded-lg px-6 py-4 mb-4 space-y-1 text-black transition ${
                  isSelected ? 'ring-2 ring-[#E55B3C] bg-[#E55B3C]/5' : 'hover:bg-gray-50'}`}
     >
       <div className="flex flex-col gap-2">
