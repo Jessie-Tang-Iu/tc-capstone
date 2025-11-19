@@ -7,7 +7,7 @@ export default function SearchBar({
     onSearch, onAdvancedSearch
 }) {
     return (
-        <div className="w-full max-w-6xl mx-auto px-4 py-5">
+        <div className="w-full max-w-6xl mx-auto px-4 py-6">
             {/* Desktop Search Bar */}
             <div className="hidden md:flex items-center h-11 overflow-hidden">
                 <div 

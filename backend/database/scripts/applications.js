@@ -50,7 +50,7 @@ const decryptData = (encryptedBuffer, ivHex) => {
 
 export async function getApplicationsByUser(id) {
   const { rows } = await query(`
-    SELECT ap.id, je.title, je.company_name AS company, je.location, ap.status, ap.applied_at AS "appliedAt"
+    SELECT ap.id, je.title, je.company_name AS company, je.location, ap.status, ap.applied_at AS "appliedAt", je.id AS "jobId"
       FROM application ap JOIN (SELECT * FROM job jb JOIN employers e ON jb.employer_id = e.clerk_id) je ON ap.job_id = je.id
      WHERE user_id = $1 ORDER BY applied_at DESC`, [id]);
   return rows;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import MemberNavbar from "../components/MemberNavBar";
 import SearchBar from "../components/job/SearchBar";
 import JobCard from "../components/job/JobCard";
@@ -15,10 +15,16 @@ export default function JobBoardPage() {
 
     const [jobs, setJobs] = useState([]);
     const [selectedJobId, setSelectedJobId] = useState();
+    const [applications, setApplications] = useState([]);
     
     const [showJobDetail, setShowJobDetail] = useState(false);
     const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
     const [showApplyForm, setShowApplyForm] = useState(false);
+
+    const [experience, setExperience] = useState([]);
+    const [types, setTypes] = useState([]);
+    const [industries, setIndustries] = useState([]);
+    const [workplaces, setWorkplaces] = useState([]);
 
     const [filteredJobs, setFilteredJobs] = useState([]);
     const [query, setQuery] = useState("");
@@ -98,7 +104,7 @@ export default function JobBoardPage() {
     }
 
     const handleApplySubmit = async () => {
-      console.log("application submit: ", formData);
+      // console.log("application submit: ", formData);
       try{
         const res = await fetch(`/api/application`, {
           method: "POST",
@@ -127,6 +133,7 @@ export default function JobBoardPage() {
       } catch (error) {
         setErrorMessage(error.message);
       }
+      getApplications();
     }
   
     const search = useCallback(() => {
@@ -189,6 +196,54 @@ export default function JobBoardPage() {
       search();
     }, [filters, search]);
 
+    const role = useMemo(() => {
+      if (!user) return null;
+      return user.publicMetadata.role;
+    }, [user]);
+
+    const getApplications = useCallback(() => {
+      if (role == "member") {
+      fetch(`/api/application/user/${user.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          let appIds = []
+          data.map((app) => {
+            appIds.push(app.jobId);
+          });
+          setApplications(appIds);
+        })
+        .catch((error) => {
+          console.error("Error fetching applications:", error);
+        });
+      } else {
+        setApplications([]);
+      }
+    }, [role]);
+
+    const fetchFilters = useCallback(() => {
+      fetch('api/job/experience')
+        .then((res) => res.json())
+        .then((data) => setExperience(data))
+        .catch((err) => console.log("Failed to fetch job experience: ", err));
+      fetch('api/job/industries')
+        .then((res) => res.json())
+        .then((data) => setIndustries(data))
+        .catch((err) => console.log("Failed to fetch job industries: ", err));
+      fetch('api/job/types')
+        .then((res) => res.json())
+        .then((data) => setTypes(data))
+        .catch((err) => console.log("Failed to fetch job types: ", err));
+      fetch('api/job/workplaces')
+        .then((res) => res.json())
+        .then((data) => setWorkplaces(data))
+        .catch((err) => console.log("Failed to fetch job workplaces: ", err));
+    }, []);
+
+    useEffect(() => {
+      getApplications();
+      fetchFilters();
+    }, [role]);
+
     if (!user) {
       // router.push("/");
       return (
@@ -199,12 +254,12 @@ export default function JobBoardPage() {
     }
   
     return (
-      <main className="bg-gray-100 min-h-screen">
+      <main className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
         {/* Navigation */}
         <MemberNavbar />
   
         {/* Search Bar */}
-        <div className="py-5">
+        <div className="pt-1">
           <SearchBar
             query={query}
             onQueryChange={setQuery}
@@ -216,7 +271,11 @@ export default function JobBoardPage() {
         </div>
   
         {showAdvancedSearch && (
-          <AdvancedSearch 
+          <AdvancedSearch
+            experience={experience}
+            industries={industries}
+            types={types}
+            workplaces={workplaces}
             filters={filters} 
             setFilters={setFilters} 
             onClose={() => setShowAdvancedSearch(false)} 
@@ -224,7 +283,6 @@ export default function JobBoardPage() {
         )}
   
         {showApplyForm && 
-          // (user.role == 'member') && (
           (<ApplyForm 
             job={selectedJob} 
             formData={formData}
@@ -245,11 +303,11 @@ export default function JobBoardPage() {
           <div className="flex flex-col md:flex-row">
             {/* Job Listings Sidebar */}
             <div
-              className={`w-full md:w-96 lg:w-[400px] xl:w-[450px]
+              className={`w-full md:w-80 
                           ${showJobDetail ? "hidden md:block" : "block"}
                           h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto`}
             >
-              <div className="px-2 md:px-4 py-2">
+              <div className="px-2 py-1 space-y-2">
                 {filteredJobs.map((job) => (
                   <JobCard
                     key={job.id}
@@ -266,7 +324,7 @@ export default function JobBoardPage() {
   
             {/* Job Detail Panel */}
             <div
-              className={`flex-1 py-2
+              className={`flex-1 pl-2 py-1
                           ${showJobDetail ? "block" : "hidden md:block"}
                           h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] relative`}
             >
@@ -279,7 +337,9 @@ export default function JobBoardPage() {
               </button>
               <div className="mt-5 md:mt-0 h-full rounded-lg">
                 <JobDetail
+                  role={role}
                   job={selectedJob}
+                  isApplied={selectedJob ? applications.includes(selectedJob.id) : false}
                   onApply={handleApply}
                 />
               </div>
