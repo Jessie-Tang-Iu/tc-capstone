@@ -1,15 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Navbar from "../../components/MemberNavBar";
 import CourseContent from "../../components/courses/CourseContent";
 import CourseQuiz from "../../components/courses/CourseQuiz";
 
-export default function CoursePage({ userId }) {
+export default function CoursePage({}) {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const courseID = params.courseID;
+  const userId = searchParams.get("userId");
 
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
@@ -21,6 +24,7 @@ export default function CoursePage({ userId }) {
 
     const fetchCourse = async () => {
       try {
+        console.log(userId)
         const res = await fetch(`/api/course/${courseID}?userId=${userId}`);
         if (!res.ok) throw new Error("Failed to fetch course");
         const data = await res.json();

@@ -7,6 +7,8 @@ export async function GET(req, { params }) {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId");
 
+    console.log("API route received userId:", userId, "for course ID:", id);
+
     if (!userId) {
       return new Response(
         JSON.stringify({ error: "Missing userId in query params" }),

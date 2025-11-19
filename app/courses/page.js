@@ -60,7 +60,7 @@ export default function PageContent() {
   }, [isLoaded, isSignedIn, router]);
 
   if (!isLoaded || loading) return <p>Loading...</p>;
-  if (!isSignedIn) return null;
+  if (!isSignedIn || !user) return null;
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value.toLowerCase());
@@ -181,7 +181,7 @@ export default function PageContent() {
         <div className="w-5/6 min-h-screen flex flex-wrap content-start">
           {filteredCourses.length > 0 ? (
             filteredCourses.map((course) => (
-              <CourseCard key={course.id} course={course} />
+              <CourseCard key={course.id} course={course} userId={user.id} />
             ))
           ) : (
             <p className="text-gray-600 p-4">No courses found.</p>
