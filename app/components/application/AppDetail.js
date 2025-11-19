@@ -68,7 +68,7 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
   if (!app) {
     return (
       <div className="flex items-center justify-center h-full bg-white">
-        <p className="text-gray-600 text-lg">Select a application to view details</p>
+        <p className="text-gray-600 text-base">Select a application to view details</p>
       </div>
     );
   }
@@ -118,17 +118,16 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
   }
 
   return (
-    <div className="bg-white h-full overflow-y-auto">
+    <div className="bg-white h-full rounded-xl overflow-y-auto mr-2">
       {/* Header */}
       <div className="border-b border-gray-300 p-4 md:p-6">
         <div className="flex items-center gap-2 mb-2">
-            <h1 className="flex-3 text-lg md:text-xl font-bold text-black leading-tight">{app.title}</h1>
-            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs md:text-sm border ${statusColors[app.status] || "bg-gray-100 text-gray-800 border-gray-300"}`}>
+            <h1 className="flex-3 text-lg font-bold text-black leading-tight">{app.title}</h1>
+            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs border ${statusColors[app.status] || "bg-gray-100 text-gray-800 border-gray-300"}`}>
                 {statusOptions[app.status]}
             </span>
         </div>
-        {/* <h1 className="text-lg md:text-xl font-bold text-black leading-tight">{application.jobTitle}</h1> */}
-        <div className="flex items-center gap-2 mt-1">
+        <div className="flex items-center gap-2 mb-3">
           <span className="text-sm text-gray-700">{app.company}</span>
           <ExternalLink className="w-4 h-4 text-gray-600" />
         </div>

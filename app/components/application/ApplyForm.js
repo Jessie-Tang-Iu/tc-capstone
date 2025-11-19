@@ -1,4 +1,4 @@
-import { FileInput, X } from "lucide-react";
+import { FileInput, Pencil, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import PopupMessage from "@/app/components/ui/PopupMessage";
 import { useRouter } from "next/navigation";
@@ -79,6 +79,16 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
     }
   };
 
+  const normalizeDate = (d) => {
+    if (!d) return null;
+    if (typeof d === "string") return d.includes("T") ? d.split("T")[0] : d;
+    if (d instanceof Date && !isNaN(d.getTime()))
+      return d.toISOString().slice(0, 10);
+    if (typeof d === "object" && typeof d.date === "string")
+      return d.date.includes("T") ? d.date.split("T")[0] : d.date;
+    return null;
+  };
+
   const ProgressBar = () => (
     <div className="w-full max-w-5xl mx-auto px-4 mb-8">
       <div className="flex items-center justify-between mb-2">
@@ -98,9 +108,12 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
   const JobHeader = () => (
     <div className="w-full max-w-2xl mx-auto mb-8 flex items-center justify-between">
       <div className="flex-1 bg-white border border-gray-200 rounded-lg p-6">
-        <h2 className="text-xl font-bold text-black mb-2">{job.title}</h2>
-        <p className="text-base font-normal text-gray-600 mb-2">{job.company}</p>
-        <p className="text-base font-normal text-black">{job.location}</p>
+        <h2 className="text-base font-bold text-black mb-2">{job.title}</h2>
+        <p className="text-sm font-normal text-gray-600 mb-2">{job.company}</p>
+        <p className="text-sm font-normal text-black">
+          {job.location} · ${job.salary_per_hour} per hour · {job.type} ·{" "}
+          {job.workplace} · {normalizeDate(job.posted_at)}
+        </p>
       </div>
       <button
         onClick={onClose}
@@ -116,14 +129,14 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
       {currentStep > 1 && (
         <button
           onClick={handleBack}
-          className="px-6 py-3 bg-white text-[#E55B3C] rounded-lg text-base font-normal hover:bg-gray-50 transition-colors border-1 border-gray-200"
+          className="px-6 py-3 bg-white text-[#E55B3C] rounded-lg text-sm font-normal hover:bg-gray-50 transition-colors border-1 border-gray-200"
         >
           {"< Back Step"}
         </button>
       )}
       <button
         onClick={currentStep === 4 ? onSubmit : handleNext}
-        className="px-6 py-3 bg-[#E55B3C] text-white rounded-lg text-base font-normal hover:bg-[#d14f32] transition-colors"
+        className="px-6 py-3 bg-[#E55B3C] text-white rounded-lg text-sm font-normal hover:bg-[#d14f32] transition-colors"
       >
         {currentStep === 4 ? "Submit >" : "Next Step >"}
       </button>
@@ -133,68 +146,101 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
   const ResumeCard = ({ type = "resume", file }) => {
     if (type == "cover_letter") { const cvContent = file.content.split('\\n'); }
     return (file && !file.error) && (
-    <div className="w-full h-130 max-w-sm border border-black rounded-2xl p-4 bg-white">
-      <div className="text-[#E55B3C] text-base font-bold mb-3">Database {type == "resume" ? "Resume" : "Cover Letter"}</div>
-      <hr className="border-gray-200 mb-3" />
-        <div>
+    <div className="w-full h-115 max-w-sm rounded-2xl bg-white">
+      <div className="w-full flex px-2 py-2 justify-center bg-[#E55B3C] rounded-t-2xl">
+        <div className="text-white text-base font-bold mt-2 ml-2 flex-3">Database {type == "resume" ? "Resume" : "Cover Letter"}</div>
+        <button  
+          className="text-white hover:bg-[#d14f32] py-2 px-2 rounded-full transition-colors"
+          aria-label="Modify Item"
+          onClick={() => router.push(`/profile?tab=profile`)}
+        >
+          <Pencil size={20} className="w-5 h-5" /> 
+        </button>
+      </div>
+        <div className="px-4 py-2">
           <div className="text-center">
-            <div className="text-base font-bold text-black">
+            <div className="text-sm font-medium text-black mb-1">
               {file.first_name} {file.last_name}
             </div>
-            <p className="text-sm text-black mb-2">{file.email}</p>
+            <p className="text-xs font-medium text-black mb-2">{file.email}</p>
           </div>
-          <div className="text-sm text-gray-500 leading-relaxed h-85 overflow-auto">
+          <div className="text-sm text-gray-500 leading-relaxed h-85 overflow-y-auto">
               {type === "resume" ? (
                 <>
-                  <b>Summary: </b>
-                    <p className="pl-5">{file.summary}</p>
+                  <div>
+                    <b className="text-xs">Summary: </b>
+                    <p className="text-xs pl-5 pt-1">{file.summary}</p>
+                  </div>
 
-                  <b>Education: </b>
-                  <ul className="pl-5">
-                    {file.education.map((edu, index) => {
-                      let eduSplit = edu.split(' | ');
-                      return(
-                        <li key={index}>{`${eduSplit[1]} in ${eduSplit[2]} from ${eduSplit[0]} (${eduSplit[3]}-${eduSplit[4]})`}</li>
-                      );
-                    })}
-                  </ul>
+                  <div className="mt-2 text-xs">
+                    <b>Education: </b>
+                    <ul className="pl-5 pt-1">
+                      {file.education.map((edu, index) => {
+                        let eduSplit = edu.split(' | ');
+                        return(
+                          <li key={index}>{`${eduSplit[1]} in ${eduSplit[2]} from ${eduSplit[0]} (${eduSplit[3]}-${eduSplit[4]})`}</li>
+                        );
+                      })}
+                    </ul>
+                  </div>
 
-                  <b>Certification: </b>
-                  <p className="pl-5">{file.certifications.map((crt) => `${crt}, `)}</p>
+                  <div className="mt-2 text-xs">
+                    <b>Certification: </b>
+                    <div className="pl-5 pt-1">
+                    {file.certifications.map((crt, index) => 
+                      <span
+                        key={index}
+                        className="mr-2 px-2 py-1 bg-gray-200 rounded font-normal text-black"
+                      >
+                        {crt}
+                      </span>
+                    )}
+                    </div>
+                  </div>
 
-                  <b>Skills: </b>
-                  <p className="pl-5">{file.skills.map((skill) => `${skill}, `)}</p>
+                  <div className="mt-2 text-xs">
+                    <b>Skills: </b>
+                    <div className="pl-5 pt-1">
+                    {file.skills.map((skill, index) => 
+                      <span
+                        key={index}
+                        className="mr-2 px-2 py-1 bg-gray-200 rounded font-normal text-black"
+                      >
+                        {skill}
+                      </span>
+                    )}
+                    </div>
+                  </div>
 
-                  <b>Experience: </b>
-                  <ul className="pl-5">                   
-                    {file.experience.map((exp, index) => {
-                      let expSplit = exp.split(' | ');
-                      let experience = "";
-                      if (expSplit[5] == "" && expSplit[6] == "") {
-                        experience = `${expSplit[0]} (${expSplit[2]}) at ${expSplit[1]} (from ${expSplit[3]}-${expSplit[4]})`
-                      } else {
-                        experience = `${expSplit[0]} (${expSplit[2]}) at ${expSplit[1]} (from ${expSplit[3]}-${expSplit[4]} to ${expSplit[5]}-${expSplit[6]})`
-                      }
-                      return (<li key={index}>{experience}</li>);
-                    })}
-                  </ul> 
+                  <div className="mt-2 text-xs">
+                    <b>Experience: </b>
+                    <ul className="pl-5 pt-1">                   
+                      {file.experience.map((exp, index) => {
+                        let expSplit = exp.split(' | ');
+                        let experience = "";
+                        if (expSplit[5] == "" && expSplit[6] == "") {
+                          experience = `${expSplit[0]} (${expSplit[2]}) at ${expSplit[1]} (from ${expSplit[3]}-${expSplit[4]})`
+                        } else {
+                          experience = `${expSplit[0]} (${expSplit[2]}) at ${expSplit[1]} (from ${expSplit[3]}-${expSplit[4]} to ${expSplit[5]}-${expSplit[6]})`
+                        }
+                        return (<li key={index}>{experience}</li>);
+                      })}
+                    </ul>
+                  </div>
 
+                  <div className="mt-2 text-xs">
                   <b>Additional information: </b>
-                   <p className="pl-5">{file.additional_info}</p>
+                   <p className="pl-5 pt-1">{file.additional_info}</p>
+                  </div>
                 </>
             ) : (
-              <>
-                {file.content.split('\n').map((line, idx) => ( <p key={idx} className="mt-2">{line}</p> ))}
-              </>
+              <div 
+                dangerouslySetInnerHTML={{ __html: file.content }} 
+                className="text-xs pt-1 leading-relaxed"
+              />
             )}
           </div>
         </div>
-      <button 
-        className="w-full bg-[#E55B3C] text-white py-2 rounded text-sm font-normal hover:bg-[#E55B3C]/90 transition-colors mt-4"
-        onClick={() => router.push(`/profile`)}
-      >
-        {type === "resume" ? "Edit Resume" : "Edit Cover Letter"}
-      </button>
     </div>
   )};
 
@@ -216,14 +262,14 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
 
     return (
     <div 
-      className="w-full h-30 max-w-sm border border-gray-300 rounded-2xl p-4 bg-white cursor-pointer"
+      className="w-full h-20 max-w-sm border border-gray-300 rounded-2xl p-4 bg-white cursor-pointer"
       onClick={() => localFileInputRef.current.click() }
     >
       <div className="text-center">
-        <div className="text-[#E55B3C] text-base font-bold mb-2">
+        <div className="text-[#E55B3C] text-sm font-bold mb-2">
           Upload New {type == "resume" ? "Resume" : "Cover Letter"}
         </div>
-        {!formData[`${type}_name`] && <div className="text-sm text-gray-500">File types: PDF, DOCS, TXT</div>}
+        {!formData[`${type}_name`] && <div className="text-xs  text-gray-500">File types: PDF, DOCS, TXT</div>}
       </div>
       <input 
         type="file"
@@ -233,7 +279,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
         accept=".pdf,.doc,.docx"
       />
       {formData[`${type}_name`] && formData[`${type}_data`] && (
-        <div className="mt-4 text-center text-sm text-gray-700">
+        <div className="mt-2 text-center text-xs text-gray-700">
           Selected File: <span className="font-bold">{formData[`${type}_name`]}</span>
         </div>
       )}
@@ -254,7 +300,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
             {/* Step 1: Resume and Cover Letter */}
             {currentStep === 1 && 
             <div className="max-w-4xl mx-auto ">
-              <h1 className="text-2xl font-bold text-black mb-8">
+              <h1 className="text-xl font-bold text-black mb-5">
                 Upload Resume/ Cover Letter
               </h1>
 
@@ -281,57 +327,57 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
             {/* Step 2: Relative Information */}
             {currentStep === 2 &&
               <div className="max-w-4xl mx-auto">
-                <h1 className="text-2xl font-bold text-black mb-8">
+                <h1 className="text-xl font-bold text-black mb-5">
                   Relative Information
                 </h1>
 
                 <div className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-base font-normal text-black mb-2">
+                      <label className="block text-xs text-gray-700 font-medium mb-1">
                         First Name:
                       </label>
                       <input
                         type="text"
                         value={formData.relative_first_name}
                         onChange={(e) => setFormData({ ...formData, relative_first_name: e.target.value })}
-                        className="w-full px-4 py-3 text-black bg-white border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                        className="w-full bg-white rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
                       />
                     </div>
                     <div>
-                      <label className="block text-base font-normal text-black mb-2">
+                      <label className="block text-xs text-gray-700 font-medium mb-1">
                         Last Name:
                       </label>
                       <input
                         type="text"
                         value={formData.relative_last_name}
                         onChange={(e) =>  setFormData({ ...formData, relative_last_name: e.target.value })}
-                        className="w-full px-4 py-3 text-black bg-white border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                        className="w-full bg-white rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
                       />
                     </div>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-base font-normal text-black mb-2">
+                      <label className="block text-xs text-gray-700 font-medium mb-1">
                         Email:
                       </label>
                       <input
                         type="email"
                         value={formData.relative_email}
                         onChange={(e) => setFormData({ ...formData, relative_email: e.target.value })}
-                        className="w-full px-4 py-3 text-black bg-white border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                        className="w-full bg-white rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
                       />
                     </div>
                     <div>
-                      <label className="block text-base font-normal text-black mb-2">
+                      <label className="block text-xs text-gray-700 font-medium mb-1">
                         Phone Number:
                       </label>
                       <input
                         type="tel"
                         value={formData.relative_phone}
                         onChange={(e) => setFormData({ ...formData, relative_phone: e.target.value })}
-                        className="w-full px-4 py-3 text-black bg-white border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                        className="w-full bg-white rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
                       />
                     </div>
                   </div>
@@ -342,11 +388,11 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
             {/* Step 3: Additional Questions */}
             {currentStep === 3 && job.questions && 
               <div className="max-w-4xl mx-auto">
-                <h1 className="text-2xl font-bold text-black mb-8">Additional Questions</h1>
-                <div className="space-y-6">
+                <h1 className="text-xl font-bold text-black mb-5">Additional Questions</h1>
+                <div className="space-y-4">
                   {job.questions.map((question, index) => (
                     <div key={index}>
-                      <label className="block text-base font-normal text-black mb-3">{question}</label>
+                      <label className="block text-xs text-gray-700 font-medium mb-1">{question}</label>
                       <input
                         type="text"
                         value={formData.answers[index]}
@@ -355,7 +401,7 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                           updatedAnswers[index] = e.target.value;
                           setFormData({ ...formData, answers: updatedAnswers });
                         }}
-                        className="w-full px-4 py-3 text-black bg-white border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+                        className="w-full bg-white rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
                       />
                     </div>
                   ))}
@@ -366,59 +412,67 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
             {/* Step 4: Review Application */}
             {currentStep === 4 &&
             <div className="max-w-4xl mx-auto">
-              <div className="mb-8">
-                  <h1 className="text-2xl font-bold text-black mb-2">Review your application</h1>
-                  <p className="text-base text-gray-600">The employer will receive a copy of your profile.</p>
+              <div className="mb-5">
+                  <h1 className="text-xl font-bold text-black mb-1">Review your application</h1>
+                  <p className="text-sm text-gray-600">The employer will receive a copy of your profile.</p>
               </div>
 
-              <div className="space-y-8">
+              <div className="space-y-5">
                 {/* Resume */}
                 <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-lg font-bold text-black">Resume</h2>
+                  <div className="flex justify-between items-center">
+                    <h2 className="flex w-30 text-base font-bold text-black">Resume</h2>
+                    {formData.resume_name && (
+                      <div className="flex-1 items-center gap-2 mr-4">
+                        <span className="inline-flex items-center justify-center py-1 mr-2 px-2 rounded bg-orange-100 text-[#E55B3C] text-xs font-bold">{formData.resume_name.split('.').pop().toUpperCase()}</span>
+                        <span className="text-xs bg-white px-2 py-1 font-bold rounded truncate">{formData.resume_name}</span>
+                      </div>
+                    )} 
                     <button 
-                      className="text-[#E55B3C] text-base font-bold hover:underline"
+                      className="text-[#E55B3C] text-sm font-bold hover:bg-gray-300 rounded px-2 py-1 transition"
                       onClick={() => setCurrentStep(1)}
                     >Edit</button> 
                   </div>
-                  <div className="flex justify-center">
-                    { !formData.resume_name ?
-                      <ResumeCard type="resume" file={ resume } />
-                      :
-                      <UploadArea type="resume" /> 
-                    }
-                  </div>
+                  { !formData.resume_name && 
+                    <div className="flex justify-center pt-2">
+                      <ResumeCard type="resume" file={resume} /> 
+                    </div>
+                  }
                 </div>
 
                 {/* Cover Letter */}
                 <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-lg font-bold text-black">Cover Letter</h2>
+                  <div className="flex justify-between items-center">
+                    <h2 className="flex w-30 text-base font-bold text-black">Cover Letter</h2>
+                    {formData.cover_letter_name && (
+                      <div className="flex-1 items-center gap-2 mr-4">
+                        <span className="inline-flex items-center justify-center py-1 mr-2 px-2 rounded bg-orange-100 text-[#E55B3C] text-xs font-bold">{formData.cover_letter_name.split('.').pop().toUpperCase()}</span>
+                        <span className="text-xs bg-white px-2 py-1 font-bold rounded truncate">{formData.cover_letter_name}</span>
+                      </div>
+                    )}
                     <button 
-                      className="text-[#E55B3C] text-base font-bold hover:underline"
+                      className="text-[#E55B3C] text-sm font-bold hover:bg-gray-300 rounded px-2 py-1 transition"
                       onClick={() => setCurrentStep(1)}
                     >Edit</button>
                   </div>
-                  <div className="flex justify-center">
-                    { !formData.cover_letter_name ?
-                      <ResumeCard type="coverLetter" file={ coverLetter} />
-                      :
-                      <UploadArea type="cover_letter" /> 
-                    }
-                  </div>
+                  { !formData.cover_letter_name &&
+                    <div className="flex justify-center pt-2">
+                      <ResumeCard type="coverLetter" file={coverLetter} />
+                    </div>
+                  }
                 </div>
 
                 {/* Contact Info */}
                 {formData.relative_first_name != "" &&
                 <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-lg font-bold text-black">Relative information</h2>
+                  <div className="flex justify-between items-center mb-2">
+                    <h2 className="text-base font-bold text-black">Relative information</h2>
                     <button 
-                      className="text-[#E55B3C] text-base font-bold hover:underline"
+                      className="text-[#E55B3C] text-sm font-bold hover:bg-gray-300 rounded px-2 py-1 transition"
                       onClick={() => setCurrentStep(2)}
                     >Edit</button>
                   </div>
-                  <div className="bg-white p-6 rounded-lg border border-gray-200">
+                  <div className="bg-white px-4 py-2 rounded-lg border border-gray-200">
                     <div className="grid md:grid-cols-2 gap-6">
                       <div>
                         <h3 className="text-lg font-bold text-black mb-4">{formData.relative_first_name} {formData.relative_last_name}</h3>
@@ -440,19 +494,19 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                 {/* Additional Questions */}
                 {job.questions && (
                 <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-lg font-bold text-black">Additional Questions</h2>
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-base font-bold text-black">Additional Questions</h2>
                     <button 
-                        className="text-[#E55B3C] text-base font-bold hover:underline"
-                        onClick={() => setCurrentStep(2)}
+                      className="text-[#E55B3C] text-sm font-bold hover:bg-gray-300 rounded px-2 py-1 transition"
+                      onClick={() => setCurrentStep(3)}
                     >Edit</button>
                   </div>
-                  <div className="space-y-4 bg-white p-6 rounded-lg border border-gray-200">
+                  <div className="space-y-4 bg-white px-4 py-2 mt-2 rounded-lg border border-gray-200">
                     {job.questions.map((question, index) => (
-                        <div key={index}>
-                            <div className="text-gray-500 font-bold text-sm">{question}</div>
-                            <div className="text-black font-bold text-sm">{formData.answers[index]}</div>
-                        </div>
+                      <div key={index}>
+                        <div className="text-gray-500 font-bold text-xs">{question}</div>
+                        <div className="text-black font-medium text-xs">{formData.answers[index]}</div>
+                      </div>
                     ))}
                   </div>
                 </div>)}
@@ -463,10 +517,10 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
             {/* Step 5: Submitted */}
             {currentStep === 5 && 
             <div className="max-w-2xl mx-auto">
-              <div className="bg-white border border-gray-400 rounded-lg p-8 text-center">
-                <h1 className="text-2xl font-bold text-black mb-4">Application Submitted</h1>
+              <div className="bg-white border border-gray-400 rounded-lg p-6 text-center">
+                <h1 className="text-xl font-bold text-black mb-6">Application Submitted</h1>
                     
-                <div className="text-left text-sm text-black space-y-4 mb-8">
+                <div className="text-left text-xs text-black space-y-3 mb-6">
                   <p>Your application has been submitted!</p>
                         
                   <div>
@@ -483,10 +537,10 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
                 </div>
 
                 <div className="flex gap-4 justify-center">
-                  <button className="px-6 py-3 bg-[#E55B3C] text-white rounded text-sm font-normal hover:bg-[#E55B3C]/90 transition-colors">
+                  <button className="px-4 py-2 bg-[#E55B3C] text-white rounded text-xs font-medium hover:bg-[#E55B3C]/90 transition-colors">
                     Save as PDF
                   </button>
-                  <button className="px-6 py-3 bg-[#E55B3C] text-white rounded text-sm font-normal hover:bg-[#E55B3C]/90 transition-colors">
+                  <button className="px-4 py-2 bg-[#E55B3C] text-white rounded text-xs font-medium hover:bg-[#E55B3C]/90 transition-colors">
                     Send to Email
                   </button>
                 </div>
@@ -498,10 +552,10 @@ export default function ApplyForm({ job, formData, setFormData, currentStep, set
             {currentStep <= 4 && <StepNavigation />}
 
             {currentStep === 5 && (
-              <div className="flex justify-center mt-8">
+              <div className="flex justify-center mt-6">
                 <button
                   onClick={onClose}
-                  className="px-6 py-3 bg-gray-200 text-black rounded-lg text-base font-normal hover:bg-gray-300 transition-colors"
+                  className="px-4 py-2 bg-gray-200 text-black rounded-lg text-sm font-normal hover:bg-gray-300 transition-colors"
                 >
                   Close
                 </button>

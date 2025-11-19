@@ -156,14 +156,14 @@ export default function Applications() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-100">
+      <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
         <MemberNavBar />
 
-        <div className="pt-7 mb-3 md:mb-8 mx-5 md:mx-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-black">
+        <div className="mx-auto w-full px-6 py-4">
+          <h1 className="text-3xl font-bold text-[#DD5B45]">
             My Applications
           </h1>
-          <p className="text-sm md:text-base text-gray-600 mt-1">
+          <p className="text-sm text-gray-600 mt-1">
             Track the jobs you have applied for.
           </p>
           
@@ -174,9 +174,9 @@ export default function Applications() {
         <div className="flex flex-col md:flex-row ml-2">
           {/* Job Listings Sidebar */}
           <div
-            className={`w-full md:w-96 lg:w-[400px] xl:w-[450px]
-                    ${showAppDetail ? "hidden md:block" : "block"}
-                    h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto`}
+            className={`w-full md:w-80 
+                        ${showAppDetail ? "hidden md:block" : "block"}
+                        h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto`}
           >
             <div className="px-2 md:px-4 py-2">
               {applications.map((app) => (
