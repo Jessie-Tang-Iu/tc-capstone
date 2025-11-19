@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import ChatWindow from "../ChatWindow";
+import { useRouter } from "next/navigation";
+import AdvisorDashboard from "@/app/advisorDashboard/page";
 
 export default function UserRow({
   id,
@@ -9,6 +11,8 @@ export default function UserRow({
   subtitle,
   status, 
   onMessage,
+  role,
+  onInvestigate,
   onDetails,
   onStatusChange,
 }) {
@@ -74,6 +78,18 @@ export default function UserRow({
             Message
           </button>
 
+          {/* Only show investigate button for advisors */}
+          {
+            role === "advisor" && (
+            <button
+              onClick={onInvestigate}
+              className="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 active:scale-[0.98] transition"
+            >
+              investigate
+            </button>
+            )
+          }
+          
           <button
             onClick={onDetails}
             className="rounded-md bg-[#4AA3FF] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 active:scale-[0.98] transition"
