@@ -1,8 +1,10 @@
 "use client";
 
-import React from "react";
+import React, {useState} from "react";
 
 export default function CourseLessonBlock({ lesson, onChange, onDelete }) {
+  const [videoError, setVideoError] = useState("");
+  
   const formatYouTubeUrl = (url) => {
     if (!url) return "";
 
@@ -11,11 +13,13 @@ export default function CourseLessonBlock({ lesson, onChange, onDelete }) {
     const match = url.match(regex);
 
     // 
-    if (match && match[1]) {
-      return `https://www.youtube.com/embed/${match[1]}`;
+    if (match && match[5]) {
+      setVideoError(""); // Clear error if valid
+      return `https://www.youtube.com/embed/${match[5]}`;
+    } else {
+      setVideoError("Please enter a valid YouTube URL");
+      return url; // keep the raw input so it doesn't delete what user typed
     }
-
-    return url;
   };
 
   const handleChange = (field, value) => {
@@ -73,9 +77,14 @@ export default function CourseLessonBlock({ lesson, onChange, onDelete }) {
           type="url"
           value={lesson.videoUrl || ""}
           onChange={(e) => handleChange("videoUrl", e.target.value)}
-          placeholder="https://example.com/video.mp4"
-          className="w-full border border-gray-300 rounded p-2 text-black"
+          placeholder="https://www.youtube.com/watch?v=..."
+          className={`w-full border rounded p-2 text-black ${
+            videoError ? "border-red-500" : "border-gray-300"
+          }`}
         />
+        {videoError && (
+          <p className="text-red-500 text-sm mt-1">{videoError}</p>
+        )}
       </div>
     </div>
   );
