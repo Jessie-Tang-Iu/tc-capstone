@@ -3,7 +3,25 @@
 import React from "react";
 
 export default function CourseLessonBlock({ lesson, onChange, onDelete }) {
+  const formatYouTubeUrl = (url) => {
+    if (!url) return "";
+
+    // Regex to check if the URL is a youtube link (standard or shortened) and extract the video ID (Adapted from StackOverflow https://stackoverflow.com/questions/19377262/regex-for-youtube-url) 
+    const regex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(?:-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|live\/|v\/)?)([\w\-]+)(\S+)?$/;
+    const match = url.match(regex);
+
+    // 
+    if (match && match[1]) {
+      return `https://www.youtube.com/embed/${match[1]}`;
+    }
+
+    return url;
+  };
+
   const handleChange = (field, value) => {
+    if (field === "videoUrl") {
+      value = formatYouTubeUrl(value);
+    }
     onChange({ ...lesson, [field]: value });
   };
 
