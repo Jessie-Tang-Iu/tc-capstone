@@ -42,8 +42,28 @@ export default function AdminCourseCreate({ onCancel, onRefresh }) {
     setContentBlocks(contentBlocks.filter((b) => b.id !== id));
   };
 
+  const isValidYouTubeUrl = (url) => {
+    if (!url) return true; // empty URLs are allowed
+
+    const regex =
+      /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(?:-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|live\/|v\/)?)([\w\-]+)(\S+)?$/;
+    const match = url.match(regex);
+    return match && match[5];
+  };
+
   const handleSaveCourse = async (e) => {
     e.preventDefault();
+
+    // Validate YouTube URLs before saving
+    const invalidVideo = contentBlocks.find(
+      (block) => block.type === "lesson" && block.videoUrl && !isValidYouTubeUrl(block.videoUrl)
+    );
+    if (invalidVideo) {
+      alert(
+        `The lesson "${invalidVideo.title || "Untitled"}" has an invalid YouTube URL.`
+      );
+      return; // stop saving
+    }
 
     const courseData = { title, description, level, duration, type };
 
