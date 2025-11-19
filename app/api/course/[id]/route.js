@@ -2,13 +2,24 @@ const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
 
 export async function GET(req, { params }) {
   try {
-    // unwrap params
-    const { id } = await params;
+    const { id } = params;
 
-    console.log("Fetching course ID:", id); // debug log
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get("userId");
 
-    const res = await fetch(`${BACKEND_URL}/courses/${id}`);
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ error: "Missing userId in query params" }),
+        { status: 400 }
+      );
+    }
+
+    const res = await fetch(
+      `${BACKEND_URL}/courses/${id}?userId=${userId}`
+    );
+
     if (!res.ok) throw new Error(`Backend error: ${res.status}`);
+
     const data = await res.json();
     return new Response(JSON.stringify(data), { status: 200 });
   } catch (err) {
@@ -33,6 +44,7 @@ export async function PUT(req, { params }) {
   try {
     const body = await req.json();
     const courseId = params.id; 
+    const userId = body.userId || "";
 
     const res = await fetch(`${BACKEND_URL}/courses/${courseId}`, {
       method: "PUT",

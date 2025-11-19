@@ -20,7 +20,7 @@ export async function getAllCoursesController(req, res) {
 export async function getCourseByIdController(req, res) {
   try {
     const courseId = req.params.id;
-    const userId = req.query.userId; // <-- IMPORTANT
+    const userId = req.query.userId;
 
     console.log("Backend received ID:", courseId, "user:", userId);
 
