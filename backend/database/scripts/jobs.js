@@ -115,6 +115,7 @@ export async function getAllJobPostsPublic() {
       jb.location,
       jb.salary_per_hour,
       jb.posted_at,
+        jb.status,   
       ji.name AS industry,
       jt.name AS type,
       jw.name AS workplace,

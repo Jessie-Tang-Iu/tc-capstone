@@ -2,7 +2,13 @@ import { query } from "../../database/db.js";
 
 // Get all advisors ordered by name
 export async function getAllAdvisors() {
-  const result  = await query(`SELECT * FROM public.users WHERE role = 'advisor' ORDER BY first_name ASC`);
+  const result  = await query(`SELECT * FROM public.users u
+                                LEFT OUTER JOIN advisors a
+                                ON u.clerk_id = a.clerk_id
+                                LEFT OUTER JOIN advisory_profile ap
+                                ON u.clerk_id = ap.advisor_id
+                                WHERE role = 'advisor' 
+                                ORDER BY first_name ASC`);
   return result.rows;
 }
 

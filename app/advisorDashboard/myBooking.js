@@ -27,6 +27,8 @@ export default function MyBookingPage({advisorId}) {
           
                 const data = await res.json();
 
+                console.log("Fetched data:", data);
+
                 // Filter data to only include booked events
                 const bookedEvents = data.filter(event => event.status === "booked");
 
@@ -42,7 +44,7 @@ export default function MyBookingPage({advisorId}) {
                 }));
 
                 setEvents(mappedEvents);
-                // console.log(mappedEvents);
+                // console.log("fetching Events", mappedEvents);
             } catch (error) {
                 console.error("Fetch error: ", error);
             }
@@ -79,7 +81,8 @@ export default function MyBookingPage({advisorId}) {
                     plugins={[dayGridPlugin]}
                     initialView="dayGridMonth"
                     // convert data for Full Calendar use
-                    events={events.map(event => {
+                    events={
+                        events.map(event => {
                         const dateOnly = event.date.split("T")[0];
                         return {
                             ...event,

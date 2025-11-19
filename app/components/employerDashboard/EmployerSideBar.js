@@ -12,7 +12,7 @@ export default function EmployerSidebar() {
   ];
 
   return (
-    <aside className="ml-0 w-52 shrink-0 rounded-lg bg-whtie p-1 shadow">
+    <aside className="ml-0 w-52 shrink-0 rounded-lg bg-white p-1 shadow">
       {menu.map((m) => {
         const active = pathname?.startsWith(m.href);
         return (

@@ -18,8 +18,8 @@ import UsersPanel from "@/app/adminDashboard/User";
 import RequestsPanel from "@/app/adminDashboard/Request";
 import ReportsPanel from "@/app/adminDashboard/Report";
 import UserDetailsCard from "../components/adminDashboard/UserDetailsCard";
-import EventPanel from "@/app/adminDashboard/Event";
-import Navbar from "@/app/components/BlankNavBar";
+import EventsPanel from "@/app/adminDashboard/Event";
+import Navbar from "@/app/components/AdminNavBar";
 import RequestDetailsCard from "../components/adminDashboard/RequestDetailsCard";
 import ReportDetailsCard from "../components/adminDashboard/ReportDetailsCard";
 
@@ -166,7 +166,7 @@ function AdminDashboardCore() {
             {tab === "users" && renderUsers()}
             {tab === "requests" && renderRequests()}
             {tab === "reports" && renderReports()}
-            {tab === "events" && <EventPanel />}
+            {tab === "events" && <EventsPanel />}
           </div>
         </div>
       </div>
