@@ -19,8 +19,12 @@ export async function getAllCoursesController(req, res) {
 
 export async function getCourseByIdController(req, res) {
   try {
-    console.log("Backend received ID:", req.params.id);
-    const data = await getCourseById(req.params.id);
+    const courseId = req.params.id;
+    const userId = req.query.userId; // <-- IMPORTANT
+
+    console.log("Backend received ID:", courseId, "user:", userId);
+
+    const data = await getCourseById(courseId, userId);
     res.status(200).json(data);
   } catch (err) {
     console.error("Error fetching course:", err);

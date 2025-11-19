@@ -1,8 +1,11 @@
 "use client";
 import React from "react";
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 export default function CourseContent({ lesson }) {
+  const router = useRouter();
+
   const { user } = useUser();
   const userId = user?.id; // Clerk user ID used for saving progress
 
@@ -18,6 +21,9 @@ export default function CourseContent({ lesson }) {
       if (!res.ok) throw new Error("Failed to mark lesson complete");
       const data = await res.json();
       console.log("Lesson completion saved:", data);
+      if (res.ok) {
+        router.refresh();
+      }
     } catch (err) {
       console.error("Error marking lesson complete:", err);
     }

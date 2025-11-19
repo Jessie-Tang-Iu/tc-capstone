@@ -21,9 +21,10 @@ export default function CoursePage({ userId }) {
 
     const fetchCourse = async () => {
       try {
-        const res = await fetch(`/api/course/${courseID}`);
+        const res = await fetch(`/api/course/${courseID}?userId=${userId}`);
         if (!res.ok) throw new Error("Failed to fetch course");
         const data = await res.json();
+        console.log("Fetched course data:", data);
         setCourse(data);
         setLessons(data.lessons || []);
       } catch (err) {
@@ -36,10 +37,30 @@ export default function CoursePage({ userId }) {
     fetchCourse();
   }, [courseID]);
 
+  useEffect(() => {
+    if (lessons.length > 0) {
+      const nextIndex = lessons.findIndex(l => !l.completed);
+      setSelectedLessonIndex(nextIndex === -1 ? null : nextIndex);
+    }
+  }, [lessons]);
+
   if (loading) return <div className="p-6 text-black bg-white">Loading course...</div>;
   if (!course) return <div className="p-6 text-black bg-white">Course not found</div>;
 
   const selectedLesson = selectedLessonIndex !== null ? lessons[selectedLessonIndex] : null;
+
+  if (selectedLesson && selectedLesson.locked) {
+    return (
+      <div className="flex-1 p-6 ml-[20%]">
+        <div className="bg-white rounded-xl shadow p-6">
+          <p className="text-gray-700">
+            This lesson is locked. Complete earlier lessons to unlock it.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="bg-gray-100 min-h-screen text-black">
@@ -68,14 +89,18 @@ export default function CoursePage({ userId }) {
             <div
               key={lesson.id}
               className={`pl-8 pr-4 py-2 flex items-center cursor-pointer ${
-                selectedLessonIndex === i ? "bg-gray-200" : ""
-              }`}
-              onClick={() => setSelectedLessonIndex(i)}
+                lesson.locked ? "opacity-50 cursor-not-allowed" : ""
+              } ${selectedLessonIndex === i ? "bg-gray-200" : ""}`}
+              onClick={() => {
+                if (lesson.locked) return;
+                setSelectedLessonIndex(i);
+              }}
             >
               <span className={`flex-1 ${lesson.completed ? "text-green-600" : ""}`}>
                 {lesson.type === "quiz" ? "Quiz" : "Lesson"} {i + 1}: {lesson.title}
               </span>
               {lesson.completed && <span>✓ Done</span>}
+              {lesson.locked && <span>🔒</span>}
             </div>
           ))}
         </div>

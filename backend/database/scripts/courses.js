@@ -1,3 +1,4 @@
+import e from "express";
 import { query } from "../db.js";
 
 // Get all courses
@@ -55,6 +56,15 @@ export async function getCourseById(courseId, userId) {
       }));
     }
   }
+
+  let firstIncompleteIndex = lessons.findIndex((l) => !l.completed);
+  if (firstIncompleteIndex === -1) firstIncompleteIndex = lessons.length;
+
+  lessons.forEach((lesson, index) => {
+    const isNextLesson = index === firstIncompleteIndex;
+    const isCompleted = lesson.completed;
+    lesson.locked = !isCompleted && !isNextLesson;
+  });
 
   // Fetch user course progress summary
   const courseProgressRes = await query(

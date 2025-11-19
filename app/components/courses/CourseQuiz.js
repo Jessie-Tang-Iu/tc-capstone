@@ -2,8 +2,11 @@
 
 import React, { useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 export default function CourseQuiz({ lesson, backToContent }) {
+  const router = useRouter();
+
   const { user } = useUser();
   const userId = user?.id; // Clerk user ID used for saving progress
 
@@ -43,7 +46,10 @@ export default function CourseQuiz({ lesson, backToContent }) {
       const data = await res.json();
       console.log("Response:", res.status, data);
       console.log("Quiz completion saved:", data);
-      setSaved(true);
+      if (res.ok) {
+        setSaved(true);
+        router.refresh();
+      }
     } catch (err) {
       console.error("Error saving quiz progress:", err);
     } finally {
