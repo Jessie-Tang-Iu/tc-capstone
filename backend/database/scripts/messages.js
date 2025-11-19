@@ -6,8 +6,11 @@ export async function getInbox(userId, { limit = 100, offset = 0 } = {}) {
   const result = await query(
     `
     SELECT DISTINCT ON (conversation_id)
-           id, conversation_id, sent_user_id, receive_user_id, content, sent_at, status
-      FROM message
+           m.id, m.conversation_id, m.sent_user_id, m.receive_user_id, m.content, m.sent_at, m.status, 
+           (u.first_name || ' ' || u.last_name) AS sender_name, (u2.first_name || ' ' || u2.last_name) AS receiver_name
+      FROM message m
+      LEFT OUTER JOIN public.users u ON m.sent_user_id = u.clerk_id
+      LEFT OUTER JOIN public.users u2 ON m.receive_user_id = u2.clerk_id
      WHERE sent_user_id = $1 OR receive_user_id = $1
   ORDER BY conversation_id, sent_at DESC
      LIMIT $2 OFFSET $3
