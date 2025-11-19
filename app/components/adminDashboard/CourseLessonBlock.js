@@ -6,25 +6,27 @@ export default function CourseLessonBlock({ lesson, onChange, onDelete }) {
   const [videoError, setVideoError] = useState("");
   
   const formatYouTubeUrl = (url) => {
-    if (!url) return "";
+    if (!url) {
+      setVideoError("");
+      return true;
+    }
 
     // Regex to check if the URL is a youtube link (standard or shortened) and extract the video ID (Adapted from StackOverflow https://stackoverflow.com/questions/19377262/regex-for-youtube-url) 
     const regex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(?:-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|live\/|v\/)?)([\w\-]+)(\S+)?$/;
     const match = url.match(regex);
 
-    // 
     if (match && match[5]) {
-      setVideoError(""); // Clear error if valid
-      return `https://www.youtube.com/embed/${match[5]}`;
+      setVideoError("");
+      return true;
     } else {
       setVideoError("Please enter a valid YouTube URL");
-      return url; // keep the raw input so it doesn't delete what user typed
+      return false;
     }
   };
 
   const handleChange = (field, value) => {
     if (field === "videoUrl") {
-      value = formatYouTubeUrl(value);
+      validateYouTubeUrl(value);
     }
     onChange({ ...lesson, [field]: value });
   };
