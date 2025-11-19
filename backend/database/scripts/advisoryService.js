@@ -14,8 +14,8 @@ export async function getBookingsByAdvisorId(id) {
                               WHERE advisor_id = $1`, 
     [id]
   );
-  if (!result.rows.length) throw new Error("Not found");
-  return result.rows;
+  // if (!result.rows.length) throw new Error("Not found");
+  return result.rows || [];
 }
 
 // Get the booking by bookingId

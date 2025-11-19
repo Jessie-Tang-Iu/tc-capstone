@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import SearchBar from "@/app/components/ui/SearchBar";
 import Section from "@/app/components/adminDashboard/Section";
 import UserRow from "@/app/components/adminDashboard/UserRow";
 import PlaceholderCard from "@/app/components/adminDashboard/PlaceholderCard";
 import ChatWindow from "@/app/components/ChatWindow";
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 export default function UsersPanel({ onShowDetails }) {
   const [query, setQuery] = useState("");
@@ -14,6 +16,11 @@ export default function UsersPanel({ onShowDetails }) {
   const [usersByRole, setUsersByRole] = useState({});
   const [activeTab, setActiveTab] = useState("admin");
   const [fetchedRoles, setFetchedRoles] = useState({});
+
+  const userContext = useUser();
+  const currentUserId = userContext?.user?.id;
+
+  const router = useRouter();
 
   const roles = [
     { key: "admin", label: "Admins" },
@@ -72,6 +79,7 @@ export default function UsersPanel({ onShowDetails }) {
   };
 
   const openMessage = (userId) => {
+    console.log("Open message to:", userId);
     setChatTo(userId);
     setOpenChat(true);
   };
@@ -148,6 +156,8 @@ export default function UsersPanel({ onShowDetails }) {
                 subtitle={`${u.username ?? ""} | ${u.email ?? ""}`}
                 status={u.status}
                 onMessage={() => openMessage(u.clerk_id)}
+                role={activeTab}
+                onInvestigate={() => {router.push(`/advisorDashboard?advisorId=${u.clerk_id}`)}}
                 onDetails={() =>
                   showDetails(u, roles.find((r) => r.key === activeTab)?.label)
                 }
@@ -163,6 +173,7 @@ export default function UsersPanel({ onShowDetails }) {
       {/* Chat Window */}
       {openChat && (
         <ChatWindow
+          me={currentUserId}
           recipient={chatTo}
           onClose={() => setOpenChat(false)}
           onSend={(text) => console.log("send:", { to: chatTo, text })}

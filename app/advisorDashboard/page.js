@@ -2,7 +2,7 @@
 
 import MessagePage from "../components/MessagePage";
 import Navbar from "../components/AdvisorNavBar";
-import { useState } from "react";
+import { use, useState } from "react";
 import MyClientPage from "./myClient";
 import Invoice from "./invoice";
 import MyBookingPage from "./myBooking";
@@ -10,9 +10,10 @@ import MyAvailability from "./myAvailability";
 
 
 
-export default function AdvisorDashboard() {
+export default function AdvisorDashboard({ searchParams }) {
 
     let [menuSelection, setMenuSelection] = useState("message");
+    let advisorID = use(searchParams).advisorId;
 
     const handleMenuSelection = (event) => {
         const selected = event.target.value;
@@ -21,6 +22,13 @@ export default function AdvisorDashboard() {
     };
 
     const ME = "testAdvisor1"; // for testing without login
+
+    if (advisorID === null || advisorID === undefined) {
+        console.log("No Advisor ID in URL, using ME");
+        advisorID = ME;
+    } else {
+        console.log("Advisor ID from URL: ", advisorID);
+    }
 
     const MOCK_MESSAGES = [
     {
@@ -88,10 +96,10 @@ export default function AdvisorDashboard() {
                     </div>
 
                     <div className=" w-full ml-6">
-                        {menuSelection === "message" && <MessagePage currentUserId={ME} />}
-                        {menuSelection === "booking" && <MyBookingPage advisorId={ME} />}
-                        {menuSelection === "client" && <MyClientPage currentUserId={ME}/>}
-                        {menuSelection === "availability" && <MyAvailability advisorId={ME} />}
+                        {menuSelection === "message" && <MessagePage currentUserId={advisorID} />}
+                        {menuSelection === "booking" && <MyBookingPage advisorId={advisorID} />}
+                        {menuSelection === "client" && <MyClientPage currentUserId={advisorID}/>}
+                        {menuSelection === "availability" && <MyAvailability advisorId={advisorID} />}
                         {menuSelection === "invoice" && <Invoice />}
                     </div>
                 </div>

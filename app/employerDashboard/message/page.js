@@ -1,8 +1,8 @@
 "use client";
 
-import Navbar from "@/app/components/BlankNavBar";
+import Navbar from "@/app/components/EmployerNavBar";
 import EmployerSidebar from "@/app/components/employerDashboard/EmployerSideBar";
-import MessagePage from "@/app/components/MessagePage"; // <- your table component
+import MessagePage from "@/app/components/MessagePage";
 
 const MOCK_MESSAGES = [
   {

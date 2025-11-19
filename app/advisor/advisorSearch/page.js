@@ -36,9 +36,15 @@ export default function AdvisorSearchPage() {
         last_name: advisor.last_name,
         email: advisor.email,
         phone: advisor.phone,
-        role: advisor.role}));
+        role: advisor.role,
+        company_name: advisor.company_name,
+        company_role: advisor.company_role,
+        education: advisor.education,
+        experience: advisor.experience,
+      }));
 
       setAdvisorList(advisorArray);
+      // console.log("Fetched Advisors: ", advisorArray);
 
       } catch (error) {
         console.error("Fetch error: ", error);
