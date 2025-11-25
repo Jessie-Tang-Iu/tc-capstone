@@ -26,7 +26,7 @@ export default function CourseLessonBlock({ lesson, onChange, onDelete }) {
 
   const handleChange = (field, value) => {
     if (field === "videoUrl") {
-      validateYouTubeUrl(value);
+      formatYouTubeUrl(value);
     }
     onChange({ ...lesson, [field]: value });
   };

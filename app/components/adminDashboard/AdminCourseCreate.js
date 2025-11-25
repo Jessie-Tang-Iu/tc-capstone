@@ -45,7 +45,12 @@ export default function AdminCourseCreate({ onCancel, onRefresh }) {
   const isValidYouTubeUrl = (url) => {
     if (!url) return true; // empty URLs are allowed
 
+     // Credit to https://stackoverflow.com/questions/19377262/regex-for-youtube-url for the Regex
     const regex =
+      // This regex is used for checking if a inputted URL is from youtuve. 
+      // In order this regex matches: Protocol (http, https) but isn't required, subdomains (www, m) some links may contain them so we need to check for them
+      // Main Domain (youtube.com, youtu.be, youtube-nocookie.com) this just checks the possible domains of youtube links, paths (This just checks if it contains valid youtube paths)
+      // Finally it checks the Video ID and extra parameters such as a start time.
       /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(?:-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|live\/|v\/)?)([\w\-]+)(\S+)?$/;
     const match = url.match(regex);
     return match && match[5];
