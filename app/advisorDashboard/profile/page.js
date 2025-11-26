@@ -158,7 +158,8 @@ export default function Profile() {
                                     value={advisor.company_name || ""}
                                     onChange={(e) => setAdvisor({...advisor, company_name: e.target.value})}
                                     />
-                                </div>
+                                </div>                                
+                                
                             </div>
                             <div>
                                 <Button text="Save" type="submit"/>
@@ -167,31 +168,88 @@ export default function Profile() {
                             
 
                         <div className='mb-10'>
-                            <h1 className="text-2xl text-black font-bold mb-2">Contact Information</h1>
+                            <div className="flex flex-col">
+                                <h1 className="text-2xl text-black font-bold mb-2">Contact Information</h1>
 
-                            {/* Phone Number */}
-                            <div className="flex flex-row space-x-2 mb-6 items-center">
-                                <label className="text-1xl text-black">Phone: </label>
-                                <input
-                                className="border rounded border-black p-1"
-                                type="text"
-                                value={advisor.phone || ""}
-                                onChange={(e) => setAdvisor({...advisor, phone: e.target.value})}
-                                />
+                                {/* Phone Number */}
+                                <div className="flex flex-row space-x-2 mb-6 items-center">
+                                    <label className="text-1xl text-black">Phone: </label>
+                                    <input
+                                    className="border rounded border-black p-1"
+                                    type="text"
+                                    value={advisor.phone || ""}
+                                    onChange={(e) => setAdvisor({...advisor, phone: e.target.value})}
+                                    />
+                                </div>
+                                
+
+                                {/* Email */}
+                                <div className="flex flex-row space-x-2 mb-6 items-center">
+                                    <label className="text-1xl text-black">Email:* </label>
+                                    <input
+                                    required
+                                    className="border rounded border-black p-1"
+                                    type="text"
+                                    value={advisor.email || ""}
+                                    onChange={(e) => setAdvisor({...advisor, email: e.target.value})}
+                                    />
+                                </div>
                             </div>
                             
+                        </div>
 
-                            {/* Email */}
-                            <div className="flex flex-row space-x-2 mb-6 items-center">
-                                <label className="text-1xl text-black">Email:* </label>
-                                <input
-                                required
-                                className="border rounded border-black p-1"
-                                type="text"
-                                value={advisor.email || ""}
-                                onChange={(e) => setAdvisor({...advisor, email: e.target.value})}
-                                />
+                        <div className="mb-10 flex flex-col">
+                            <h1 className="text-2xl text-black font-bold mb-2">Skills</h1>
+
+                            <div className="flex flex-row space-x-4">
+                                <div className="flex flex-row space-x-2 mb-6 items-center">
+                                    <label className="text-1xl text-black">Skill 1:</label>
+                                    <input
+                                    className="border rounded border-black p-1"
+                                    type="text"
+                                    value={""}
+                                    />
+                                </div>
+
+                                <div className="flex flex-row space-x-2 mb-6 items-center">
+                                    <label className="text-1xl text-black">Skill 2:</label>
+                                    <input
+                                    className="border rounded border-black p-1"
+                                    type="text"
+                                    value={""}
+                                    />
+                                </div>
+
+                                <div className="flex flex-row space-x-2 mb-6 items-center">
+                                    <label className="text-1xl text-black">Skill 3:</label>
+                                    <input
+                                    className="border rounded border-black p-1"
+                                    type="text"
+                                    value={""}
+                                    />
+                                </div>
                             </div>
+
+                            <div className="flex flex-row space-x-4">
+                                <div className="flex flex-row space-x-2 mb-6 items-center">
+                                    <label className="text-1xl text-black">Skill 4:</label>
+                                    <input
+                                    className="border rounded border-black p-1"
+                                    type="text"
+                                    value={""}
+                                    />
+                                </div>
+
+                                <div className="flex flex-row space-x-2 mb-6 items-center">
+                                    <label className="text-1xl text-black">Skill 5:</label>
+                                    <input
+                                    className="border rounded border-black p-1"
+                                    type="text"
+                                    value={""}
+                                    />
+                                </div>
+                            </div>
+                            
                             
                         </div>
                         
