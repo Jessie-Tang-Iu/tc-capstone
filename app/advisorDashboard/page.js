@@ -47,7 +47,7 @@ export default function AdvisorDashboard({ searchParams }) {
     ];
 
     return(
-        <main className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
+        <main className="w-full min-h-screen bg-linear-to-br from-[#f8eae2] to-white">
             <Navbar />
         
             <div className="mx-auto w-full max-w-8xl px-6 py-8">
