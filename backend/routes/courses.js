@@ -7,6 +7,7 @@ import {
     updateCourseProgressController,
     deleteCourseController,
     editCourseController,
+    getCourseAdminController,
 } from "../controllers/coursesController.js";
 
 const router = express.Router();
@@ -36,5 +37,8 @@ router.post("/progress", markLessonCompleteController);
 // POST course progress update (optional, e.g. after finishing a quiz)
 // Example body: { "userId": "USER123", "courseId": 1 }
 router.post("/progress/course", updateCourseProgressController);
+
+// GET a course by ID for admin (no user-specific data)
+router.get("/admin/:id", getCourseAdminController);
 
 export default router;
