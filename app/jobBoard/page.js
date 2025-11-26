@@ -11,7 +11,7 @@ import ApplyForm from "../components/application/ApplyForm";
 
 export default function JobBoardPage() {
 
-    const { user } = useUser();
+    const { user, isLoaded } = useUser();
 
     const [jobs, setJobs] = useState([]);
     const [selectedJobId, setSelectedJobId] = useState();
@@ -198,7 +198,7 @@ export default function JobBoardPage() {
     }, [filters, search]);
 
     const role = useMemo(() => {
-      return user.publicMetadata?.role;
+      return user?.publicMetadata?.role;
     }, [user]);
 
     const getApplications = useCallback(() => {
@@ -244,7 +244,7 @@ export default function JobBoardPage() {
       fetchFilters();
     }, [role]);
 
-    if (!user) {
+    if (!isLoaded) {
       // router.push("/");
       return (
         <div className="min-h-screen flex items-center justify-center">
