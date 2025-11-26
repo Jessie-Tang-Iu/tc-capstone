@@ -7,8 +7,9 @@ export default function CourseLessonBlock({ lesson, onChange, onDelete }) {
   const [displayUrl, setDisplayUrl] = useState(lesson.videoUrl || "");
 
   const extractVideoId = (url) => {
-    // Regex to check if the URL is a youtube link (standard or shortened) and extract the video ID (Copied from StackOverflow user phuc77 https://stackoverflow.com/questions/19377262/regex-for-youtube-url) 
-    const regex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(?:-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|live\/|v\/)?)([\w\-]+)(\S+)?$/;
+    // Regex to check if the URL is a youtube link (standard or shortened) and extract the video ID 
+    // (Adapted from StackOverflow user phuc77 to be a bit more strict on URL format https://stackoverflow.com/questions/19377262/regex-for-youtube-url) 
+    const regex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(?:-nocookie)?\.com|youtu.be))(\/(?:watch\?v=|embed\/|live\/|v\/)?)([\w\-]+)(\S+)?$/;
     // Example Valid URL: youtube.com/watch?v=jNQXAC9IVRw
 
     // Grabs Match group 5 which contains the video ID, that way we can add it to a premade embed URL when sending to the backend

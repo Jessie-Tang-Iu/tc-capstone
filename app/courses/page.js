@@ -100,19 +100,21 @@ export default function PageContent() {
       <Navbar />
 
       {/* Search Bar */}
-      <header className="flex justify-center mx-16">
-        <div className="flex justify-between border border-black rounded-xl overflow-hidden p-2 my-4 w-1/4 h-15">
+      <header className="flex justify-between mx-8">
+        <div className="border border-[#E55B3C] rounded-xl overflow-hidden py-1 px-3 my-4 w-fit">
           <input
             type="text"
             placeholder="Search by Course Title or Tags"
-            className="px-3 py-2 w-64 focus:outline-none placeholder-gray-700 text-black"
+            className="px-2 py-2 w-60 focus:outline-none placeholder-gray-700 bg-[#f8f1ed] text-black"
             value={searchQuery}
             onChange={handleSearchChange}
           />
-          <button className="bg-[#F26D51] text-white px-3 py-1 rounded-lg" onClick={filterSearch}>
-            Search
-          </button>
         </div>
+        <h1 className="self-baseline font-bold text-3xl text-[#E55B3C] mt-8 mr-8">
+          Courses
+        </h1>
+        {/* Blank for Spacing */}
+        <div></div>
       </header>
 
       {/* Filters and Courses */}
