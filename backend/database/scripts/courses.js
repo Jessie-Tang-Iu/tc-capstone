@@ -72,7 +72,8 @@ export async function getCourseById(courseId, userId) {
      WHERE user_id = $1 AND course_id = $2`,
     [userId, courseId]
   );
-
+  
+  // Returns user progress OR if there is none it returns as if they havent completed anything yet
   course.user_progress = courseProgressRes.rows[0] || {
     completed_lessons: 0,
     total_lessons: lessons.length,

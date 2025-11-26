@@ -10,6 +10,7 @@ export default function PageContent() {
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     beginner: false,
@@ -20,17 +21,6 @@ export default function PageContent() {
     online: false,
     inPerson: false,
     workshop: false,
-  });
-
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [newCourse, setNewCourse] = useState({
-    title: "",
-    description: "",
-    type: "Online",
-    certificate: false,
-    level: "Beginner",
-    lessonCount: 0,
-    duration: "",
   });
 
   const { isLoaded, isSignedIn, user } = useUser();
@@ -106,7 +96,7 @@ export default function PageContent() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-gradient-to-br from-[#f8f1ed] to-white min-h-screen">
       <Navbar />
 
       {/* Search Bar */}
@@ -128,53 +118,58 @@ export default function PageContent() {
       {/* Filters and Courses */}
       <main className="flex">
         <div className="w-1/6 border-r-black border-r-1 min-h-screen text-black my-5">
-          <div className="ml-8 mb-4">
-            <h2 className="font-bold text-xl">Filter By</h2>
-            <h3 className="font-medium text-lg mt-2">Course Level</h3>
-            {["beginner", "intermediate", "advanced"].map((lvl) => (
-              <div key={lvl}>
-                <input
-                  type="checkbox"
-                  id={lvl}
-                  name={lvl}
-                  checked={filters[lvl]}
-                  onChange={handleCheckboxChange}
-                />
-                <label htmlFor={lvl}> {lvl.charAt(0).toUpperCase() + lvl.slice(1)}</label>
-              </div>
-            ))}
-          </div>
+          <div className="ml-8 mb-6">
+            <h2 className="font-bold text-xl mb-4">Filter By</h2>
 
-          <div className="ml-8 mb-4">
-            <h3 className="font-medium text-lg mt-2">Offers Certificate</h3>
-            {["certificateYes", "certificateNo"].map((cert) => (
-              <div key={cert}>
-                <input
-                  type="checkbox"
-                  id={cert}
-                  name={cert}
-                  checked={filters[cert]}
-                  onChange={handleCheckboxChange}
-                />
-                <label htmlFor={cert}> {cert === "certificateYes" ? "Yes" : "No"}</label>
-              </div>
-            ))}
-          </div>
+            {/* LEVEL DROPDOWN */}
+            <div className="mb-4">
+              <label className="font-medium text-lg block mb-1 ">Course Level</label>
+              <select
+                className="border p-2 rounded w-40 bg-[#f8f1ed] border-[#E55B3C] text-black"
+                value={filters.level || ""}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, level: e.target.value }))
+                }
+              >
+                <option value="">Any</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+            </div>
 
-          <div className="ml-8 mb-4">
-            <h3 className="font-medium text-lg mt-2">Type</h3>
-            {["online", "inPerson", "workshop"].map((type) => (
-              <div key={type}>
-                <input
-                  type="checkbox"
-                  id={type}
-                  name={type}
-                  checked={filters[type]}
-                  onChange={handleCheckboxChange}
-                />
-                <label htmlFor={type}> {type}</label>
-              </div>
-            ))}
+            {/* CERTIFICATE DROPDOWN */}
+            <div className="mb-4">
+              <label className="font-medium text-lg block mb-1">Certificate</label>
+              <select
+                className="border p-2 rounded w-40 bg-[#f8f1ed] border-[#E55B3C] text-black"
+                value={filters.certificate || ""}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, certificate: e.target.value }))
+                }
+              >
+                <option value="">Any</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+
+            {/* TYPE DROPDOWN */}
+            <div className="mb-4">
+              <label className="font-medium text-lg block mb-1">Course Type</label>
+              <select
+                className="border p-2 rounded w-40 bg-[#f8f1ed] border-[#E55B3C] text-black"
+                value={filters.type || ""}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, type: e.target.value }))
+                }
+              >
+                <option value="">Any</option>
+                <option value="Online">Online</option>
+                <option value="In Person">In Person</option>
+                <option value="Workshop">Workshop</option>
+              </select>
+            </div>
           </div>
         </div>
 
