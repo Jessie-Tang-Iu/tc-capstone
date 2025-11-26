@@ -95,7 +95,7 @@ export default function CourseLessonBlock({ lesson, onChange, onDelete }) {
         </label>
         <input
           type="url"
-          value={lesson.videoUrl || ""}
+          value={displayUrl}
           onChange={(e) => handleChange("videoUrl", e.target.value)}
           placeholder="https://www.youtube.com/watch?v=..."
           className={`w-full border rounded p-2 text-black ${
