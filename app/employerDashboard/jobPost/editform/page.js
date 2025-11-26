@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react"; // Added useRef
+import React, { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 
@@ -9,7 +9,6 @@ import Navbar from "@/app/components/EmployerNavBar";
 import EmployerSidebar from "@/app/components/employerDashboard/EmployerSideBar";
 import PopupMessage from "@/app/components/ui/PopupMessage";
 
-/* ========== UI Components (Existing) ========== */
 const FieldLabel = ({ children }) => (
   <div className="text-xs font-medium text-gray-700 mb-1">{children}</div>
 );
@@ -44,7 +43,6 @@ const HeaderButton = ({ children, kind = "solid", onClick }) => {
   );
 };
 
-/* ========== New Dropdown Component ========== */
 const ActionDropdown = ({ children, label, className = "" }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -114,7 +112,6 @@ const DropdownItem = ({ children, onClick, className = "" }) => (
   </button>
 );
 
-/* ========== ReactQuill ========== */
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 const toolbarOptions = [
   [{ font: [] }, { size: [] }],
@@ -164,7 +161,6 @@ export default function JobPostEditForm() {
     loadDropdowns();
   }, []);
 
-  /* ======= Form fields ======= */
   const [title, setTitle] = useState("");
   const [company, setCompany] = useState("");
   const [location, setLocation] = useState("Calgary, Alberta");
@@ -181,7 +177,6 @@ export default function JobPostEditForm() {
   const [moreDetails, setMoreDetails] = useState("");
   const [benefits, setBenefits] = useState("");
 
-  /* ======= Fetch existing job & Prefill ======= */
   const prefillForm = (data) => {
     setTitle(data.title || "");
     // Use jobData.company_name as fallback if jobData.company is null/undefined
@@ -222,10 +217,6 @@ export default function JobPostEditForm() {
     fetchJob();
   }, [isEdit, jobId]);
 
-  /* The second useEffect for prefill is redundant and was removed. */
-  /* The third useEffect for prefill is also redundant and was removed. */
-
-  /* ======= Action Handlers (Moved from inline) ======= */
   const handleJobStatusChange = async (newStatus) => {
     const action = newStatus === "A" ? "Reopen" : "Close";
     if (!confirm(`Are you sure you want to ${action.toLowerCase()} this job?`))
@@ -241,7 +232,6 @@ export default function JobPostEditForm() {
       alert(`Job ${action.toLowerCase()}ed successfully`);
       // Update jobData status locally or re-fetch job
       setJobData((prev) => ({ ...prev, status: newStatus }));
-      // Optional: redirect to job list after action
       // router.push("/employerDashboard/jobPost");
     } catch (err) {
       alert(`Error ${action.toLowerCase()}ing job: ` + err.message);
@@ -251,23 +241,27 @@ export default function JobPostEditForm() {
   const handleDeleteJob = async () => {
     if (
       !confirm(
-        "Permanently delete this job post? This action cannot be undone."
+        "WARNING: Permanently delete this job post? This action cannot be undone, and the job will be completely removed from the database."
       )
     )
       return;
+
     try {
+      // Revert to DELETE method for hard deletion as required
       const res = await fetch(`/api/job/${jobId}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("Failed to delete job");
-      alert("Job deleted successfully");
+
+      if (!res.ok)
+        throw new Error(`Failed to delete job (Status: ${res.status})`);
+
+      alert("Job permanently deleted.");
       router.push("/employerDashboard/jobPost");
     } catch (err) {
       alert("Error deleting job: " + err.message);
     }
   };
 
-  /* ======= Save ======= */
   const handleSave = async () => {
     const newErrors = {};
     // Regex for stripping HTML tags and entities, then trimming whitespace
