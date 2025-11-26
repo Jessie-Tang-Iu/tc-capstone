@@ -21,20 +21,23 @@ export default function InvoiceDetail({ params }) {
 
                         <div className="flex justify-center items-center flex-col bg-white p-6 rounded-lg shadow-md mb-10">
                             <div className="mb-4 text-4xl font-semibold text-[#E55B3C]">
-                                Invoice
+                                Invoice Information
                             </div>
-                            <p className="text-black">Details for Invoice ID: {id}</p>
+                            <p className="text-black mb-2"><strong>Invoice ID:</strong> {id}</p>
                         </div>
 
                         <div className="flex flex-col bg-white p-6 rounded-lg shadow-md">
-                            <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">Invoice Information</h2>
-                            <div className="flex flex-row space-x-20">
-                                <p className="text-black mb-2"><strong>Invoice ID:</strong> {id}</p>
-                                <p className="text-black mb-2"><strong>Date Issued:</strong> June 15, 2024</p>
-                            </div>
-                            <p className="text-black mb-2"><strong>Service:</strong> Advisory Session</p>
+                            <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">Billing Information</h2>
+                            <p className="text-black mb-2"><strong>Date Issued:</strong> June 15, 2024</p>
+                            
+                            
                             <p className="text-black mb-2"><strong>Client Name:</strong> John Doe</p>
-                            <p className="text-black mb-2"><strong>Advisor:</strong> Advisor Name</p>
+                            <p className="text-black mb-10"><strong>Advisor:</strong> Advisor Name</p>
+
+                            <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">Description</h2>
+                            <p className="text-black mb-2"><strong>Service:</strong> Advisory Session</p>
+                            <p className="text-black mb-2"><strong>Quantity:</strong> 1</p>
+                            <p className="text-black mb-2"><strong>Unit Price:</strong> $150.00</p>
                             <p className="text-black mb-2"><strong>Amount:</strong> $150.00</p>
                             <p className="text-black mb-2"><strong>Status:</strong> Paid</p>
                         </div>
