@@ -2,7 +2,7 @@ const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
 
 export async function GET(req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId");
