@@ -1,26 +1,31 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Navbar from "../../components/MemberNavBar";
 import CourseContent from "../../components/courses/CourseContent";
 import CourseQuiz from "../../components/courses/CourseQuiz";
 
-export default function CoursePage() {
-  const params = useParams(); // get route params
-  const courseID = params.courseID; // this matches your [courseID] folder
+export default function CoursePage({}) {
+  const params = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const courseID = params.courseID;
+  const userId = searchParams.get("userId");
+
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
-  const [view, setView] = useState("home");
-  const [selectedLesson, setSelectedLesson] = useState(null);
+  const [selectedLessonIndex, setSelectedLessonIndex] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!courseID) return; // don't fetch if no ID
+    if (!courseID) return;
 
     const fetchCourse = async () => {
       try {
-        const res = await fetch(`/api/course/${courseID}`);
+        console.log(userId)
+        const res = await fetch(`/api/course/${courseID}?userId=${userId}`);
         if (!res.ok) throw new Error("Failed to fetch course");
         const data = await res.json();
         console.log("Fetched course data:", data);
@@ -36,52 +41,77 @@ export default function CoursePage() {
     fetchCourse();
   }, [courseID]);
 
-  if (loading) return <div className="p-6 text-black">Loading course...</div>;
-  if (!course) return <div className="p-6 text-black">Course not found</div>;
+  useEffect(() => {
+    if (lessons.length > 0) {
+      const nextIndex = lessons.findIndex(l => !l.completed);
+      setSelectedLessonIndex(nextIndex === -1 ? null : nextIndex);
+    }
+  }, [lessons]);
 
-  const openLesson = (index) => {
-    setSelectedLesson(index);
-    setView("lesson");
-  };
+  if (loading) return <div className="p-6 text-black bg-white">Loading course...</div>;
+  if (!course) return <div className="p-6 text-black bg-white">Course not found</div>;
 
-  const lesson = selectedLesson !== null ? lessons[selectedLesson] : null;
+  const selectedLesson = selectedLessonIndex !== null ? lessons[selectedLessonIndex] : null;
+
+  if (selectedLesson && selectedLesson.locked) {
+    return (
+      <div className="flex-1 p-6 ml-[20%]">
+        <div className="bg-white rounded-xl shadow p-6">
+          <p className="text-gray-700">
+            This lesson is locked. Complete earlier lessons to unlock it.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="bg-gray-100 min-h-screen text-black">
       <Navbar />
 
       <div className="flex">
-        <div className="w-1/5 border-r border-gray-300 min-h-screen bg-white">
+        {/* Sidebar with lessons */}
+        <div className="fixed left-0 top-0 w-1/5 h-screen border-r border-gray-300 bg-white overflow-y-auto">
           <div className="p-4 border-b font-semibold text-lg text-[#E55B3C]">
             {course.title}
           </div>
+
           <div
-            className={`p-4 cursor-pointer ${view === "home" ? "bg-gray-200" : ""}`}
-            onClick={() => setView("home")}
+            className="p-4 cursor-pointer text-blue-600 hover:underline"
+            onClick={() => router.push("/courses")}
           >
+            ← Back to Courses
+          </div>
+
+          <div className="p-4 cursor-pointer" onClick={() => setSelectedLessonIndex(null)}>
             Course Home
           </div>
-          <div
-            className={`p-4 cursor-pointer ${view === "content" ? "bg-gray-200" : ""}`}
-            onClick={() => setView("content")}
-          >
-            Lessons & Quizzes
-          </div>
-          {lessons.map((l, i) => (
+          <div className="p-4 cursor-pointer font-semibold">Lessons & Quizzes</div>
+
+          {lessons.map((lesson, i) => (
             <div
-              key={l.id}
-              className={`pl-8 pr-4 py-2 cursor-pointer ${
-                selectedLesson === i && view === "lesson" ? "bg-gray-300" : "bg-white"
-              }`}
-              onClick={() => openLesson(i)}
+              key={lesson.id}
+              className={`pl-8 pr-4 py-2 flex items-center cursor-pointer ${
+                lesson.locked ? "opacity-50 cursor-not-allowed" : ""
+              } ${selectedLessonIndex === i ? "bg-gray-200" : ""}`}
+              onClick={() => {
+                if (lesson.locked) return;
+                setSelectedLessonIndex(i);
+              }}
             >
-              {l.type === "quiz" ? "Quiz" : "Lesson"} {i + 1}: {l.title}
+              <span className={`flex-1 ${lesson.completed ? "text-green-600" : ""}`}>
+                {lesson.type === "quiz" ? "Quiz" : "Lesson"} {i + 1}: {lesson.title}
+              </span>
+              {lesson.completed && <span>✓ Done</span>}
+              {lesson.locked && <span>🔒</span>}
             </div>
           ))}
         </div>
 
-        <div className="flex-1 p-6">
-          {view === "home" && (
+        {/* Main content area */}
+        <div className="flex-1 p-6 ml-[20%]">
+          {!selectedLesson && (
             <div className="bg-white rounded-xl shadow p-6">
               <h1 className="text-3xl font-bold mb-4">{course.title}</h1>
               <p className="mb-4 text-gray-700">{course.description}</p>
@@ -90,63 +120,17 @@ export default function CoursePage() {
                 <p>Type: {course.type}</p>
                 <p>Lessons: {course.lesson_count}</p>
                 <p>Duration: {course.duration}</p>
-                {course.certificate && <p>🎓 Certificate Available</p>}
+                {course.certificate && <p>Certificate Available</p>}
               </div>
-              <button
-                onClick={() => setView("content")}
-                className="bg-[#E55B3C] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#c94b2d]"
-              >
-                View Course Content
-              </button>
             </div>
           )}
 
-          {view === "content" && (
-            <CourseContent lessons={lessons} openLesson={openLesson} />
+          {selectedLesson && selectedLesson.type === "lesson" && (
+            <CourseContent lesson={selectedLesson} userId={userId} />
           )}
 
-          {view === "lesson" && lesson && (
-            <div className="bg-white rounded-xl shadow p-6">
-              <h2 className="text-2xl font-bold mb-4">{lesson.title}</h2>
-
-              {lesson.type === "lesson" && (
-                <>
-                  <div
-                    className="text-gray-700 mb-4"
-                    dangerouslySetInnerHTML={{ __html: lesson.content }}
-                  />
-                  {lesson.video_url && (
-                    <iframe
-                      className="rounded-lg w-full h-64"
-                      src={lesson.video_url}
-                      title={lesson.title}
-                      allowFullScreen
-                    ></iframe>
-                  )}
-                  <div className="mt-6 flex gap-4">
-                    <button
-                      onClick={() => setView("content")}
-                      className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300"
-                    >
-                      Back to Content
-                    </button>
-                    <button
-                      onClick={() => setView("home")}
-                      className="bg-[#E55B3C] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#c94b2d]"
-                    >
-                      Course Home
-                    </button>
-                  </div>
-                </>
-              )}
-
-              {lesson.type === "quiz" && (
-                <CourseQuiz
-                  lesson={lesson}
-                  backToContent={() => setView("content")}
-                />
-              )}
-            </div>
+          {selectedLesson && selectedLesson.type === "quiz" && (
+            <CourseQuiz lesson={selectedLesson} backToContent={() => setSelectedLessonIndex(null)} userId={userId} />
           )}
         </div>
       </div>
