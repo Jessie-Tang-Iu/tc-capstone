@@ -17,7 +17,7 @@ export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
     useEffect(() => {
         const fetchCourse = async () => {
         try {
-            const res = await fetch(`/api/course/${courseId}`);
+            const res = await fetch(`/api/course/admin/${courseId}`);
             if (!res.ok) throw new Error("Failed to fetch course");
             const data = await res.json();
 

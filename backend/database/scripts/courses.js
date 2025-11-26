@@ -83,6 +83,51 @@ export async function getCourseById(courseId, userId) {
   return { ...course, lessons };
 }
 
+export async function getCourseAdmin(courseId) {
+  courseId = parseInt(courseId, 10);
+
+  const courseRes = await query(
+    `SELECT * FROM courses WHERE id = $1`,
+    [courseId]
+  );
+
+  if (courseRes.rows.length === 0) return null;
+
+  const course = courseRes.rows[0];
+
+  const lessonsRes = await query(
+    `SELECT * FROM lessons WHERE course_id = $1 ORDER BY position ASC`,
+    [courseId]
+  );
+
+  const lessons = lessonsRes.rows.map((l) => {
+    if (l.type === "lesson") {
+      return {
+        id: l.id,
+        type: "lesson",
+        title: l.title,
+        content: l.content,
+        video_url: l.video_url,
+        position: l.position,
+      };
+    }
+
+    if (l.type === "quiz") {
+      return {
+        id: l.id,
+        type: "quiz",
+        title: l.title,
+        description: l.content,
+        position: l.position,
+      };
+    }
+
+    return l;
+  });
+
+  return { ...course, lessons };
+}
+
 /** Mark a lesson as completed and update course progress */
 export async function markLessonComplete(userId, lessonId) {
   // Mark this lesson as complete
