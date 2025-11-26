@@ -1,5 +1,13 @@
 import { NextResponse } from "next/server";
 import { query } from "@/backend/database/db.js";
+import { auth, clerkClient } from '@clerk/nextjs/server'
+// import { getAuth } from "@clerk/express";
+import { updateUserMetadata } from "@/backend/controllers/usersController";
+
+const client = await clerkClient()
+
+// const userList = await client.users.getUserList()
+// console.log("API user: ", userList)
 
 export async function GET(req) {
   try {
@@ -55,5 +63,24 @@ export async function GET(req) {
       { error: "Failed to fetch users" },
       { status: 500 }
     );
+  }
+}
+
+export async function POST(req) {
+  try {
+    const body = await req.json();
+    if (body.role == 'member') {
+      const { userId } = await auth();
+      if (!userId) {
+        return NextResponse.json({ error: "Unauthorized"}, { status: 401 });
+      }
+    }
+
+    const newUser = await updateUserMetadata(body)
+    // console.log("New user api: ", newUser)
+    return NextResponse.json(newUser, { status: 201 });
+  } catch (err) {
+    console.error("API POST /users error: ", err.message);
+    return NextResponse.json({ error: err.message }, { status: 400 })
   }
 }

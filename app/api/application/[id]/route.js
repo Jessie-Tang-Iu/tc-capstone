@@ -20,7 +20,7 @@ export async function PATCH(req, { params }) {
   const { id } = await params;
   try {
     const body = await req.json();
-    const updated = await updateApplicationStatus(Number(id), body.status); // ✅ fixed here
+    const updated = await updateApplicationStatus(Number(id), body);
     if (!updated) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }

@@ -63,6 +63,7 @@ export default function ProfileSection({ setSuccessMessage, setErrorMessage }) {
           if (data.error) {
             setCoverLetterData({
               isNew: true,
+              user_id: user.id,
               content: "",
             })
           } else setCoverLetterData(data);
@@ -107,6 +108,9 @@ export default function ProfileSection({ setSuccessMessage, setErrorMessage }) {
       if (!res.ok) {
         throw new Error (res.status, await res.text());
       }
+      if (resumeData.isNew) {
+        setResumeData((prev) => ({ ...prev, isNew: false }));
+      }
       setSuccessMessage("Resume is saved");
     } catch (err) {
       setErrorMessage("Saving resume failed\n", err.message);
@@ -129,6 +133,9 @@ export default function ProfileSection({ setSuccessMessage, setErrorMessage }) {
       })
       if (!res.ok) {
         throw new Error (res.status, await res.text());
+      }
+      if (coverLetterData.isNew) {
+        setCoverLetterData((prev) => ({ ...prev, isNew: false }));
       }
       setSuccessMessage("Cover letter is saved");
     } catch (err) {
