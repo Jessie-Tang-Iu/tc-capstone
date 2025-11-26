@@ -230,9 +230,7 @@ export default function Applications() {
         <PopupMessage
           type="error"
           title={
-            errorMessage.includes("already registered")
-              ? "Already Registered"
-              : "Update Failed"
+            errorMessage
           }
           description={errorMessage}
           onClose={() => setErrorMessage("")}

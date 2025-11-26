@@ -198,7 +198,6 @@ export default function JobBoardPage() {
     }, [filters, search]);
 
     const role = useMemo(() => {
-      if (!user) return null;
       return user.publicMetadata.role;
     }, [user]);
 
