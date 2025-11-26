@@ -1,4 +1,3 @@
-import e from "express";
 import { query } from "../db.js";
 
 // Get all courses
