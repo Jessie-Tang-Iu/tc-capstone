@@ -4,6 +4,18 @@ import Button from "@/app/components/ui/Button";
 import Navbar from "../../components/AdminNavBar";
 import { useEffect, useState } from "react";
 
+// Utility function to format the phone number for display
+const formatPhoneNumber = (phoneNumberString) => {
+  if (!phoneNumberString) return "";
+  const cleaned = ("" + phoneNumberString).replace(/\D/g, ""); // Remove all non-digit characters
+  const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+
+  if (match) {
+    return "(" + match[1] + ") " + match[2] + "-" + match[3];
+  }
+  return cleaned;
+};
+
 export default function AdminProfile() {
   const [admin, setAdmin] = useState({
     clerk_id: null,
@@ -17,7 +29,6 @@ export default function AdminProfile() {
     department: null,
   });
 
-  // TEMP hardcoded admin ID
   const ME = "testAdmin1";
 
   useEffect(() => {
@@ -25,7 +36,6 @@ export default function AdminProfile() {
     fetchAdmin(ME);
   }, [ME]);
 
-  // Fetch admin data
   const fetchAdmin = async (userId) => {
     try {
       const res = await fetch(`/api/admin`, {
@@ -46,7 +56,6 @@ export default function AdminProfile() {
     }
   };
 
-  // Update admin profile
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
 
@@ -80,58 +89,72 @@ export default function AdminProfile() {
     }
   };
 
+  const handlePhoneChange = (e) => {
+    // 1. Sanitize the input to keep only digits (XXXXXXXXXX)
+    const rawValue = e.target.value.replace(/\D/g, "");
+
+    // 2. Update the state with the raw, unformatted number
+    setAdmin({ ...admin, phone: rawValue.substring(0, 10) });
+  };
+
   return (
     <main className="bg-gradient-to-br from-[#f8eae2] to-white min-h-screen">
       <Navbar />
 
-      <div className="mx-auto mt-10">
-        <div className="w-4/5 mx-auto flex flex-col justify-center items-center">
-          <h1 className="text-3xl font-bold text-[#E55B3C]">Admin Profile</h1>
+      <div className="mx-auto mt-10 p-4">
+        <div className="max-w-4xl mx-auto flex flex-col items-center">
+          <h1 className="text-4xl font-extrabold text-[#E55B3C] mb-6">
+            Admin Profile
+          </h1>
 
-          <div className="w-full my-8 p-12 bg-white rounded-lg shadow-md text-black">
+          <div className="w-full my-8 p-12 bg-white rounded-xl shadow-2xl text-black">
             <form onSubmit={handleProfileSubmit}>
-              <div className="flex justify-between">
-                <div className="mb-10">
-                  <p className="mb-6 text-gray-600">* Indicates required</p>
-                  <h1 className="text-2xl text-black font-bold mb-2">
-                    Personal Information
-                  </h1>
+              <div className="mb-10 border-b pb-8 border-gray-200">
+                <p className="mb-6 text-sm text-gray-500">
+                  * Indicates required fields
+                </p>
+                <h2 className="text-2xl font-bold mb-6 text-black">
+                  Personal & Office Information
+                </h2>
 
-                  {/* First / Last */}
-                  <div className="flex flex-row space-x-4">
-                    <div className="flex flex-col">
-                      <label className="font-bold">First Name: *</label>
-                      <input
-                        required
-                        className="border rounded border-black mb-6 p-1"
-                        type="text"
-                        value={admin.first_name || ""}
-                        onChange={(e) =>
-                          setAdmin({ ...admin, first_name: e.target.value })
-                        }
-                      />
-                    </div>
-
-                    <div className="flex flex-col">
-                      <label className="font-bold">Last Name: *</label>
-                      <input
-                        required
-                        className="border rounded border-black mb-6 p-1"
-                        type="text"
-                        value={admin.last_name || ""}
-                        onChange={(e) =>
-                          setAdmin({ ...admin, last_name: e.target.value })
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  {/* Department */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                   <div className="flex flex-col">
-                    <label className="font-bold">Department: *</label>
+                    <label className="font-semibold text-gray-700 mb-1">
+                      First Name: *
+                    </label>
                     <input
                       required
-                      className="border rounded border-black mb-6 p-1"
+                      className="border rounded-lg border-gray-300 focus:border-[#E55B3C] focus:ring-1 focus:ring-[#E55B3C] transition duration-150 p-2"
+                      type="text"
+                      value={admin.first_name || ""}
+                      onChange={(e) =>
+                        setAdmin({ ...admin, first_name: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="font-semibold text-gray-700 mb-1">
+                      Last Name: *
+                    </label>
+                    <input
+                      required
+                      className="border rounded-lg border-gray-300 focus:border-[#E55B3C] focus:ring-1 focus:ring-[#E55B3C] transition duration-150 p-2"
+                      type="text"
+                      value={admin.last_name || ""}
+                      onChange={(e) =>
+                        setAdmin({ ...admin, last_name: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  <div className="flex flex-col md:col-span-2">
+                    <label className="font-semibold text-gray-700 mb-1">
+                      Department: *
+                    </label>
+                    <input
+                      required
+                      className="border rounded-lg border-gray-300 focus:border-[#E55B3C] focus:ring-1 focus:ring-[#E55B3C] transition duration-150 p-2"
                       type="text"
                       value={admin.department || ""}
                       onChange={(e) =>
@@ -140,11 +163,12 @@ export default function AdminProfile() {
                     />
                   </div>
 
-                  {/* Office */}
-                  <div className="flex flex-col">
-                    <label className="font-bold">Office Location:</label>
+                  <div className="flex flex-col md:col-span-2">
+                    <label className="font-semibold text-gray-700 mb-1">
+                      Office Location:
+                    </label>
                     <input
-                      className="border rounded border-black mb-6 p-1"
+                      className="border rounded-lg border-gray-300 focus:border-[#E55B3C] focus:ring-1 focus:ring-[#E55B3C] transition duration-150 p-2"
                       type="text"
                       value={admin.office_location || ""}
                       onChange={(e) =>
@@ -153,43 +177,50 @@ export default function AdminProfile() {
                     />
                   </div>
                 </div>
+              </div>
 
-                {/* Save button */}
-                <div>
-                  <Button text="Save" type="submit" />
+              <div className="mb-10">
+                <h2 className="text-2xl font-bold mb-6 text-black">
+                  Contact Information
+                </h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                  <div className="flex flex-col">
+                    <label className="font-semibold text-gray-700 mb-1">
+                      Email: *
+                    </label>
+                    <input
+                      required
+                      className="border rounded-lg border-gray-300 focus:border-[#E55B3C] focus:ring-1 focus:ring-[#E55B3C] transition duration-150 p-2"
+                      type="email"
+                      value={admin.email || ""}
+                      onChange={(e) =>
+                        setAdmin({ ...admin, email: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="font-semibold text-gray-700 mb-1">
+                      Phone:
+                    </label>
+                    <input
+                      className="border rounded-lg border-gray-300 focus:border-[#E55B3C] focus:ring-1 focus:ring-[#E55B3C] transition duration-150 p-2"
+                      type="tel"
+                      // Display the formatted value
+                      value={formatPhoneNumber(admin.phone)}
+                      // Handle the change event to store only digits
+                      onChange={handlePhoneChange}
+                      // Store only digits in state, but show formatted value
+                      // The 'onBlur' prop is often used for formatting, but using 'value' and 'onChange' achieves the desired UX
+                      // by showing the formatted value as long as the state is a full 10-digit number.
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* Contact */}
-              <div className="mb-10">
-                <h1 className="text-2xl text-black font-bold mb-2">
-                  Contact Information
-                </h1>
-
-                <div className="flex flex-row space-x-2 mb-6 items-center">
-                  <label className="">Phone:</label>
-                  <input
-                    className="border rounded border-black p-1"
-                    type="text"
-                    value={admin.phone || ""}
-                    onChange={(e) =>
-                      setAdmin({ ...admin, phone: e.target.value })
-                    }
-                  />
-                </div>
-
-                <div className="flex flex-row space-x-2 mb-6 items-center">
-                  <label>Email: *</label>
-                  <input
-                    required
-                    className="border rounded border-black p-1"
-                    type="text"
-                    value={admin.email || ""}
-                    onChange={(e) =>
-                      setAdmin({ ...admin, email: e.target.value })
-                    }
-                  />
-                </div>
+              <div className="flex justify-center pt-4">
+                <Button text="Save Profile" type="submit" />
               </div>
             </form>
           </div>
