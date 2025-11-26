@@ -36,7 +36,7 @@ export default function InvoiceRow({
     
             {/* Right action */}
             <div className="flex items-center">
-            <Button text="Download" onClick={handleInvoiceClick} />
+            <Button text="Invoice Detail" onClick={handleInvoiceClick} />
             </div>
         </div>
     );
