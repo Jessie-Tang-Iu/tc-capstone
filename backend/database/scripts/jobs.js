@@ -215,3 +215,13 @@ export async function updateJobPost(id, data) {
   if (!rows.length) throw new Error("Job not found");
   return rows[0];
 }
+
+// Delete a job post
+export async function deleteJobPost(id) {
+  if (!id) throw new Error("Missing job ID");
+
+  const { rowCount } = await query(`DELETE FROM job WHERE id = $1;`, [id]);
+
+  if (rowCount === 0) throw new Error("Job not found or already deleted");
+  return { success: true, id };
+}

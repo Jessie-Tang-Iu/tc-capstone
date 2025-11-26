@@ -11,7 +11,7 @@ import ApplyForm from "../components/application/ApplyForm";
 
 export default function JobBoardPage() {
 
-    const { user } = useUser();
+    const { user, isLoaded } = useUser();
 
     const [jobs, setJobs] = useState([]);
     const [selectedJobId, setSelectedJobId] = useState();
@@ -60,8 +60,9 @@ export default function JobBoardPage() {
       fetch('/api/job')
         .then((res) => res.json())
         .then((data) => {
+          // let activeJobs = data.filter((job) => job.status == 'A');
           setJobs(data);
-          // console.log(data);
+          // console.log(activeJobs);
         })
         .catch((error) => console.error('Error fetching jobs:', error));
     }, []);
@@ -197,8 +198,7 @@ export default function JobBoardPage() {
     }, [filters, search]);
 
     const role = useMemo(() => {
-      if (!user) return null;
-      return user.publicMetadata.role;
+      return user?.publicMetadata?.role;
     }, [user]);
 
     const getApplications = useCallback(() => {
@@ -244,7 +244,7 @@ export default function JobBoardPage() {
       fetchFilters();
     }, [role]);
 
-    if (!user) {
+    if (!isLoaded) {
       // router.push("/");
       return (
         <div className="min-h-screen flex items-center justify-center">

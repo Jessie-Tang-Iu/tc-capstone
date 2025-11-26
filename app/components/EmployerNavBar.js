@@ -40,7 +40,7 @@ export default function EmployerNavbar() {
         href="/employerDashboard/message"
         className="flex items-center space-x-2"
       >
-        <img src="/logo.jpeg" className="w-8 h-8" alt="Logo" />
+        <img src="/logo.jpg" className="w-8 h-8" alt="Logo" />
         <span className="hidden sm:inline font-bold text-lg text-black whitespace-nowrap">
           Tech Connect Alberta
         </span>

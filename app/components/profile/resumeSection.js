@@ -358,7 +358,7 @@ export default function Resume({
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
             />
             <div className="text-right text-xs text-gray-500 mr-1 w-full">
-              {resumeData.additional_info.length} / 500
+              {resumeData.additional_info?.length} / 500
             </div>
           </div>
           <div className="flex justify-center">
