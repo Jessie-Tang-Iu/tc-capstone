@@ -15,9 +15,15 @@ export default function InvoiceDetail({ params }) {
                     <AdvisorNavbar />
                 
                     <div className="mx-auto w-full max-w-8xl px-6 py-8">
-                        <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
+                        {/* <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
                             Advisor DashBoard
-                        </h1>
+                        </h1> */}
+
+                        <div>
+                            <button onClick={() => window.history.back()} className="text-[20px] text-black font-semibold mb-5 hover:underline">
+                                &lt; Back to Invoices
+                            </button>
+                        </div>
 
                         <div className="flex justify-center items-center flex-col bg-white p-6 rounded-lg shadow-md mb-10">
                             <div className="mb-4 text-4xl font-semibold text-[#E55B3C]">
