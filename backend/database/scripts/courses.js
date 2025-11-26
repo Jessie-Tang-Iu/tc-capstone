@@ -100,30 +100,45 @@ export async function getCourseAdmin(courseId) {
     [courseId]
   );
 
-  const lessons = lessonsRes.rows.map((l) => {
+  const lessons = [];
+
+  for (const l of lessonsRes.rows) {
     if (l.type === "lesson") {
-      return {
+      lessons.push({
         id: l.id,
         type: "lesson",
         title: l.title,
         content: l.content,
         video_url: l.video_url,
         position: l.position,
-      };
+      });
     }
 
     if (l.type === "quiz") {
-      return {
+      // Fetch quiz questions for this quiz
+      const questionsRes = await query(
+        `SELECT id, question, answers, correct_answer 
+         FROM quiz_questions 
+         WHERE lesson_id = $1
+         ORDER BY id ASC`,
+        [l.id]
+      );
+
+      lessons.push({
         id: l.id,
         type: "quiz",
         title: l.title,
         description: l.content,
+        questions: questionsRes.rows.map((q) => ({
+          id: q.id,
+          question: q.question,
+          answers: q.answers,
+          correctAnswer: q.correct_answer,
+        })),
         position: l.position,
-      };
+      });
     }
-
-    return l;
-  });
+  }
 
   return { ...course, lessons };
 }
