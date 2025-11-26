@@ -25,10 +25,11 @@ export default function AdminCourseCreate({ onCancel, onRefresh }) {
                 id: Date.now() + 1,
                 question: "",
                 answers: ["", "", "", ""],
-                correct_answer: null,
-              },
-            ],
+                correct_answer: null
+              }
+            ]
           };
+
     setContentBlocks((prev) => [...prev, newBlock]);
   };
 
@@ -42,30 +43,29 @@ export default function AdminCourseCreate({ onCancel, onRefresh }) {
     setContentBlocks(contentBlocks.filter((b) => b.id !== id));
   };
 
+  // Only validate the embed URL returned by CourseLessonBlock
   const isValidYouTubeUrl = (url) => {
-    if (!url) return true; // empty URLs are allowed
+    if (!url) return true; // empty allowed
 
-     // Credit to https://stackoverflow.com/questions/19377262/regex-for-youtube-url for the Regex
-    const regex =
-      // This regex is used for checking if a inputted URL is from youtuve. 
-      // In order this regex matches: Protocol (http, https) but isn't required, subdomains (www, m) some links may contain them so we need to check for them
-      // Main Domain (youtube.com, youtu.be, youtube-nocookie.com) this just checks the possible domains of youtube links, paths (This just checks if it contains valid youtube paths)
-      // Finally it checks the Video ID and extra parameters such as a start time.
-      /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(?:-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|live\/|v\/)?)([\w\-]+)(\S+)?$/;
-    const match = url.match(regex);
-    return match && match[5];
+    return url.startsWith("https://www.youtube.com/embed/");
   };
 
   const handleSaveCourse = async (e) => {
     e.preventDefault();
 
-    // Validate YouTube URLs before saving
+    // Validate embed URLs before sending to the backend
     const invalidVideo = contentBlocks.find(
-      (block) => block.type === "lesson" && block.videoUrl && !isValidYouTubeUrl(block.videoUrl)
+      (block) =>
+        block.type === "lesson" &&
+        block.videoUrl &&
+        !isValidYouTubeUrl(block.videoUrl)
     );
+
     if (invalidVideo) {
       alert(
-        `The lesson "${invalidVideo.title || "Untitled"}" has an invalid YouTube URL.`
+        `The lesson "${
+          invalidVideo.title || "Untitled"
+        }" has an invalid YouTube URL.`
       );
       return; // stop saving
     }
@@ -123,7 +123,9 @@ export default function AdminCourseCreate({ onCancel, onRefresh }) {
 
   return (
     <div className="bg-white rounded-xl shadow p-6 w-4/5 mx-auto">
-      <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">Create New Course</h2>
+      <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">
+        Create New Course
+      </h2>
 
       {/* Course Info */}
       <div className="grid grid-cols-2 gap-4 mb-6">
@@ -220,7 +222,10 @@ export default function AdminCourseCreate({ onCancel, onRefresh }) {
 
       {/* Footer */}
       <div className="flex justify-between mt-8">
-        <button onClick={onCancel} className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
+        <button
+          onClick={onCancel}
+          className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+        >
           Cancel
         </button>
         <button
