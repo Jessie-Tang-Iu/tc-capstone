@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSignUp, useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/NavBarBeforeSignIn";
+import PopupMessage from "../components/ui/PopupMessage";
 
 export default function AdvisorRegister() {
     const { isLoaded, signUp, setActive } = useSignUp();
@@ -23,55 +24,61 @@ export default function AdvisorRegister() {
     // ui
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const registerAdvisor = async (e) => {
         e.preventDefault();
         if (!isLoaded) return;
 
         try {
-        setLoading(true);
-        setError("");
+            setLoading(true);
+            setError("");
 
-        // Create Clerk account
-        const result = await signUp.create({
-            emailAddress: email,
-            username,
-            password,
-            firstName,
-            lastName,
-        });
-
-        if (result.status === "complete") {
-            // Activate Clerk session
-            if (result.createdSessionId) {
-                await setActive({ session: result.createdSessionId });
-            }
-
-            // Optional: update metadata via API if needed
-            const token = await getToken({ template: "backend" });
-            await fetch("/api/users/metadata", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    role: "advisor",
-                    username: username,
-                    firstName: firstName,
-                    lastName: lastName,
-                    email: email,
-                    phone: phoneNumber,
-                    companyName: companyName,
-                    companyRole: title,
-                }),
+            // Create Clerk account
+            const result = await signUp.create({
+                emailAddress: email,
+                username,
+                password,
+                firstName,
+                lastName,
             });
 
-            router.push("/advisorDashboard"); // redirect after signup
-        } else {
-            setError("Unexpected signup state: " + result.status);
-        }
+            if (result.status === "complete") {
+                // Activate Clerk session
+                // if (result.createdSessionId) {
+                //     await setActive({ session: result.createdSessionId });
+                // }
+
+                // Optional: update metadata via API if needed
+                // const token = await getToken({ template: "backend" });
+                const res = await fetch(`/api/users`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        // Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        role: "advisor",
+                        status: 'under-review',
+                        clerkId: result.createdUserId,
+                        username: username,
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
+                        phone: phoneNumber,
+                        companyName: companyName,
+                        companyRole: title,
+                    }),
+                });
+
+                if (res.ok) { 
+                    setShowSuccess(true);
+                } else {
+                    setError("Your username or email is taken. Please try another.")
+                }
+            } else {
+                setError("Unexpected signup state: " + result.status);
+            }
         } catch (err) {
             console.error("Signup error:", err);
             setError(err.errors ? err.errors[0].message : err.message);
@@ -81,6 +88,7 @@ export default function AdvisorRegister() {
     };
 
     return (
+        <>
         <main className="bg-gray-100 min-h-screen">
             <Navbar />
             <h1 className="text-4xl text-[#DD5B45] text-center font-bold mt-20 mb-2">Register as Advisor</h1>
@@ -185,5 +193,17 @@ export default function AdvisorRegister() {
                 </form>
             </div>
         </main>
+        {showSuccess && (
+            <PopupMessage
+                type="success"
+                title="Successfully Registration"
+                description="Your registration form is currently under review. Please try logging in again in 2–3 days."
+                onClose={() => {
+                    setShowSuccess(false);
+                    router.push("/") // redirect after signup
+                }}
+          />
+        )}
+        </>
     )
 }

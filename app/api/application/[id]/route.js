@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { getApplicationById, updateApplicationStatus } from "@/backend/controllers/applicationsController";
+import {
+  getApplicationById,
+  updateApplicationStatus,
+} from "@/backend/controllers/applicationsController";
 
 export async function GET(_req, { params }) {
   const { id } = await params;
@@ -17,7 +20,7 @@ export async function PATCH(req, { params }) {
   const { id } = await params;
   try {
     const body = await req.json();
-    const updated = await updateApplicationStatus(Number(id),body);
+    const updated = await updateApplicationStatus(Number(id), body);
     if (!updated) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }

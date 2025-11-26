@@ -60,22 +60,24 @@ export default function EmployerRegistration() {
       });
 
       if (result.status === "complete") {
-        if (result.createdSessionId) {
-          await setActive({ session: result.createdSessionId });
-        }
+        // if (result.createdSessionId) {
+        //   await setActive({ session: result.createdSessionId });
+        // }
 
         // Save employer role metadata
         const token = await getToken({ template: "backend" });
         console.log("Submitting employer registration:", formData);
 
-        await fetch("/api/users/metadata", {
+        const res = await fetch(`/api/users`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             role: "employer",
+            status: 'under-review',
+            clerkId: result.createdUserId,
             username: formData.username,
             firstName: formData.firstName,
             lastName: formData.lastName,
@@ -87,7 +89,11 @@ export default function EmployerRegistration() {
           }),
         });
 
-        router.push("/employerDashboard/message");
+        if (res.ok) { 
+          setShowSuccess(true);
+        } else {
+          setError("Your username or email is taken. Please try another.")
+        }
       } else {
         setError("Unexpected signup state: " + result.status);
       }

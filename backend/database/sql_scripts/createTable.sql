@@ -1,3 +1,4 @@
+
 BEGIN;
 
 -- =========================================
@@ -42,7 +43,7 @@ CREATE TABLE users (
     last_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     phone VARCHAR(20),
-    status VARCHAR(20) NOT NULL DEFAULT 'active',
+    status VARCHAR(20) NOT NULL DEFAULT 'under_review',
     role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'member', 'advisor', 'employer'))
 );
 
@@ -92,15 +93,14 @@ CREATE INDEX idx_event_date ON events (date, start_time);
 CREATE TABLE event_user (
   id SERIAL PRIMARY KEY,
   event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
-  user_id INTEGER NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
-  status TEXT NOT NULL DEFAULT 'registered',
+  user_id VARCHAR(255) NOT NULL REFERENCES users(clerk_id) ON DELETE CASCADE,
+  status TEXT NOT NULL DEFAULT 'registered',  -- could be 'registered', 'cancelled', 'attended'
   registered_at TIMESTAMP NOT NULL DEFAULT now(),
   CONSTRAINT uq_event_user UNIQUE (event_id, user_id)
 );
 
 CREATE INDEX idx_event_user_event ON event_user (event_id);
 CREATE INDEX idx_event_user_user ON event_user (user_id);
-
 -- =========================================
 -- MESSAGING
 -- =========================================
@@ -289,9 +289,9 @@ CREATE TABLE comments (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE INDEX idx_posts_author     ON posts (author, created_at DESC);
+CREATE INDEX idx_posts_author     ON posts (author_id, created_at DESC);
 CREATE INDEX idx_comments_post    ON comments (post_id, created_at);
-CREATE INDEX idx_comments_author  ON comments (author, created_at DESC);
+CREATE INDEX idx_comments_author  ON comments (author_id, created_at DESC);
 
 CREATE TABLE reports (
   report_id           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,   -- internal PK
@@ -344,17 +344,5 @@ CREATE INDEX idx_reports_is_removed ON reports (is_removed);
 CREATE INDEX idx_reports_is_banned ON reports (is_banned);
 
 
+
 COMMIT;
-
-----event booking 
-CREATE TABLE event_user (
-  id SERIAL PRIMARY KEY,
-  event_id INTEGER NOT NULL REFERENCES workshop(id) ON DELETE CASCADE,
-  user_id INTEGER NOT NULL REFERENCES users(clerk_id) ON DELETE CASCADE,
-  status TEXT NOT NULL DEFAULT 'registered',  -- could be 'registered', 'cancelled', 'attended'
-  registered_at TIMESTAMP NOT NULL DEFAULT now(),
-  CONSTRAINT uq_event_user UNIQUE (event_id, user_id)
-);
-
-CREATE INDEX idx_event_user_event ON event_user (event_id);
-CREATE INDEX idx_event_user_user ON event_user (user_id);

@@ -11,14 +11,14 @@ export async function getCoverLetterByUser(id) {
 
 // Create functions
 export async function createCoverLetter(coverLetter) {
-  const query = `
-    INSERT INTO cover_letter (user_id, upload_at, content)
-    VALUES ($1, NOW(), $2)`;
-  const values = [
-    coverLetter.userId,
+  console.log("cover letter script: ", coverLetter);
+  const { rows } = await query(`
+    INSERT INTO cover_letter (user_id, content)
+    VALUES ($1, $2) RETURNING *`, 
+  [
+    coverLetter.user_id,
     coverLetter.content
-  ];
-  const { rows } = await query(query, values);
+  ]);
   return rows[0];
 }
 

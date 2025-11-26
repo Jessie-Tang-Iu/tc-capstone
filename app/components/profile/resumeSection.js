@@ -1,23 +1,40 @@
+import { Plus } from 'lucide-react';
 import { useState } from "react";
 import ExperienceCard from "./experienceCard";
 import SkillCard from "./skillCard";
 import EducationCard from "./educationCard";
 import CertificationCard from "./certificationCard";
 
-export default function Resume({resumeData, setResumeData, isNewResume, setErrorMessage, onSave}) {
-
+export default function Resume({
+  resumeData,
+  setResumeData,
+  isNewResume,
+  setErrorMessage,
+  onSave,
+}) {
   // console.log("resume section: ", resumeData);
 
   const [addResume, setAddResume] = useState(isNewResume);
 
   const [isEduLoading, setIsEduLoading] = useState(false);
   const [newEdu, setNewEdu] = useState({
-    school: "", degree: "", fieldOfStudy: "", startYear: "", endYear: ""
+    school: "",
+    degree: "",
+    fieldOfStudy: "",
+    startYear: "",
+    endYear: "",
   });
-  
+
   const [isExpLoading, setIsExpLoading] = useState(false);
   const [newExp, setNewExp] = useState({
-    title: "", company: "", type: "", startMonth: "", startYear: "", endMonth: "", endYear: "", description: "",
+    title: "",
+    company: "",
+    type: "",
+    startMonth: "",
+    startYear: "",
+    endMonth: "",
+    endYear: "",
+    description: "",
   });
 
   const [isSkillLoading, setIsSkillLoading] = useState(false);
@@ -25,73 +42,88 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
 
   const [isCertLoading, setIsCertLoading] = useState(false);
   const [newCert, setNewCert] = useState("");
-  
+
   // Update Resume
-  
+
   const handleResumeChange = (field, value) => {
-    setResumeData(prev => ({ ...prev, [field]: value }));
+    setResumeData((prev) => ({ ...prev, [field]: value }));
   };
-  
-  // Update Education 
-  
+
+  // Update Education
+
   const handleEducationChange = (idx) => {
-    console.log("Education change: ", idx, " - ", newEdu);
+    console.log("Resume - Education change: ", idx, " - ", newEdu);
     let updatedEdu = resumeData.education;
     updatedEdu[idx] = `${newEdu.school} | ${newEdu.degree} | ${newEdu.fieldOfStudy} | ${newEdu.startYear} | ${newEdu.endYear}`;
-    console.log(updatedEdu);
+    // console.log(updatedEdu);
     handleResumeChange("education", updatedEdu);
-    setNewEdu({school: "", degree: "", fieldOfStudy: "", startYear: "", endYear: ""});
+    setNewEdu({
+      school: "",
+      degree: "",
+      fieldOfStudy: "",
+      startYear: "",
+      endYear: "",
+    });
     setIsEduLoading(false);
   };
-  
+
   const handleAddEducation = () => {
     if (isEduLoading) setErrorMessage("Education must be saved to continue");
     else {
       setIsEduLoading(true);
       let updatedEdu = resumeData.education;
-      console.log("length of education: ", updatedEdu.length);
+      // console.log("length of education: ", updatedEdu.length);
       if (updatedEdu.length == 5) return;
       updatedEdu.push("");
       handleResumeChange("education", updatedEdu);
     }
   };
-  
+
   const handleRemoveEducation = (index) => {
-    console.log("remove index: ", index);
+    // console.log("remove index: ", index);
     let updatedEdu = [];
     resumeData.education.map((edu, idx) => {if (idx != index) updatedEdu.push(edu);});
-    console.log(updatedEdu);
+    // console.log(updatedEdu);
     handleResumeChange("education", updatedEdu);
   };
-  
-  // Update Experience 
-  
+
+  // Update Experience
+
   const handleExperienceChange = (idx) => {
-    console.log("Experience change: ", idx, " - ", newExp);
+    // console.log("Experience change: ", idx, " - ", newExp);
     let updatedExp = resumeData.experience;
     updatedExp[idx] = `${newExp.title} | ${newExp.company} | ${newExp.type} | ${newExp.startMonth} | ${newExp.startYear} | ${newExp.endMonth} | ${newExp.endYear} | ${newExp.description}`;
-    console.log(updatedExp);
+    // console.log(updatedExp);
     handleResumeChange("experience", updatedExp);
-    setNewExp({title: "", company: "", type: "", startMonth: "", startYear: "", endMonth: "", endYear: "", description: ""})
+    setNewExp({
+      title: "",
+      company: "",
+      type: "",
+      startMonth: "",
+      startYear: "",
+      endMonth: "",
+      endYear: "",
+      description: "",
+    });
     setIsExpLoading(false);
   };
-  
+
   const handleAddExperience = () => {
     if (isExpLoading) setErrorMessage("Experience must be saved to continue");
     else {
       setIsExpLoading(true);
       let updatedExp = resumeData.experience;
-      console.log("length of experience: ", updatedExp.length);
+      // console.log("length of experience: ", updatedExp.length);
       if (updatedExp.length == 5) return;
       updatedExp.push("");
       handleResumeChange("experience", updatedExp);
     }
   };
-  
+
   const handleRemoveExperience = (index) => {
     let updatedExp = [];
     resumeData.experience.map((exp, idx) => { if (idx != index) updatedExp.push(exp) });
-    console.log(updatedExp);
+    // console.log(updatedExp);
     handleResumeChange("experience", updatedExp);
   };
 
@@ -100,7 +132,7 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
   const handleCertChange = (index) => {
     let updatedCerts = resumeData.certifications;
     updatedCerts[index] = newCert;
-    console.log("Certification change: ", updatedCerts);
+    // console.log("Certification change: ", updatedCerts);
     handleResumeChange("certifications", updatedCerts);
     setNewCert("");
     setIsCertLoading(false);
@@ -117,17 +149,19 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
   };
 
   const handleRemoveCert = (index) => {
-    let updatedCerts =[];
-    resumeData.certifications.map((cert, idx) => { if (idx != index) updatedCerts.push(cert) });
+    let updatedCerts = [];
+    resumeData.certifications.map((cert, idx) => {
+      if (idx != index) updatedCerts.push(cert);
+    });
     handleResumeChange("certifications", updatedCerts);
-  }
+  };
 
   // Update skill
 
   const handleSkillChange = (index) => {
     let updatedSkills = resumeData.skills;
     updatedSkills[index] = newSkill;
-    console.log("Skill change: ", updatedSkills);
+    // console.log("Skill change: ", updatedSkills);
     handleResumeChange("skills", updatedSkills);
     setNewSkill("");
     setIsSkillLoading(false);
@@ -144,58 +178,69 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
   };
 
   const handleRemoveSkill = (index) => {
-    let updatedSkills =[];
-    resumeData.skills.map((skill, idx) => { if (idx != index) updatedSkills.push(skill) });
+    let updatedSkills = [];
+    resumeData.skills.map((skill, idx) => {
+      if (idx != index) updatedSkills.push(skill);
+    });
     handleResumeChange("skills", updatedSkills);
-  }
+  };
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-2xl md:text-2xl font-bold text-black mb-6">TC Alberta Resume</h2>
-        {addResume ? (
-          <button 
-            className="text-sm mb-6 px-6 py-2 bg-[#E55B3C] hover:bg-[#d14f32] font-semibold rounded-md transition duration-200 cursor-pointer focus:outline-none active:scale-95 text-white"
+      {addResume && 
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-semibold text-[#E55B3C]">
+            TC Alberta Resume
+          </h2>
+          <button
+            className="text-sm px-6 py-2 bg-[#E55B3C] hover:bg-[#d14f32] font-semibold rounded-md transition duration-200 cursor-pointer focus:outline-none active:scale-95 text-white"
             onClick={() => setAddResume(!addResume)}
-           >Add</button>
-          ) : (
-          <button 
-            className="text-sm mb-6 px-6 py-2 bg-[#E55B3C] hover:bg-[#d14f32] font-semibold rounded-md transition duration-200 cursor-pointer focus:outline-none active:scale-95 text-white"
-            onClick={onSave}
-          >Save</button>
-        )}
-      </div>
-    
-      {!addResume && 
+          >
+            Add
+          </button>
+        </div>
+      }
+
+      {!addResume && (
         <div>
-          {/* Summary */}  
-          <div>
-            <label className="block text-base md:text-lg font-bold text-black mb-2">Summary</label>
+          <div className="mb-4 text-2xl font-semibold text-[#E55B3C] text-center">
+            TC Alberta Resume
+          </div>
+          {/* Summary */}
+          <div className="mb-4">
+            <label className="block text-xs text-gray-700 font-medium mb-1">
+              Summary
+            </label>
             <textarea
               value={resumeData.summary}
-              onChange={(e) => handleResumeChange('summary', e.target.value)}
+              onChange={(e) => handleResumeChange("summary", e.target.value)}
               placeholder="List your major duties and successes, highlighting specific projects"
               rows={3}
-              className="w-full px-4 py-2 text-black bg-white rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
             />
-            <div className="text-right text-sm text-gray-500 mt-1 w-full">
+            <div className="text-right text-xs text-gray-500 mr-1 w-full">
               {resumeData.summary.length} / 500
             </div>
           </div>
-    
+
           {/* Education */}
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="block text-base md:text-lg font-bold text-black mb-3">Education</h2>
+          <div className="mb-5">
+            <div className="flex justify-between items-center mb-1">
+              <h2 className="block text-xs text-gray-700 font-medium mt-2">
+                Education
+              </h2>
               <button 
-                className="text-[#E55B3C] text-base font-bold hover:underline mr-1"
                 onClick={handleAddEducation}
-              >Add</button>
+                className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-xs font-bold text-white rounded-md hover:bg-green-700 transition"
+              >
+                <Plus size={12} /> {/* The 'Plus' icon */}
+                <span>Add</span>
+              </button>
             </div>
-    
+
             {resumeData.education.map((edu, idx) => (
               <EducationCard 
-                key={idx} 
+                key={`${idx} - ${edu}`} 
                 index={idx}
                 edu={edu}
                 setNewEdu={setNewEdu}
@@ -207,20 +252,25 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
               />
             ))}
           </div>
-    
+
           {/* Work Experience */}
-          <div className="mt-10">
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="block text-base md:text-lg font-bold text-black mb-3">Work Experience</h2>
+          <div className="mb-5">
+            <div className="flex justify-between items-center mb-1">
+              <h2 className="block text-xs text-gray-700 font-medium mt-2">
+                Work Experience
+              </h2>
               <button 
-                className="text-[#E55B3C] text-base font-bold hover:underline mr-1"
                 onClick={handleAddExperience}
-              >Add</button>
+                className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-xs font-bold text-white rounded-md hover:bg-green-700 transition"
+              >
+                <Plus size={12} /> {/* The 'Plus' icon */}
+                <span>Add</span>
+              </button>
             </div>
-    
+
             {resumeData.experience.map((exp, idx) => (
               <ExperienceCard
-                key={idx}
+                key={`${idx} - ${exp}`}
                 index={idx}
                 exp={exp}
                 setNewExp={setNewExp}
@@ -232,20 +282,25 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
               />
             ))}
           </div>
-    
+
           {/* Skills */}
-          <div className="mt-10">
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="block text-base md:text-lg font-bold text-black mb-3">Skill</h2>
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-1">
+              <h2 className="block text-xs text-gray-700 font-medium mt-2">
+                Skill
+              </h2>
               <button 
-                className="text-[#E55B3C] text-base font-bold hover:underline mr-1"
                 onClick={handleAddSkill}
-              >Add</button>
+                className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-xs font-bold text-white rounded-md hover:bg-green-700 transition"
+              >
+                <Plus size={12} /> {/* The 'Plus' icon */}
+                <span>Add</span>
+              </button>
             </div>
-    
+
             {resumeData.skills.map((skill, idx) => (
               <SkillCard 
-                key={idx}
+                key={`${idx} - ${skill}`}
                 index={idx}
                 skill={skill}
                 setNewSkill={setNewSkill}
@@ -259,18 +314,23 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
           </div>
 
           {/* Certification */}
-          <div className="mt-10">
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="block text-base md:text-lg font-bold text-black mb-3">Certifications</h2>
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-1">
+              <h2 className="block text-xs text-gray-700 font-medium mt-2">
+                Certifications
+              </h2>
               <button 
-                className="text-[#E55B3C] text-base font-bold hover:underline mr-1"
                 onClick={handleAddCert}
-              >Add</button>
+                className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-xs font-bold text-white rounded-md hover:bg-green-700 transition"
+              >
+                <Plus size={12} /> {/* The 'Plus' icon */}
+                <span>Add</span>
+              </button>
             </div>
-    
+
             {resumeData.certifications.map((cert, idx) => (
               <CertificationCard 
-                key={idx}
+                key={`${idx} - ${cert}`}
                 index={idx}
                 cert={cert}
                 setNewCert={setNewCert}
@@ -283,22 +343,34 @@ export default function Resume({resumeData, setResumeData, isNewResume, setError
             ))}
           </div>
 
-          {/* Additional information */}  
-          <div className="mt-10">
-            <label className="block text-base md:text-lg font-bold text-black mb-2">Additional Information</label>
+          {/* Additional information */}
+          <div className="mb-4">
+            <label className="block text-xs text-gray-700 font-medium mb-1">
+              Additional Information
+            </label>
             <textarea
               value={resumeData.additional_info}
-              onChange={(e) => handleResumeChange('additional_info', e.target.value)}
+              onChange={(e) =>
+                handleResumeChange("additional_info", e.target.value)
+              }
               placeholder="List your major duties and successes, highlighting specific projects"
               rows={3}
-              className="w-full px-4 py-2 text-black bg-white rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
             />
-            <div className="text-right text-sm text-gray-500 mt-1 w-full">
-              {resumeData.additional_info.length} / 500
+            <div className="text-right text-xs text-gray-500 mr-1 w-full">
+              {resumeData.additional_info?.length} / 500
             </div>
           </div>
+          <div className="flex justify-center">
+            <button
+              className="text-sm px-6 py-2 bg-[#E55B3C] hover:bg-[#d14f32] font-semibold rounded-md transition duration-200 cursor-pointer focus:outline-none active:scale-95 text-white"
+              onClick={onSave}
+            >
+              Save
+            </button>
+          </div>
         </div>
-      }
+      )}
     </div>
   );
 }

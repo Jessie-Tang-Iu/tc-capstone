@@ -1,54 +1,74 @@
--- Insert fake posts
-INSERT INTO posts (user_id, author, title, content) VALUES
-('99999999-9999-9999-9999-999999999999', 'Alice', 'How to learn React?', 'I am new to React and want to know the best resources to get started.'),
-('99999999-9999-9999-9999-999999999999', 'Bob', 'Best PostgreSQL tips?', 'Share your favorite tips and tricks for optimizing queries in Postgres.'),
-('22222222-2222-2222-2222-222222222222', 'Charlie', 'Next.js vs Express?', 'When would you choose Next.js over a traditional Express backend?'),
-('22222222-2222-2222-2222-222222222222', 'Dana', 'Tailwind CSS worth it?', 'I see Tailwind CSS everywhere—what are the pros and cons compared to plain CSS or Bootstrap?');
- 
--- Insert fake comments (referencing posts by ID)
-INSERT INTO comments (post_id, user_id, author, content) VALUES
-(1, '99999999-9999-9999-9999-999999999999', 'Eve', 'I recommend the official React docs—they are super well written!'),
-(1, '99999999-9999-9999-9999-999999999999', 'Frank', 'Try Scrimba or Frontend Mentor, very interactive.'),
-(2, '99999999-9999-9999-9999-999999999999', 'Grace', 'Use EXPLAIN ANALYZE to understand query performance.'),
-(2, '99999999-9999-9999-9999-999999999999', 'Heidi', 'Don’t forget to index frequently used columns.'),
-(3, '22222222-2222-2222-2222-222222222222', 'Ivan', 'Next.js is great if you need SSR, otherwise Express is simpler.'),
-(4, '22222222-2222-2222-2222-222222222222', 'Judy', 'Tailwind is amazing once you get used to utility classes.'),
-(4, '22222222-2222-2222-2222-222222222222', 'Karl', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
 
--- test data
 --members
 INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES
-('user_33TltDhWmKiEGfSs7DJk6b1HlI1', 'Jessie', 'Jessie', 'Tang', 'gmail.com', '123-456-7890', 'member');
+('user_33TltDhWmKiEGfSs7DJk6b1HlI1', 'Jessie', 'Jessie', 'Tang', 'gmail.com', '123-456-7890', 'member')
+ON CONFLICT (clerk_id) DO NOTHING;
+
 --advisors
 INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES 
 ('testAdvisor1', 'Mary', 'Mary', 'White', 'mary.w@gmail.com', '403-555-1234', 'advisor'),
 ('testAdvisor2', 'James', 'James', 'Brown', 'jb@hotmail.com', '587-555-5678', 'advisor'),
 ('testAdvisor3', 'Harry', 'Harry', 'Potter', 'hp@gmail.com', '123-456-7890', 'advisor'),
 ('testAdvisor4', 'Lily', 'Lily', 'Potter', 'lily.p@gmail.com', '123-456-7890', 'advisor'),
-('testAdvisor5', 'John', 'John', 'Doe', 'john.doe@gmail.com', '123-456-7890', 'advisor');
+('testAdvisor5', 'John', 'John', 'Doe', 'john.doe@gmail.com', '123-456-7890', 'advisor'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'advisoracc123', 'Advisor', 'Account', 'Advisor@gmail.com', '1234567890', 'advisor')
+ON CONFLICT (clerk_id) DO NOTHING;
+
 
 INSERT INTO advisors (clerk_id, company_name, company_role) VALUES 
 ('testAdvisor1', 'Tech Solutions', 'Senior Developer'),
 ('testAdvisor2', 'Innovatech', 'Project Manager'),
 ('testAdvisor3', 'ABC Company', 'Front-end Developer'),
 ('testAdvisor4', 'BCD Company', 'Full Stack Developer'),
-('testAdvisor5', 'AAB Tech', 'Project Manager');
+('testAdvisor5', 'AAB Tech', 'Project Manager'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'XYZ Tech Inc.', 'Career Advisor');
+
+-- Add placeholder users so posts/comments have valid references
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES
+('99999999-9999-9999-9999-999999999999', 'fakeuser1', 'Alice', 'Example', 'alice@example.com', '000-000-0000', 'member'),
+('22222222-2222-2222-2222-222222222222', 'fakeuser2', 'Bob', 'Example', 'bob@example.com', '000-000-0000', 'member');
+
+-- Insert fake posts
+INSERT INTO posts (author_id, title, content) VALUES
+('99999999-9999-9999-9999-999999999999', 'How to learn React?', 'I am new to React and want to know the best resources to get started.'),
+('99999999-9999-9999-9999-999999999999', 'Best PostgreSQL tips?', 'Share your favorite tips and tricks for optimizing queries in Postgres.'),
+('22222222-2222-2222-2222-222222222222', 'Next.js vs Express?', 'When would you choose Next.js over a traditional Express backend?'),
+('22222222-2222-2222-2222-222222222222', 'Tailwind CSS worth it?', 'I see Tailwind CSS everywhere—what are the pros and cons compared to plain CSS or Bootstrap?');
+-- Insert fake comments (referencing posts by ID)
+INSERT INTO comments (post_id, author_id, content) VALUES
+(1, '99999999-9999-9999-9999-999999999999', 'I recommend the official React docs—they are super well written!'),
+(1, '99999999-9999-9999-9999-999999999999', 'Try Scrimba or Frontend Mentor, very interactive.'),
+(2, '99999999-9999-9999-9999-999999999999', 'Use EXPLAIN ANALYZE to understand query performance.'),
+(2, '99999999-9999-9999-9999-999999999999', 'Don’t forget to index frequently used columns.'),
+(3, '22222222-2222-2222-2222-222222222222', 'Next.js is great if you need SSR, otherwise Express is simpler.'),
+(4, '22222222-2222-2222-2222-222222222222', 'Tailwind is amazing once you get used to utility classes.'),
+(4, '22222222-2222-2222-2222-222222222222', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
+-- test data
 
 --booked slots
 INSERT INTO advisory_bookings (advisor_id, client_id, date, startTime, description, endTime, status) VALUES 
-('testAdvisor1', 'testAdvisor2', '2025-10-16', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('testAdvisor1', 'testAdvisor2', '2025-10-15', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', '2025-11-6', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', '2025-11-5', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('testAdvisor1', 'testAdvisor2', '2025-11-6', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('testAdvisor1', 'testAdvisor2', '2025-11-5', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
 ('testAdvisor2', 'testAdvisor1', '2025-10-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked');
 
 --open slots
 INSERT INTO advisory_bookings (advisor_id, date, startTime, endTime, status) VALUES 
-('testAdvisor1', '2025-10-13', '10:00:00', '12:00:00', 'open'),
-('testAdvisor1', '2025-10-14', '12:00:00', '14:00:00', 'open'),
-('testAdvisor1', '2025-10-15', '12:00:00', '14:00:00', 'open'),
-('testAdvisor1', '2025-10-15', '14:00:00', '16:00:00', 'open'),
-('testAdvisor1', '2025-10-16', '11:00:00', '13:00:00', 'open'),
-('testAdvisor1', '2025-10-17', '10:00:00', '12:00:00', 'open'),
-('testAdvisor2', '2025-10-13', '10:00:00', '12:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-3', '10:00:00', '12:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-4', '12:00:00', '14:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-5', '12:00:00', '14:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-5', '14:00:00', '16:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-6', '11:00:00', '13:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-7', '10:00:00', '12:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-3', '10:00:00', '12:00:00', 'open'),
+('testAdvisor1', '2025-11-3', '10:00:00', '12:00:00', 'open'),
+('testAdvisor1', '2025-11-4', '12:00:00', '14:00:00', 'open'),
+('testAdvisor1', '2025-11-5', '12:00:00', '14:00:00', 'open'),
+('testAdvisor1', '2025-11-5', '14:00:00', '16:00:00', 'open'),
+('testAdvisor1', '2025-11-6', '11:00:00', '13:00:00', 'open'),
+('testAdvisor1', '2025-11-7', '10:00:00', '12:00:00', 'open'),
+('testAdvisor1', '2025-11-3', '10:00:00', '12:00:00', 'open'),
 ('testAdvisor2', '2025-10-13', '12:00:00', '14:00:00', 'open'),
 ('testAdvisor2', '2025-10-14', '12:00:00', '14:00:00', 'open'),
 ('testAdvisor2', '2025-10-15', '12:00:00', '14:00:00', 'open'),
@@ -57,6 +77,9 @@ INSERT INTO advisory_bookings (advisor_id, date, startTime, endTime, status) VAL
 
 -- test data for advisory session
 INSERT INTO advisory_sessions (advisor_id, client_id, message, status) VALUES 
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', 'I need help with front-end', 'active'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', 'I need help with backend', 'pending'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', null, 'closed'),
 ('testAdvisor1', 'testAdvisor2', 'I need help with front-end', 'active'),
 ('testAdvisor1', 'testAdvisor2', 'I need help with backend', 'pending'),
 ('testAdvisor1', 'testAdvisor2', null, 'closed'),
@@ -440,3 +463,47 @@ VALUES
  300, 0, '2025-12-03 23:59:00',
  'Formal gala celebrating student innovation',
  40.00);
+
+
+-- under reivew user
+-- 7 new advisors
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role, status)
+VALUES
+('testAdvisor6', 'adv6', 'Liam', 'Wong', 'liam.wong@sample.com', '403-555-6001', 'advisor', 'under_review'),
+('testAdvisor7', 'adv7', 'Chloe', 'Park', 'chloe.park@sample.com', '403-555-6002', 'advisor', 'under_review'),
+('testAdvisor8', 'adv8', 'Noah', 'Chan', 'noah.chan@sample.com', '403-555-6003', 'advisor', 'under_review'),
+('testAdvisor9', 'adv9', 'Emma', 'Lee', 'emma.lee@sample.com', '403-555-6004', 'advisor', 'under_review'),
+('testAdvisor10', 'adv10', 'Mason', 'Ng', 'mason.ng@sample.com', '403-555-6005', 'advisor', 'under_review'),
+('testAdvisor11', 'adv11', 'Sophia', 'Lam', 'sophia.lam@sample.com', '403-555-6006', 'advisor', 'under_review'),
+('testAdvisor12', 'adv12', 'Ethan', 'Ho', 'ethan.ho@sample.com', '403-555-6007', 'advisor', 'under_review');
+
+INSERT INTO advisors (clerk_id, company_name, company_role)
+VALUES
+('testAdvisor6', 'MindBridge Analytics', 'Data Analyst'),
+('testAdvisor7', 'Aurora Systems', 'Tech Consultant'),
+('testAdvisor8', 'NovaSoft', 'Product Designer'),
+('testAdvisor9', 'CloudWave', 'Full Stack Engineer'),
+('testAdvisor10', 'NextEdge', 'Project Manager'),
+('testAdvisor11', 'PrimeWorks', 'Software Engineer'),
+('testAdvisor12', 'Orbit Tech', 'UX Lead');
+
+-- 7 new employers
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role, status)
+VALUES
+('testEmployer6', 'emp6', 'Ella', 'Kim', 'ella.kim@sample.com', '403-555-7001', 'employer', 'under_review'),
+('testEmployer7', 'emp7', 'Jack', 'Wu', 'jack.wu@sample.com', '403-555-7002', 'employer', 'under_review'),
+('testEmployer8', 'emp8', 'Olivia', 'Tran', 'olivia.tran@sample.com', '403-555-7003', 'employer', 'under_review'),
+('testEmployer9', 'emp9', 'Lucas', 'Zhao', 'lucas.zhao@sample.com', '403-555-7004', 'employer', 'under_review'),
+('testEmployer10', 'emp10', 'Mia', 'Cheung', 'mia.cheung@sample.com', '403-555-7005', 'employer', 'under_review'),
+('testEmployer11', 'emp11', 'Benjamin', 'Leung', 'benjamin.leung@sample.com', '403-555-7006', 'employer', 'under_review'),
+('testEmployer12', 'emp12', 'Isabella', 'Kwan', 'isabella.kwan@sample.com', '403-555-7007', 'employer', 'under_review');
+
+INSERT INTO employers (clerk_id, company_name, company_role)
+VALUES
+('testEmployer6', 'DataForge Inc', 'HR Lead'),
+('testEmployer7', 'Zenith Labs', 'Operations Manager'),
+('testEmployer8', 'TechNova Ltd', 'HR Assistant'),
+('testEmployer9', 'EcoStream Energy', 'Recruitment Lead'),
+('testEmployer10', 'BluePeak Digital', 'People Manager'),
+('testEmployer11', 'CoreByte Systems', 'HR Specialist'),
+('testEmployer12', 'HoloView Media', 'HR Coordinator');

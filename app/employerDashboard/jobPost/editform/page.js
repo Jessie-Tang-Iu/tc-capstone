@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import Navbar from "@/app/components/BlankNavBar";
+import Navbar from "@/app/components/EmployerNavBar";
 import EmployerSidebar from "@/app/components/employerDashboard/EmployerSideBar";
 import PopupMessage from "@/app/components/ui/PopupMessage";
 
@@ -83,7 +83,7 @@ export default function JobPostEditForm() {
           fetch("/api/job/types").then((r) => r.json()),
           fetch("/api/job/workplaces").then((r) => r.json()),
         ]);
-        // console.log("Industries:", ind);
+        console.log("Dropdown results:", { ind, exp, typ, work }); // <--
         setIndustries(ind);
         setExperiences(exp);
         setTypes(typ);
@@ -115,6 +115,26 @@ export default function JobPostEditForm() {
     };
     fetchJob();
   }, [isEdit, jobId]);
+
+  useEffect(() => {
+    if (isEdit && jobData?.title) {
+      setTitle(jobData.title || "");
+      setCompany(jobData.company || jobData.company_name || ""); // ← key fix
+      setLocation(jobData.location || "Calgary, Alberta");
+      setIndustryId(jobData.industry_id || "");
+      setWorkplaceId(jobData.workplace_id || "");
+      setTypeId(jobData.type_id || "");
+      setExperienceId(jobData.experience_id || "");
+      setSalary(jobData.salary_per_hour || "");
+      setLink(jobData.link || "");
+      setAboutCompany(jobData.company_info || "");
+      setAboutJob(jobData.description || "");
+      setBringToTeam(jobData.responsibilities || "");
+      setSkillsNeed(jobData.requirements || "");
+      setMoreDetails(jobData.details || "");
+      setBenefits(jobData.benefits || "");
+    }
+  }, [jobData, isEdit]);
 
   /* ======= Form fields ======= */
   const [title, setTitle] = useState("");
@@ -189,6 +209,7 @@ export default function JobPostEditForm() {
       experienceId: Number(experienceId),
       salaryPerHour: Number(salary),
       link,
+      aboutCompany,
       description: aboutJob,
       responsibilities: bringToTeam,
       requirements: skillsNeed,
@@ -247,11 +268,88 @@ export default function JobPostEditForm() {
               <div className="text-[15px] font-semibold">
                 {title || "New Job"}
               </div>
+
               <div className="flex items-center gap-3">
-                <HeaderButton kind="ghost" onClick={() => router.back()}>
-                  Cancel
+                <HeaderButton
+                  kind="ghost"
+                  onClick={() => router.push("/employerDashboard/jobPost")}
+                >
+                  Back
                 </HeaderButton>
+
                 <HeaderButton onClick={handleSave}>Save</HeaderButton>
+
+                {isEdit && (
+                  <>
+                    {jobData?.status === "I" ? (
+                      <HeaderButton
+                        kind="solid"
+                        onClick={async () => {
+                          if (!confirm("Reopen this job post?")) return;
+                          try {
+                            const res = await fetch(`/api/job/${jobId}`, {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ status: "A" }),
+                            });
+                            if (!res.ok)
+                              throw new Error("Failed to reopen job");
+                            alert("Job reopened successfully");
+                            router.push("/employerDashboard/jobPost");
+                          } catch (err) {
+                            alert("Error reopening job: " + err.message);
+                          }
+                        }}
+                      >
+                        Reopen Job
+                      </HeaderButton>
+                    ) : (
+                      <HeaderButton
+                        kind="ghost"
+                        onClick={async () => {
+                          if (
+                            !confirm("Are you sure you want to close this job?")
+                          )
+                            return;
+                          try {
+                            const res = await fetch(`/api/job/${jobId}`, {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ status: "I" }),
+                            });
+                            if (!res.ok) throw new Error("Failed to close job");
+                            alert("Job closed successfully");
+                            router.push("/employerDashboard/jobPost");
+                          } catch (err) {
+                            alert("Error closing job: " + err.message);
+                          }
+                        }}
+                      >
+                        Close Job
+                      </HeaderButton>
+                    )}
+
+                    <button
+                      className="px-6 py-2 rounded-md text-sm font-semibold bg-red-500 text-white hover:opacity-90 transition cursor-pointer"
+                      onClick={async () => {
+                        if (!confirm("Permanently delete this job post?"))
+                          return;
+                        try {
+                          const res = await fetch(`/api/job/${jobId}`, {
+                            method: "DELETE",
+                          });
+                          if (!res.ok) throw new Error("Failed to delete job");
+                          alert("Job deleted successfully");
+                          router.push("/employerDashboard/jobPost");
+                        } catch (err) {
+                          alert("Error deleting job: " + err.message);
+                        }
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
               </div>
             </div>
 

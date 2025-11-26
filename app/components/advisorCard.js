@@ -29,9 +29,9 @@ export default function AdvisorCard({ advisor }) {
                 <div className="flex flex-row space-x-2">
                     <RxAvatar size={90} />
                     <div className="text-start">
-                        <p className='font-bold text-[25px] mb-2'>{advisor.first_name} {advisor.last_name}</p>
-                        <p className='text-gray-500'>Front-end Developer</p>
-                        <p className='text-gray-500 mb-2'>10+ years experience</p>
+                        <p className='font-bold text-[20px] mb-2'>{advisor.first_name} {advisor.last_name}</p>
+                        <p className='text-gray-500'>{ advisor.company_role || "No Role Provided" }</p>
+                        <p className='text-gray-500 mb-2'>{ advisor.company_name || "No Company Provided"}</p>
                     </div>
                 </div>
                 

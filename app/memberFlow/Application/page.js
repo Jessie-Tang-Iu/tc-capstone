@@ -156,14 +156,14 @@ export default function Applications() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-100">
+      <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
         <MemberNavBar />
 
-        <div className="pt-7 mb-3 md:mb-8 mx-5 md:mx-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-black">
+        <div className="mx-auto w-full px-6 py-4">
+          <h1 className="text-3xl font-bold text-[#DD5B45]">
             My Applications
           </h1>
-          <p className="text-sm md:text-base text-gray-600 mt-1">
+          <p className="text-sm text-gray-600 mt-1">
             Track the jobs you have applied for.
           </p>
           
@@ -174,11 +174,11 @@ export default function Applications() {
         <div className="flex flex-col md:flex-row ml-2">
           {/* Job Listings Sidebar */}
           <div
-            className={`w-full md:w-96 lg:w-[400px] xl:w-[450px]
-                    ${showAppDetail ? "hidden md:block" : "block"}
-                    h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto`}
+            className={`w-full md:w-80 
+                        ${showAppDetail ? "hidden md:block" : "block"}
+                        h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto`}
           >
-            <div className="px-2 md:px-4 py-2">
+            <div className="px-2 py-1 space-y-2">
               {applications.map((app) => (
                 <ApplyCard
                   key={app.id}
@@ -195,18 +195,18 @@ export default function Applications() {
 
           {/* Job Detail Panel */}
           <div
-            className={`flex-1 py-2
-                                ${showAppDetail ? "block" : "hidden md:block"}
-                                h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] relative`}
+            className={`flex-1 pl-2 py-1
+                        ${showAppDetail ? "block" : "hidden md:block"}
+                        h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] relative`}
           >
             {/* Mobile Back Button */}
             <button
               onClick={handleBackToList}
               className="md:hidden top-4 ml-5 z-10 text-black rounded-lg text-sm font-normal hover:underline transition-colors"
             >
-              {"< Back to Jobs"}
+              ← Back to Applications
             </button>
-            <div className="mt-5 md:mt-0 h-full">
+            <div className="mt-5 md:mt-0 h-full rounded-lg">
               <AppDetail
                 app={selectedApp}
                 resume={resume}
@@ -230,9 +230,7 @@ export default function Applications() {
         <PopupMessage
           type="error"
           title={
-            errorMessage.includes("already registered")
-              ? "Already Registered"
-              : "Update Failed"
+            errorMessage
           }
           description={errorMessage}
           onClose={() => setErrorMessage("")}

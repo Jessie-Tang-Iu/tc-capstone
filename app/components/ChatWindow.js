@@ -15,6 +15,22 @@ export default function ChatWindow({
   const scrollRef = useRef(null);
   const panelRef = useRef(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const [recipientName, setRecipientName] = useState("");
+
+  // Load user names
+  useEffect(() => {
+    if (!recipient) return;
+    (async () => {
+      try {
+        const res = await fetch(`/api/users/${recipient}`);
+        if (!res.ok) throw new Error("Failed to fetch recipient");
+        const recipientData = await res.json();
+        setRecipientName(`${recipientData.first_name} ${recipientData.last_name}`);
+      } catch (err) {
+        console.error("Error loading user names:", err);
+      }
+    })();
+  }, [recipient]);
 
   // Load conversation
   useEffect(() => {
@@ -161,7 +177,7 @@ export default function ChatWindow({
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b px-3 py-2">
-          <div className="text-sm font-semibold">To: {recipient}</div>
+          <div className="text-sm font-semibold">To: {recipientName}</div>
           <button
             onClick={onClose}
             aria-label="Close"

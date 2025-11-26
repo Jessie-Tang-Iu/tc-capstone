@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import SearchBar from "@/app/components/ui/SearchBar";
 import Section from "@/app/components/adminDashboard/Section";
 import UserRow from "@/app/components/adminDashboard/UserRow";
 import PlaceholderCard from "@/app/components/adminDashboard/PlaceholderCard";
 import ChatWindow from "@/app/components/ChatWindow";
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 export default function UsersPanel({ onShowDetails }) {
   const [query, setQuery] = useState("");
@@ -14,6 +16,11 @@ export default function UsersPanel({ onShowDetails }) {
   const [usersByRole, setUsersByRole] = useState({});
   const [activeTab, setActiveTab] = useState("admin");
   const [fetchedRoles, setFetchedRoles] = useState({});
+
+  const userContext = useUser();
+  const currentUserId = userContext?.user?.id;
+
+  const router = useRouter();
 
   const roles = [
     { key: "admin", label: "Admins" },
@@ -30,7 +37,9 @@ export default function UsersPanel({ onShowDetails }) {
       if (!res.ok) throw new Error("Failed to fetch users");
       const data = await res.json();
       const filtered = data.filter(
-        (u) => u.status !== "underreview" && u.role === roleKey
+        (u) =>
+          (u.status === "active" || u.status === "banned") &&
+          (u.role === roleKey || !u.role)
       );
       setUsersByRole((prev) => ({ ...prev, [roleKey]: filtered }));
       setFetchedRoles((prev) => ({ ...prev, [roleKey]: true }));
@@ -51,7 +60,7 @@ export default function UsersPanel({ onShowDetails }) {
 
   const updateUserStatus = async (id, newStatus) => {
     try {
-      const res = await fetch(`/api/users/${clerk_id}`, {
+      const res = await fetch(`/api/users/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
@@ -61,7 +70,7 @@ export default function UsersPanel({ onShowDetails }) {
       setUsersByRole((prev) => ({
         ...prev,
         [activeTab]: prev[activeTab].map((u) =>
-          u.id === updated.id ? updated : u
+          u.clerk_id === updated.clerk_id ? updated : u
         ),
       }));
     } catch (err) {
@@ -70,6 +79,7 @@ export default function UsersPanel({ onShowDetails }) {
   };
 
   const openMessage = (userId) => {
+    console.log("Open message to:", userId);
     setChatTo(userId);
     setOpenChat(true);
   };
@@ -140,17 +150,19 @@ export default function UsersPanel({ onShowDetails }) {
             {filterByQuery(currentList).map((u) => (
               <UserRow
                 {...u}
-                key={u.id}
-                id={u.id}
+                key={u.clerk_id}
+                id={u.clerk_id}
                 name={`${u.first_name} ${u.last_name}`}
                 subtitle={`${u.username ?? ""} | ${u.email ?? ""}`}
                 status={u.status}
-                onMessage={() => openMessage(u.id)}
+                onMessage={() => openMessage(u.clerk_id)}
+                role={activeTab}
+                onInvestigate={() => {router.push(`/advisorDashboard?advisorId=${u.clerk_id}`)}}
                 onDetails={() =>
                   showDetails(u, roles.find((r) => r.key === activeTab)?.label)
                 }
                 onStatusChange={(updated) =>
-                  updateUserStatus(u.id, updated.status)
+                  updateUserStatus(u.clerk_id, updated.status)
                 }
               />
             ))}
@@ -161,6 +173,7 @@ export default function UsersPanel({ onShowDetails }) {
       {/* Chat Window */}
       {openChat && (
         <ChatWindow
+          me={currentUserId}
           recipient={chatTo}
           onClose={() => setOpenChat(false)}
           onSend={(text) => console.log("send:", { to: chatTo, text })}

@@ -1,13 +1,15 @@
 "use client";
 
-import { useSignUp } from "@clerk/nextjs";
-import { useAuth } from "@clerk/nextjs"
+import { useSignUp, useUser } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
+import PopupMessage from "../ui/PopupMessage";
 
 export default function ClerkSignUp() {
   const { isLoaded, signUp, setActive } = useSignUp();
+  const { user } = useUser();
   const router = useRouter();
   const { getToken } = useAuth();
 
@@ -20,6 +22,7 @@ export default function ClerkSignUp() {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const registerUser = async (e) => {
     e.preventDefault();
@@ -38,22 +41,26 @@ export default function ClerkSignUp() {
         lastName,
       });
 
+      console.log("Sign up result: ", result);
+
       if (result.status === "complete") {
         // Activate the session first
         if (result.createdSessionId) {
           await setActive({ session: result.createdSessionId });
         }
 
-        const token = await getToken({ template: "backend" }); 
-
-        await fetch("/api/users/metadata", {
+        // const token = await getToken({ template: "backend" });
+        
+        const res = await fetch(`/api/users`, {
           method: "POST",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-           },
+            // Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify({
             role: "member",
+            status: 'active',
+            clerkId: result.createdUserId,
             username: username,
             firstName: firstName,
             lastName: lastName,
@@ -62,7 +69,12 @@ export default function ClerkSignUp() {
           }),
         });
 
-        router.push("/"); // redirect after everything is done
+        if (res.ok) {
+          console.log("User signed up: ", user);
+          router.push("/memberFlow"); // redirect after everything is done
+        } else {
+          setError("Your username or email is taken. Please try another.")
+        }
       } else {
         setError("Unexpected signup state: " + result.status);
       }
@@ -74,8 +86,8 @@ export default function ClerkSignUp() {
     }
   };
 
-
   return (
+    <>
     <div className="flex justify-center items-center">
       <form onSubmit={registerUser}>
         <div className="bg-[#F3E1D5] rounded-2xl p-10 lg:w-200 justify-center items-center">
@@ -182,5 +194,14 @@ export default function ClerkSignUp() {
         </div>
       </form>
     </div>
+    {showSuccess && (
+      <PopupMessage
+        type="success"
+        title="Successfully Update"
+        description={`Your application's status is updated to ${statusOptions[status]}`}
+        onClose={() => setShowSuccess(false)}
+      />
+    )}
+    </>
   );
 }

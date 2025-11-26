@@ -1,112 +1,131 @@
 import { ExternalLink, Bookmark, Link as LinkIcon } from "lucide-react";
 
-export default function JobDetail({ job, onApply }) {
-    if (!job) {
-        return (
-            <div className="flex items-center justify-center h-full bg-white">
-                <p className="text-gray-600 text-lg">Select a job to view details</p>
-            </div>
-        );
-    }
-
-    // Normalize date to YYYY-MM-DD format
-    const normalizeDate = (d) => {
-        if (!d) return null;
-        if (typeof d === "string") return d.includes("T") ? d.split("T")[0] : d;
-        if (d instanceof Date && !isNaN(d.getTime()))
-            return d.toISOString().slice(0, 10);
-        if (typeof d === "object" && typeof d.date === "string")
-            return d.date.includes("T") ? d.date.split("T")[0] : d.date;
-        return null;
-    };
-
+export default function JobDetail({ role, job, isApplied, onApply }) {
+  if (!job) {
     return (
-        <div className="bg-white h-full overflow-y-auto">
-            {/* Job Header */}
-            <div className="border-b border-gray-400 p-4 md:p-6">
-                <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
-                    <div className="flex-1">
-                        <h1 className="text-lg md:text-xl font-bold text-black mb-2">{job.title}</h1>
-                        
-                        <div className="flex items-center gap-2 mb-2">
-                            <span className="text-sm md:text-base font-normal text-gray-600">{job.company}</span>
-                            <ExternalLink className="w-5 h-5 md:w-6 md:h-6 text-gray-600" />
-                        </div>
-                        
-                        <p className="text-sm md:text-base font-normal text-black">
-                            {job.location} · {job.salary_per_hour} · {job.type} · {job.workplace} · {normalizeDate(job.posted_at)}
-                        </p>
-                    </div>
-
-                    <div className="flex gap-2 lg:flex-row lg:items-center">
-                        <button 
-                            className="bg-[#E55B3C] text-white px-4 md:px-6 py-2 rounded-lg text-sm md:text-base font-normal hover:bg-[#E55B3C]/90 transition-colors"
-                            onClick={onApply}
-                        >
-                            Apply Now
-                        </button>
-                        <div className="flex gap-2">
-                            <button className="bg-[#E55B3C] text-white p-2 rounded-lg hover:bg-[#E55B3C]/90 transition-colors">
-                                <Bookmark className="w-5 h-5 md:w-6 md:h-6" />
-                            </button>
-                            <a href={job.link} className="bg-[#E55B3C] text-white p-2 rounded-lg hover:bg-[#E55B3C]/90 transition-colors">
-                                <LinkIcon className="w-5 h-5 md:w-6 md:h-6" />
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Job Content */}
-            <div className="p-4 md:p-6 space-y-6 md:space-y-8">
-                {/* About the company */}
-                <section>
-                    <h2 className="text-lg md:text-xl font-bold text-black mb-3 md:mb-4">About the company</h2>
-                    <p className="text-sm md:text-sm font-normal text-black leading-relaxed">
-                        {job.company_info}
-                    </p>
-                </section>
-
-                {/* About the job */}
-                <section>
-                    <h2 className="text-lg md:text-xl font-bold text-black mb-3 md:mb-4">About the job</h2>
-                    <p className="text-sm md:text-sm font-normal text-black leading-relaxed">
-                        {job.description}
-                    </p>
-                </section>
-
-                {/* What you bring to the team */}
-                <section>
-                    <h2 className="text-lg md:text-xl font-bold text-black mb-3 md:mb-4">What you bring to the team</h2>
-                    <div className="text-sm md:text-sm font-normal text-black leading-relaxed whitespace-pre-line">
-                        {job.responsibilities}
-                    </div>
-                </section>
-
-                {/* What skill you need */}
-                <section>
-                    <h2 className="text-lg md:text-xl font-bold text-black mb-3 md:mb-4">What skill you need</h2>
-                    <div className="text-sm md:text-sm font-normal text-black leading-relaxed whitespace-pre-line">
-                        {job.requirements}
-                    </div>
-                </section>
-
-                {/* More details */}
-                <section>
-                    <h2 className="text-lg md:text-xl font-bold text-black mb-3 md:mb-4">More details</h2>
-                    <div className="text-sm md:text-sm font-normal text-black leading-relaxed whitespace-pre-line">
-                        {job.details}
-                    </div>
-                </section>
-
-                {/* Benefits */}
-                <section>
-                    <h2 className="text-lg md:text-xl font-bold text-black mb-3 md:mb-4">Benefits</h2>
-                    <div className="text-sm md:text-sm font-normal text-black leading-relaxed whitespace-pre-line">
-                        {job.benefits}
-                    </div>
-                </section>
-            </div>
-        </div>
+      <div className="flex items-center justify-center h-full bg-white rounded-xl mr-2">
+        <p className="text-gray-600 text-lg">Select a job to view details</p>
+      </div>
     );
+  }
+
+  return (
+    <div className="bg-white h-full rounded-xl overflow-y-auto mr-2">
+      {/* Job Header */}
+      <div className="border-b border-gray-400 p-5">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
+          <div className="flex-1">
+            <h1 className="text-lg font-bold text-black mb-1">
+              {job.title}
+            </h1>
+
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-sm font-normal text-gray-600">
+                {job.company}
+              </span>
+              <ExternalLink className="w-4 h-4 text-gray-600" />
+            </div>
+
+            <p className="text-sm font-normal text-black">
+              {job.location} · ${job.salary_per_hour} per hour · {job.type} ·{" "}
+              {job.workplace} · Posted at {new Date(job.posted_at).toLocaleDateString()}
+            </p>
+          </div>
+
+          <div className="flex gap-2 lg:flex-row lg:items-center">
+            {role === "member" && (
+              <button
+                className={`
+                  ${(isApplied || job.status != 'A')
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-[#E55B3C] hover:bg-[#E55B3C]/90'
+                  }
+
+                  text-white px-4 md:px-6 py-2 rounded-lg text-sm font-normal transition-colors
+                `}
+                onClick={onApply}
+                disabled={isApplied || job.status != 'A'}
+              >
+                {job.status != 'A' ? 'Expired' : (isApplied ? 'Applied' : 'Apply Now')}
+              </button>
+            )}
+            <div className="flex gap-2">
+              <button className="bg-[#E55B3C] text-white p-2 rounded-lg hover:bg-[#E55B3C]/90 transition-colors">
+                <Bookmark className="w-5 h-5" />
+              </button>
+              <a
+                href={job.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#E55B3C] text-white p-2 rounded-lg hover:bg-[#E55B3C]/90 transition-colors"
+              >
+                <LinkIcon className="w-5 h-5" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Job Content */}
+      <div className="p-5 space-y-6">
+        {/* About the company */}
+        <div className="border border-gray-200 rounded-lg bg-white">
+          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">About the company</div>
+          <div 
+            dangerouslySetInnerHTML={{ __html: job.company_info }} 
+            className="px-5 py-3 text-sm font-medium text-black break-words leading-relaxed"
+          />
+        </div>
+
+        {/* About the job */}
+        <div className="border border-gray-200 rounded-lg bg-white">
+          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">About the job</div>
+          <div 
+            dangerouslySetInnerHTML={{ __html: job.description }} 
+            className="px-5 py-3 text-sm font-medium text-black break-words leading-relaxed"
+          />
+        </div>
+
+        {/* Responsibilities */}
+        {job.responsibilities?.trim() &&
+        <div className="border border-gray-200 rounded-lg bg-white">
+          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">What you bring to the team</div>
+          <div 
+            dangerouslySetInnerHTML={{ __html: job.responsibilities }} 
+            className="px-5 py-3 text-sm font-medium text-black break-words leading-relaxed"
+          />
+        </div>}
+
+        {/* Requirements */}
+        {job.requirements?.trim() &&
+        <div className="border border-gray-200 rounded-lg bg-white">
+          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">What skills you need</div>
+          <div 
+            dangerouslySetInnerHTML={{ __html: job.requirements }} 
+            className="px-5 py-3 text-sm font-medium text-black break-words leading-relaxed"
+          />
+        </div>}
+
+        {/* More details */}
+        {job.details?.trim() &&
+        <div className="border border-gray-200 rounded-lg bg-white">
+          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">More details</div>
+          <div 
+            dangerouslySetInnerHTML={{ __html: job.details }} 
+            className="px-5 py-3 text-sm font-medium text-black break-words leading-relaxed"
+          />
+        </div>}
+
+        {/* Benefits */}
+        {job.benefits?.trim() &&
+        <div className="border border-gray-200 rounded-lg bg-white">
+          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">Benefits</div>
+          <div 
+            dangerouslySetInnerHTML={{ __html: job.benefits }} 
+            className="px-5 py-3 text-sm font-medium text-black break-words leading-relaxed"
+          />
+        </div>}
+      </div>
+    </div>
+  );
 }
