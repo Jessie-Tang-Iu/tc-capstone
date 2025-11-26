@@ -48,6 +48,22 @@ export default function CoursePage({}) {
     }
   }, [lessons]);
 
+  const markLessonCompletedLocally = (lessonId) => {
+    setLessons(prev => {
+      const updated = prev.map(l =>
+        l.id === lessonId ? { ...l, completed: true } : l
+      );
+
+      for (let i = 0; i < updated.length; i++) {
+        if (updated[i].completed) continue;
+        updated[i].locked = false;
+        break;
+      }
+
+      return [...updated];
+    });
+  };
+
   if (loading) return <div className="p-6 text-black bg-white">Loading course...</div>;
   if (!course) return <div className="p-6 text-black bg-white">Course not found</div>;
 
@@ -126,11 +142,20 @@ export default function CoursePage({}) {
           )}
 
           {selectedLesson && selectedLesson.type === "lesson" && (
-            <CourseContent lesson={selectedLesson} userId={userId} />
+            <CourseContent 
+              lesson={selectedLesson} 
+              userId={userId} 
+              onCompleted={markLessonCompletedLocally} 
+            />
           )}
 
           {selectedLesson && selectedLesson.type === "quiz" && (
-            <CourseQuiz lesson={selectedLesson} backToContent={() => setSelectedLessonIndex(null)} userId={userId} />
+            <CourseQuiz 
+              lesson={selectedLesson} 
+              backToContent={() => setSelectedLessonIndex(null)} 
+              userId={userId} 
+              onCompleted={markLessonCompletedLocally} 
+            />
           )}
         </div>
       </div>

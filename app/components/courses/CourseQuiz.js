@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
-export default function CourseQuiz({ lesson, backToContent }) {
+export default function CourseQuiz({ lesson, backToContent, onCompleted }) {
   const router = useRouter();
 
   const { user } = useUser();
@@ -48,7 +48,7 @@ export default function CourseQuiz({ lesson, backToContent }) {
       console.log("Quiz completion saved:", data);
       if (res.ok) {
         setSaved(true);
-        router.refresh();
+        onCompleted?.(lesson.id);
       }
     } catch (err) {
       console.error("Error saving quiz progress:", err);
