@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import AdminCourse from "../components/adminDashboard/AdminCourse";
 import AdminCourseCreate from "../components/adminDashboard/AdminCourseCreate";
 import AdminCourseEdit from "../components/adminDashboard/AdminCourseEdit";
+import AdminCourseOverview from "../components/adminDashboard/AdminCourseOverview";
 
 export default function AdminDashboard() {
   const [courses, setCourses] = useState([]);
