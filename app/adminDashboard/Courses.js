@@ -8,8 +8,8 @@ export default function AdminDashboard() {
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState("list"); // list, edit, create
-  const [editCourseId, setEditCourseId] = useState(null);
+  const [view, setView] = useState("list"); // list, edit, create, overview
+  const [selectedCourseId, setSelectedCourseId] = useState(null);
 
   const [searchText, setSearchText] = useState("");
   const [filterLevel, setFilterLevel] = useState("");
@@ -53,9 +53,9 @@ export default function AdminDashboard() {
     }
   }
 
-  const handleEditClick = (courseId) => {
-    setEditCourseId(courseId);
-    setView("edit");
+  const handleCourseClick = (courseId) => {
+    setSelectedCourseId(courseId);
+    setView("overview");
   };
 
   if (loading) return <div className="p-6 text-black">Loading...</div>;
@@ -133,7 +133,7 @@ export default function AdminDashboard() {
               filteredCourses.map((course) => (
                 <div
                   key={course.id || course._id}
-                  onClick={() => handleEditClick(course.id)}
+                  onClick={() => handleCourseClick(course.id)}
                   className="cursor-pointer"
                 >
                   <AdminCourse course={course} />
@@ -152,11 +152,19 @@ export default function AdminDashboard() {
           onRefresh={fetchCourses}
         />
       )}
+      
+      {view === "overview" && selectedCourseId && (
+        <AdminCourseOverview
+          courseId={selectedCourseId}
+          onBack={() => setView("list")}
+          onEdit={() => setView("edit")}
+        />
+      )}
 
-      {view === "edit" && editCourseId && (
+      {view === "edit" && selectedCourseId && (
         <AdminCourseEdit
-          courseId={editCourseId}
-          onCancel={() => setView("list")}
+          courseId={selectedCourseId}
+          onCancel={() => setView("overview")}
           onRefresh={fetchCourses}
         />
       )}
