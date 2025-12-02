@@ -127,6 +127,7 @@ export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
         const payload = { course: courseData, lessons };
 
         try {
+        console.log("Saving course with payload:", payload);
         const res = await fetch(`/api/course/${courseId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
