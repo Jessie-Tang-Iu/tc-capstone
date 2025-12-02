@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
@@ -41,7 +41,7 @@ export default function CourseQuiz({ lesson, backToContent, onCompleted }) {
       const res = await fetch("/api/course/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, lessonId: lesson.id, score }),
+        body: JSON.stringify({ userId, lessonId: lesson.id, score, answers: userAnswers }),
       });
       if (!res.ok) throw new Error("Failed to save quiz progress");
       const data = await res.json();

@@ -143,31 +143,51 @@ export async function getCourseAdmin(courseId) {
   return { ...course, lessons };
 }
 
-/** Mark a lesson as completed and update course progress */
-export async function markLessonComplete(userId, lessonId) {
-  // Mark this lesson as complete
+// Mark a lesson as completed and update course progress
+export async function markLessonComplete({ 
+  userId, 
+  lessonId, 
+  score = null, // Null so when a non quiz is completed it just leaves the data null
+  answers = null // Same as above
+}) {
+  const passed = score !== null ? score >= 50 : null;
+
   await query(
-    `INSERT INTO user_lesson_progress (user_id, lesson_id, completed)
-     VALUES ($1, $2, true)
+    `INSERT INTO user_lesson_progress (user_id, lesson_id, completed, quiz_score, passed, answers)
+     VALUES ($1, $2, true, $3, $4, $5)
      ON CONFLICT (user_id, lesson_id)
-     DO UPDATE SET completed = true`,
-    [userId, lessonId]
+     DO UPDATE SET completed = true,
+                   quiz_score = $3,
+                   passed = $4,
+                   answers = $5`,
+    [userId, lessonId, score, passed, answers]
   );
 
-  // Find course ID for this lesson
-  const lessonRes = await query(`SELECT course_id FROM lessons WHERE id = $1`, [lessonId]);
+  // Find course ID
+  const lessonRes = await query(
+    `SELECT course_id FROM lessons WHERE id = $1`,
+    [lessonId]
+  );
+
   const courseId = lessonRes.rows[0]?.course_id;
   if (!courseId) return;
 
-  // Count total lessons and completed lessons
-  const totalRes = await query(`SELECT COUNT(*) FROM lessons WHERE course_id = $1`, [courseId]);
+  // Count total & completed lessons
+  const totalRes = await query(
+    `SELECT COUNT(*) FROM lessons WHERE course_id = $1`, 
+    [courseId]
+  );
+
   const totalLessons = parseInt(totalRes.rows[0].count, 10);
 
   const completedRes = await query(
     `SELECT COUNT(*) FROM user_lesson_progress
-     WHERE user_id = $1 AND lesson_id IN (SELECT id FROM lessons WHERE course_id = $2) AND completed = true`,
+     WHERE user_id = $1 
+       AND lesson_id IN (SELECT id FROM lessons WHERE course_id = $2)
+       AND completed = true`,
     [userId, courseId]
   );
+
   const completedLessons = parseInt(completedRes.rows[0].count, 10);
 
   // Update course progress
@@ -175,14 +195,22 @@ export async function markLessonComplete(userId, lessonId) {
     `INSERT INTO user_course_progress (user_id, course_id, completed_lessons, total_lessons, completed)
      VALUES ($1, $2, $3, $4, $5)
      ON CONFLICT (user_id, course_id)
-     DO UPDATE SET completed_lessons = $3, total_lessons = $4, completed = $5`,
-    [userId, courseId, completedLessons, totalLessons, completedLessons >= totalLessons]
+     DO UPDATE SET completed_lessons = $3,
+                   total_lessons = $4,
+                   completed = $5`,
+    [
+      userId,
+      courseId,
+      completedLessons,
+      totalLessons,
+      completedLessons >= totalLessons,
+    ]
   );
 
   return { courseId, completedLessons, totalLessons };
 }
 
-/** Update course-level progress manually (e.g. after quiz submission) */
+// Update course-level progress manually (e.g. after quiz submission)
 export async function updateCourseProgress(userId, courseId) {
   const totalRes = await query(`SELECT COUNT(*) FROM lessons WHERE course_id = $1`, [courseId]);
   const totalLessons = parseInt(totalRes.rows[0].count, 10);
@@ -325,7 +353,6 @@ export async function editCourse(courseId, coursePayload) {
 
   return updatedCourse;
 }
-
 
 export async function deleteCourseById(courseId) {
   if (!courseId) throw new Error("Course ID is required");
