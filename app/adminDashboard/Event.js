@@ -5,6 +5,7 @@ import EventCard from "../components/event/eventCard";
 import Button from "../components/ui/Button";
 import EventFormPanel from "../components/adminDashboard/EventFormPanel";
 import SearchBar from "../components/ui/SearchBar";
+import PopupMessage from "../components/ui/PopupMessage";
 
 /* ========== Helpers ========== */
 const toTimeHM = (t) => {
@@ -48,6 +49,7 @@ export default function EventsPanel() {
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [sortOrder, setSortOrder] = useState("newest");
   const [query, setQuery] = useState("");
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const [form, setForm] = useState({
     title: "",
@@ -73,15 +75,43 @@ export default function EventsPanel() {
     [editingEvent]
   );
 
-  /* ========== Fetch Events ========== */
-  useEffect(() => {
-    (async () => {
+  /* ========== CRUD Operations ========== */
+  const fetchEvent = async (eventId) => {
+    try {
+      const res = await fetch(`/api/events/${eventId}`, { cache: "no-store" });
+      if (!res.ok) {
+        // If status is 404, throw the status code directly
+        if (res.status === 404) throw new Error("404");
+        throw new Error("Fetch failed");
+      }
+      return await res.json();
+    } catch (err) {
+      // If it's a 404 error, we return null to signal deletion
+      if (err.message === "404") return null;
+      console.error("Fetch individual event error:", err);
+      return null;
+    }
+  };
+
+  const fetchEvents = async () => {
+    try {
       const res = await fetch("/api/events", { cache: "no-store" });
-      if (res.ok) setEvents(await res.json());
-    })();
+      if (res.ok) {
+        setEvents(await res.json());
+      } else {
+        console.error("Failed to fetch events list.");
+        setEvents([]);
+      }
+    } catch (error) {
+      console.error("Network error fetching events:", error);
+      setEvents([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
   }, []);
 
-  /* ========== CRUD Operations ========== */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isReadOnly) return;
@@ -111,8 +141,13 @@ export default function EventsPanel() {
     });
 
     if (!res.ok) {
-      console.error("Save failed:", res.status, await res.text());
-      setErrors((e) => ({ ...e, form: "Create/Update failed." }));
+      // console.error("Save failed:", res.status, await res.text());
+      if (res.status === 404) {
+        setShowErrorModal(true);
+        return;
+      }
+      let errorMsg = "Save failed. Please check your data and try again.";
+      setErrors((e) => ({ ...e, form: errorMsg }));
       return;
     }
 
@@ -130,9 +165,18 @@ export default function EventsPanel() {
   const handleDelete = async () => {
     if (!eventId) return;
     const res = await fetch(`/api/events/${eventId}`, { method: "DELETE" });
+
     if (!res.ok) {
       console.error("Delete failed:", res.status, await res.text());
-      setErrors((e) => ({ ...e, form: "Delete failed." }));
+
+      if (res.status === 404) {
+        // 💡 FIX: Show modal if event was already deleted
+        setShowErrorModal(true);
+        return;
+      }
+
+      let errorMsg = "Delete failed. Please try again.";
+      setErrors((e) => ({ ...e, form: errorMsg }));
       return;
     }
     setEvents((prev) => prev.filter((e) => (e.id ?? e.event_id) !== eventId));
@@ -221,8 +265,18 @@ export default function EventsPanel() {
     setErrors({});
   };
 
-  const openEdit = (raw) => {
-    const ev = { ...raw, id: raw.id ?? raw.event_id };
+  const openEdit = async (raw) => {
+    const id = raw.id ?? raw.event_id;
+
+    const currentEvent = await fetchEvent(id);
+
+    if (!currentEvent) {
+      setShowErrorModal(true); // Show the deletion notice
+      return; // Stop execution, do not open the form
+    }
+
+    const ev = { ...raw, ...currentEvent, id: id };
+
     setEditingEvent(ev);
     setIsReadOnly(isEventPast(ev));
     setIsOpen(true);
@@ -331,6 +385,20 @@ export default function EventsPanel() {
           </div>
         )}
       </div>
+
+      {showErrorModal && (
+        <PopupMessage
+          type="error"
+          title="Action Failed"
+          description="This event has been deleted by another administrator."
+          buttonText="Back to List"
+          onClose={() => {
+            setShowErrorModal(false);
+            closeModal();
+            fetchEvents();
+          }}
+        />
+      )}
     </main>
   );
 }
