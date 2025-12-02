@@ -50,6 +50,7 @@ export default function EventsPanel() {
   const [sortOrder, setSortOrder] = useState("newest");
   const [query, setQuery] = useState("");
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
   const [form, setForm] = useState({
     title: "",
@@ -112,6 +113,27 @@ export default function EventsPanel() {
     fetchEvents();
   }, []);
 
+  const executeDelete = async () => {
+    // RENAMED FUNCTION
+    if (!eventId) return;
+    const res = await fetch(`/api/events/${eventId}`, { method: "DELETE" });
+
+    if (!res.ok) {
+      console.error("Delete failed:", res.status, await res.text());
+
+      if (res.status === 404) {
+        setShowErrorModal(true);
+        return;
+      }
+
+      let errorMsg = "Delete failed. Please try again.";
+      setErrors((e) => ({ ...e, form: errorMsg }));
+      return;
+    }
+    setEvents((prev) => prev.filter((e) => (e.id ?? e.event_id) !== eventId));
+    closeModal();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isReadOnly) return;
@@ -162,25 +184,8 @@ export default function EventsPanel() {
     closeModal();
   };
 
-  const handleDelete = async () => {
-    if (!eventId) return;
-    const res = await fetch(`/api/events/${eventId}`, { method: "DELETE" });
-
-    if (!res.ok) {
-      console.error("Delete failed:", res.status, await res.text());
-
-      if (res.status === 404) {
-        // 💡 FIX: Show modal if event was already deleted
-        setShowErrorModal(true);
-        return;
-      }
-
-      let errorMsg = "Delete failed. Please try again.";
-      setErrors((e) => ({ ...e, form: errorMsg }));
-      return;
-    }
-    setEvents((prev) => prev.filter((e) => (e.id ?? e.event_id) !== eventId));
-    closeModal();
+  const handleDelete = () => {
+    setShowConfirmDelete(true);
   };
 
   /* ========== Form Logic ========== */
@@ -385,6 +390,23 @@ export default function EventsPanel() {
           </div>
         )}
       </div>
+
+      {showConfirmDelete && (
+        <PopupMessage
+          type="confirm"
+          title="Confirm Deletion"
+          description={[
+            "Are you sure you want to delete this event?",
+            "This action cannot be undone.",
+          ]}
+          buttonText="Yes"
+          onClose={() => setShowConfirmDelete(false)} // Closes only the confirmation popup
+          onConfirm={() => {
+            setShowConfirmDelete(false); // Close the confirmation popup first
+            executeDelete(); // Execute the actual deletion API call
+          }}
+        />
+      )}
 
       {showErrorModal && (
         <PopupMessage
