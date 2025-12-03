@@ -1,20 +1,21 @@
 "use client";
 
-import { useSignIn, useSession } from "@clerk/nextjs";
+import { useSignIn, useSession, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { jwtDecode } from "jwt-decode"; // Helps Decode the Clerk JWT for the user's role
 import Image from "next/image";
 
 export default function ClerkSignIn() {
   const { isLoaded, signIn, setActive } = useSignIn();
   const { session } = useSession();
+  const { signOut } = useClerk();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showError, setShowError] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleAuth = async (e) => {
@@ -32,7 +33,6 @@ export default function ClerkSignIn() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/post-login");
       } else if (
         result.status === "needs_first_factor" ||
         result.status === "needs_second_factor"
@@ -65,6 +65,22 @@ export default function ClerkSignIn() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const getStatus = async () => {
+      if (session) {
+        // console.log("Session: ", session.user.publicMetadata.status);
+        let status = session.user.publicMetadata.status;
+        if (status == "active") {
+          router.push("/post-login");
+        } else {
+          setError("Your account is currently under review. Please try logging in again later.");
+          await signOut(() => router.push("/signIn"));
+        }
+      }
+    }
+    getStatus();
+  }, [session]);
 
   return (
     <div className="flex justify-center items-center">
