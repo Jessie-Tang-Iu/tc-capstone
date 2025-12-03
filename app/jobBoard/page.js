@@ -101,6 +101,7 @@ export default function JobBoardPage() {
         answers: Array(selectedJob?.questions?.length || 0).fill(""),
       });
       // console.log("Form Data Reset:", formData);
+      setCurrentStep(1);
       setShowApplyForm(true);
     }
 
@@ -331,7 +332,7 @@ export default function JobBoardPage() {
               {/* Mobile Back Button */}
               <button
                 onClick={handleBackToList}
-                className="md:hidden top-4 ml-5 z-10 text-black text-sm font-normal hover:bg-[#E55B3C]/90 transition-colors"
+                className="md:hidden top-4 ml-5 z-10 text-black rounded-lg text-base font-normal hover:underline transition-colors"
               >
                 ← Back to Jobs
               </button>

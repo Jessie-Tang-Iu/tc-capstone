@@ -163,7 +163,7 @@ export default function Applications() {
           <h1 className="text-3xl font-bold text-[#DD5B45]">
             My Applications
           </h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-base text-gray-600 mt-1">
             Track the jobs you have applied for.
           </p>
           
@@ -204,7 +204,7 @@ export default function Applications() {
             {/* Mobile Back Button */}
             <button
               onClick={handleBackToList}
-              className="md:hidden top-4 ml-5 z-10 text-black rounded-lg text-sm font-normal hover:underline transition-colors"
+              className="md:hidden top-4 ml-5 z-10 text-black rounded-lg text-base font-normal hover:underline transition-colors"
             >
               ← Back to Applications
             </button>
