@@ -156,7 +156,7 @@ export default function Applications() {
 
   return (
     <>
-      <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
+      <div className="w-full min-h-screen bg-gray-100">
         <MemberNavBar />
 
         <div className="mx-auto w-full px-6 py-4">
