@@ -79,8 +79,15 @@ export default function ClerkSignUp() {
         setError("Unexpected signup state: " + result.status);
       }
     } catch (err) {
-      console.error("Signup error:", err);
-      setError(err.errors ? err.errors[0].message : err.message);
+      // console.error("Signup error:", err);
+
+      let msg = err.errors ? err.errors[0].message : err.message;
+
+      if (msg.toLowerCase() === "is invalid") {
+        msg = "Email address is invalid.";
+      }
+
+      setError(msg);
     } finally {
       setLoading(false);
     }

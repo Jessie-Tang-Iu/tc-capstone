@@ -10,7 +10,8 @@ DROP TABLE IF EXISTS workshop_booking CASCADE;
 DROP TABLE IF EXISTS workshop CASCADE;
 
 
-DROP TABLE IF EXISTS
+DROP TABLE IF EXISTS  
+  admin,
   reports,
   comments,
   posts,
@@ -346,3 +347,12 @@ CREATE INDEX idx_reports_is_banned ON reports (is_banned);
 
 
 COMMIT;
+
+CREATE TABLE admin (
+  admin_id TEXT PRIMARY KEY,
+  office_location TEXT,
+  department TEXT,
+  status VARCHAR(20) NOT NULL DEFAULT 'active',
+  CONSTRAINT fk_admin_user FOREIGN KEY (admin_id)
+    REFERENCES users(clerk_id) ON DELETE CASCADE
+);

@@ -1,13 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/MemberNavBar";
 import CourseCard from "../components/courseCard/courseCard.js";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { RxCross2 } from "react-icons/rx";
-import Button from "../components/ui/Button";
 
 export default function PageContent() {
   const [courses, setCourses] = useState([]);
@@ -63,26 +60,7 @@ export default function PageContent() {
   }, [isLoaded, isSignedIn, router]);
 
   if (!isLoaded || loading) return <p>Loading...</p>;
-  if (!isSignedIn) return null;
-
-  const handleAddCourse = () => {
-    if (!newCourse.title.trim() || !newCourse.description.trim()) return;
-    const nextCourse = {
-      ...newCourse,
-      courseID: filteredCourses.length + 1,
-    };
-    setFilteredCourses((prev) => [nextCourse, ...prev]);
-    setNewCourse({
-      title: "",
-      description: "",
-      type: "Online",
-      certificate: false,
-      level: "Beginner",
-      lessonCount: 0,
-      duration: "",
-    });
-    setShowCreateModal(false);
-  };
+  if (!isSignedIn || !user) return null;
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value.toLowerCase());
@@ -145,13 +123,6 @@ export default function PageContent() {
             Search
           </button>
         </div>
-
-        <button
-          className="ml-6 bg-[#E55B3C] text-white px-4 py-2 rounded-lg font-semibold"
-          onClick={() => setShowCreateModal(true)}
-        >
-          + New Course
-        </button>
       </header>
 
       {/* Filters and Courses */}
@@ -210,55 +181,13 @@ export default function PageContent() {
         <div className="w-5/6 min-h-screen flex flex-wrap content-start">
           {filteredCourses.length > 0 ? (
             filteredCourses.map((course) => (
-              <CourseCard key={course.id} course={course} />
+              <CourseCard key={course.id} course={course} userId={user.id} />
             ))
           ) : (
             <p className="text-gray-600 p-4">No courses found.</p>
           )}
         </div>
       </main>
-
-      {/* Create Course Modal (local only, not backend) */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-auto text-black">
-            <div className="flex justify-between items-center px-6 py-4 border-b bg-gray-50">
-              <h1 className="text-2xl font-bold text-[#E55B3C]">Create New Course</h1>
-              <RxCross2
-                onClick={() => setShowCreateModal(false)}
-                className="cursor-pointer text-gray-600 hover:text-black"
-                size={22}
-              />
-            </div>
-
-            <div className="p-6 space-y-5">
-              <input
-                type="text"
-                className="border border-gray-300 w-full px-3 py-2 rounded-lg"
-                placeholder="Course Title"
-                value={newCourse.title}
-                onChange={(e) => setNewCourse({ ...newCourse, title: e.target.value })}
-              />
-              <textarea
-                className="border border-gray-300 w-full px-3 py-2 rounded-lg min-h-[5em]"
-                placeholder="Course Description"
-                value={newCourse.description}
-                onChange={(e) => setNewCourse({ ...newCourse, description: e.target.value })}
-              />
-            </div>
-
-            <div className="flex justify-end gap-4 px-6 py-4 border-t bg-gray-50">
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="px-4 py-2 bg-gray-200 rounded-md font-semibold hover:bg-gray-300"
-              >
-                Cancel
-              </button>
-              <Button onClick={handleAddCourse} text="Create" />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

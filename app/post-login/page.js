@@ -26,6 +26,8 @@ export default function PostLogin() {
           router.replace("/employerDashboard/message");
         } else if (role === "member") {
           router.replace("/memberFlow");
+        } else if (role === "admin") {
+          router.replace("/adminDashboard");
         } else {
           router.replace("/"); // fallback
         }
