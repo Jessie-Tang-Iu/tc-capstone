@@ -3,7 +3,7 @@
 
 import AdvisorNavbar from "@/app/components/AdvisorNavBar";
 import Button from "@/app/components/ui/Button";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 
@@ -23,6 +23,8 @@ export default function InvoiceDetail({ params }) {
 
     const { id } = useParams();
 
+    const router = useRouter();
+
     const sendToClient = () => {
         console.log("Send to client clicked for invoice:", id, "\nAmount: $157.50");
         alert(`Invoice ${id} sent to client!`);
@@ -38,10 +40,10 @@ export default function InvoiceDetail({ params }) {
                         </h1> */}
 
                         <div className="flex justify-between">
-                            <button onClick={() => window.history.back()} className="text-[20px] text-black font-semibold mb-5 hover:underline">
+                            <button onClick={() => router.push("/advisorDashboard")} className="text-[20px] text-black font-semibold mb-5 hover:underline">
                                 &lt; Back to Invoices
                             </button>
-                            
+
                             {window === "viewInvoice" &&
                                 <div>
                                     <Button text="Send To Client" onClick={sendToClient}/>
@@ -139,13 +141,52 @@ export default function InvoiceDetail({ params }) {
 
                                         <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">Description</h2>
                                         <p className="text-black mb-2"><strong>Service:</strong> Advisory Session</p>
-                                        <p className="text-black mb-2"><strong>Quantity:</strong> 1</p>
-                                        <p className="text-black mb-10"><strong>Unit Price:</strong> $150.00</p>
+                                        <div className="flex flex-row mb-2 items-center">
+                                            <p className="text-black mr-2"><strong>Quantity:</strong></p>
+                                            <input type="number" 
+                                                className="border border-gray-300 rounded-md p-2 text-black ml-2 w-20"
+                                                value={quantity}
+                                                onChange={(e) => setQuantity(parseInt(e.target.value))}
+                                            />
+                                        </div>
+                                        <div className="flex flex-row mb-10 items-center">
+                                            <p className="text-black mr-2"><strong>Unit Price:</strong></p>
+                                            <input type="number" 
+                                                className="border border-gray-300 rounded-md p-2 text-black ml-2 w-20"
+                                                value={unitePrice}
+                                                onChange={(e) => setUnitPrice(parseFloat(e.target.value))}
+                                            />
+                                        </div>
 
                                         <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">Total</h2>
-                                        <p className="text-black mb-2"><strong>Tax:</strong> $7.50</p>
-                                        <p className="text-black mb-2"><strong>Total:</strong> $157.50</p>
-                                        <p className="text-black mb-2"><strong>Status:</strong> Paid</p>
+                                        <div className="flex flex-row mb-2 items-center">
+                                            <p className="text-black mr-2"><strong>Tax:</strong></p>
+                                            <input type="number" 
+                                                className="border border-gray-300 rounded-md p-2 text-black ml-2 w-20"
+                                                value={tax}
+                                                onChange={(e) => setTax(parseFloat(e.target.value))}
+                                            />
+                                        </div>
+                                        <div className="flex flex-row mb-2 items-center">
+                                            <p className="text-black mr-2"><strong>Total:</strong></p>
+                                            <input type="number"
+                                                className="border border-gray-300 rounded-md p-2 text-black ml-2 w-20"
+                                                value={total}
+                                                onChange={(e) => setTotal(parseFloat(e.target.value))}
+                                            />
+                                        </div>
+                                        <div className="flex flex-row mb-2 items-center">
+                                            <p className="text-black mr-2"><strong>Status:</strong></p>
+                                            <select
+                                                className="border border-gray-300 rounded-md p-2 text-black"
+                                                value={status}
+                                                onChange={(e) => setStatus(e.target.value)}
+                                            >
+                                                <option value="Paid">Paid</option>
+                                                <option value="Unpaid">Unpaid</option>
+                                                <option value="Overdue">Overdue</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 )
                             }
