@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import { updatePassword, getAccessToken } from "@/lib/supabase_auth";
 import Navbar from "../components/NavBarBeforeSignIn";
 import { useRouter } from "next/navigation";
 

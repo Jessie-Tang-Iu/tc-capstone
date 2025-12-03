@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import NavBarBeforeSignIn from "../components/NavBarBeforeSignIn";
 import Button from "../components/ui/Button";
 import PopupMessage from "../components/ui/PopupMessage";
+import { phoneNumberString } from "@/lib/utils";
 
 export default function EmployerRegistration() {
   const { isLoaded, signUp, setActive } = useSignUp();

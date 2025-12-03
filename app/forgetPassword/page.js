@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { resetPassword } from "@/lib/supabase_auth";
 import Navbar from "../components/NavBarBeforeSignIn";
 import Link from "next/link";
 
