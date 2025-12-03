@@ -4,7 +4,7 @@ export default function JobDetail({ role, job, isApplied, onApply }) {
   if (!job) {
     return (
       <div className="flex items-center justify-center h-full bg-white rounded-xl mr-2">
-        <p className="text-gray-600 text-lg">Select a job to view details</p>
+        <p className="text-gray-600 text-base">Select a job to view details</p>
       </div>
     );
   }

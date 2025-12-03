@@ -32,6 +32,15 @@ export default function EventFormPanel({
         </div>
       )}
 
+      {errors.form && (
+        <div
+          className="mb-4 rounded-md border border-red-500 bg-red-100 px-3 py-2 text-red-700 font-semibold"
+          role="alert"
+        >
+          {errors.form}
+        </div>
+      )}
+
       <form onSubmit={onSubmit} className="flex flex-col overflow-y-auto">
         {/* ===== Title + Date ===== */}
         <div className="flex gap-4 mb-3 w-full">

@@ -36,7 +36,7 @@ export default function Profile({profile, setProfile, onSave}) {
           
       <div className="grid md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="block text-xs text-gray-700 font-bold mb-1">First name</label>
+          <label className="block text-sm text-gray-700 font-bold mb-1">First name</label>
           <input
             required
             type="text"
@@ -46,7 +46,7 @@ export default function Profile({profile, setProfile, onSave}) {
           />
         </div>
         <div> 
-          <label className="block text-xs text-gray-700 font-bold mb-1">Last name</label>
+          <label className="block text-sm text-gray-700 font-bold mb-1">Last name</label>
           <input
             required
             type="text"
@@ -59,7 +59,7 @@ export default function Profile({profile, setProfile, onSave}) {
 
       <div className="grid md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="block text-xs text-gray-700 font-medium mb-1">Preferred name</label>
+          <label className="block text-sm text-gray-700 font-medium mb-1">Preferred name</label>
           <input
             type="text"
             value={profile.preferred_name}
@@ -68,7 +68,7 @@ export default function Profile({profile, setProfile, onSave}) {
           />
         </div>
         <div>
-          <label className="block text-xs text-gray-700 font-medium mb-1">Pronouns</label>
+          <label className="block text-sm text-gray-700 font-medium mb-1">Pronouns</label>
           <select
             value={profile.pronouns}
             onChange={(e) => handleProfileChange('pronouns', e.target.value)}
@@ -82,7 +82,7 @@ export default function Profile({profile, setProfile, onSave}) {
 
       <div className="grid md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="block text-xs text-gray-700 font-bold mb-1">Email</label>
+          <label className="block text-sm text-gray-700 font-bold mb-1">Email</label>
           <input
             required
             type="text"
@@ -97,11 +97,11 @@ export default function Profile({profile, setProfile, onSave}) {
               onChange={(e) => handleProfileChange('show_email', e.target.checked)}
               className="rounded border-black"
             />
-            <label className="text-xs text-black">Show in profile</label>
+            <label className="text-sm text-black">Show in profile</label>
           </div>
         </div>
         <div>
-          <label className="block text-xs text-gray-700 font-bold mb-1">Phone Number</label>
+          <label className="block text-sm text-gray-700 font-bold mb-1">Phone Number</label>
           <input
             type="tel"
             value={profile.phone}
@@ -115,13 +115,13 @@ export default function Profile({profile, setProfile, onSave}) {
               onChange={(e) => handleProfileChange('show_phone', e.target.checked)}
               className="rounded border-black"
             />
-            <label className="text-xs text-black">Show in profile</label>
+            <label className="text-sm text-black">Show in profile</label>
           </div>
         </div>
       </div>
 
       <div className="mb-4">
-        <label className="block text-xs text-gray-700 font-medium mb-1">Address</label>
+        <label className="block text-sm text-gray-700 font-medium mb-1">Address</label>
         <input
           value={address.address1}
           onChange={(e) => handleAddressChange('address1', e.target.value)}
@@ -132,7 +132,7 @@ export default function Profile({profile, setProfile, onSave}) {
 
       <div className="grid md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="block text-xs text-gray-700 font-medium mb-1">City</label>
+          <label className="block text-sm text-gray-700 font-medium mb-1">City</label>
           <input
             type="text"
             value={address.city}
@@ -142,7 +142,7 @@ export default function Profile({profile, setProfile, onSave}) {
           />
         </div>
         <div>
-          <label className="block text-xs text-gray-700 font-medium mb-1">Country/Region</label>
+          <label className="block text-sm text-gray-700 font-medium mb-1">Country/Region</label>
           <div className="flex items-center gap-3">
             <input
               type="email"
@@ -156,7 +156,7 @@ export default function Profile({profile, setProfile, onSave}) {
       </div>
 
       <div className="mb-4">
-        <label className="block text-xs text-gray-700 font-medium mb-1">Website</label>
+        <label className="block text-sm text-gray-700 font-medium mb-1">Website</label>
         <input
           type="url"
           value={profile.link}

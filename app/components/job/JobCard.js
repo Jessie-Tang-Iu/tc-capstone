@@ -12,20 +12,20 @@ export default function JobCard({
       onClick={onClick}
     >
       {/* Job Title */}
-      <h3 className="text-base font-bold text-black leading-tight mb-2">{title}</h3>
+      <h3 className="text-lg font-bold text-black leading-tight mb-2">{title}</h3>
             
       {/* Company */}
-      <p className="text-xs font-bold text-gray-600">{company}</p>
+      <p className="text-sm font-medium text-gray-600">{company}</p>
             
       {/* Location */}
-      <p className="text-xs font-bold text-gray-600 mb-3">{location}</p>
+      <p className="text-sm font-medium text-gray-600 mb-3">{location}</p>
             
       {/* Tags */}
       <div className="flex flex-wrap gap-1">
         {tags.map((tag, index) => (
           <span
             key={index}
-            className="px-2 py-1 bg-gray-200 rounded text-xs font-normal text-black"
+            className="px-2 py-1 bg-gray-200 rounded text-sm font-normal text-black"
           >
             {tag}
           </span>

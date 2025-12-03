@@ -208,7 +208,7 @@ export default function Resume({
           </div>
           {/* Summary */}
           <div className="mb-4">
-            <label className="block text-xs text-gray-700 font-medium mb-1">
+            <label className="block text-sm text-gray-700 font-medium mb-1">
               Summary
             </label>
             <textarea
@@ -218,20 +218,20 @@ export default function Resume({
               rows={3}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
             />
-            <div className="text-right text-xs text-gray-500 mr-1 w-full">
+            <div className="text-right text-sm text-gray-500 mr-1 w-full">
               {resumeData.summary.length} / 500
             </div>
           </div>
 
           {/* Education */}
-          <div className="mb-5">
+          <div className="mb-4">
             <div className="flex justify-between items-center mb-1">
-              <h2 className="block text-xs text-gray-700 font-medium mt-2">
+              <h2 className="block text-sm text-gray-700 font-medium mt-2">
                 Education
               </h2>
               <button 
                 onClick={handleAddEducation}
-                className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-xs font-bold text-white rounded-md hover:bg-green-700 transition"
+                className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-sm font-bold text-white rounded-md hover:bg-green-700 transition"
               >
                 <Plus size={12} /> {/* The 'Plus' icon */}
                 <span>Add</span>
@@ -254,14 +254,14 @@ export default function Resume({
           </div>
 
           {/* Work Experience */}
-          <div className="mb-5">
+          <div className="mb-4">
             <div className="flex justify-between items-center mb-1">
-              <h2 className="block text-xs text-gray-700 font-medium mt-2">
+              <h2 className="block text-sm text-gray-700 font-medium mt-2">
                 Work Experience
               </h2>
               <button 
                 onClick={handleAddExperience}
-                className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-xs font-bold text-white rounded-md hover:bg-green-700 transition"
+                className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-sm font-bold text-white rounded-md hover:bg-green-700 transition"
               >
                 <Plus size={12} /> {/* The 'Plus' icon */}
                 <span>Add</span>
@@ -286,12 +286,12 @@ export default function Resume({
           {/* Skills */}
           <div className="mb-4">
             <div className="flex justify-between items-center mb-1">
-              <h2 className="block text-xs text-gray-700 font-medium mt-2">
+              <h2 className="block text-sm text-gray-700 font-medium mt-2">
                 Skill
               </h2>
               <button 
                 onClick={handleAddSkill}
-                className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-xs font-bold text-white rounded-md hover:bg-green-700 transition"
+               className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-sm font-bold text-white rounded-md hover:bg-green-700 transition"
               >
                 <Plus size={12} /> {/* The 'Plus' icon */}
                 <span>Add</span>
@@ -314,14 +314,14 @@ export default function Resume({
           </div>
 
           {/* Certification */}
-          <div className="mb-4">
+          <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
-              <h2 className="block text-xs text-gray-700 font-medium mt-2">
-                Certifications
+              <h2 className="block text-sm text-gray-700 font-medium mt-2">
+                Certificate
               </h2>
               <button 
                 onClick={handleAddCert}
-                className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-xs font-bold text-white rounded-md hover:bg-green-700 transition"
+                className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-sm font-bold text-white rounded-md hover:bg-green-700 transition"
               >
                 <Plus size={12} /> {/* The 'Plus' icon */}
                 <span>Add</span>
@@ -345,7 +345,7 @@ export default function Resume({
 
           {/* Additional information */}
           <div className="mb-4">
-            <label className="block text-xs text-gray-700 font-medium mb-1">
+            <label className="block text-sm text-gray-700 font-medium mb-1">
               Additional Information
             </label>
             <textarea
@@ -357,7 +357,7 @@ export default function Resume({
               rows={3}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
             />
-            <div className="text-right text-xs text-gray-500 mr-1 w-full">
+            <div className="text-right text-sm text-gray-500 mr-1 w-full">
               {resumeData.additional_info?.length} / 500
             </div>
           </div>
