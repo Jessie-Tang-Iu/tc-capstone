@@ -3,7 +3,7 @@ import React from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
-export default function CourseContent({ lesson }) {
+export default function CourseContent({ lesson, onCompleted }) {
   const router = useRouter();
 
   const { user } = useUser();
@@ -19,11 +19,11 @@ export default function CourseContent({ lesson }) {
         body: JSON.stringify({ userId, lessonId: lesson.id }),
       });
       if (!res.ok) throw new Error("Failed to mark lesson complete");
+
       const data = await res.json();
       console.log("Lesson completion saved:", data);
-      if (res.ok) {
-        router.refresh();
-      }
+      
+      onCompleted?.(lesson.id);
     } catch (err) {
       console.error("Error marking lesson complete:", err);
     }
