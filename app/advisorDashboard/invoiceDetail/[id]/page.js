@@ -2,6 +2,7 @@
 
 
 import AdvisorNavbar from "@/app/components/AdvisorNavBar";
+import Button from "@/app/components/ui/Button";
 import { useParams } from "next/navigation";
 
 
@@ -9,6 +10,11 @@ import { useParams } from "next/navigation";
 export default function InvoiceDetail({ params }) {
 
     const { id } = useParams();
+
+    const sendToClient = () => {
+        console.log("Send to client clicked for invoice:", id, "\nAmount: $157.50");
+        alert(`Invoice ${id} sent to client!`);
+    }
 
     return (
         <main className="w-full min-h-screen bg-linear-to-br from-[#f8eae2] to-white">
@@ -19,10 +25,14 @@ export default function InvoiceDetail({ params }) {
                             Advisor DashBoard
                         </h1> */}
 
-                        <div>
+                        <div className="flex justify-between">
                             <button onClick={() => window.history.back()} className="text-[20px] text-black font-semibold mb-5 hover:underline">
                                 &lt; Back to Invoices
                             </button>
+                            <div>
+                                <Button text="Send To Client" onClick={sendToClient}/>
+                            </div>
+                            
                         </div>
 
                         <div className="flex justify-center items-center flex-col bg-white p-6 rounded-lg shadow-md mb-10">
