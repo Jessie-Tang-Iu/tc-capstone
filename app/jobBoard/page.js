@@ -254,7 +254,7 @@ export default function JobBoardPage() {
     }
   
     return (
-      <main className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
+      <main className="w-full min-h-screen bg-gray-100">
         {/* Navigation */}
         <MemberNavbar />
   
