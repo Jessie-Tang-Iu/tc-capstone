@@ -35,14 +35,14 @@ INSERT INTO posts (author_id, title, content) VALUES
 ('22222222-2222-2222-2222-222222222222', 'Next.js vs Express?', 'When would you choose Next.js over a traditional Express backend?'),
 ('22222222-2222-2222-2222-222222222222', 'Tailwind CSS worth it?', 'I see Tailwind CSS everywhere—what are the pros and cons compared to plain CSS or Bootstrap?');
 -- Insert fake comments (referencing posts by ID)
-INSERT INTO comments (post_id, author_id, content) VALUES
-(1, '99999999-9999-9999-9999-999999999999', 'I recommend the official React docs—they are super well written!'),
-(1, '99999999-9999-9999-9999-999999999999', 'Try Scrimba or Frontend Mentor, very interactive.'),
-(2, '99999999-9999-9999-9999-999999999999', 'Use EXPLAIN ANALYZE to understand query performance.'),
-(2, '99999999-9999-9999-9999-999999999999', 'Don’t forget to index frequently used columns.'),
-(3, '22222222-2222-2222-2222-222222222222', 'Next.js is great if you need SSR, otherwise Express is simpler.'),
-(4, '22222222-2222-2222-2222-222222222222', 'Tailwind is amazing once you get used to utility classes.'),
-(4, '22222222-2222-2222-2222-222222222222', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
+-- INSERT INTO comments (post_id, author_id, content) VALUES
+-- (1, '99999999-9999-9999-9999-999999999999', 'I recommend the official React docs—they are super well written!'),
+-- (1, '99999999-9999-9999-9999-999999999999', 'Try Scrimba or Frontend Mentor, very interactive.'),
+-- (2, '99999999-9999-9999-9999-999999999999', 'Use EXPLAIN ANALYZE to understand query performance.'),
+-- (2, '99999999-9999-9999-9999-999999999999', 'Don’t forget to index frequently used columns.'),
+-- (3, '22222222-2222-2222-2222-222222222222', 'Next.js is great if you need SSR, otherwise Express is simpler.'),
+-- (4, '22222222-2222-2222-2222-222222222222', 'Tailwind is amazing once you get used to utility classes.'),
+-- (4, '22222222-2222-2222-2222-222222222222', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
 -- test data
 
 --booked slots
