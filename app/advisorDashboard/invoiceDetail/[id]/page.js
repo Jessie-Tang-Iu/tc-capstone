@@ -11,6 +11,16 @@ import { useState } from "react";
 export default function InvoiceDetail({ params }) {
 
     const [window, setWindow] = useState("viewInvoice");
+    const [date, setDate] = useState("2024-07-15");
+    const [clientName, setClientName] = useState("John Doe");
+    const [phone, setPhone] = useState("825-912-2324");
+    const [email, setEmail] = useState("john.d@gmail.com");
+    const [quantity, setQuantity] = useState(1);
+    const [unitePrice, setUnitPrice] = useState(150.00);
+    const [tax, setTax] = useState(7.50);
+    const [total, setTotal] = useState(157.50);
+    const [status, setStatus] = useState("Paid");
+
     const { id } = useParams();
 
     const sendToClient = () => {
@@ -31,9 +41,13 @@ export default function InvoiceDetail({ params }) {
                             <button onClick={() => window.history.back()} className="text-[20px] text-black font-semibold mb-5 hover:underline">
                                 &lt; Back to Invoices
                             </button>
-                            <div>
-                                <Button text="Send To Client" onClick={sendToClient}/>
-                            </div>
+                            
+                            {window === "viewInvoice" &&
+                                <div>
+                                    <Button text="Send To Client" onClick={sendToClient}/>
+                                </div>
+                            }
+                            
                             
                         </div>
 
@@ -51,41 +65,87 @@ export default function InvoiceDetail({ params }) {
                                 (
                                     <div>
 
-                                    <div className="mb-10 flex justify-between">
-                                        <div>
-                                            <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">Bill To</h2>
-                                            <p className="text-black mb-2"><strong>Date Issued:</strong> June 15, 2024</p>
-                                            <p className="text-black mb-2"><strong>Client Name:</strong> John Doe</p>
-                                            <p className="text-black mb-2"><strong>Phone:</strong> 825-912-2324</p>
-                                            <p className="text-black mb-2"><strong>Email:</strong> john.d@gmail.com</p>
+                                        <div className="mb-10 flex justify-between">
+                                            <div>
+                                                <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">Bill To</h2>
+                                                <p className="text-black mb-2"><strong>Date Issued:</strong> {date}</p>
+                                                <p className="text-black mb-2"><strong>Client Name:</strong> {clientName}</p>
+                                                <p className="text-black mb-2"><strong>Phone:</strong> {phone}</p>
+                                                <p className="text-black mb-2"><strong>Email:</strong> {email}</p>
+                                            </div>
+                                            
+                                            <div>
+                                                <Button text="Edit" onClick={() => setWindow("editInvoice")}/>
+                                            </div>
                                         </div>
                                         
-                                        <div>
-                                            <Button text="Edit" onClick={() => setWindow("editInvoice")}/>
-                                        </div>
-                                    </div>
-                                    
 
-                                    <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">Description</h2>
-                                    <p className="text-black mb-2"><strong>Service:</strong> Advisory Session</p>
-                                    <p className="text-black mb-2"><strong>Quantity:</strong> 1</p>
-                                    <p className="text-black mb-10"><strong>Unit Price:</strong> $150.00</p>
+                                        <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">Description</h2>
+                                        <p className="text-black mb-2"><strong>Service:</strong> Advisory Session</p>
+                                        <p className="text-black mb-2"><strong>Quantity:</strong> {quantity}</p>
+                                        <p className="text-black mb-10"><strong>Unit Price:</strong> ${unitePrice}</p>
 
-                                    <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">Total</h2>
-                                    <p className="text-black mb-2"><strong>Tax:</strong> $7.50</p>
-                                    <p className="text-black mb-2"><strong>Total:</strong> $157.50</p>
-                                    <p className="text-black mb-2"><strong>Status:</strong> Paid</p>
+                                        <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">Total</h2>
+                                        <p className="text-black mb-2"><strong>Tax:</strong> ${tax}</p>
+                                        <p className="text-black mb-2"><strong>Total:</strong> ${total}</p>
+                                        <p className="text-black mb-2"><strong>Status:</strong> {status}</p>
 
                                     </div>
                             )}
 
-                            {
-                                window === "editInvoice" &&
+                            {window === "editInvoice" &&
                                 (
                                     <div>
-                                        <div>
-                                            <Button text="Back to View" onClick={() => setWindow("viewInvoice")}/>
+                                        <div className="mb-10 flex justify-between">
+                                            <div>
+                                                <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">Bill To</h2>
+                                                <div className="flex flex-row mb-2 items-center">
+                                                    <p className="text-black mr-2"><strong>Date Issued:</strong></p>
+                                                    <input type="date" 
+                                                        className="border border-gray-300 rounded-md p-2 text-black"
+                                                        value={date}
+                                                        onChange={(e) => setDate(e.target.value)}
+                                                    />
+                                                </div>
+                                                <div className="flex flex-row mb-2 items-center">
+                                                    <p className="text-black mr-2"><strong>Client Name:</strong></p>
+                                                    <input type="text" 
+                                                        className="border border-gray-300 rounded-md p-2 text-black"
+                                                        value={clientName}
+                                                        onChange={(e) => setClientName(e.target.value)}
+                                                    />
+                                                </div>
+                                                <div className="flex flex-row mb-2 items-center">
+                                                    <p className="text-black mr-2"><strong>Phone:</strong></p>
+                                                    <input type="text" 
+                                                        className="border border-gray-300 rounded-md p-2 text-black"
+                                                        value={phone}
+                                                        onChange={(e) => setPhone(e.target.value)}
+                                                    />
+                                                </div>
+                                                <div className="flex flex-row mb-2 items-center">
+                                                    <p className="text-black mr-2"><strong>Email:</strong></p>
+                                                    <input type="email" 
+                                                        className="border border-gray-300 rounded-md p-2 text-black"
+                                                        value={email}
+                                                        onChange={(e) => setEmail(e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <Button text="Back to View" onClick={() => setWindow("viewInvoice")}/>
+                                            </div>
                                         </div>
+
+                                        <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">Description</h2>
+                                        <p className="text-black mb-2"><strong>Service:</strong> Advisory Session</p>
+                                        <p className="text-black mb-2"><strong>Quantity:</strong> 1</p>
+                                        <p className="text-black mb-10"><strong>Unit Price:</strong> $150.00</p>
+
+                                        <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">Total</h2>
+                                        <p className="text-black mb-2"><strong>Tax:</strong> $7.50</p>
+                                        <p className="text-black mb-2"><strong>Total:</strong> $157.50</p>
+                                        <p className="text-black mb-2"><strong>Status:</strong> Paid</p>
                                     </div>
                                 )
                             }
