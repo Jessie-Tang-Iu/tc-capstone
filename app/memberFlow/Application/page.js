@@ -170,7 +170,9 @@ export default function Applications() {
         </div>
 
         {/* Main Content */}
-        {applications.length > 0 && (
+        {applications.length === 0 ? (
+          <div className="text-center text-gray-500 py-10">No applications found</div>
+        ) : (
         <div className="flex flex-col md:flex-row ml-2">
           {/* Job Listings Sidebar */}
           <div

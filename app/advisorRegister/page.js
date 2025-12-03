@@ -76,6 +76,11 @@ export default function AdvisorRegister() {
                 } else {
                     setError("Your username or email is taken. Please try another.")
                 }
+
+                if (result.createdSessionId) {
+                    await signOut();
+                }
+
             } else {
                 setError("Unexpected signup state: " + result.status);
             }

@@ -224,7 +224,7 @@ export default function Resume({
           </div>
 
           {/* Education */}
-          <div className="mb-5">
+          <div className="mb-4">
             <div className="flex justify-between items-center mb-1">
               <h2 className="block text-sm text-gray-700 font-medium mt-2">
                 Education
@@ -254,7 +254,7 @@ export default function Resume({
           </div>
 
           {/* Work Experience */}
-          <div className="mb-5">
+          <div className="mb-4">
             <div className="flex justify-between items-center mb-1">
               <h2 className="block text-sm text-gray-700 font-medium mt-2">
                 Work Experience
@@ -291,7 +291,7 @@ export default function Resume({
               </h2>
               <button 
                 onClick={handleAddSkill}
-                className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-sm font-bold text-white rounded-md hover:bg-green-700 transition"
+               className="flex items-center space-x-1 mb-1 px-2 py-1 bg-green-600 text-sm font-bold text-white rounded-md hover:bg-green-700 transition"
               >
                 <Plus size={12} /> {/* The 'Plus' icon */}
                 <span>Add</span>
@@ -314,10 +314,10 @@ export default function Resume({
           </div>
 
           {/* Certification */}
-          <div className="mb-4">
+          <div className="mb-6">
             <div className="flex justify-between items-center mb-1">
               <h2 className="block text-sm text-gray-700 font-medium mt-2">
-                Certifications
+                Certificate
               </h2>
               <button 
                 onClick={handleAddCert}
