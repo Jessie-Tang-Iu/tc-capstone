@@ -29,10 +29,10 @@ export default function Navbar() {
       {/* Brand: icon always, text ≥ sm */}
       <Link href="/" className="flex items-center space-x-2">
         <Image
-          src="/logo.jpeg"
+          src="/logo.jpg"
           alt="Logo"
-          width={32}
-          height={32}
+          width={512}
+          height={512}
           className="w-8 h-8 shrink-0"
         />
         <span className="hidden sm:inline font-bold text-lg text-black whitespace-nowrap">

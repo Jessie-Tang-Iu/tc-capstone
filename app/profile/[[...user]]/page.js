@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import MemberNavbar from "../components/MemberNavBar";
+import MemberNavbar from "../../components/MemberNavBar";
 import ProfileSection from "./profileMember";
 import Security from "./security";
 import Privacy from "./privacy";
@@ -9,7 +9,6 @@ import Notification from "./notification";
 import { useUser } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import PopupMessage from "@/app/components/ui/PopupMessage";
-import { IoNuclearOutline } from "react-icons/io5";
 
 function ProfileDashboardContent() {
 
@@ -22,7 +21,6 @@ function ProfileDashboardContent() {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  const [formData, setFormData] = useState();
   const [profile, setProfile] = useState(null);
 
   const [notificationData, setNotificationData] = useState({
@@ -43,19 +41,6 @@ function ProfileDashboardContent() {
 
   useEffect(() => {
     if (user) {
-      setFormData((prev) => ({
-        emails: [
-          { email: user?.emailAddresses[0].emailAddress || "#######@gmail.com", isPrimary: true },
-          { email: "#######@gmail.com", isPrimary: false },
-          { email: "#######@gmail.com", isPrimary: false },
-        ],
-        phones: [
-          { phone: user?.phoneNumbers.length > 0 ? user?.phoneNumbers[0].phoneNumber : "US +1 (519) XXX-XXX", isPrimary: true },
-          { phone: "US +1 (519) XXX-XXX", isPrimary: false },
-          { phone: "US +1 (519) XXX-XXX", isPrimary: false },
-        ],
-      }));
-
       // Fetch user data
       fetch(`/api/users/${user.id}`)
         .then((res) => res.json())
@@ -64,7 +49,6 @@ function ProfileDashboardContent() {
           setProfile(data);
         })
         .catch((error) => console.error('Error fetching profile: ', error));
-
     }
   }, [user]);
 
@@ -78,7 +62,7 @@ function ProfileDashboardContent() {
         router.push(`/profile?tab=${v}`);
         setShowDetail(true);
       }}
-      className={`w-full text-left rounded-md px-4 py-3 text-base font-medium transition text-black hover:bg-[#F0E0D5] ${tab === v ? "bg-[#E2B596]" : ""}`}
+      className={`w-full text-left rounded-md px-4 py-2 my-1 text-base font-medium transition text-black hover:bg-[#F0E0D5] ${tab === v ? "bg-[#E2B596]" : ""}`}
     >
       {children} <span className="ml-1"></span>
       {">"}
@@ -98,26 +82,29 @@ function ProfileDashboardContent() {
 
   return (
     <>
-    <main className="bg-gray-100 min-h-screen w-full">
+    <div className="w-full min-h-screen bg-gray-100">
       <MemberNavbar />
-      <div className="pt-7 mb-3 md:mb-8 mx-5 md:mx-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-black">Setting</h1>
-      </div>
 
-      <div className="flex flex-col md:flex-row bg-gray-100 min-h-[calc(100vh-80px)] px-6">
+      <main className="mx-auto w-full px-6 py-8">
+        <h1 className="mb-6 text-3xl font-bold text-[#DD5B45]">
+          Profile Settings
+        </h1>
+      
+
+      <div className="flex flex-col md:flex-row min-h-[calc(100vh-80px)]">
         <div
-          className={`w-full px-2 md:w-50 lg:w-[250px] xl:w-[300px] bg-gray-100
+          className={`w-full px-2 min-w-3xs md:w-50 lg:w-[250px]
             ${showDetail ? "hidden md:block" : "block"}
-            h-57 rounded-lg bg-white p-1 shadow`}
+            h-50 bg-white rounded-lg p-1 shadow`}
         >
-          <TabBtn v="profile">Profile</TabBtn>
-          <TabBtn v="security">Sign & Security</TabBtn>
+          <TabBtn v="security">Profile & Security</TabBtn>
+          <TabBtn v="profile">User Information</TabBtn>
           <TabBtn v="privacy">Data Privacy</TabBtn>
           <TabBtn v="notifications">Notifications</TabBtn>
         </div>
 
         <div
-          className={`flex-1 pt-2
+          className={`flex-1
             ${showDetail ? "block" : "hidden md:block"}
             h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] relative`}
         >
@@ -129,16 +116,14 @@ function ProfileDashboardContent() {
           </button>
           <div className="mt-5 md:mt-0 h-full">
             {tab === "profile" && (
-              // user.role === "member" && 
+              // user.role === "member" &&
               <ProfileSection 
                 setSuccessMessage={setSuccessMessage}
                 setErrorMessage={setErrorMessage}
               />
             )}
             
-            {tab === "security" && (
-              <Security formData={formData} setFormData={setFormData} />
-            )}
+            {tab === "security" && <Security /> }
             
             {tab === "privacy" && <Privacy />}
             
@@ -148,7 +133,9 @@ function ProfileDashboardContent() {
           </div>
         </div>
       </div>
-    </main>
+      </main>
+    </div>
+
     {errorMessage && (
       <PopupMessage
         type="error"
@@ -161,6 +148,7 @@ function ProfileDashboardContent() {
         onClose={() => setErrorMessage("")}
       />
     )}
+
     {successMessage && (
       <PopupMessage
         type="success"

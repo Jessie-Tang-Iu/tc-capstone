@@ -1,11 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { use, useState } from "react";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
-export default function CourseQuiz({ lesson, backToContent }) {
+export default function CourseQuiz({ lesson, backToContent, onCompleted }) {
+  const router = useRouter();
+
+  const { user } = useUser();
+  const userId = user?.id; // Clerk user ID used for saving progress
+
   const [userAnswers, setUserAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [started, setStarted] = useState(false);
 
   const questions = lesson?.questions || [];
 
@@ -17,21 +27,76 @@ export default function CourseQuiz({ lesson, backToContent }) {
     const total = questions.length;
     let correct = 0;
     questions.forEach((q, i) => {
-      if (userAnswers[i] === q.correctAnswer) correct++;
+      if (userAnswers[i] === q.correct_answer) correct++;
     });
     setScore(total > 0 ? Math.round((correct / total) * 100) : 0);
     setSubmitted(true);
+  };
+
+  const handleSaveProgress = async () => {
+    if (score < 50) return;
+    setSaving(true);
+    try {
+      console.log("Submitting progress:", { userId, lessonId: lesson.id, score });
+      const res = await fetch("/api/course/progress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, lessonId: lesson.id, score, answers: userAnswers }),
+      });
+      if (!res.ok) throw new Error("Failed to save quiz progress");
+      const data = await res.json();
+      console.log("Response:", res.status, data);
+      console.log("Quiz completion saved:", data);
+      if (res.ok) {
+        setSaved(true);
+        onCompleted?.(lesson.id);
+      }
+    } catch (err) {
+      console.error("Error saving quiz progress:", err);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const resetQuiz = () => {
     setUserAnswers({});
     setSubmitted(false);
     setScore(0);
+    setSaved(false);
   };
 
   return (
     <div>
-      {!submitted ? (
+      {/* Start Screen */}
+      {!started && (
+        <div className="text-center py-10">
+          <h2 className="text-2xl font-semibold mb-3">{lesson.title}</h2>
+          {lesson.content && (
+            <p className="text-gray-700 max-w-xl mx-auto mb-6">
+              {lesson.content}
+            </p>
+          )}
+
+          <button
+            onClick={() => setStarted(true)}
+            className="bg-[#E55B3C] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#c94b2d]"
+          >
+            Start Quiz
+          </button>
+
+          <div>
+            <button
+              onClick={backToContent}
+              className="mt-4 text-gray-600 underline text-sm"
+            >
+              Back to Content
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Quiz Screen */}
+      {started && !submitted && (
         <>
           {questions.map((q, i) => (
             <div key={i} className="mb-6 border-b pb-4">
@@ -55,6 +120,7 @@ export default function CourseQuiz({ lesson, backToContent }) {
               </div>
             </div>
           ))}
+
           <button
             onClick={handleSubmit}
             className="bg-[#E55B3C] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#c94b2d]"
@@ -62,7 +128,10 @@ export default function CourseQuiz({ lesson, backToContent }) {
             Submit Quiz
           </button>
         </>
-      ) : (
+      )}
+
+      {/* Results Screen */}
+      {started && submitted && (
         <>
           <h3 className="text-xl font-semibold mb-4">Quiz Results</h3>
           <p className="mb-6 text-lg font-medium text-green-700">
@@ -70,7 +139,7 @@ export default function CourseQuiz({ lesson, backToContent }) {
           </p>
 
           {questions.map((q, i) => {
-            const correct = userAnswers[i] === q.correctAnswer;
+            const correct = userAnswers[i] === q.correct_answer;
             return (
               <div
                 key={i}
@@ -87,20 +156,39 @@ export default function CourseQuiz({ lesson, backToContent }) {
                 </p>
                 {!correct && (
                   <p className="text-sm text-gray-700">
-                    Correct answer: {q.correctAnswer}
+                    Correct answer: {q.correct_answer}
                   </p>
                 )}
               </div>
             );
           })}
 
-          <div className="mt-6 flex gap-4">
+          <div className="mt-6 flex flex-wrap gap-4">
             <button
               onClick={resetQuiz}
               className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300"
             >
               Retake Quiz
             </button>
+
+            {score >= 50 && !saved && (
+              <button
+                onClick={handleSaveProgress}
+                disabled={saving}
+                className={`${
+                  saving ? "bg-gray-400" : "bg-green-500 hover:bg-green-600"
+                } text-white px-4 py-2 rounded-lg font-semibold`}
+              >
+                {saving ? "Saving..." : "Save Progress"}
+              </button>
+            )}
+
+            {saved && (
+              <span className="text-green-700 font-medium mt-2">
+                ✓ Progress Saved
+              </span>
+            )}
+
             <button
               onClick={backToContent}
               className="bg-[#E55B3C] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#c94b2d]"

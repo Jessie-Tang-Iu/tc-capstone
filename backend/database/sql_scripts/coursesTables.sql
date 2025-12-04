@@ -22,10 +22,10 @@ CREATE TABLE lessons (
   id SERIAL PRIMARY KEY,
   course_id INT REFERENCES courses(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
-  content TEXT,               -- Quill HTML content
+  content TEXT, -- Quill HTML content
   video_url TEXT,
   type TEXT CHECK (type IN ('lesson', 'quiz')),
-  position INT                -- order in course
+  position INT -- order in course
 );
 
 -- QUIZ QUESTIONS (expanded table only for quizzes)
@@ -52,5 +52,8 @@ CREATE TABLE user_lesson_progress (
   user_id VARCHAR(255) REFERENCES users(clerk_id) ON DELETE CASCADE,
   lesson_id INT REFERENCES lessons(id) ON DELETE CASCADE,
   completed BOOLEAN DEFAULT FALSE,
-  PRIMARY KEY (user_id, lesson_id)
+  PRIMARY KEY (user_id, lesson_id),
+  answers JSONB,
+  quiz_score INT,
+  passed BOOLEAN
 );

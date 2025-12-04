@@ -1,8 +1,8 @@
-import Profile from "../components/profile/profileSection";
-import Resume from "../components/profile/resumeSection";
-import CoverLetter from "../components/profile/coverLetterSection";
+import Profile from "../../components/profile/profileSection";
+import Resume from "../../components/profile/resumeSection";
+import CoverLetter from "../../components/profile/coverLetterSection";
 import { useUser } from "@clerk/nextjs";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function ProfileSection({ setSuccessMessage, setErrorMessage }) {
 
@@ -12,14 +12,27 @@ export default function ProfileSection({ setSuccessMessage, setErrorMessage }) {
   const [resumeData, setResumeData] = useState(null);
   const [coverLetterData, setCoverLetterData] = useState(null);
 
+  const role = useMemo(() => {
+    if (!user) return null;
+      return user.publicMetadata.role;
+  }, [user]);
+
   useEffect(() => {
     if (user) {
+      console.log("User from Clerk: ", user);
       // Fetch user data
       fetch(`/api/users/${user.id}`)
         .then((res) => res.json())
         .then((data) => {
-          // console.log("Profile: ", data);
+          console.log("Profile: ", data);
           setProfile(data);
+          setProfile(prev => ({ 
+            ...prev, 
+            first_name: user.firstName,
+            last_name: user.lastName, 
+            email: user.emailAddresses[0].emailAddress,  
+            phone: user.phoneNumbers[0]?.phoneNumber || "",
+          }));
         })
         .catch((error) => console.error('Error fetching profile: ', error))
 
@@ -50,6 +63,7 @@ export default function ProfileSection({ setSuccessMessage, setErrorMessage }) {
           if (data.error) {
             setCoverLetterData({
               isNew: true,
+              user_id: user.id,
               content: "",
             })
           } else setCoverLetterData(data);
@@ -60,9 +74,6 @@ export default function ProfileSection({ setSuccessMessage, setErrorMessage }) {
   }, [user]);
 
   const handleSaveProfile = async () => {
-    if (!profile.first_name) { setErrorMessage("First name is required"); return; }
-    if (!profile.last_name) { setErrorMessage("Last name is required"); return; }
-    if (!profile.email) { setErrorMessage("Email is required"); return; }
     // console.log("Saved profile: ", profile); 
     try {
       const res = await fetch(`/api/users/${user.id}`, {
@@ -97,6 +108,9 @@ export default function ProfileSection({ setSuccessMessage, setErrorMessage }) {
       if (!res.ok) {
         throw new Error (res.status, await res.text());
       }
+      if (resumeData.isNew) {
+        setResumeData((prev) => ({ ...prev, isNew: false }));
+      }
       setSuccessMessage("Resume is saved");
     } catch (err) {
       setErrorMessage("Saving resume failed\n", err.message);
@@ -120,6 +134,9 @@ export default function ProfileSection({ setSuccessMessage, setErrorMessage }) {
       if (!res.ok) {
         throw new Error (res.status, await res.text());
       }
+      if (coverLetterData.isNew) {
+        setCoverLetterData((prev) => ({ ...prev, isNew: false }));
+      }
       setSuccessMessage("Cover letter is saved");
     } catch (err) {
       setErrorMessage("Saving cover letter failed\n", err.message);
@@ -127,7 +144,7 @@ export default function ProfileSection({ setSuccessMessage, setErrorMessage }) {
   }
 
   if (!isLoaded) {
-    return <p>Loading...</p>;
+    return <p className="pl-5 text-black">Loading...</p>;
   }
 
   if (!isSignedIn) {
@@ -136,39 +153,43 @@ export default function ProfileSection({ setSuccessMessage, setErrorMessage }) {
   }
 
   if (!profile || !resumeData || !coverLetterData) {
-  return <p>Loading user data...</p>;
+  return <p className="pl-5 text-black">Loading user data...</p>;
 }
 
   return (
     <div className="space-y-8 px-5 h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto">
       {/* Basic Information */}
+      <div className="mb-6 rounded-xl bg-white p-6 shadow">
       <Profile
         profile={profile}
         setProfile={setProfile}
         onSave={handleSaveProfile}
       />
-
-      <hr className="border-gray-300" />
+      </div>
 
       {/* Resume */}
-      <Resume 
-        resumeData={resumeData}
-        setResumeData={setResumeData}
-        isNewResume={resumeData?.isNew ? true : false}
-        setErrorMessage={setErrorMessage}
-        onSave={handleSaveResume}
-      />
-
-      <hr className="border-gray-300" />
+      {role === "member" && 
+      <div className="mb-6 rounded-xl bg-white p-6 shadow">
+        <Resume 
+          resumeData={resumeData}
+          setResumeData={setResumeData}
+          isNewResume={resumeData?.isNew ? true : false}
+          setErrorMessage={setErrorMessage}
+          onSave={handleSaveResume}
+        />
+      </div>}
 
       {/* Cover Letter */}
-      <CoverLetter 
-        coverLetter={coverLetterData}
-        setCoverLetter={setCoverLetterData}
-        isNew={coverLetterData?.isNew ? true : false}
-        setErrorMessage={setErrorMessage}
-        onSave={handleSaveCoverLetter}
-      />
+      {role === "member" &&
+      <div className="mb-6 rounded-xl bg-white p-6 shadow">
+        <CoverLetter 
+          coverLetter={coverLetterData}
+          setCoverLetter={setCoverLetterData}
+          isNew={coverLetterData?.isNew ? true : false}
+          setErrorMessage={setErrorMessage}
+          onSave={handleSaveCoverLetter}
+        />
+      </div>}
     </div>
     );
 }

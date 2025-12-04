@@ -21,6 +21,10 @@ export default function Profile() {
         experience: null,
     });
 
+    const [skill1, setSkill1] = useState("");
+    const [skill2, setSkill2] = useState("");
+    const [skill3, setSkill3] = useState("");
+
     const ME = "testAdvisor1"; // for testing without login
 
     useEffect(() => {
@@ -95,7 +99,7 @@ export default function Profile() {
     }
 
     return(
-        <main className="bg-gradient-to-br from-[#f8eae2] to-white min-h-screen">
+        <main className="bg-linear-to-br from-[#f8eae2] to-white min-h-screen">
             <Navbar />
         
             <div className="mx-auto mt-10">
@@ -158,7 +162,8 @@ export default function Profile() {
                                     value={advisor.company_name || ""}
                                     onChange={(e) => setAdvisor({...advisor, company_name: e.target.value})}
                                     />
-                                </div>
+                                </div>                                
+                                
                             </div>
                             <div>
                                 <Button text="Save" type="submit"/>
@@ -167,31 +172,71 @@ export default function Profile() {
                             
 
                         <div className='mb-10'>
-                            <h1 className="text-2xl text-black font-bold mb-2">Contact Information</h1>
+                            <div className="flex flex-col">
+                                <h1 className="text-2xl text-black font-bold mb-2">Contact Information</h1>
 
-                            {/* Phone Number */}
-                            <div className="flex flex-row space-x-2 mb-6 items-center">
-                                <label className="text-1xl text-black">Phone: </label>
-                                <input
-                                className="border rounded border-black p-1"
-                                type="text"
-                                value={advisor.phone || ""}
-                                onChange={(e) => setAdvisor({...advisor, phone: e.target.value})}
-                                />
+                                {/* Phone Number */}
+                                <div className="flex flex-row space-x-2 mb-6 items-center">
+                                    <label className="text-1xl text-black">Phone: </label>
+                                    <input
+                                    className="border rounded border-black p-1"
+                                    type="text"
+                                    value={advisor.phone || ""}
+                                    onChange={(e) => setAdvisor({...advisor, phone: e.target.value})}
+                                    />
+                                </div>
+                                
+
+                                {/* Email */}
+                                <div className="flex flex-row space-x-2 mb-6 items-center">
+                                    <label className="text-1xl text-black">Email:* </label>
+                                    <input
+                                    required
+                                    className="border rounded border-black p-1"
+                                    type="text"
+                                    value={advisor.email || ""}
+                                    onChange={(e) => setAdvisor({...advisor, email: e.target.value})}
+                                    />
+                                </div>
                             </div>
                             
+                        </div>
 
-                            {/* Email */}
-                            <div className="flex flex-row space-x-2 mb-6 items-center">
-                                <label className="text-1xl text-black">Email:* </label>
-                                <input
-                                required
-                                className="border rounded border-black p-1"
-                                type="text"
-                                value={advisor.email || ""}
-                                onChange={(e) => setAdvisor({...advisor, email: e.target.value})}
-                                />
+                        <div className="mb-10 flex flex-col">
+                            <h1 className="text-2xl text-black font-bold mb-2">Skills</h1>
+
+                            <div className="flex flex-row sm:flex-col space-x-4">
+                                <div className="flex flex-row space-x-2 mb-6 items-center">
+                                    <label className="text-1xl text-black">Skill 1:</label>
+                                    <input
+                                    className="border rounded border-black p-1"
+                                    type="text"
+                                    value={skill1}
+                                    onChange={(e) => setSkill1(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="flex flex-row space-x-2 mb-6 items-center">
+                                    <label className="text-1xl text-black">Skill 2:</label>
+                                    <input
+                                    className="border rounded border-black p-1"
+                                    type="text"
+                                    value={skill2}
+                                    onChange={(e) => setSkill2(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="flex flex-row space-x-2 mb-6 items-center">
+                                    <label className="text-1xl text-black">Skill 3:</label>
+                                    <input
+                                    className="border rounded border-black p-1"
+                                    type="text"
+                                    value={skill3}
+                                    onChange={(e) => setSkill3(e.target.value)}
+                                    />
+                                </div>
                             </div>
+                            
                             
                         </div>
                         

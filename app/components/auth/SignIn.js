@@ -72,11 +72,11 @@ export default function ClerkSignIn() {
         <div className="bg-[#F3E1D5] rounded-2xl p-10 flex flex-row lg:w-250 justify-center items-center">
           <div className="text-[#DD5B45] font-bold p-5 flex-2/3">
             <Image
-              src="/logo.jpeg"
+              src="/logo.jpg"
               alt="Logo"
               className="w-40 h-40 rounded-2xl shadow-2xl mb-7 mx-auto"
-              width={40}
-              height={40}
+              width={512}
+              height={512}
             />
             <p className="text-5xl">Hello!</p>
             <p className="text-2xl">Community.</p>

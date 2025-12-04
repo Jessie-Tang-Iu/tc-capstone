@@ -3,6 +3,10 @@ module.exports = {
   content: ["./app/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      height: {
+        // Define a custom height utility using the complex calc() value
+        'profile-main': 'calc(100vh - 180px)',
+      },
       typography: {
         DEFAULT: {
           css: {

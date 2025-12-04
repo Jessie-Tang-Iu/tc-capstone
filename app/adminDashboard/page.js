@@ -13,6 +13,7 @@ import Navbar from "@/app/components/AdminNavBar";
 import RequestDetailsCard from "../components/adminDashboard/RequestDetailsCard";
 import ReportDetailsCard from "../components/adminDashboard/ReportDetailsCard";
 import withAdminAuth from "../components/adminDashboard/withAdminAuth";
+import CoursePage from "@/app/adminDashboard/Courses";
 
 const ME = "11111111-1111-1111-1111-111111111111";
 
@@ -147,6 +148,7 @@ function AdminDashboardCore() {
             <TabBtn v="requests">Requests</TabBtn>
             <TabBtn v="reports">Reports</TabBtn>
             <TabBtn v="events">Events</TabBtn>
+            <TabBtn v="courses">Courses</TabBtn>
           </div>
 
           <div className="w-full">
@@ -154,7 +156,8 @@ function AdminDashboardCore() {
             {tab === "users" && renderUsers()}
             {tab === "requests" && renderRequests()}
             {tab === "reports" && renderReports()}
-            {tab === "events" && <EventsPanel />}
+            {tab === "events" && <EventPanel />}
+            {tab === "courses" && <CoursePage />}
           </div>
         </div>
       </div>

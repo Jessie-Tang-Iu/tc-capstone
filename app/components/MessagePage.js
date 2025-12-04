@@ -43,7 +43,8 @@ export default function MessagePage({ currentUserId }) {
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState([]); // inbox rows
   const [openChat, setOpenChat] = useState(false);
-  const [chatRecipient, setChatRecipient] = useState(""); // peer user id (string)
+  const [chatRecipient, setChatRecipient] = useState(""); // peer name (string)
+  const [recipientId, setRecipientId] = useState(""); // peer user id (string)
   const [selected, setSelected] = useState(new Set());
   const [query, setQuery] = useState("");
 
@@ -64,11 +65,16 @@ export default function MessagePage({ currentUserId }) {
       const rows = await res.json();
       const mapped = rows.map((m) => {
         const peer =
-          m.sent_user_id === currentUserId ? m.receive_user_id : m.sent_user_id;
+          m.sent_user_id === currentUserId ? m.receiver_name : m.sender_name;
+        const peerId =
+          m.sent_user_id === currentUserId
+            ? m.receive_user_id
+            : m.sent_user_id;
         const sentDate = new Date(m.sent_at);
         return {
           id: m.conversation_id,
           name: peer,
+          recipientId: peerId,
           message: m.content,
           date: sentDate.toLocaleDateString(),
           time: sentDate.toLocaleTimeString([], {
@@ -85,6 +91,7 @@ export default function MessagePage({ currentUserId }) {
 
   const handleRowClick = (row) => {
     setChatRecipient(row.name);
+    setRecipientId(row.recipientId);
     setOpenChat(true);
   };
 
@@ -128,10 +135,15 @@ export default function MessagePage({ currentUserId }) {
       const rows = await res.json();
       const mapped = rows.map((m) => {
         const peer =
-          m.sent_user_id === currentUserId ? m.receive_user_id : m.sent_user_id;
+          m.sent_user_id === currentUserId ? m.receiver_name : m.sender_name;
+        const peerId =
+          m.sent_user_id === currentUserId
+            ? m.receive_user_id
+            : m.sent_user_id;
         return {
           id: m.conversation_id,
           name: peer,
+          recipientId: peerId,
           message: m.content,
           date: new Date(m.sent_at).toLocaleString(),
           raw: m,
@@ -306,7 +318,7 @@ export default function MessagePage({ currentUserId }) {
       {openChat && (
         <ChatWindow
           me={currentUserId}
-          recipient={chatRecipient}
+          recipient={recipientId}
           onClose={() => setOpenChat(false)}
           onSent={() => refresh()}
         />

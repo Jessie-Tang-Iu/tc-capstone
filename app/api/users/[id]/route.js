@@ -3,6 +3,9 @@
 //temporary file to update user status for admin purposes
 import { NextResponse } from "next/server";
 import { query } from "@/backend/database/db.js";
+// import { clerkClient } from '@clerk/nextjs/server'
+
+// const client = await clerkClient()
 
 export async function GET(_req, { params }) {
   const { id } = await params;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import MemberNavbar from "../components/MemberNavBar";
 import SearchBar from "../components/job/SearchBar";
 import JobCard from "../components/job/JobCard";
@@ -10,108 +10,86 @@ import AdvancedSearch from "../components/job/AdvancedSearch";
 import ApplyForm from "../components/application/ApplyForm";
 
 export default function JobBoardPage() {
-  const { user } = useUser();
 
-  const [jobs, setJobs] = useState([]);
-  const [selectedJobId, setSelectedJobId] = useState();
+    const { user, isLoaded } = useUser();
 
-  const [showJobDetail, setShowJobDetail] = useState(false);
-  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
-  const [showApplyForm, setShowApplyForm] = useState(false);
+    const [jobs, setJobs] = useState([]);
+    const [selectedJobId, setSelectedJobId] = useState();
+    const [applications, setApplications] = useState([]);
+    
+    const [showJobDetail, setShowJobDetail] = useState(false);
+    const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+    const [showApplyForm, setShowApplyForm] = useState(false);
 
-  const [filteredJobs, setFilteredJobs] = useState([]);
-  const [query, setQuery] = useState("");
-  const [location, setLocation] = useState("");
-  const [filters, setFilters] = useState({
-    sortBy: "",
-    datePosted: "",
-    location: [],
-    experience: [],
-    workplace: [],
-    type: [],
-    industry: [],
-    salary: "",
-  });
+    const [experience, setExperience] = useState([]);
+    const [types, setTypes] = useState([]);
+    const [industries, setIndustries] = useState([]);
+    const [workplaces, setWorkplaces] = useState([]);
 
-  const [formData, setFormData] = useState({
-    id: null,
-    job_id: null,
-    user_id: null,
-    resume: null,
-    cover_letter: null,
-    relative_first_name: "",
-    relative_last_name: "",
-    relative_email: "",
-    relative_phone: "",
-    answers: [],
-  });
+    const [filteredJobs, setFilteredJobs] = useState([]);
+    const [query, setQuery] = useState("");
+    const [location, setLocation] = useState("");
+    const [filters, setFilters] = useState({
+      sortBy: "",
+      datePosted: "",
+      location: [],
+      experience: [],
+      workplace: [],
+      type: [],
+      industry: [],
+      salary: "",
+    });
 
-  const [currentStep, setCurrentStep] = useState(1); // For multi-step form
-  const [errorMessage, setErrorMessage] = useState("");
-
-  useEffect(() => {
-    fetch("/api/job")
-      .then((res) => res.json())
-      .then((data) => {
-        const activeJobs = data.filter((job) => job.status === "A"); // ✅ only active
-        setJobs(activeJobs);
-      })
-      .catch((error) => console.error("Error fetching jobs:", error));
-  }, []);
-
-  useEffect(() => {
-    setFilteredJobs(jobs);
-  }, [jobs]);
-
-  const selectedJob = jobs.find((job) => job.id === selectedJobId);
-
-  const handleJobSelect = (jobId) => {
-    setSelectedJobId(jobId);
-    setShowJobDetail(true);
-    let job = jobs.find((job) => job.id === jobId);
-    // console.log("Selected Job:", job);
-  };
-
-  const handleBackToList = () => {
-    setShowJobDetail(false);
-  };
-
-  const handleApply = () => {
-    if (!user) return;
-    setFormData({
+    const [formData, setFormData] = useState({
       id: null,
-      job_id: selectedJobId,
-      user_id: user.id,
-      resume_name: "",
-      resume_data: null,
-      cover_letter_name: "",
-      cover_letter_data: null,
+      job_id: null,
+      user_id: null,
+      resume: null,
+      cover_letter: null,
       relative_first_name: "",
       relative_last_name: "",
       relative_email: "",
       relative_phone: "",
-      answers: Array(selectedJob?.questions?.length || 0).fill(""),
+      answers: [],
     });
-    // console.log("Form Data Reset:", formData);
-    setShowApplyForm(true);
-  };
 
-  const handleApplySubmit = async () => {
-    console.log("application submit: ", formData);
-    try {
-      const res = await fetch(`/api/application`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      if (!res.ok) {
-        if (res.status == 450) throw new Error("Already applied this job");
-        else throw new Error("Failed to submit application");
-      }
+    const [currentStep, setCurrentStep] = useState(1); // For multi-step form
+    const [errorMessage, setErrorMessage] = useState("");
+  
+    useEffect(() => {
+      fetch('/api/job')
+        .then((res) => res.json())
+        .then((data) => {
+          // let activeJobs = data.filter((job) => job.status == 'A');
+          setJobs(data);
+          // console.log(activeJobs);
+        })
+        .catch((error) => console.error('Error fetching jobs:', error));
+    }, []);
+
+    useEffect(() => {
+      setFilteredJobs(jobs);
+    }, [jobs]);
+
+    const selectedJob = jobs.find((job) => job.id === selectedJobId);
+  
+    const handleJobSelect = (jobId) => {
+      setSelectedJobId(jobId);
+      setShowJobDetail(true);
+      let job = jobs.find((job) => job.id === jobId);
+      // console.log("Selected Job:", job);
+    };
+  
+    const handleBackToList = () => {
+      setShowJobDetail(false);
+    };
+
+    const handleApply = () => {
+      if (!user) return;
       setFormData({
         id: null,
-        job_id: null,
-        user_id: null,
+        job_id: selectedJobId,
+        user_id: user.id,
         resume_name: "",
         resume_data: null,
         cover_letter_name: "",
@@ -120,194 +98,254 @@ export default function JobBoardPage() {
         relative_last_name: "",
         relative_email: "",
         relative_phone: "",
-        answers: [],
+        answers: Array(selectedJob?.questions?.length || 0).fill(""),
       });
-      setCurrentStep(5);
-    } catch (error) {
-      setErrorMessage(error.message);
+      // console.log("Form Data Reset:", formData);
+      setShowApplyForm(true);
     }
-  };
 
-  const search = useCallback(() => {
-    setSelectedJobId();
-    let results = jobs;
+    const handleApplySubmit = async () => {
+      // console.log("application submit: ", formData);
+      try{
+        const res = await fetch(`/api/application`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+        if (!res.ok) {
+          if (res.status == 450) throw new Error("Already applied this job");
+          else throw new Error("Failed to submit application");
+        }
+        setFormData({
+          id: null,
+          job_id: null,
+          user_id: null,
+          resume_name: "",
+          resume_data: null,
+          cover_letter_name: "",
+          cover_letter_data: null,
+          relative_first_name: "",
+          relative_last_name: "",
+          relative_email: "",
+          relative_phone: "",
+          answers: [],
+        });
+        setCurrentStep(5);
+      } catch (error) {
+        setErrorMessage(error.message);
+      }
+      getApplications();
+    }
+  
+    const search = useCallback(() => {
+      setSelectedJobId();
+      let results = jobs;
+  
+      results = results.filter((job) => {
+  
+        // Filter date
+        let now = new Date();
+        let posted = new Date(job.posted_at);
+        let diffInMilliseconds = now.getTime() - posted.getTime();
+        let diffInDays = diffInMilliseconds / (1000 * 60 * 60 * 24);
+        const matchesDate = 
+          filters.datePosted == "" ||
+          filters.datePosted == "anytime" ||
+          ((diffInDays < 1) && (filters.datePosted == "past24Hours")) ||
+          ((diffInDays < 7) && (filters.datePosted == "pastWeek")) ||
+          ((diffInDays < 31) && (filters.datePosted == "pastMonth"))
+        
+  
+        // Filter location
+        const matchesLocation = 
+          filters.location.length === 0 || filters.location.includes(job.location);
+        
+        // Filter experience
+        const matchesExperience = 
+          filters.experience.length === 0 || filters.experience.includes(job.experience);
+        
+        // Filter Workplace
+        const matchesWorkplace = 
+          filters.workplace.length === 0 || filters.workplace.includes(job.workplace);
+  
+        // Filter type
+        const matchesType = 
+          filters.type.length === 0 || filters.type.includes(job.type);
+  
+        // Filter industry
+        const matchesIndustry = 
+          filters.industry.length === 0 || filters.industry.includes(job.industry);
+  
+        // Filter salary
+        let minSalary = Number(filters.salary);
+        const matchesSalary = 
+          !minSalary || ((minSalary <= job.salary_per_hour) && (job.salary_per_hour <= (minSalary+5)));
+  
+        return matchesDate && matchesLocation && matchesExperience && matchesWorkplace && matchesType && matchesIndustry && matchesSalary;
+      })
+  
+      if (query.trim() !== "") 
+        results = results.filter((job) => job.title.toLowerCase().includes(query));
+      
+      if (location.trim() !== "")
+        results = results.filter((job) => job.location.toLowerCase().includes(location));
+  
+      setFilteredJobs(results);
+    }, [jobs, filters, query, ,location]);
 
-    results = results.filter((job) => {
-      // Filter date
-      let now = new Date();
-      let posted = new Date(job.posted_at);
-      let diffInMilliseconds = now.getTime() - posted.getTime();
-      let diffInDays = diffInMilliseconds / (1000 * 60 * 60 * 24);
-      const matchesDate =
-        filters.datePosted == "" ||
-        filters.datePosted == "anytime" ||
-        (diffInDays < 1 && filters.datePosted == "past24Hours") ||
-        (diffInDays < 7 && filters.datePosted == "pastWeek") ||
-        (diffInDays < 31 && filters.datePosted == "pastMonth");
+    useEffect(() => {
+      search();
+    }, [filters, search]);
 
-      // Filter location
-      const matchesLocation =
-        filters.location.length === 0 ||
-        filters.location.includes(job.location);
+    const role = useMemo(() => {
+      return user?.publicMetadata?.role;
+    }, [user]);
 
-      // Filter experience
-      const matchesExperience =
-        filters.experience.length === 0 ||
-        filters.experience.includes(job.experience);
+    const getApplications = useCallback(() => {
+      if (role == "member") {
+      fetch(`/api/application/user/${user.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          let appIds = []
+          data.map((app) => {
+            appIds.push(app.jobId);
+          });
+          setApplications(appIds);
+        })
+        .catch((error) => {
+          console.error("Error fetching applications:", error);
+        });
+      } else {
+        setApplications([]);
+      }
+    }, [role]);
 
-      // Filter Workplace
-      const matchesWorkplace =
-        filters.workplace.length === 0 ||
-        filters.workplace.includes(job.workplace);
+    const fetchFilters = useCallback(() => {
+      fetch('api/job/experience')
+        .then((res) => res.json())
+        .then((data) => setExperience(data))
+        .catch((err) => console.log("Failed to fetch job experience: ", err));
+      fetch('api/job/industries')
+        .then((res) => res.json())
+        .then((data) => setIndustries(data))
+        .catch((err) => console.log("Failed to fetch job industries: ", err));
+      fetch('api/job/types')
+        .then((res) => res.json())
+        .then((data) => setTypes(data))
+        .catch((err) => console.log("Failed to fetch job types: ", err));
+      fetch('api/job/workplaces')
+        .then((res) => res.json())
+        .then((data) => setWorkplaces(data))
+        .catch((err) => console.log("Failed to fetch job workplaces: ", err));
+    }, []);
 
-      // Filter type
-      const matchesType =
-        filters.type.length === 0 || filters.type.includes(job.type);
+    useEffect(() => {
+      getApplications();
+      fetchFilters();
+    }, [role]);
 
-      // Filter industry
-      const matchesIndustry =
-        filters.industry.length === 0 ||
-        filters.industry.includes(job.industry);
-
-      // Filter salary
-      let minSalary = Number(filters.salary);
-      const matchesSalary =
-        !minSalary ||
-        (minSalary <= job.salary_per_hour &&
-          job.salary_per_hour <= minSalary + 5);
-
+    if (!isLoaded) {
+      // router.push("/");
       return (
-        matchesDate &&
-        matchesLocation &&
-        matchesExperience &&
-        matchesWorkplace &&
-        matchesType &&
-        matchesIndustry &&
-        matchesSalary
+        <div className="min-h-screen flex items-center justify-center">
+          <p className="text-gray-500">Loading...</p>
+        </div>
       );
-    });
-
-    if (query.trim() !== "")
-      results = results.filter((job) =>
-        job.title.toLowerCase().includes(query)
-      );
-
-    if (location.trim() !== "")
-      results = results.filter((job) =>
-        job.location.toLowerCase().includes(location)
-      );
-
-    setFilteredJobs(results);
-  }, [jobs, filters, query, , location]);
-
-  useEffect(() => {
-    search();
-  }, [filters, search]);
-
-  if (!user) {
-    // router.push("/");
+    }
+  
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Loading...</p>
-      </div>
-    );
-  }
-
-  return (
-    <main className="bg-gray-100 min-h-screen">
-      {/* Navigation */}
-      <MemberNavbar />
-
-      {/* Search Bar */}
-      <div className="py-5">
-        <SearchBar
-          query={query}
-          onQueryChange={setQuery}
-          location={location}
-          onLocationChange={setLocation}
-          onSearch={search}
-          onAdvancedSearch={() => setShowAdvancedSearch(true)}
-        />
-      </div>
-
-      {showAdvancedSearch && (
-        <AdvancedSearch
-          filters={filters}
-          setFilters={setFilters}
-          onClose={() => setShowAdvancedSearch(false)}
-          k
-        />
-      )}
-
-      {showApplyForm && (
-        // (user.role == 'member') && (
-        <ApplyForm
-          job={selectedJob}
-          formData={formData}
-          setFormData={setFormData}
-          currentStep={currentStep}
-          setCurrentStep={setCurrentStep}
-          errorMessage={errorMessage}
-          setErrorMessage={setErrorMessage}
-          onSubmit={handleApplySubmit}
-          onClose={() => {
-            setShowApplyForm(false);
-            setCurrentStep(1);
-          }}
-        />
-      )}
-
-      {/* Main Content */}
-      {filteredJobs.length === 0 ? (
-        <div className="text-center text-gray-500 py-10">No jobs found</div>
-      ) : (
-        <div className="flex flex-col md:flex-row">
-          {/* Job Listings Sidebar */}
-          <div
-            className={`w-full md:w-96 lg:w-[400px] xl:w-[450px]
+      <main className="w-full min-h-screen bg-gray-100">
+        {/* Navigation */}
+        <MemberNavbar />
+  
+        {/* Search Bar */}
+        <div className="pt-1">
+          <SearchBar
+            query={query}
+            onQueryChange={setQuery}
+            location={location}
+            onLocationChange={setLocation}
+            onSearch={search}
+            onAdvancedSearch={() => setShowAdvancedSearch(true)}
+          />
+        </div>
+  
+        {showAdvancedSearch && (
+          <AdvancedSearch
+            experience={experience}
+            industries={industries}
+            types={types}
+            workplaces={workplaces}
+            filters={filters} 
+            setFilters={setFilters} 
+            onClose={() => setShowAdvancedSearch(false)} 
+          k/>
+        )}
+  
+        {showApplyForm && 
+          (<ApplyForm 
+            job={selectedJob} 
+            formData={formData}
+            setFormData={setFormData}
+            currentStep={currentStep}
+            setCurrentStep={setCurrentStep}
+            errorMessage={errorMessage}
+            setErrorMessage={setErrorMessage}
+            onSubmit={handleApplySubmit}
+            onClose={() => {setShowApplyForm(false); setCurrentStep(1);}} 
+          />
+        )}
+  
+        {/* Main Content */}
+        {filteredJobs.length === 0 ? (
+          <div className="text-center text-gray-500 py-10">No jobs found</div>
+        ) : (
+          <div className="flex flex-col md:flex-row">
+            {/* Job Listings Sidebar */}
+            <div
+              className={`w-full md:w-80 
                           ${showJobDetail ? "hidden md:block" : "block"}
                           h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto`}
-          >
-            <div className="px-2 md:px-4 py-2">
-              {filteredJobs.map((job) => (
-                <JobCard
-                  key={job.id}
-                  title={job.title}
-                  company={job.company}
-                  location={job.location}
-                  tags={[
-                    `${job.salary_per_hour} per an hour`,
-                    job.type,
-                    job.workplace,
-                    job.experience,
-                    job.industry,
-                  ]}
-                  isSelected={job.id === selectedJobId}
-                  onClick={() => handleJobSelect(job.id)}
-                />
-              ))}
+            >
+              <div className="px-2 py-1 space-y-2">
+                {filteredJobs.map((job) => (
+                  <JobCard
+                    key={job.id}
+                    title={job.title}
+                    company={job.company}
+                    location={job.location}
+                    tags={[`${job.salary_per_hour} per an hour`, job.type, job.workplace, job.experience, job.industry]}
+                    isSelected={job.id === selectedJobId}
+                    onClick={() => handleJobSelect(job.id)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-
-          {/* Job Detail Panel */}
-          <div
-            className={`flex-1 py-2
+  
+            {/* Job Detail Panel */}
+            <div
+              className={`flex-1 pl-2 py-1
                           ${showJobDetail ? "block" : "hidden md:block"}
                           h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] relative`}
-          >
-            {/* Mobile Back Button */}
-            <button
-              onClick={handleBackToList}
-              className="md:hidden top-4 ml-5 z-10 text-black text-sm font-normal hover:bg-[#E55B3C]/90 transition-colors"
             >
-              ← Back to Jobs
-            </button>
-            <div className="mt-5 md:mt-0 h-full rounded-lg">
-              <JobDetail job={selectedJob} onApply={handleApply} />
+              {/* Mobile Back Button */}
+              <button
+                onClick={handleBackToList}
+                className="md:hidden top-4 ml-5 z-10 text-black text-sm font-normal hover:bg-[#E55B3C]/90 transition-colors"
+              >
+                ← Back to Jobs
+              </button>
+              <div className="mt-5 md:mt-0 h-full rounded-lg">
+                <JobDetail
+                  role={role}
+                  job={selectedJob}
+                  isApplied={selectedJob ? applications.includes(selectedJob.id) : false}
+                  onApply={handleApply}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </main>
-  );
+        )}
+      </main>
+    );
 }
