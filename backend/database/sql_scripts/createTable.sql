@@ -63,6 +63,14 @@ CREATE TABLE advisors (
     CONSTRAINT fk_advisor_user FOREIGN KEY (clerk_id) REFERENCES users(clerk_id) ON DELETE CASCADE
 );
 
+CREATE TABLE admin (
+  admin_id TEXT PRIMARY KEY,
+  office_location TEXT,
+  department TEXT,
+  status VARCHAR(20) NOT NULL DEFAULT 'active',
+  CONSTRAINT fk_admin_user FOREIGN KEY (admin_id)
+    REFERENCES users(clerk_id) ON DELETE CASCADE
+);
 
 -- =========================================
 -- Events
@@ -347,12 +355,3 @@ CREATE INDEX idx_reports_is_banned ON reports (is_banned);
 
 
 COMMIT;
-
-CREATE TABLE admin (
-  admin_id TEXT PRIMARY KEY,
-  office_location TEXT,
-  department TEXT,
-  status VARCHAR(20) NOT NULL DEFAULT 'active',
-  CONSTRAINT fk_admin_user FOREIGN KEY (admin_id)
-    REFERENCES users(clerk_id) ON DELETE CASCADE
-);
