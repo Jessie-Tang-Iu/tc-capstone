@@ -26,6 +26,8 @@ export default function PostLogin() {
           router.replace("/employerDashboard/message");
         } else if (role === "member") {
           router.replace("/memberFlow");
+        } else if (role === "admin") {
+          router.replace("/adminDashboard");
         } else {
           router.replace("/"); // fallback
         }
@@ -40,7 +42,9 @@ export default function PostLogin() {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <p className="text-lg text-gray-600">Redirecting you to your dashboard...</p>
+      <p className="text-lg text-gray-600">
+        Redirecting you to your dashboard...
+      </p>
     </div>
   );
 }
