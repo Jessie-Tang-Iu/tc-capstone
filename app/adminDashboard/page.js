@@ -1,16 +1,6 @@
-// app/adminDashboard/page.js
-/*
-data need to change to postgres db
-- users (Half done with dummy data)
-- reports
-- events (DONE)
-- requests
-- messages (DONE)
-*/
 "use client";
 
 import { Suspense } from "react";
-
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import MessagePage from "../components/MessagePage";
@@ -22,6 +12,7 @@ import EventsPanel from "@/app/adminDashboard/Event";
 import Navbar from "@/app/components/AdminNavBar";
 import RequestDetailsCard from "../components/adminDashboard/RequestDetailsCard";
 import ReportDetailsCard from "../components/adminDashboard/ReportDetailsCard";
+import withAdminAuth from "../components/adminDashboard/withAdminAuth";
 
 const ME = "11111111-1111-1111-1111-111111111111";
 
@@ -101,7 +92,6 @@ function AdminDashboardCore() {
     setDetails({ type: "report", data: report });
   };
 
-  // Close any detail
   const closeDetails = () => {
     pushParams((p) => {
       p.delete("userId");
@@ -151,7 +141,6 @@ function AdminDashboardCore() {
         </h1>
 
         <div className="flex flex-row gap-6">
-          {/* Sidebar */}
           <div className="ml-0 w-60 rounded-lg bg-white p-1 flex flex-col shadow">
             <TabBtn v="message">Message</TabBtn>
             <TabBtn v="users">Users</TabBtn>
@@ -160,7 +149,6 @@ function AdminDashboardCore() {
             <TabBtn v="events">Events</TabBtn>
           </div>
 
-          {/* Main area */}
           <div className="w-full">
             {tab === "message" && <MessagePage currentUserId={ME} />}
             {tab === "users" && renderUsers()}
@@ -174,10 +162,12 @@ function AdminDashboardCore() {
   );
 }
 
+const WrappedAdminDashboardCore = withAdminAuth(AdminDashboardCore);
+
 export default function AdminDashboard() {
   return (
     <Suspense fallback={<p>Loading dashboard...</p>}>
-      <AdminDashboardCore />
+      <WrappedAdminDashboardCore />
     </Suspense>
   );
 }
