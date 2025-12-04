@@ -211,7 +211,7 @@ export default function Profile() {
                                     <input
                                     className="border rounded border-black p-1"
                                     type="text"
-                                    value={""}
+                                    value={skill1}
                                     onChange={(e) => setSkill1(e.target.value)}
                                     />
                                 </div>
@@ -221,7 +221,7 @@ export default function Profile() {
                                     <input
                                     className="border rounded border-black p-1"
                                     type="text"
-                                    value={""}
+                                    value={skill2}
                                     onChange={(e) => setSkill2(e.target.value)}
                                     />
                                 </div>
@@ -231,7 +231,7 @@ export default function Profile() {
                                     <input
                                     className="border rounded border-black p-1"
                                     type="text"
-                                    value={""}
+                                    value={skill3}
                                     onChange={(e) => setSkill3(e.target.value)}
                                     />
                                 </div>

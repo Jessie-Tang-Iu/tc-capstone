@@ -39,8 +39,8 @@ export default function InvoiceDetail({ params }) {
                             Advisor DashBoard
                         </h1> */}
 
-                        <div className="flex justify-between">
-                            <button onClick={() => router.push("/advisorDashboard")} className="text-[20px] text-black font-semibold mb-5 hover:underline">
+                        <div className="flex justify-between mb-5">
+                            <button onClick={() => router.push("/advisorDashboard")} className="text-[20px] text-black font-semibold hover:underline">
                                 &lt; Back to Invoices
                             </button>
 
