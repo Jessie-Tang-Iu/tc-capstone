@@ -3,11 +3,11 @@
 import Button from "@/app/components/ui/Button";
 import Navbar from "../../components/AdminNavBar";
 import { useEffect, useState } from "react";
+import withAdminAuth from "@/app/components/adminDashboard/withAdminAuth";
 
-// Utility function to format the phone number for display
 const formatPhoneNumber = (phoneNumberString) => {
   if (!phoneNumberString) return "";
-  const cleaned = ("" + phoneNumberString).replace(/\D/g, ""); // Remove all non-digit characters
+  const cleaned = ("" + phoneNumberString).replace(/\D/g, "");
   const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
 
   if (match) {
@@ -16,7 +16,7 @@ const formatPhoneNumber = (phoneNumberString) => {
   return cleaned;
 };
 
-export default function AdminProfile() {
+function AdminProfile() {
   const [admin, setAdmin] = useState({
     clerk_id: null,
     username: null,
@@ -90,10 +90,8 @@ export default function AdminProfile() {
   };
 
   const handlePhoneChange = (e) => {
-    // 1. Sanitize the input to keep only digits (XXXXXXXXXX)
     const rawValue = e.target.value.replace(/\D/g, "");
 
-    // 2. Update the state with the raw, unformatted number
     setAdmin({ ...admin, phone: rawValue.substring(0, 10) });
   };
 
@@ -207,13 +205,8 @@ export default function AdminProfile() {
                     <input
                       className="border rounded-lg border-gray-300 focus:border-[#E55B3C] focus:ring-1 focus:ring-[#E55B3C] transition duration-150 p-2"
                       type="tel"
-                      // Display the formatted value
                       value={formatPhoneNumber(admin.phone)}
-                      // Handle the change event to store only digits
                       onChange={handlePhoneChange}
-                      // Store only digits in state, but show formatted value
-                      // The 'onBlur' prop is often used for formatting, but using 'value' and 'onChange' achieves the desired UX
-                      // by showing the formatted value as long as the state is a full 10-digit number.
                     />
                   </div>
                 </div>
@@ -229,3 +222,5 @@ export default function AdminProfile() {
     </main>
   );
 }
+
+export default withAdminAuth(AdminProfile);
