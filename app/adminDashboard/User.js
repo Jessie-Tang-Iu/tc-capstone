@@ -8,6 +8,7 @@ import PlaceholderCard from "@/app/components/adminDashboard/PlaceholderCard";
 import ChatWindow from "@/app/components/ChatWindow";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
+import { clerkBEClient } from "@/backend/lib/clerk";
 
 export default function UsersPanel({ onShowDetails }) {
   const [query, setQuery] = useState("");
@@ -58,12 +59,14 @@ export default function UsersPanel({ onShowDetails }) {
     if (!fetchedRoles[roleKey]) fetchUsersByRole(roleKey);
   };
 
-  const updateUserStatus = async (id, newStatus) => {
+  const updateUserStatus = async (id, newStatus, oldStatus) => {
     try {
+      console.log("status: ", newStatus,"-",oldStatus)
+
       const res = await fetch(`/api/users/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ newStatus: newStatus, oldStatus: oldStatus }),
       });
       if (!res.ok) throw new Error("Failed to update user status");
       const updated = await res.json();
@@ -162,7 +165,7 @@ export default function UsersPanel({ onShowDetails }) {
                   showDetails(u, roles.find((r) => r.key === activeTab)?.label)
                 }
                 onStatusChange={(updated) =>
-                  updateUserStatus(u.clerk_id, updated.status)
+                  updateUserStatus(u.clerk_id, updated.status, u.status)
                 }
               />
             ))}
