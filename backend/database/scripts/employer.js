@@ -11,8 +11,7 @@ export async function getAllEmployers() {
         u.phone,
         u.status,
         e.company_name,
-        e.company_role,
-        e.company_id
+        e.company_role
      FROM users u
      LEFT JOIN employers e
        ON u.clerk_id = e.clerk_id

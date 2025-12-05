@@ -21,8 +21,6 @@ export async function updateEmployerProfileController(body) {
     // primaryPhoneNumber: body.phone, 
   });
 
-  console.log("Employer controller: ", res);
-
   await employer.updateEmployerProfile({
     clerk_id: body.id,
     first_name: body.first_name,
