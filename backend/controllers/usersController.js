@@ -1,8 +1,8 @@
 import { clerkClient } from "@clerk/clerk-sdk-node";
 import { getAuth } from "@clerk/express";
-import { handleEmployer, handleAdvisor, handleMember, getUserdataByClerkID } from "../database/scripts/users.js";
+import { handleEmployer, handleAdvisor, handleMember, getUserdataByClerkID, updateStatusByClerkID, updateUserDataByClerkID } from "../database/scripts/users.js";
 
-export async function updateUserMetadata(user) {
+export async function createUserMetadata(user) {
   try {
     // const { isAuthenticated, userId } = getAuth(req);
     // if (!isAuthenticated || !userId) {
@@ -109,5 +109,30 @@ export async function fetchUserDataByID(req, res) {
   } catch (err) {
     console.error("Error fetching user by clerk_id:", err);
     res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+export async function updateStatusByID(user) {
+  try {
+    let { id, newStatus } = user;
+    await clerkClient.users.updateUserMetadata(id, {
+        publicMetadata: { status: newStatus },
+      });
+    return await updateStatusByClerkID(id, newStatus);
+  } catch (err) {
+    console.error("Update status failed:", err);
+    throw new Error("Failed to update status" + err.detail);
+  }
+}
+
+export async function updateUserDataById(user) {
+  try {
+    // await clerkClient.users.updateUserMetadata(id, {
+    //     publicMetadata: { status: newStatus },
+    //   });
+    return await updateUserDataByClerkID(user);
+  } catch (err) {
+    console.error("Update user failed:", err);
+    throw new Error("Failed to update user: ", err.detail);
   }
 }

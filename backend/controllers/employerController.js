@@ -1,3 +1,4 @@
+import { clerkClient } from "@clerk/clerk-sdk-node";
 import * as employer from "../database/scripts/employer.js";
 
 export async function getAllEmployersController() {
@@ -10,19 +11,28 @@ export async function getEmployerByIdController(clerk_id) {
 }
 
 export async function updateEmployerProfileController(body) {
-  if (!body.clerk_id) throw new Error("clerk_id required");
+  if (!body.id) throw new Error("clerk_id required");
+
+  const res = await clerkClient.users.updateUser(body.id, {
+    firstName: body.first_name,
+    lastName: body.last_name,
+    // notifyPrimaryEmailAddressChanged: true,
+    // primaryEmailAddress: body.email,
+    // primaryPhoneNumber: body.phone, 
+  });
+
+  console.log("Employer controller: ", res);
 
   await employer.updateEmployerProfile({
-    clerk_id: body.clerk_id,
+    clerk_id: body.id,
     first_name: body.first_name,
     last_name: body.last_name,
     email: body.email,
     phone: body.phone,
     company_name: body.company_name,
     company_role: body.company_role,
-    company_id: body.company_id || null,
   });
 
   // always return latest data
-  return await employer.getEmployerById(body.clerk_id);
+  return await employer.getEmployerById(body.id);
 }

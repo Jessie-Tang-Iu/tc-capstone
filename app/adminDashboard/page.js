@@ -156,7 +156,7 @@ function AdminDashboardCore() {
             {tab === "users" && renderUsers()}
             {tab === "requests" && renderRequests()}
             {tab === "reports" && renderReports()}
-            {tab === "events" && <EventPanel />}
+            {tab === "events" && <EventsPanel />}
             {tab === "courses" && <CoursePage />}
           </div>
         </div>
