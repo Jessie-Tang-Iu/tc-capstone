@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { query } from "@/backend/database/db.js";
 import { auth, clerkClient } from '@clerk/nextjs/server'
 // import { getAuth } from "@clerk/express";
-import { updateUserMetadata } from "@/backend/controllers/usersController";
+import { createUserMetadata } from "@/backend/controllers/usersController";
 
 const client = await clerkClient()
 
@@ -76,7 +76,7 @@ export async function POST(req) {
       }
     }
 
-    const newUser = await updateUserMetadata(body)
+    const newUser = await createUserMetadata(body)
     // console.log("New user api: ", newUser)
     return NextResponse.json(newUser, { status: 201 });
   } catch (err) {

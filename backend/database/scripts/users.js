@@ -89,7 +89,7 @@ export async function getUserdataByClerkID(clerkId) {
 
 // ---------- UPDATE USER DATA BY CLERK ID ----------
 
-export async function updateUserDataById(user) {
+export async function updateUserDataByClerkID(user) {
   const result = await query(
     `UPDATE users
         SET first_name = $1, last_name = $2, preferred_name = $3, pronouns = $4,
@@ -108,16 +108,16 @@ export async function updateUserDataById(user) {
       user.show_phone,
       user.address,
       user.link,
-      user.id,
+      user.clerk_id,
     ]
   );
-  return result.rows[0] || null;
+  return result;
 }
 
 // ---------- UPDATE USER STATUS BY CLERK ID ----------
 
 export async function updateStatusByClerkID(id, status) {
-  console.log("SQL: ",id,"-",status)
+  // console.log("SQL: ",id,"-",status)
   const result = await query(`UPDATE users SET status = $1 WHERE clerk_id = $2 RETURNING *;`,
     [status,id]
   );

@@ -34,8 +34,7 @@ export async function getEmployerById(clerkId) {
         u.phone,
         u.status,
         e.company_name,
-        e.company_role,
-        e.company_id
+        e.company_role
      FROM users u
      LEFT JOIN employers e
        ON u.clerk_id = e.clerk_id
@@ -55,8 +54,7 @@ export async function updateEmployerProfile({
   email,
   phone,
   company_name,
-  company_role,
-  company_id,
+  company_role
 }) {
   // Update users table — ALL FIELDS UPDATEABLE
   await query(
@@ -81,11 +79,10 @@ export async function updateEmployerProfile({
       `UPDATE employers
        SET 
          company_name = $1,
-         company_role = $2,
-         company_id = $3
-       WHERE clerk_id = $4
+         company_role = $2
+       WHERE clerk_id = $3
        RETURNING *`,
-      [company_name, company_role, company_id, clerk_id]
+      [company_name, company_role, clerk_id]
     );
 
     return updated.rows[0];
@@ -93,10 +90,10 @@ export async function updateEmployerProfile({
 
   // If not exists → insert new
   const inserted = await query(
-    `INSERT INTO employers (clerk_id, company_name, company_role, company_id)
-     VALUES ($1, $2, $3, $4)
+    `INSERT INTO employers (clerk_id, company_name, company_role)
+     VALUES ($1, $2, $3)
      RETURNING *`,
-    [clerk_id, company_name, company_role, company_id]
+    [clerk_id, company_name, company_role]
   );
 
   return inserted.rows[0];
