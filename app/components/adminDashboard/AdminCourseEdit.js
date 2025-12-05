@@ -30,28 +30,29 @@ export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
             const blocks = (data.lessons || []).map((l) => {
             if (l.type === "lesson") {
                 return {
-                id: l.id,
-                type: "lesson",
-                title: l.title,
-                description: l.content || "",
-                videoUrl: l.video_url || "",
+                    id: l.id,
+                    type: "lesson",
+                    title: l.title,
+                    description: l.content || "",
+                    videoUrl: l.video_url || "",
                 };
             } else if (l.type === "quiz") {
                 return {
-                id: l.id,
-                type: "quiz",
-                title: l.title,
-                description: l.content || "",
-                questions: (l.questions || []).map((q) => ({
-                    id: q.id,
-                    question: q.question,
-                    answers: q.answers,
-                    correct_answer: q.correct_answer,
-                })),
+                    id: l.id,
+                    type: "quiz",
+                    title: l.title,
+                    description: l.content || "",
+                    questions: (l.questions || []).map((q) => ({
+                        id: q.id,
+                        question: q.question,
+                        answers: q.answers,
+                        correctAnswer: q.correctAnswer,
+                    })),
                 };
             }
             });
 
+            console.log("Loaded content blocks:", blocks);
             setContentBlocks(blocks);
         } catch (err) {
             console.error("Error loading course:", err);
@@ -77,7 +78,7 @@ export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
                     id: Date.now() + 1,
                     question: "",
                     answers: ["", "", "", ""],
-                    correct_answer: null,
+                    correctAnswer: null,
                 },
                 ],
             };
@@ -117,7 +118,7 @@ export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
             questions: block.questions.map((q) => ({
                 question: q.question,
                 answers: q.answers,
-                correct_answer: q.correct_answer, // already stored as actual answer text
+                correctAnswer: q.correctAnswer,
             })),
             };
         }
@@ -126,6 +127,7 @@ export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
         const payload = { course: courseData, lessons };
 
         try {
+        console.log("Saving course with payload:", payload);
         const res = await fetch(`/api/course/${courseId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
