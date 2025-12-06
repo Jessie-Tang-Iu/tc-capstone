@@ -1,31 +1,17 @@
-
---members
-INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES
-('user_33TltDhWmKiEGfSs7DJk6b1HlI1', 'Jessie', 'Jessie', 'Tang', 'gmail.com', '123-456-7890', 'member')
-ON CONFLICT (clerk_id) DO NOTHING;
-
---advisors
-INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role, status) VALUES 
-('testAdvisor2', 'James', 'James', 'Brown', 'jb@hotmail.com', '587-555-5678', 'advisor', 'active'),
-('testAdvisor3', 'Harry', 'Harry', 'Potter', 'hp@gmail.com', '123-456-7890', 'advisor', 'active'),
-('testAdvisor4', 'Lily', 'Lily', 'Potter', 'lily.p@gmail.com', '123-456-7890', 'advisor', 'active'),
-('testAdvisor5', 'John', 'John', 'Doe', 'john.doe@gmail.com', '123-456-7890', 'advisor', 'active');
-
 INSERT INTO users (clerk_id, username, first_name, last_name, email, role, status) VALUES
 ('user_33TXk5AzMm228mH76TLzGUitM2U','joywong1228','Joy','Wong','s1041071@gmail.com','member','active'),
-('user_33TltDhWmKiEGfSs7DJk6b1HlI1','jessie','Jessie','Tang','jessiestitch666@gmail.com','member','active'),
+('user_33TltDhWmKiEGfSs7DJk6b1HlI1','Jessie','Jessie','Tang','jessiestitch666@gmail.com','member','active'),
 ('user_33TygiU42yjY3nfWxD5cEPCACv7','lamdao','Lam','Dao','lam.dao@edu.sait.ca','member','active'),
 ('user_347IKz8chgO4vioewBOUXv2DZTr','dione1','Dion','Emary','emarydion15@gmail.com','member','active'),
 ('user_345ZOK9fIENSJZtJi4CqfDxYkNO','dione2','Dion','Emary','emarydion16@gmail.com','employer','active'),
 ('user_345Zd39578QY7lu7hxmEHoVDKrU','dione3','Dion','Emary','emarydion17@gmail.com','advisor','active'),
 ('user_34RDeo5WKU2K8s6AArG7XBAODkb','admin','Admin','Account','admin@gmail.com','admin','active'),
-('user_354NOlnmVLauZqHMM9kKE4mxprm','advisoracc123','Advisor','Account','advisor@gmail.com','advisor','active'),
-('user_36LsgiytrqklL4r6V2fqus5wfVo', 'testadvisor1', 'Mary', 'White', 'mary.w@gmail.com', 'advisor', 'active')
+('user_354NOlnmVLauZqHMM9kKE4mxprm','advisoracc123','Advisor','Account','advisor@gmail.com','advisor','active')
 ON CONFLICT (clerk_id) DO NOTHING;
 
 --advisors (5 active) - password: [first_name]Adv[index] - ex: MaryAdv1
 INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role, status) VALUES
-('user_36LsgiytrqklL4r6V2fqus5wfVo','maryadvisor1','Mary','White','mary.w@gmail.com','403-555-6001','advisor','active'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'testadvisor1', 'Mary', 'White', 'mary.w@gmail.com', '403-555-6001', 'advisor', 'active'),
 ('user_36LtMEozUBovhSFgSeW8hkWRJ6J','jamesadvisor2','James','Brown','jb@hotmail.com','403-555-6002','advisor','active'),
 ('user_36LtbOmcHhwL8SFxMVejTJuidjl','harryadvisor3','Harry','Potter','hp@gmail.com','403-555-6003','advisor','active'),
 ('user_36Lu1gq63tyhea7IZS2yPISpObd','lilyadvisor4','Lily','Potter','lily.p@gmail.com','403-555-6004','advisor','active'),
@@ -33,10 +19,6 @@ INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role
 
 INSERT INTO advisors (clerk_id, company_name, company_role) VALUES 
 ('user_36LsgiytrqklL4r6V2fqus5wfVo', 'Tech Solutions', 'Senior Developer'),
-('testAdvisor2', 'Innovatech', 'Project Manager'),
-('testAdvisor3', 'ABC Company', 'Front-end Developer'),
-('testAdvisor4', 'BCD Company', 'Full Stack Developer'),
-('testAdvisor5', 'AAB Tech', 'Project Manager'),
 ('user_354NOlnmVLauZqHMM9kKE4mxprm', 'XYZ Tech Inc.', 'Career Advisor'),
 ('user_36LtMEozUBovhSFgSeW8hkWRJ6J', 'Innovatech', 'Project Manager'),
 ('user_36LtbOmcHhwL8SFxMVejTJuidjl', 'ABC Company', 'Front-end Developer'),
