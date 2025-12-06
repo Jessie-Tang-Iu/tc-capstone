@@ -24,5 +24,8 @@ export async function updateAdvisorProfile(body) {
     advisorId: body.advisorId,
     education: body.education,
     experience: body.experience,
+    skill1: body.skill1,
+    skill2: body.skill2,
+    skill3: body.skill3
   });
 }
