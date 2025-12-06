@@ -39,16 +39,6 @@ export default function AdvisorDashboard({ searchParams }) {
         return <div>Loading authentication...</div>;
     }
 
-    // After loading, if the user is signed in, render the actual dashboard content.
-    if (isSignedIn) {
-        return (
-            <div>
-                <h1>Welcome to the Advisor Dashboard</h1>
-                {/* ... rest of your dashboard content */}
-            </div>
-        );
-    }
-
     if (advisorID === null || advisorID === undefined) {
         console.log("No Advisor ID in URL, using advisorId");
         advisorID = user?.id;
