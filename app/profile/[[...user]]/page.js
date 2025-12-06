@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import MemberNavbar from "../../components/MemberNavBar";
+import AdvisorNavbar from "../../components/AdvisorNavBar";
 import ProfileSection from "./profileMember";
 import Security from "./security";
 import Privacy from "./privacy";
@@ -38,6 +39,8 @@ function ProfileDashboardContent() {
     },
   });
 
+  const [userRole, setUserRole] = useState("");
+
 
   useEffect(() => {
     if (user) {
@@ -69,6 +72,14 @@ function ProfileDashboardContent() {
     </button>
   );
 
+  // check user role
+  useEffect(() => {
+    console.log("Profile data in role check: ", profile);
+    if (profile && profile.role) {
+      setUserRole(profile.role);
+    }
+  }, [profile]);
+
   const handleBackToList = () => setShowDetail(false);
 
   if (!isLoaded) {
@@ -82,8 +93,16 @@ function ProfileDashboardContent() {
 
   return (
     <>
-    <div className="w-full min-h-screen bg-gray-100">
-      <MemberNavbar />
+    <div className="w-full min-h-screen bg-linear-to-br from-[#f8eae2] to-white">
+      
+      {userRole === "member" && (
+        <MemberNavbar />
+      )}
+
+      {userRole === "advisor" && (
+        <AdvisorNavbar />
+      )}
+      
 
       <main className="mx-auto w-full px-6 py-8">
         <h1 className="mb-6 text-3xl font-bold text-[#DD5B45]">

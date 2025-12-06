@@ -6,7 +6,7 @@ ON CONFLICT (clerk_id) DO NOTHING;
 
 --advisors
 INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES 
-('testAdvisor1', 'Mary', 'Mary', 'White', 'mary.w@gmail.com', '403-555-1234', 'advisor'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'Mary', 'Mary', 'White', 'mary.w@gmail.com', '403-555-1234', 'advisor'),
 ('testAdvisor2', 'James', 'James', 'Brown', 'jb@hotmail.com', '587-555-5678', 'advisor'),
 ('testAdvisor3', 'Harry', 'Harry', 'Potter', 'hp@gmail.com', '123-456-7890', 'advisor'),
 ('testAdvisor4', 'Lily', 'Lily', 'Potter', 'lily.p@gmail.com', '123-456-7890', 'advisor'),
@@ -16,7 +16,7 @@ ON CONFLICT (clerk_id) DO NOTHING;
 
 
 INSERT INTO advisors (clerk_id, company_name, company_role) VALUES 
-('testAdvisor1', 'Tech Solutions', 'Senior Developer'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'Tech Solutions', 'Senior Developer'),
 ('testAdvisor2', 'Innovatech', 'Project Manager'),
 ('testAdvisor3', 'ABC Company', 'Front-end Developer'),
 ('testAdvisor4', 'BCD Company', 'Full Stack Developer'),
@@ -49,9 +49,9 @@ INSERT INTO posts (author_id, title, content) VALUES
 INSERT INTO advisory_bookings (advisor_id, client_id, date, startTime, description, endTime, status) VALUES 
 ('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', '2025-11-6', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
 ('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', '2025-11-5', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('testAdvisor1', 'testAdvisor2', '2025-11-6', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('testAdvisor1', 'testAdvisor2', '2025-11-5', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('testAdvisor2', 'testAdvisor1', '2025-10-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked');
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'testAdvisor2', '2025-11-6', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'testAdvisor2', '2025-11-5', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('testAdvisor2', 'user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-10-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked');
 
 --open slots
 INSERT INTO advisory_bookings (advisor_id, date, startTime, endTime, status) VALUES 
@@ -62,13 +62,13 @@ INSERT INTO advisory_bookings (advisor_id, date, startTime, endTime, status) VAL
 ('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-6', '11:00:00', '13:00:00', 'open'),
 ('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-7', '10:00:00', '12:00:00', 'open'),
 ('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-3', '10:00:00', '12:00:00', 'open'),
-('testAdvisor1', '2025-11-3', '10:00:00', '12:00:00', 'open'),
-('testAdvisor1', '2025-11-4', '12:00:00', '14:00:00', 'open'),
-('testAdvisor1', '2025-11-5', '12:00:00', '14:00:00', 'open'),
-('testAdvisor1', '2025-11-5', '14:00:00', '16:00:00', 'open'),
-('testAdvisor1', '2025-11-6', '11:00:00', '13:00:00', 'open'),
-('testAdvisor1', '2025-11-7', '10:00:00', '12:00:00', 'open'),
-('testAdvisor1', '2025-11-3', '10:00:00', '12:00:00', 'open'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-11-3', '10:00:00', '12:00:00', 'open'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-11-4', '12:00:00', '14:00:00', 'open'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-11-5', '12:00:00', '14:00:00', 'open'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-11-5', '14:00:00', '16:00:00', 'open'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-11-6', '11:00:00', '13:00:00', 'open'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-11-7', '10:00:00', '12:00:00', 'open'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-11-3', '10:00:00', '12:00:00', 'open'),
 ('testAdvisor2', '2025-10-13', '12:00:00', '14:00:00', 'open'),
 ('testAdvisor2', '2025-10-14', '12:00:00', '14:00:00', 'open'),
 ('testAdvisor2', '2025-10-15', '12:00:00', '14:00:00', 'open'),
@@ -80,10 +80,10 @@ INSERT INTO advisory_sessions (advisor_id, client_id, message, status) VALUES
 ('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', 'I need help with front-end', 'active'),
 ('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', 'I need help with backend', 'pending'),
 ('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', null, 'closed'),
-('testAdvisor1', 'testAdvisor2', 'I need help with front-end', 'active'),
-('testAdvisor1', 'testAdvisor2', 'I need help with backend', 'pending'),
-('testAdvisor1', 'testAdvisor2', null, 'closed'),
-('testAdvisor2', 'testAdvisor1', 'I need help with front-end', 'active');
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'testAdvisor2', 'I need help with front-end', 'active'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'testAdvisor2', 'I need help with backend', 'pending'),
+('testadvuser_36LsgiytrqklL4r6V2fqus5wfVoisor1', 'testAdvisor2', null, 'closed'),
+('testAdvisor2', 'user_36LsgiytrqklL4r6V2fqus5wfVo', 'I need help with front-end', 'active');
 
 -- Test data for applications
 -- members

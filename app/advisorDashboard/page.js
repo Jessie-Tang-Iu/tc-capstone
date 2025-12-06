@@ -2,11 +2,12 @@
 
 import MessagePage from "../components/MessagePage";
 import Navbar from "../components/AdvisorNavBar";
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 import MyClientPage from "./myClient";
 import Invoice from "./invoice";
 import MyBookingPage from "./myBooking";
 import MyAvailability from "./myAvailability";
+import { useUser } from "@clerk/nextjs";
 
 
 
@@ -21,11 +22,15 @@ export default function AdvisorDashboard({ searchParams }) {
         console.log("Selected menu:", selected);
     };
 
-    const ME = "testAdvisor1"; // for testing without login
+    const { user, isLoaded, isSignedIn } = useUser();
+
+    if (!isLoaded || !isSignedIn) {
+        return <p>Loading...</p>;
+    }
 
     if (advisorID === null || advisorID === undefined) {
-        console.log("No Advisor ID in URL, using ME");
-        advisorID = ME;
+        console.log("No Advisor ID in URL, using advisorId");
+        advisorID = user?.id;
     } else {
         console.log("Advisor ID from URL: ", advisorID);
     }
