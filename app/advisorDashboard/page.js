@@ -8,6 +8,7 @@ import Invoice from "./invoice";
 import MyBookingPage from "./myBooking";
 import MyAvailability from "./myAvailability";
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 
 
@@ -24,8 +25,28 @@ export default function AdvisorDashboard({ searchParams }) {
 
     const { user, isLoaded, isSignedIn } = useUser();
 
-    if (!isLoaded || !isSignedIn) {
-        return <p>Loading...</p>;
+    const router = useRouter();
+
+    useEffect(() => {
+        // This code only runs AFTER the component has finished rendering.
+        if (isLoaded && !isSignedIn) {
+            router.push("/signIn");
+        }
+    }, [isLoaded, isSignedIn, router]); // Dependency array: Re-run when these values change.
+
+    // Show a loading screen or spinner while the authentication state is determined.
+    if (!isLoaded) {
+        return <div>Loading authentication...</div>;
+    }
+
+    // After loading, if the user is signed in, render the actual dashboard content.
+    if (isSignedIn) {
+        return (
+            <div>
+                <h1>Welcome to the Advisor Dashboard</h1>
+                {/* ... rest of your dashboard content */}
+            </div>
+        );
     }
 
     if (advisorID === null || advisorID === undefined) {
@@ -34,22 +55,6 @@ export default function AdvisorDashboard({ searchParams }) {
     } else {
         console.log("Advisor ID from URL: ", advisorID);
     }
-
-    const MOCK_MESSAGES = [
-    {
-        id: 1,
-        name: "John Doe",
-        message: "Sure! You can see my available time on the booking management",
-        date: "Jun 15, 2025",
-    },
-    // dummy data → total 50 messages
-    ...Array.from({ length: 49 }, (_, i) => ({
-        id: i + 2,
-        name: `Dummy ${i + 1}`,
-        message: "Yes, you are right about the job application, i will have a …",
-        date: "Jun 15, 2025",
-    })),
-    ];
 
     return(
         <main className="w-full min-h-screen bg-linear-to-br from-[#f8eae2] to-white">
