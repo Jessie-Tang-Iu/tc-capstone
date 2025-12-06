@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSignUp, useAuth } from "@clerk/nextjs";
+import { useSignUp, useAuth, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/NavBarBeforeSignIn";
 import PopupMessage from "../components/ui/PopupMessage";
@@ -9,6 +9,7 @@ import PopupMessage from "../components/ui/PopupMessage";
 export default function AdvisorRegister() {
     const { isLoaded, signUp, setActive } = useSignUp();
     const { getToken } = useAuth();
+    const { signOut } = useClerk();
     const router = useRouter();
 
     // form
@@ -202,7 +203,7 @@ export default function AdvisorRegister() {
             <PopupMessage
                 type="success"
                 title="Successfully Registration"
-                description="Your registration form is currently under review. Please try logging in again in 2–3 days."
+                description="Your registration form was submitted successfully and will be reviewed by our admin team. Please try logging in again in 2–3 days."
                 onClose={() => {
                     setShowSuccess(false);
                     router.push("/") // redirect after signup

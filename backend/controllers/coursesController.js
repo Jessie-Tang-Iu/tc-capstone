@@ -86,11 +86,11 @@ export async function deleteCourseController(req, res) {
 export async function markLessonCompleteController(req, res) {
   console.log("Progress endpoint hit:", req.body);
   try {
-    const { userId, lessonId } = req.body;
+    const { userId, lessonId, score, answers } = req.body;
     if (!userId || !lessonId)
       return res.status(400).json({ error: "Missing userId or lessonId" });
 
-    const progress = await markLessonComplete(userId, lessonId);
+    const progress = await markLessonComplete({userId, lessonId, score, answers});
     res.status(200).json({ message: "Lesson marked complete", progress });
   } catch (err) {
     console.error("Error updating progress:", err);

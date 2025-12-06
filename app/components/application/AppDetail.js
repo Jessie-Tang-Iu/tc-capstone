@@ -21,11 +21,11 @@ const statusOptions = {
 
 const LabelValue = ({ label, value }) => (
   <div className="border border-gray-200 rounded-md p-3 bg-white">
-    <div className="text-xs font-bold text-gray-600 mb-1">{label}</div>
+    <div className="text-sm font-bold text-gray-600 mb-1">{label}</div>
 
     {/* if value is a string */}
     {typeof value == 'string' && (
-      <div className="text-sm font-medium text-black break-words">
+      <div className="text-base font-medium text-black break-words">
         {value ? `${value}` : "—"}
       </div>
     )}
@@ -50,7 +50,7 @@ const LabelValue = ({ label, value }) => (
           return (
           <span
             key={index}
-            className="px-2 py-1 bg-gray-200 rounded text-sm font-medium text-black"
+            className="px-2 py-1 bg-gray-200 rounded text-base font-medium text-black"
           >{information}</span>
           );
         })}
@@ -123,15 +123,15 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
       <div className="border-b border-gray-300 p-4 md:p-6">
         <div className="flex items-center gap-2 mb-2">
             <h1 className="flex-3 text-lg font-bold text-black leading-tight">{app.title}</h1>
-            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs border ${statusColors[app.status] || "bg-gray-100 text-gray-800 border-gray-300"}`}>
+            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-sm border ${statusColors[app.status] || "bg-gray-100 text-gray-800 border-gray-300"}`}>
                 {statusOptions[app.status]}
             </span>
         </div>
         <div className="flex items-center gap-2 mb-3">
-          <span className="text-sm text-gray-700">{app.company}</span>
+          <span className="text-base text-gray-700">{app.company}</span>
           <ExternalLink className="w-4 h-4 text-gray-600" />
         </div>
-        <div className="text-sm text-black mt-1">
+        <div className="text-base text-black mt-1">
           {app.location}
           {appliedDate ? ` · Applied on ${appliedDate}` : ""}
 
@@ -171,7 +171,7 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
         {/* Resume */}
         <section className="space-y-3">
           <div className="border border-gray-200 rounded-lg bg-white">
-            <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">TC Alberta Resume</div>
+            <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">Resume</div>
               
             {(!resume.error && !app.resume_data) && (
               <div className="p-4 grid gap-3">
@@ -184,16 +184,16 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
               </div>
             )}
             {app.resume_data && (
-              <div className="p-4 items-center gap-2 text-sm text-black">
-                <span className="inline-flex items-center justify-center px-2 py-1 mr-3 rounded bg-orange-100 text-[#E55B3C] text-xs font-bold">{app.resume_name.split('.').pop().toUpperCase()}</span>
+              <div className="p-4 items-center gap-2 text-base text-black">
+                <span className="inline-flex items-center justify-center px-2 py-1 mr-3 rounded bg-orange-100 text-[#E55B3C] text-sm font-bold">{app.resume_name.split('.').pop().toUpperCase()}</span>
                 <span className="font-bold truncate">{app.resume_name}</span>
                 <div className="mt-3">
-                  <div className="text-sm text-black">
+                  <div className="text-base text-black">
                     {"We can't load a preview of your resume right now, but it will be submitted as part of your application. Download your resume to make sure everything is correct before you submit your application."}
                   </div>
                   <button
                     onClick={() => downloadFile(app.resume_data, app.resume_name)}
-                    className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded bg-[#E55B3C]/80 text-white text-xs font-bold hover:bg-[#E55B3C]/90 transition-colors"
+                    className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded bg-[#E55B3C]/80 text-white text-sm font-bold hover:bg-[#E55B3C]/90 transition-colors"
                   >
                     <Download className="w-4 h-4" /> Download Resume
                   </button>
@@ -205,27 +205,26 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
 
         {/* Cover Letter */}
         <section className="space-y-3">
+          <div className="border border-gray-200 rounded-lg bg-white">
+            <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">Cover Letter</div>
           {(!coverLetter.error && !app.cover_letter_name) && (
-            <div className="border border-gray-200 rounded-lg bg-white">
-              <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">TC Alberta Cover Letter</div>
-              <div 
-                dangerouslySetInnerHTML={{ __html: coverLetter.content }} 
-                className="px-5 py-3 text-sm font-medium text-black break-words leading-relaxed"
-              />
-            </div>
+            <div 
+              dangerouslySetInnerHTML={{ __html: coverLetter.content }} 
+              className="p-4 text-base font-medium text-black break-words leading-relaxed"
+            />
           )}
           {app.cover_letter_name && (
-            <div className="items-center gap-2 text-sm text-black">
-              <span className="inline-flex items-center justify-center h-6 mr-3 rounded bg-orange-100 text-[#E55B3C] text-xs font-bold">{app.cover_letter_name.split('.').pop().toUpperCase()}</span>
+            <div className="p-4 items-center gap-2 text-base text-black">
+              <span className="inline-flex items-center justify-center px-2 py-1 mr-3 rounded bg-orange-100 text-[#E55B3C] text-sm font-bold">{app.cover_letter_name.split('.').pop().toUpperCase()}</span>
               <span className="font-bold truncate">{app.cover_letter_name}</span>
-              <div className="mt-3 rounded-md border border-orange-200 bg-orange-50 p-3">
-                <div className="text-sm text-[#E55B3C]">
+              <div className="mt-3">
+                  <div className="text-base text-black">
                   {"We can't load a preview of your resume right now, but it will be submitted as part of your application. Download your resume to make sure everything is correct before you submit your application."}
                 </div>
                 {app.cover_letter_name && (
                   <button
                     onClick={onDownload}
-                    className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded bg-[#E55B3C]/80 text-white text-xs font-bold hover:bg-[#E55B3C]/90 transition-colors"
+                    className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded bg-[#E55B3C]/80 text-white text-sm font-bold hover:bg-[#E55B3C]/90 transition-colors"
                   >
                     <Download className="w-4 h-4" /> Download Cover Letter
                   </button>
@@ -233,6 +232,7 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
               </div>
             </div>
           )}
+          </div>
         </section>
 
         {/* Employer questions */}
@@ -245,7 +245,7 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
                   <LabelValue key={idx} label={qa} value={app.answers[idx]} />
                 ))
               ) : (
-                <div className="border border-gray-200 rounded-md p-3 bg-white text-sm font-bold text-black">No questions provided.</div>
+                <div className="border border-gray-200 rounded-md p-3 bg-white text-base font-bold text-black">No questions provided.</div>
               )}
             </div>
           </div>

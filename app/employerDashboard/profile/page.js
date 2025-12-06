@@ -3,6 +3,7 @@
 import Button from "@/app/components/ui/Button";
 import Navbar from "@/app/components/EmployerNavBar";
 import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 
 // Utility function to format the phone number for display
 const formatPhoneNumber = (phoneNumberString) => {
@@ -17,14 +18,13 @@ const formatPhoneNumber = (phoneNumberString) => {
 };
 
 export default function EmployerProfile() {
+  const { user } = useUser();
   const [employer, setEmployer] = useState({
     clerk_id: null,
-    username: null,
     first_name: null,
     last_name: null,
     email: null,
     phone: null, // Stores raw digits (XXXXXXXXXX)
-    role: null,
     company_name: null,
     company_role: null,
   });
@@ -32,24 +32,37 @@ export default function EmployerProfile() {
   // NEW STATE: Tracks if the phone input is focused
   const [isPhoneFocused, setIsPhoneFocused] = useState(false);
 
-  const ME = "testEmployer1";
-
   useEffect(() => {
-    fetchEmployer(ME);
-  }, []);
+    if (user) {
+      fetch(`/api/employer/${user.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          // console.log("Employer: ", data);
+          setEmployer(data);
+          setEmployer(prev => ({ 
+            ...prev, 
+            first_name: user.firstName,
+            last_name: user.lastName, 
+            email: user.emailAddresses[0].emailAddress,  
+            phone: user.phoneNumbers[0]?.phoneNumber || "",
+          }));
+        })
+        .catch((error) => console.error('Error fetching employer profile: ', error))
+    }
+  }, [user]);
 
-  const fetchEmployer = async (clerkId) => {
-    const res = await fetch("/api/employer", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ clerk_id: clerkId }),
-    });
+  // const fetchEmployer = async (clerkId) => {
+  //   const res = await fetch("/api/employer", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({ clerk_id: clerkId }),
+  //   });
 
-    if (!res.ok) return;
+  //   if (!res.ok) return;
 
-    const data = await res.json();
-    setEmployer({ ...data, clerk_id: clerkId });
-  };
+  //   const data = await res.json();
+  //   setEmployer({ ...data, clerk_id: clerkId });
+  // };
 
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
@@ -57,18 +70,17 @@ export default function EmployerProfile() {
     alert("Profile saved");
 
     try {
-      await fetch("/api/employer", {
+      await fetch(`/api/employer/${user.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          clerk_id: employer.clerk_id,
+          id: employer.clerk_id,
           first_name: employer.first_name,
           last_name: employer.last_name,
           email: employer.email,
           phone: employer.phone,
           company_name: employer.company_name,
-          company_role: employer.company_role,
-          company_id: employer.company_id ?? null,
+          company_role: employer.company_role
         }),
       });
     } catch (err) {

@@ -8,6 +8,11 @@ BEGIN;
 -- workshop table is not longer available, its replaced by event table
 DROP TABLE IF EXISTS workshop_booking CASCADE;
 DROP TABLE IF EXISTS workshop CASCADE;
+DROP TABLE IF EXISTS quiz_questions CASCADE;
+DROP TABLE IF EXISTS user_lesson_progress CASCADE;
+DROP TABLE IF EXISTS user_course_progress CASCADE;
+DROP TABLE IF EXISTS lessons CASCADE;
+DROP TABLE IF EXISTS courses CASCADE;
 
 
 DROP TABLE IF EXISTS  
@@ -38,31 +43,44 @@ CASCADE;
 -- CORE: Users
 -- =========================================
 CREATE TABLE users (
-    clerk_id VARCHAR(255) PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    first_name VARCHAR(100) NOT NULL,
-    last_name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    phone VARCHAR(20),
-    status VARCHAR(20) NOT NULL DEFAULT 'under_review',
-    role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'member', 'advisor', 'employer'))
+    clerk_id        VARCHAR(255) PRIMARY KEY,
+    username        VARCHAR(50)  UNIQUE NOT NULL,
+    first_name      VARCHAR(100) NOT NULL,
+    last_name       VARCHAR(100) NOT NULL,
+    preferred_name  VARCHAR(100) DEFAULT '',
+    pronouns        VARCHAR(100) DEFAULT '',
+    address         TEXT DEFAULT '',
+    link            VARCHAR(500) DEFAULT '',
+    email           VARCHAR(255) UNIQUE NOT NULL,
+    show_email      BOOLEAN DEFAULT FALSE,
+    phone           VARCHAR(20) DEFAULT '',
+    show_phone      BOOLEAN DEFAULT FALSE,
+    role            VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'member', 'advisor', 'employer')),
+    status          VARCHAR(50) NOT NULL CHECK (status IN ('banned', 'active', 'under-review'))
 );
 
 CREATE TABLE employers (
-    clerk_id VARCHAR(255) PRIMARY KEY,
-    company_name VARCHAR(255) NOT NULL,
-    company_role VARCHAR(100) NOT NULL,
-    company_id VARCHAR(100),
+    clerk_id        VARCHAR(255) PRIMARY KEY,
+    company_name    VARCHAR(255) NOT NULL,
+    company_role    VARCHAR(100) NOT NULL,
     CONSTRAINT fk_employer_user FOREIGN KEY (clerk_id) REFERENCES users(clerk_id) ON DELETE CASCADE
 );
 
 CREATE TABLE advisors (
-    clerk_id VARCHAR(255) PRIMARY KEY,
-    company_name VARCHAR(255) NOT NULL,
-    company_role VARCHAR(100) NOT NULL,
+    clerk_id        VARCHAR(255) PRIMARY KEY,
+    company_name    VARCHAR(255) NOT NULL,
+    company_role    VARCHAR(100) NOT NULL,
     CONSTRAINT fk_advisor_user FOREIGN KEY (clerk_id) REFERENCES users(clerk_id) ON DELETE CASCADE
 );
 
+CREATE TABLE admin (
+  admin_id TEXT PRIMARY KEY,
+  office_location TEXT,
+  department TEXT,
+  status VARCHAR(20) NOT NULL DEFAULT 'active',
+  CONSTRAINT fk_admin_user FOREIGN KEY (admin_id)
+    REFERENCES users(clerk_id) ON DELETE CASCADE
+);
 
 -- =========================================
 -- Events
@@ -294,6 +312,60 @@ CREATE INDEX idx_posts_author     ON posts (author_id, created_at DESC);
 CREATE INDEX idx_comments_post    ON comments (post_id, created_at);
 CREATE INDEX idx_comments_author  ON comments (author_id, created_at DESC);
 
+-- COURSES
+CREATE TABLE courses (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  level TEXT CHECK (level IN ('Beginner', 'Intermediate', 'Advanced')),
+  type TEXT CHECK (type IN ('Online', 'In Person', 'Workshop')),
+  certificate BOOLEAN DEFAULT FALSE,
+  lesson_count INT,
+  duration TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- LESSONS
+CREATE TABLE lessons (
+  id SERIAL PRIMARY KEY,
+  course_id INT REFERENCES courses(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  content TEXT, -- Quill HTML content
+  video_url TEXT,
+  type TEXT CHECK (type IN ('lesson', 'quiz')),
+  position INT -- order in course
+);
+
+-- QUIZ QUESTIONS (expanded table only for quizzes)
+CREATE TABLE quiz_questions (
+  id SERIAL PRIMARY KEY,
+  lesson_id INT REFERENCES lessons(id) ON DELETE CASCADE,
+  question TEXT NOT NULL,
+  answers TEXT[] NOT NULL,
+  correct_answer TEXT NOT NULL
+);
+
+-- USER COURSE PROGRESS
+CREATE TABLE user_course_progress (
+  user_id VARCHAR(255) REFERENCES users(clerk_id) ON DELETE CASCADE,
+  course_id INT REFERENCES courses(id) ON DELETE CASCADE,
+  completed_lessons INT DEFAULT 0,
+  total_lessons INT,
+  completed BOOLEAN DEFAULT FALSE,
+  PRIMARY KEY (user_id, course_id)
+);
+
+-- USER LESSON PROGRESS
+CREATE TABLE user_lesson_progress (
+  user_id VARCHAR(255) REFERENCES users(clerk_id) ON DELETE CASCADE,
+  lesson_id INT REFERENCES lessons(id) ON DELETE CASCADE,
+  completed BOOLEAN DEFAULT FALSE,
+  PRIMARY KEY (user_id, lesson_id),
+  answers JSONB,
+  quiz_score INT,
+  passed BOOLEAN
+);
+
 CREATE TABLE reports (
   report_id           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,   -- internal PK
   source_page         TEXT NOT NULL,                                     -- e.g. "profile", "post", or URL slug
@@ -347,12 +419,3 @@ CREATE INDEX idx_reports_is_banned ON reports (is_banned);
 
 
 COMMIT;
-
-CREATE TABLE admin (
-  admin_id TEXT PRIMARY KEY,
-  office_location TEXT,
-  department TEXT,
-  status VARCHAR(20) NOT NULL DEFAULT 'active',
-  CONSTRAINT fk_admin_user FOREIGN KEY (admin_id)
-    REFERENCES users(clerk_id) ON DELETE CASCADE
-);

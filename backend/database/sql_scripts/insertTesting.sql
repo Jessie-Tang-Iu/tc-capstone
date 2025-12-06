@@ -5,15 +5,31 @@ INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role
 ON CONFLICT (clerk_id) DO NOTHING;
 
 --advisors
-INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES 
-('user_36LsgiytrqklL4r6V2fqus5wfVo', 'Mary', 'Mary', 'White', 'mary.w@gmail.com', '403-555-1234', 'advisor'),
-('testAdvisor2', 'James', 'James', 'Brown', 'jb@hotmail.com', '587-555-5678', 'advisor'),
-('testAdvisor3', 'Harry', 'Harry', 'Potter', 'hp@gmail.com', '123-456-7890', 'advisor'),
-('testAdvisor4', 'Lily', 'Lily', 'Potter', 'lily.p@gmail.com', '123-456-7890', 'advisor'),
-('testAdvisor5', 'John', 'John', 'Doe', 'john.doe@gmail.com', '123-456-7890', 'advisor'),
-('user_354NOlnmVLauZqHMM9kKE4mxprm', 'advisoracc123', 'Advisor', 'Account', 'Advisor@gmail.com', '1234567890', 'advisor')
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role, status) VALUES 
+('testAdvisor2', 'James', 'James', 'Brown', 'jb@hotmail.com', '587-555-5678', 'advisor', 'active'),
+('testAdvisor3', 'Harry', 'Harry', 'Potter', 'hp@gmail.com', '123-456-7890', 'advisor', 'active'),
+('testAdvisor4', 'Lily', 'Lily', 'Potter', 'lily.p@gmail.com', '123-456-7890', 'advisor', 'active'),
+('testAdvisor5', 'John', 'John', 'Doe', 'john.doe@gmail.com', '123-456-7890', 'advisor', 'active');
+
+INSERT INTO users (clerk_id, username, first_name, last_name, email, role, status) VALUES
+('user_33TXk5AzMm228mH76TLzGUitM2U','joywong1228','Joy','Wong','s1041071@gmail.com','member','active'),
+('user_33TltDhWmKiEGfSs7DJk6b1HlI1','jessie','Jessie','Tang','jessiestitch666@gmail.com','member','active'),
+('user_33TygiU42yjY3nfWxD5cEPCACv7','lamdao','Lam','Dao','lam.dao@edu.sait.ca','member','active'),
+('user_347IKz8chgO4vioewBOUXv2DZTr','dione1','Dion','Emary','emarydion15@gmail.com','member','active'),
+('user_345ZOK9fIENSJZtJi4CqfDxYkNO','dione2','Dion','Emary','emarydion16@gmail.com','employer','active'),
+('user_345Zd39578QY7lu7hxmEHoVDKrU','dione3','Dion','Emary','emarydion17@gmail.com','advisor','active'),
+('user_34RDeo5WKU2K8s6AArG7XBAODkb','admin','Admin','Account','admin@gmail.com','admin','active'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm','advisoracc123','Advisor','Account','advisor@gmail.com','advisor','active'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'testadvisor1', 'Mary', 'White', 'mary.w@gmail.com', 'advisor', 'active')
 ON CONFLICT (clerk_id) DO NOTHING;
 
+--advisors (5 active) - password: [first_name]Adv[index] - ex: MaryAdv1
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role, status) VALUES
+('user_36LsgiytrqklL4r6V2fqus5wfVo','maryadvisor1','Mary','White','mary.w@gmail.com','403-555-6001','advisor','active'),
+('user_36LtMEozUBovhSFgSeW8hkWRJ6J','jamesadvisor2','James','Brown','jb@hotmail.com','403-555-6002','advisor','active'),
+('user_36LtbOmcHhwL8SFxMVejTJuidjl','harryadvisor3','Harry','Potter','hp@gmail.com','403-555-6003','advisor','active'),
+('user_36Lu1gq63tyhea7IZS2yPISpObd','lilyadvisor4','Lily','Potter','lily.p@gmail.com','403-555-6004','advisor','active'),
+('user_36LuOUs6t5eeG3LcltRac4UHXID','johnadvisor5','John','Doe','john.doe@gmail.com','403-555-6005','advisor','active');
 
 INSERT INTO advisors (clerk_id, company_name, company_role) VALUES 
 ('user_36LsgiytrqklL4r6V2fqus5wfVo', 'Tech Solutions', 'Senior Developer'),
@@ -21,37 +37,45 @@ INSERT INTO advisors (clerk_id, company_name, company_role) VALUES
 ('testAdvisor3', 'ABC Company', 'Front-end Developer'),
 ('testAdvisor4', 'BCD Company', 'Full Stack Developer'),
 ('testAdvisor5', 'AAB Tech', 'Project Manager'),
-('user_354NOlnmVLauZqHMM9kKE4mxprm', 'XYZ Tech Inc.', 'Career Advisor');
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'XYZ Tech Inc.', 'Career Advisor'),
+('user_36LtMEozUBovhSFgSeW8hkWRJ6J', 'Innovatech', 'Project Manager'),
+('user_36LtbOmcHhwL8SFxMVejTJuidjl', 'ABC Company', 'Front-end Developer'),
+('user_36Lu1gq63tyhea7IZS2yPISpObd', 'BCD Company', 'Full Stack Developer'),
+('user_36LuOUs6t5eeG3LcltRac4UHXID', 'AAB Tech', 'Project Manager');
 
 -- Add placeholder users so posts/comments have valid references
-INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES
-('99999999-9999-9999-9999-999999999999', 'fakeuser1', 'Alice', 'Example', 'alice@example.com', '000-000-0000', 'member'),
-('22222222-2222-2222-2222-222222222222', 'fakeuser2', 'Bob', 'Example', 'bob@example.com', '000-000-0000', 'member');
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role, status) VALUES
+('user_36MRxcVmgtvX9V7SuCkpT20UQ6n', 'aliceuser1', 'Alice', 'Example', 'alice@example.com', '403-555-0001', 'member', 'active'),
+('user_36MS55rT6vLJjFls1z62mKG2rRO', 'bobuser2', 'Bob', 'Example', 'bob@example.com', '403-555-0002', 'member', 'active'),
+('user_36MTe4Q0HGtiwbzjXkh5z0msm3E','johnuser3','John','Smith','john@example.com','403-555-0003','member','active'),
+('user_36MTie8sONovgUFzzAmg38JSigF','janeuser4','Jane','Nguyen','jane@example.com','403-555-0004','member','active'),
+('user_36MTqkFlFAI6FME7sUBSxISPCq2','alexuser5','Alex','Example','alex@example.com','403-555-0005','member','active');
 
 -- Insert fake posts
 INSERT INTO posts (author_id, title, content) VALUES
-('99999999-9999-9999-9999-999999999999', 'How to learn React?', 'I am new to React and want to know the best resources to get started.'),
-('99999999-9999-9999-9999-999999999999', 'Best PostgreSQL tips?', 'Share your favorite tips and tricks for optimizing queries in Postgres.'),
-('22222222-2222-2222-2222-222222222222', 'Next.js vs Express?', 'When would you choose Next.js over a traditional Express backend?'),
-('22222222-2222-2222-2222-222222222222', 'Tailwind CSS worth it?', 'I see Tailwind CSS everywhere—what are the pros and cons compared to plain CSS or Bootstrap?');
+('user_36MRxcVmgtvX9V7SuCkpT20UQ6n', 'How to learn React?', 'I am new to React and want to know the best resources to get started.'),
+('user_36MRxcVmgtvX9V7SuCkpT20UQ6n', 'Best PostgreSQL tips?', 'Share your favorite tips and tricks for optimizing queries in Postgres.'),
+('user_36MS55rT6vLJjFls1z62mKG2rRO', 'Next.js vs Express?', 'When would you choose Next.js over a traditional Express backend?'),
+('user_36MS55rT6vLJjFls1z62mKG2rRO', 'Tailwind CSS worth it?', 'I see Tailwind CSS everywhere—what are the pros and cons compared to plain CSS or Bootstrap?');
+
 -- Insert fake comments (referencing posts by ID)
--- INSERT INTO comments (post_id, author_id, content) VALUES
--- (1, '99999999-9999-9999-9999-999999999999', 'I recommend the official React docs—they are super well written!'),
--- (1, '99999999-9999-9999-9999-999999999999', 'Try Scrimba or Frontend Mentor, very interactive.'),
--- (2, '99999999-9999-9999-9999-999999999999', 'Use EXPLAIN ANALYZE to understand query performance.'),
--- (2, '99999999-9999-9999-9999-999999999999', 'Don’t forget to index frequently used columns.'),
--- (3, '22222222-2222-2222-2222-222222222222', 'Next.js is great if you need SSR, otherwise Express is simpler.'),
--- (4, '22222222-2222-2222-2222-222222222222', 'Tailwind is amazing once you get used to utility classes.'),
--- (4, '22222222-2222-2222-2222-222222222222', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
+INSERT INTO comments (post_id, author_id, content) VALUES
+(1, 'user_36MRxcVmgtvX9V7SuCkpT20UQ6n', 'I recommend the official React docs—they are super well written!'),
+(1, 'user_36MRxcVmgtvX9V7SuCkpT20UQ6n', 'Try Scrimba or Frontend Mentor, very interactive.'),
+(2, 'user_36MRxcVmgtvX9V7SuCkpT20UQ6n', 'Use EXPLAIN ANALYZE to understand query performance.'),
+(2, 'user_36MRxcVmgtvX9V7SuCkpT20UQ6n', 'Don’t forget to index frequently used columns.'),
+(3, 'user_36MS55rT6vLJjFls1z62mKG2rRO', 'Next.js is great if you need SSR, otherwise Express is simpler.'),
+(4, 'user_36MS55rT6vLJjFls1z62mKG2rRO', 'Tailwind is amazing once you get used to utility classes.'),
+(4, 'user_36MS55rT6vLJjFls1z62mKG2rRO', 'I prefer writing raw CSS for full control, but Tailwind is fast for prototyping.');
 -- test data
 
 --booked slots
 INSERT INTO advisory_bookings (advisor_id, client_id, date, startTime, description, endTime, status) VALUES 
-('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', '2025-11-6', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', '2025-11-5', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('user_36LsgiytrqklL4r6V2fqus5wfVo', 'testAdvisor2', '2025-11-6', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('user_36LsgiytrqklL4r6V2fqus5wfVo', 'testAdvisor2', '2025-11-5', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('testAdvisor2', 'user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-10-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked');
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-11-6', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-11-5', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-11-6', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-11-5', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('user_36LtMEozUBovhSFgSeW8hkWRJ6J', 'user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-10-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked');
 
 --open slots
 INSERT INTO advisory_bookings (advisor_id, date, startTime, endTime, status) VALUES 
@@ -69,59 +93,54 @@ INSERT INTO advisory_bookings (advisor_id, date, startTime, endTime, status) VAL
 ('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-11-6', '11:00:00', '13:00:00', 'open'),
 ('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-11-7', '10:00:00', '12:00:00', 'open'),
 ('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-11-3', '10:00:00', '12:00:00', 'open'),
-('testAdvisor2', '2025-10-13', '12:00:00', '14:00:00', 'open'),
-('testAdvisor2', '2025-10-14', '12:00:00', '14:00:00', 'open'),
-('testAdvisor2', '2025-10-15', '12:00:00', '14:00:00', 'open'),
-('testAdvisor2', '2025-10-16', '11:00:00', '13:00:00', 'open'),
-('testAdvisor2', '2025-10-17', '10:00:00', '12:00:00', 'open');
+('user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-10-13', '12:00:00', '14:00:00', 'open'),
+('user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-10-14', '12:00:00', '14:00:00', 'open'),
+('user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-10-15', '12:00:00', '14:00:00', 'open'),
+('user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-10-16', '11:00:00', '13:00:00', 'open'),
+('user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-10-17', '10:00:00', '12:00:00', 'open');
 
 -- test data for advisory session
 INSERT INTO advisory_sessions (advisor_id, client_id, message, status) VALUES 
-('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', 'I need help with front-end', 'active'),
-('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', 'I need help with backend', 'pending'),
-('user_354NOlnmVLauZqHMM9kKE4mxprm', 'testAdvisor2', null, 'closed'),
-('user_36LsgiytrqklL4r6V2fqus5wfVo', 'testAdvisor2', 'I need help with front-end', 'active'),
-('user_36LsgiytrqklL4r6V2fqus5wfVo', 'testAdvisor2', 'I need help with backend', 'pending'),
-('testadvuser_36LsgiytrqklL4r6V2fqus5wfVoisor1', 'testAdvisor2', null, 'closed'),
-('testAdvisor2', 'user_36LsgiytrqklL4r6V2fqus5wfVo', 'I need help with front-end', 'active');
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', 'I need help with front-end', 'active'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', 'I need help with backend', 'pending'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', null, 'closed'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', 'I need help with front-end', 'active'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', 'I need help with backend', 'pending'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', null, 'closed'),
+('user_36LtMEozUBovhSFgSeW8hkWRJ6J', 'user_36LsgiytrqklL4r6V2fqus5wfVo', 'I need help with front-end', 'active');
 
 -- Test data for applications
--- members
-INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES 
-('testMember1', 'johnsmith', 'John', 'Smith', 'JohnS@sample.com', '403-555-1934', 'member'),
-('testMember2', 'janenguyen', 'Jane', 'Nguyen', 'JaneNg@sample.com', '587-555-5078', 'member')
-ON CONFLICT (clerk_id) DO NOTHING;
 
 -- resume
 INSERT INTO resume (user_id, summary, skills, experience, education, certifications, additional_info) VALUES
-('testMember1', 'Experienced software developer with a passion for creating innovative solutions.', ARRAY['JavaScript, Python, SQL'], ARRAY['Full Stack Developer | TechCorp | Contract | April | 2013 | June | 2018'], ARRAY['University X | Bachelor | Computer Science | 2010 | 2014'], ARRAY['Certified Scrum Master'], 'Open to relocation.'),
-('testMember2', 'Detail-oriented data analyst with expertise in data visualization and statistical analysis.', ARRAY['R, Python, Tableau'], ARRAY['Data Analyst | Data Insights | Full-time | January | 2020 | August | 2022'], ARRAY['University Y | Master | Data Science | 2012 | 2016'], ARRAY['Certified Data Analyst'], 'Looking for remote opportunities.')
+('user_36MRxcVmgtvX9V7SuCkpT20UQ6n', 'Experienced software developer with a passion for creating innovative solutions.', ARRAY['JavaScript, Python, SQL'], ARRAY['Full Stack Developer | TechCorp | Contract | April | 2013 | June | 2018'], ARRAY['University X | Bachelor | Computer Science | 2010 | 2014'], ARRAY['Certified Scrum Master'], 'Open to relocation.'),
+('user_36MS55rT6vLJjFls1z62mKG2rRO', 'Detail-oriented data analyst with expertise in data visualization and statistical analysis.', ARRAY['R, Python, Tableau'], ARRAY['Data Analyst | Data Insights | Full-time | January | 2020 | August | 2022'], ARRAY['University Y | Master | Data Science | 2012 | 2016'], ARRAY['Certified Data Analyst'], 'Looking for remote opportunities.')
 ON CONFLICT (user_id) DO NOTHING;
 
 -- cover letter
 INSERT INTO cover_letter (user_id, content) VALUES
-('testMember1', 'Dear Hiring Manager,\n\nI am writing to express my interest in the Software Developer position at your esteemed company. With over 5 years of experience in full stack development and a strong background in JavaScript and Python, I am confident in my ability to contribute effectively to your team.\n\nI have attached my resume for your review and would welcome the opportunity to discuss how my skills and experiences align with your needs.\n\nThank you for considering my application.\n\nSincerely,\nJohn Doe'),
-('testMember2', 'Dear Hiring Manager,\n\nI am excited to apply for the Data Analyst position at your organization. With a Master degree in Data Science and 3 years of hands-on experience in data analysis and visualization, I am eager to bring my expertise to your team.\n\nPlease find my resume attached for your consideration. I look forward to the possibility of discussing how I can contribute to your company success.\n\nThank you for your time and consideration.\n\nBest regards,\nJane Smith')
+('user_36MRxcVmgtvX9V7SuCkpT20UQ6n', 'Dear Hiring Manager,\n\nI am writing to express my interest in the Software Developer position at your esteemed company. With over 5 years of experience in full stack development and a strong background in JavaScript and Python, I am confident in my ability to contribute effectively to your team.\n\nI have attached my resume for your review and would welcome the opportunity to discuss how my skills and experiences align with your needs.\n\nThank you for considering my application.\n\nSincerely,\nJohn Doe'),
+('user_36MS55rT6vLJjFls1z62mKG2rRO', 'Dear Hiring Manager,\n\nI am excited to apply for the Data Analyst position at your organization. With a Master degree in Data Science and 3 years of hands-on experience in data analysis and visualization, I am eager to bring my expertise to your team.\n\nPlease find my resume attached for your consideration. I look forward to the possibility of discussing how I can contribute to your company success.\n\nThank you for your time and consideration.\n\nBest regards,\nJane Smith')
 ON CONFLICT (user_id) DO NOTHING;
 
 -- TEST DATA FOR JOB BOARD
 
 -- users
-INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role) VALUES 
-('testEmployer1', 'TCcompany', 'Employer', 'A', 'employer1@techcorp.com', '403-555-1134', 'employer'),
-('testEmployer2', 'HFcompany', 'Employer', 'B', 'employer2@healthfirst.com', '403-555-1334', 'employer'),
-('testEmployer3', 'BTcompany', 'Employer', 'C', 'employer3@banktrust.com', '403-555-1434', 'employer'),
-('testEmployer4', 'IBcompany', 'Employer', 'D', 'employer4@infrabuild.com', '403-555-1534', 'employer'),
-('testEmployer5', 'BMacademy', 'Employer', 'E', 'employer5@brightminds.com', '403-555-1634', 'employer')
+INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role, status) VALUES 
+('user_36MVovbCJp6OkcXlDRHpBtfuDfX', 'tcemployer1', 'Techcorp', 'Employer', 'employer1@techcorp.com', '403-555-2001', 'employer', 'active'),
+('user_36MW1kRcnK6VscYofJWZOj0NhTR', 'hfemployer2', 'HealthFirst', 'Employer', 'employer2@healthfirst.com', '403-555-2002', 'employer', 'active'),
+('user_36MWFpxHChGaSyZSICjyAGIgy9X', 'btemployer3', 'BankTrust', 'Employer', 'employer3@banktrust.com', '403-555-2003', 'employer', 'active'),
+('user_36MWNcpJ6UDWMF5P3CHHEKn3Tjt', 'btemployer4', 'InfraBuild', 'Employer', 'employer4@infrabuild.com', '403-555-2004', 'employer', 'active'),
+('user_36MWvQuGOjHD902BVDSbGAz0s67', 'bmemployer5', 'BrightMinds', 'Employer', 'employer5@brightminds.com', '403-555-2005', 'employer', 'active')
 ON CONFLICT (clerk_id) DO NOTHING;
 
 -- employers
-INSERT INTO employers (company_id, clerk_id, company_name, company_role) VALUES
-('testCompany1', 'testEmployer1', 'TechCorp company', 'HR assistant'),
-('testCompany2', 'testEmployer2', 'HealthFirst company', 'project manager'),
-('testCompany3', 'testEmployer3', 'BankTrust company', 'HR assistant'),
-('testCompany4', 'testEmployer4', 'InfraBuild company', 'HR assistant'),
-('testCompany5', 'testEmployer5', 'BrightMinds academy', 'HR assistant')
+INSERT INTO employers (clerk_id, company_name, company_role) VALUES
+('user_36MVovbCJp6OkcXlDRHpBtfuDfX', 'TechCorp company', 'HR assistant'),
+('user_36MW1kRcnK6VscYofJWZOj0NhTR', 'HealthFirst company', 'project manager'),
+('user_36MWFpxHChGaSyZSICjyAGIgy9X', 'BankTrust company', 'HR assistant'),
+('user_36MWNcpJ6UDWMF5P3CHHEKn3Tjt', 'InfraBuild company', 'HR assistant'),
+('user_36MWvQuGOjHD902BVDSbGAz0s67', 'BrightMinds academy', 'HR assistant')
 ON CONFLICT (clerk_id) DO NOTHING;
 
 -- industries
@@ -184,11 +203,11 @@ INSERT INTO job_workplace (name) VALUES
 
 -- jobs
 INSERT INTO job (title, employer_id, company_info, location, posted_at, industry_id, workplace_id, type_id, experience_id, salary_per_hour, link, description, responsibilities, requirements, details, benefits) VALUES
-('Software Engineer', 'testEmployer1', 'TechCorp is a leading technology solutions provider specializing in cloud computing and AI-driven products.', 'Vancouver, BC', '2025-09-10', 1, 2, 1, 3, 32.35, 'https://techcorp.com/jobs/123', 'Develop and maintain software applications.', 'Design, code, test software.', 'Bachelors degree in Computer Science.', 'Full job details here.', 'Health insurance, 401k'),
-('Nurse Practitioner', 'testEmployer2', 'HealthFirst operates a network of clinics focused on patient-centered care and innovative health solutions.', 'Calgary, AB', '2025-09-12', 4, 2, 2, 2, 45.00, 'https://healthfirst.com/careers/np', 'Provide primary and specialty healthcare services.', 'Diagnose and treat patients.', 'Registered Nurse with NP license.', 'Full job details here.', 'Comprehensive health benefits'),
-('Financial Analyst', 'testEmployer3', 'BankTrust is a major Canadian bank offering a wide range of financial services to individuals and businesses.', 'Toronto, ON', '2025-09-08', 2, 3, 3, 3, 29.75, 'https://banktrust.com/jobs/finanalyst', 'Analyze financial data and trends.', 'Prepare reports and forecasts.', 'Degree in Finance or related field.', 'Full job details here.', 'Retirement plan, bonuses'),
-('Civil Engineer', 'testEmployer4', 'InfraBuild specializes in large-scale infrastructure projects, including bridges, highways, and public works.', 'Edmonton, AB', '2025-09-11', 8, 2, 4, 3, 36.50, 'https://infrabuild.com/careers/civileng', 'Design and oversee construction projects.', 'Project management and site supervision.', 'P.Eng. designation required.', 'Full job details here.', 'Vehicle allowance, health benefits'),
-('Teacher', 'testEmployer5', 'BrightMinds Academy is a private K-12 school dedicated to innovative teaching and student success.', 'Winnipeg, MB', '2025-09-09', 17, 1, 5, 1, 28.00, 'https://brightminds.ca/jobs/teacher', 'Teach and mentor students in assigned subjects.', 'Lesson planning and classroom management.', 'Teaching certificate required.', 'Full job details here.', 'Professional development, pension');
+('Software Engineer', 'user_36MVovbCJp6OkcXlDRHpBtfuDfX', 'TechCorp is a leading technology solutions provider specializing in cloud computing and AI-driven products.', 'Vancouver, BC', '2025-09-10', 1, 2, 1, 3, 32.35, 'https://techcorp.com/jobs/123', 'Develop and maintain software applications.', 'Design, code, test software.', 'Bachelors degree in Computer Science.', 'Full job details here.', 'Health insurance, 401k'),
+('Nurse Practitioner', 'user_36MW1kRcnK6VscYofJWZOj0NhTR', 'HealthFirst operates a network of clinics focused on patient-centered care and innovative health solutions.', 'Calgary, AB', '2025-09-12', 4, 2, 2, 2, 45.00, 'https://healthfirst.com/careers/np', 'Provide primary and specialty healthcare services.', 'Diagnose and treat patients.', 'Registered Nurse with NP license.', 'Full job details here.', 'Comprehensive health benefits'),
+('Financial Analyst', 'user_36MWFpxHChGaSyZSICjyAGIgy9X', 'BankTrust is a major Canadian bank offering a wide range of financial services to individuals and businesses.', 'Toronto, ON', '2025-09-08', 2, 3, 3, 3, 29.75, 'https://banktrust.com/jobs/finanalyst', 'Analyze financial data and trends.', 'Prepare reports and forecasts.', 'Degree in Finance or related field.', 'Full job details here.', 'Retirement plan, bonuses'),
+('Civil Engineer', 'user_36MWNcpJ6UDWMF5P3CHHEKn3Tjt', 'InfraBuild specializes in large-scale infrastructure projects, including bridges, highways, and public works.', 'Edmonton, AB', '2025-09-11', 8, 2, 4, 3, 36.50, 'https://infrabuild.com/careers/civileng', 'Design and oversee construction projects.', 'Project management and site supervision.', 'P.Eng. designation required.', 'Full job details here.', 'Vehicle allowance, health benefits'),
+('Teacher', 'user_36MWvQuGOjHD902BVDSbGAz0s67', 'BrightMinds Academy is a private K-12 school dedicated to innovative teaching and student success.', 'Winnipeg, MB', '2025-09-09', 17, 1, 5, 1, 28.00, 'https://brightminds.ca/jobs/teacher', 'Teach and mentor students in assigned subjects.', 'Lesson planning and classroom management.', 'Teaching certificate required.', 'Full job details here.', 'Professional development, pension');
 
 -- Questions field can include questions like:
 UPDATE job
@@ -200,16 +219,16 @@ UPDATE job
  WHERE id IN (1, 2, 3, 4, 5);
 
 INSERT INTO message (sent_user_id, receive_user_id, content, status) VALUES
-('11111111-1111-1111-1111-111111111111', '99999999-9999-9999-9999-999999999999', 'Hey there, this is ME sending the first test message.', 'S'),
-('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', 'Hi ME! Got your message just fine.', 'R'),
-('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Hello user 2222, testing another peer chat.', 'S'),
-('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 'Replying to ME from user 2222.', 'D'),
-('11111111-1111-1111-1111-111111111111', '99999999-9999-9999-9999-999999999999', 'Follow-up message to user 9999.', 'S');
+('user_36MTqkFlFAI6FME7sUBSxISPCq2', 'user_36MRxcVmgtvX9V7SuCkpT20UQ6n', 'Hey there, this is ME sending the first test message.', 'S'),
+('user_36MRxcVmgtvX9V7SuCkpT20UQ6n', 'user_36MTqkFlFAI6FME7sUBSxISPCq2', 'Hi ME! Got your message just fine.', 'R'),
+('user_36MTqkFlFAI6FME7sUBSxISPCq2', 'user_36MS55rT6vLJjFls1z62mKG2rRO', 'Hello user 2222, testing another peer chat.', 'S'),
+('user_36MS55rT6vLJjFls1z62mKG2rRO', 'user_36MTqkFlFAI6FME7sUBSxISPCq2', 'Replying to ME from user 2222.', 'D'),
+('user_36MTqkFlFAI6FME7sUBSxISPCq2', 'user_36MRxcVmgtvX9V7SuCkpT20UQ6n', 'Follow-up message to user 9999.', 'S');
 
 -- not involving ME
 INSERT INTO message (sent_user_id, receive_user_id, content, status) VALUES
-('33333333-3333-3333-3333-333333333333', '44444444-4444-4444-4444-444444444444', 'This chat is between 3333 and 4444 only.', 'S'),
-('44444444-4444-4444-4444-444444444444', '33333333-3333-3333-3333-333333333333', 'Reply back to 3333 from 4444.', 'R');
+('user_36MTe4Q0HGtiwbzjXkh5z0msm3E', 'user_36MTie8sONovgUFzzAmg38JSigF', 'This chat is between 3333 and 4444 only.', 'S'),
+('user_36MTie8sONovgUFzzAmg38JSigF', 'user_36MTe4Q0HGtiwbzjXkh5z0msm3E', 'Reply back to 3333 from 4444.', 'R');
 
 
 -- =========================================
@@ -469,41 +488,41 @@ VALUES
 -- 7 new advisors
 INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role, status)
 VALUES
-('testAdvisor6', 'adv6', 'Liam', 'Wong', 'liam.wong@sample.com', '403-555-6001', 'advisor', 'under_review'),
-('testAdvisor7', 'adv7', 'Chloe', 'Park', 'chloe.park@sample.com', '403-555-6002', 'advisor', 'under_review'),
-('testAdvisor8', 'adv8', 'Noah', 'Chan', 'noah.chan@sample.com', '403-555-6003', 'advisor', 'under_review'),
-('testAdvisor9', 'adv9', 'Emma', 'Lee', 'emma.lee@sample.com', '403-555-6004', 'advisor', 'under_review'),
-('testAdvisor10', 'adv10', 'Mason', 'Ng', 'mason.ng@sample.com', '403-555-6005', 'advisor', 'under_review'),
-('testAdvisor11', 'adv11', 'Sophia', 'Lam', 'sophia.lam@sample.com', '403-555-6006', 'advisor', 'under_review'),
-('testAdvisor12', 'adv12', 'Ethan', 'Ho', 'ethan.ho@sample.com', '403-555-6007', 'advisor', 'under_review');
+('user_36LuW3xqICj7ZjdFec7xVsmFp9L','liamadvisor6','Liam','Wong','liam.wong@sample.com','403-555-6006','advisor','under-review'),
+('user_36Lud5Qr140OWVjnGzyI8sgKNsp','chloeadvisor7','Chloe','Park','chloe.park@sample.com','403-555-6007','advisor','under-review'),
+('user_36LujVUa51HBuJYktaa7GVGBQuS','noahadvisor8','Noah','Chan','noah.chan@sample.com','403-555-6008','advisor','under-review'),
+('user_36LwKkX9d7lcxmNoVeOmO5AMgXC','emmaadvisor9','Emma','Lee','emma.lee@sample.com','403-555-6009','advisor','under-review'),
+('user_36LwS1Twi0OQlRCt1ReErjZhjjJ','masonadvisor10','Mason','Ng','mason.ng@sample.com','403-555-6010','advisor','under-review'),
+('user_36Lwa069wSfjnhrOxX5aYumDZ78','sophiaadvisor11','Sophia','Lam','sophia.lam@sample.com','403-555-6011','advisor','under-review'),
+('user_36LwpQ3kb4RPiZYrxhMmHiKkh6g','ethanadvisor12','Ethan','Ho','ethan.ho@sample.com','403-555-6012','advisor','under-review');
 
 INSERT INTO advisors (clerk_id, company_name, company_role)
 VALUES
-('testAdvisor6', 'MindBridge Analytics', 'Data Analyst'),
-('testAdvisor7', 'Aurora Systems', 'Tech Consultant'),
-('testAdvisor8', 'NovaSoft', 'Product Designer'),
-('testAdvisor9', 'CloudWave', 'Full Stack Engineer'),
-('testAdvisor10', 'NextEdge', 'Project Manager'),
-('testAdvisor11', 'PrimeWorks', 'Software Engineer'),
-('testAdvisor12', 'Orbit Tech', 'UX Lead');
+('user_36LuW3xqICj7ZjdFec7xVsmFp9L', 'MindBridge Analytics', 'Data Analyst'),
+('user_36Lud5Qr140OWVjnGzyI8sgKNsp', 'Aurora Systems', 'Tech Consultant'),
+('user_36LujVUa51HBuJYktaa7GVGBQuS', 'NovaSoft', 'Product Designer'),
+('user_36LwKkX9d7lcxmNoVeOmO5AMgXC', 'CloudWave', 'Full Stack Engineer'),
+('user_36LwS1Twi0OQlRCt1ReErjZhjjJ', 'NextEdge', 'Project Manager'),
+('user_36Lwa069wSfjnhrOxX5aYumDZ78', 'PrimeWorks', 'Software Engineer'),
+('user_36LwpQ3kb4RPiZYrxhMmHiKkh6g', 'Orbit Tech', 'UX Lead');
 
 -- 7 new employers
 INSERT INTO users (clerk_id, username, first_name, last_name, email, phone, role, status)
 VALUES
-('testEmployer6', 'emp6', 'Ella', 'Kim', 'ella.kim@sample.com', '403-555-7001', 'employer', 'under_review'),
-('testEmployer7', 'emp7', 'Jack', 'Wu', 'jack.wu@sample.com', '403-555-7002', 'employer', 'under_review'),
-('testEmployer8', 'emp8', 'Olivia', 'Tran', 'olivia.tran@sample.com', '403-555-7003', 'employer', 'under_review'),
-('testEmployer9', 'emp9', 'Lucas', 'Zhao', 'lucas.zhao@sample.com', '403-555-7004', 'employer', 'under_review'),
-('testEmployer10', 'emp10', 'Mia', 'Cheung', 'mia.cheung@sample.com', '403-555-7005', 'employer', 'under_review'),
-('testEmployer11', 'emp11', 'Benjamin', 'Leung', 'benjamin.leung@sample.com', '403-555-7006', 'employer', 'under_review'),
-('testEmployer12', 'emp12', 'Isabella', 'Kwan', 'isabella.kwan@sample.com', '403-555-7007', 'employer', 'under_review');
+('user_36MXBxvWzKLVeMxB2okxvEUY9h2', 'emellaemployer6', 'Ella', 'Kim', 'ella.kim@sample.com', '403-555-2006', 'employer', 'under-review'),
+('user_36MXJsNRQJOy5rj0tCyki5GMT0F', 'jackemployer7', 'Jack', 'Wu', 'jack.wu@sample.com', '403-555-2007', 'employer', 'under-review'),
+('user_36MXTGp0nKn55nh59uncYuZ73sa', 'oliviaemployer8', 'Olivia', 'Tran', 'olivia.tran@sample.com', '403-555-2008', 'employer', 'under-review'),
+('user_36MXZr6PNPVtDoQ7NtPP38OiWHV', 'lucasemployer9', 'Lucas', 'Zhao', 'lucas.zhao@sample.com', '403-555-2009', 'employer', 'under-review'),
+('user_36MXgqFiwNOAvQoUv2GYKJst8l7', 'miaemployer10', 'Mia', 'Cheung', 'mia.cheung@sample.com', '403-555-2010', 'employer', 'under-review'),
+('user_36MXogG7p1mO7syNAuvNYkL2ixV', 'benjaminemployer11', 'Benjamin', 'Leung', 'benjamin.leung@sample.com', '403-555-2011', 'employer', 'under-review'),
+('user_36MXwXUpY52BJCd5u1001eSz4qH', 'isabellaemployer12', 'Isabella', 'Kwan', 'isabella.kwan@sample.com', '403-555-2012', 'employer', 'under-review');
 
 INSERT INTO employers (clerk_id, company_name, company_role)
 VALUES
-('testEmployer6', 'DataForge Inc', 'HR Lead'),
-('testEmployer7', 'Zenith Labs', 'Operations Manager'),
-('testEmployer8', 'TechNova Ltd', 'HR Assistant'),
-('testEmployer9', 'EcoStream Energy', 'Recruitment Lead'),
-('testEmployer10', 'BluePeak Digital', 'People Manager'),
-('testEmployer11', 'CoreByte Systems', 'HR Specialist'),
-('testEmployer12', 'HoloView Media', 'HR Coordinator');
+('user_36MXBxvWzKLVeMxB2okxvEUY9h2', 'DataForge Inc', 'HR Lead'),
+('user_36MXJsNRQJOy5rj0tCyki5GMT0F', 'Zenith Labs', 'Operations Manager'),
+('user_36MXTGp0nKn55nh59uncYuZ73sa', 'TechNova Ltd', 'HR Assistant'),
+('user_36MXZr6PNPVtDoQ7NtPP38OiWHV', 'EcoStream Energy', 'Recruitment Lead'),
+('user_36MXgqFiwNOAvQoUv2GYKJst8l7', 'BluePeak Digital', 'People Manager'),
+('user_36MXogG7p1mO7syNAuvNYkL2ixV', 'CoreByte Systems', 'HR Specialist'),
+('user_36MXwXUpY52BJCd5u1001eSz4qH', 'HoloView Media', 'HR Coordinator');

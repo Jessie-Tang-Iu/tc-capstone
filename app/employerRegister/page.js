@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import NavBarBeforeSignIn from "../components/NavBarBeforeSignIn";
 import Button from "../components/ui/Button";
 import PopupMessage from "../components/ui/PopupMessage";
+import { phoneNumberString } from "@/lib/utils";
 
 export default function EmployerRegistration() {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -302,7 +303,7 @@ export default function EmployerRegistration() {
         <PopupMessage
           type="success"
           title="Successfully Registration"
-          description="Your registration form is currently under review. Please try logging in again in 2–3 days."
+          description="Your registration form was submitted successfully and will be reviewed by our admin team. Please try logging in again in 2–3 days."
           onClose={() => {
             setShowSuccess(false);
             router.push("/") // redirect after signup

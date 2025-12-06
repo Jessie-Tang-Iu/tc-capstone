@@ -3,6 +3,7 @@
 //temporary file to update user status for admin purposes
 import { NextResponse } from "next/server";
 import { query } from "@/backend/database/db.js";
+import { updateStatusByID, updateUserDataById } from "@/backend/controllers/usersController";
 // import { clerkClient } from '@clerk/nextjs/server'
 
 // const client = await clerkClient()
@@ -36,27 +37,7 @@ export async function PUT(req, { params }) {
       );
     }
 
-    const updated = await query(
-      `UPDATE users
-          SET first_name = $1, last_name = $2, preferred_name = $3, pronouns = $4,
-              email = $5, show_email = $6, phone = $7, show_phone = $8,
-              address = $9, link = $10
-        WHERE clerk_id = $11
-       RETURNING *`,
-      [
-        body.first_name,
-        body.last_name,
-        body.preferred_name,
-        body.pronouns,
-        body.email,
-        body.show_email,
-        body.phone,
-        body.show_phone,
-        body.address,
-        body.link,
-        id,
-      ]
-    );
+    const updated = await updateUserDataById(body);
 
     if (updated.rowCount === 0) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -71,23 +52,26 @@ export async function PUT(req, { params }) {
 
 export async function PATCH(req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await req.json();
 
-    if (!body.status) {
+    if (!body.newStatus) {
       return NextResponse.json({ error: "Missing status" }, { status: 400 });
     }
 
-    const result = await query(
-      "UPDATE users SET status = $1 WHERE clerk_id = $2 RETURNING *",
-      [body.status, id]
-    );
+    let userData = {
+      id: id,
+      newStatus: body.newStatus,
+      oldStatus: body.oldStatus
+    }
 
-    if (result.rowCount === 0) {
+    const result = await updateStatusByID(userData);
+
+    if (!result) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json(result.rows[0], { status: 200 });
+    return NextResponse.json(result, { status: 200 });
   } catch (err) {
     console.error("PATCH /api/users/[id] error:", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });

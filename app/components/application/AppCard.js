@@ -33,26 +33,26 @@ export default function ApplyCard({ app, status, setStatus, isSelected = false, 
         <div>
           {/* Job title and status */}
           <div className="flex items-center gap-2 mb-2">
-            <h3 onClick={onClick} className="flex-3 text-base font-bold text-black leading-tight cursor-pointer">{app.title}</h3>
-            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs border ${statusColors[app.status] || "bg-gray-100 text-gray-800 border-gray-300"}`}>
+            <h3 onClick={onClick} className="flex-3 text-lg font-bold text-black leading-tight cursor-pointer">{app.title}</h3>
+            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-sm border ${statusColors[app.status] || "bg-gray-100 text-gray-800 border-gray-300"}`}>
               {statusOptions[app.status]}
             </span>
           </div>
 
           {/* Company and location */}
-          <div className="text-xs font-semi-bold text-gray-600">
+          <div className="text-sm font-semi-bold text-gray-600">
             {app.company} • {app.location}
           </div>
 
           {/* Applied date */}
-          <div className="text-xs text-gray-500 mt-1">Applied on {new Date(app.appliedAt).toLocaleDateString()}</div>
+          <div className="text-sm text-gray-500 mt-1">Applied on {new Date(app.appliedAt).toLocaleDateString()}</div>
           
           {/* Update status button and select */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-2">
             {!editingId && (
               <button
                 onClick={() => { setStatus(app.status); setEditingId(app.id); } }
-                className={`mt-2 px-3 py-2 bg-[#E55B3C] text-white rounded-lg text-xs 
+                className={`mt-2 px-3 py-2 bg-[#E55B3C] text-white rounded-lg text-sm 
                             ${(app.status == "R" || app.status == "O" || app.status == "D") ? 
                             'cursor-not-allowed' : 'hover:bg-[#E55B3C]/90'}`}
                 disabled={ app.status == "R" || app.status == "O" || app.status == "D" }
@@ -66,7 +66,7 @@ export default function ApplyCard({ app, status, setStatus, isSelected = false, 
                 <select
                   value={status}
                   onChange={(e) => {setStatus(e.target.value); }}
-                  className="px-2 py-2 border border-gray-300 rounded-lg text-xs"
+                  className="px-2 py-2 border border-gray-300 rounded-lg text-sm"
                 >
                   {Object.entries(statusOptions).map(([key, value]) => (
                     <option key={key} value={key}>{value}</option>

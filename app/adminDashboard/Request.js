@@ -21,7 +21,7 @@ export default function RequestsPanel({ onShowDetails }) {
   const fetchRequestsByRole = async (roleKey) => {
     try {
       const res = await fetch(
-        `/api/users?status=under_review&role=${roleKey}`,
+        `/api/users?status=under-review&role=${roleKey}`,
         {
           cache: "no-store",
         }
