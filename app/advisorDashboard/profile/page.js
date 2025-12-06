@@ -3,10 +3,14 @@
 import Button from "@/app/components/ui/Button";
 import Navbar from "../../components/AdvisorNavBar";
 import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 
 
 
 export default function Profile() {
+
+    const { user } = useUser();
+    const advisorId = user?.id;
 
     const [advisor, setAdvisor] = useState({
         username: null, 
@@ -25,13 +29,11 @@ export default function Profile() {
     const [skill2, setSkill2] = useState("");
     const [skill3, setSkill3] = useState("");
 
-    const ME = "testAdvisor1"; // for testing without login
-
     useEffect(() => {
-        if (!ME) return;
+        if (!advisorId) return;
 
-       fetchAdvisor(ME);
-    }, [ME]);
+       fetchAdvisor(advisorId);
+    }, [advisorId]);
 
     const fetchAdvisor = async (advisorId) => {
         try {
