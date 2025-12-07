@@ -3,29 +3,26 @@
 import Navbar from "@/app/components/EmployerNavBar";
 import EmployerSidebar from "@/app/components/employerDashboard/EmployerSideBar";
 import MessagePage from "@/app/components/MessagePage";
-
-const MOCK_MESSAGES = [
-  {
-    id: 1,
-    name: "John Doe",
-    message: "Sure! You can see my available time on the booking management",
-    date: "Jun 15, 2025",
-  },
-  ...Array.from({ length: 49 }, (_, i) => ({
-    id: i + 2,
-    name: `Joy Wong ${i + 1}`,
-    message: "Yes, you are right about the job application, I will have a …",
-    date: "Jun 15, 2025",
-  })),
-];
+import { useUser } from "@clerk/nextjs";
 
 export default function EmployerMessagePage() {
+  const { user, isLoaded } = useUser();
+
+  if (!isLoaded) {
+    // router.push("/");
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
+    <div className="w-full min-h-screen bg-linear-to-br from-[#f8eae2] to-white">
       <Navbar />
 
       <main className="mx-auto w-full px-6 py-8">
-        <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
+        <h1 className="mb-6 text-3xl font-bold text-[#DD5B45]">
           Employer DashBoard
         </h1>
 
@@ -35,7 +32,7 @@ export default function EmployerMessagePage() {
 
           {/* Main message panel */}
           <div className="flex-1">
-            <MessagePage messageList={MOCK_MESSAGES} />
+            {user && <MessagePage currentUserId={user.id} />}
           </div>
         </div>
       </main>
