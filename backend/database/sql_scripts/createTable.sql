@@ -285,7 +285,10 @@ CREATE TABLE advisory_sessions (
 CREATE TABLE advisory_profile (
   advisor_id TEXT  PRIMARY KEY,
   experience TEXT,
-  education  TEXT
+  education  TEXT,
+  skill_1     TEXT,
+  skill_2     TEXT,
+  skill_3     TEXT
 );
 
 -- =========================================

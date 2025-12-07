@@ -3,11 +3,13 @@
 import MemberNavbar from "@/app/components/MemberNavBar";
 import Button from "@/app/components/ui/Button";
 import { useRouter } from "next/navigation";
-import { use, useState } from "react";
+import { use, useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { IoLogoElectron } from "react-icons/io5";
 
 export default function RegisterAdvisor({ params }) {
+
+    const [recipientName, setRecipientName] = useState("");
 
     const { advisorID } = use(params);
     const router = useRouter();
@@ -18,6 +20,21 @@ export default function RegisterAdvisor({ params }) {
 
     // Register advisor state
     const [newAdvisor, setNewAdvisor] = useState({ advisorId: advisorID, clientId: userID , message: '', status: 'pending'});
+
+    // Load user names
+    useEffect(() => {
+    if (!advisorID) return;
+    (async () => {
+        try {
+        const res = await fetch(`/api/users/${advisorID}`);
+        if (!res.ok) throw new Error("Failed to fetch recipient");
+        const recipientData = await res.json();
+        setRecipientName(`${recipientData.first_name} ${recipientData.last_name}`);
+        } catch (err) {
+        console.error("Error loading user names:", err);
+        }
+    })();
+    }, [advisorID]);
 
     const handleBackToAdvisorList = () => {
         router.push('/advisor/advisorSearch');
@@ -55,7 +72,7 @@ export default function RegisterAdvisor({ params }) {
             <div className="w-4/5 h-full mx-auto mt-10 pb-10">
                 <button type='button' onClick={handleBackToAdvisorList} className="text-[20px] text-black font-semibold mb-5">&lt; Back to Advisor List</button>
 
-                <div className="flex flex-row mb-4 rounded-xl bg-gradient-to-br from-[#F3E1D5] to-white shadow text-center px-20">
+                <div className="flex flex-row mb-4 rounded-xl bg-linear-to-br from-[#F3E1D5] to-white shadow text-center px-20">
                     <div className="w-3/5 flex flex-col items-start">
                         {/* Session 1 */}
                         <div className='my-7 mb-10 text-left'>
@@ -83,7 +100,7 @@ export default function RegisterAdvisor({ params }) {
                    <div className="flex flex-row mb-4 rounded-xl bg-white shadow text-center px-20">
                         {/* Leave Message */}
                         <div className='w-1/2 my-7 mb-10 text-center px-17'>
-                            <h1 className="text-[25px] font-bold text-[#E55B3C] mb-6">Step 1: Leave A Message To {advisorID}</h1>
+                            <h1 className="text-[25px] font-bold text-[#E55B3C] mb-6">Step 1: Leave A Message To {recipientName}</h1>
                             <p className="text-gray-700 mb-7">Sharing a short message about your goals, questions, or needs will help your advisor understand how best to support you — and respond faster with relevant guidance.</p>
                             <textarea
                                 className="border rounded border-black lg:w-130 sm:w-40 min-h-40 mb-6 p-3 text-black"

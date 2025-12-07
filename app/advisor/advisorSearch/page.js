@@ -41,6 +41,9 @@ export default function AdvisorSearchPage() {
         company_role: advisor.company_role,
         education: advisor.education,
         experience: advisor.experience,
+        skill_1: advisor.skill_1,
+        skill_2: advisor.skill_2,
+        skill_3: advisor.skill_3,
       }));
 
       setAdvisorList(advisorArray);
@@ -81,7 +84,7 @@ export default function AdvisorSearchPage() {
           </div>
         </div>
         
-        <div className="flex flex-wrap lg:justify-start sm:justify-center my-4 lg:space-x-6 sm:space-x-5 space-y-10 text-center text-black">
+        <div className="flex flex-wrap lg:justify-start sm:justify-center my-4 space-x-5 space-y-10 text-center text-black">
           {advisorList.length > 0 ? (
             filteredAdvisor.map((advisor) => (
               <AdvisorCard key={advisor.advisorID} advisor={advisor} />

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/app/components/EmployerNavBar";
 import EmployerSidebar from "../../components/employerDashboard/EmployerSideBar";
 import ApplicationItem from "../../components/employerDashboard/EmployerApplicationItem";
+import { useUser } from "@clerk/nextjs";
 
 const IconChevronLeft = () => (
   <svg viewBox="0 0 24 24" className="h-5 w-5">
@@ -25,7 +26,9 @@ const IconChevronRight = () => (
 );
 
 export default function ApplicationsPage() {
+  const { user } = useUser();
   const router = useRouter();
+  
   const [applications, setApplications] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -41,7 +44,7 @@ export default function ApplicationsPage() {
       try {
         setLoading(true);
 
-        const employerId = "testEmployer1";
+        const employerId = user.id;
 
         // fetch applications
         const resApp = await fetch(
@@ -73,7 +76,7 @@ export default function ApplicationsPage() {
       }
     };
 
-    fetchApps();
+    if (user) fetchApps();
 
     // Re-fetch when returning to tab
     const handleFocus = () => fetchApps();
