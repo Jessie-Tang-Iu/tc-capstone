@@ -26,7 +26,7 @@ export default function JobBoardPage() {
     const [industries, setIndustries] = useState([]);
     const [workplaces, setWorkplaces] = useState([]);
 
-    const [filteredJobs, setFilteredJobs] = useState([]);
+    const [filteredJobs, setFilteredJobs] = useState();
     const [query, setQuery] = useState("");
     const [location, setLocation] = useState("");
     const [filters, setFilters] = useState({
@@ -298,6 +298,10 @@ export default function JobBoardPage() {
         )}
   
         {/* Main Content */}
+        {!filteredJobs ? (
+          <div className="text-center text-gray-500 py-10">Loading...</div>
+        ) : (
+        <>
         {filteredJobs.length === 0 ? (
           <div className="text-center text-gray-500 py-10">No jobs found</div>
         ) : (
@@ -347,6 +351,7 @@ export default function JobBoardPage() {
             </div>
           </div>
         )}
+      </>)}
       </main>
     );
 }

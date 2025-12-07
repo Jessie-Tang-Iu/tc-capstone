@@ -355,7 +355,7 @@ export default function JobPostEditForm() {
     <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white text-black">
       <Navbar />
       <main className="mx-auto w-full px-6 py-8">
-        <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
+        <h1 className="mb-6 text-3xl font-bold text-[#DD5B45]">
           {isEdit ? "Edit Job Post" : "Add New Job Post"}
         </h1>
 
