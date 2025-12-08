@@ -1,3 +1,5 @@
+import { query } from "../db.js";
+
 export async function getCourseProgress(courseId) {
   const result = await query(
     `

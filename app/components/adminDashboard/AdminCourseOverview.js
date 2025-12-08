@@ -292,7 +292,11 @@ export default function AdminCourseOverview({ courseId, onBack, onEdit }) {
                         </thead>
                         <tbody>
                         {userProgress.map((u) => (
-                            <tr key={u.user_id} className="border-b">
+                            <tr
+                                key={u.user_id}
+                                className="border-b cursor-pointer hover:bg-gray-200"
+                                onClick={() => setSelectedUser(u.user_id)}
+                            >
                             <td className="p-2">{u.first_name} {u.last_name}</td>
                             <td className="p-2">{u.email}</td>
                             <td className="p-2">

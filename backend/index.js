@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { testConnection } from "./database/db.js";
 import usersRouter from "./routes/users.js";
 import coursesRouter from "./routes/courses.js";
+import adminRouter from "./routes/admin.js";
 
 import { clerkMiddleware } from "@clerk/express";
 
@@ -20,6 +21,7 @@ app.use(clerkMiddleware());
 // Routes
 app.use("/users", usersRouter);
 app.use("/courses", coursesRouter);
+app.use("/admin", adminRouter);
 
 // Async code to test the database then start listening on Port 5000 if successful
 (async () => {
