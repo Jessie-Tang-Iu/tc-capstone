@@ -165,7 +165,7 @@ export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
     if (loading) return <div className="p-6 text-black bg-white">Loading course...</div>;
 
     return (
-        <div className="bg-white rounded-xl shadow p-6 w-4/5 mx-auto">
+      <div className="mb-6 rounded-xl bg-white p-6 shadow">
         <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">Edit Course</h2>
 
         {/* Course Info */}
@@ -319,6 +319,6 @@ export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
             </div>
             </div>
         )}
-        </div>
+      </div>
     );
 }

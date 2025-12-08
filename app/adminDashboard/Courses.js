@@ -62,20 +62,21 @@ export default function AdminDashboard() {
   if (loading) return <div className="p-6 text-black">Loading...</div>;
 
   return (
-    <main className="w-full min-h-screen bg-gradient-to-br from-[#f8f1ed] to-white p-6">
+    <main>
       {view === "list" && (
-        <div>
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-[#E55B3C]">
-              Courses Dashboard
-            </h1>
+        <>
+          <div className="mb-6 rounded-xl bg-white p-6 shadow">
+            <div className="mb-4 text-3xl font-semibold text-[#E55B3C] text-center">
+              Courses Management
+            </div>
 
-            <div className="flex gap-4 mb-6">
+            <div className="flex flex-wrap justify-between items-center mb-4 gap-3">
+              <div className="flex justify-center gap-3">
               {/* Search by name */}
               <input
                 type="text"
                 placeholder="Search by name..."
-                className="border-2 px-3 py-2 rounded w-1/3 bg-[#f8f1ed] border-[#E55B3C] text-black"
+                className="h-10 border-2 px-3 py-2 rounded w-1/3 bg-[#f8f1ed] border-[#E55B3C] text-black"
                 onChange={(e) => {
                   const text = e.target.value.toLowerCase();
                   setFilteredCourses(
@@ -87,7 +88,7 @@ export default function AdminDashboard() {
               />
               {/* Filter by Level */}
               <select
-                className="border-2 px-3 py-2 rounded bg-[#f8f1ed] border-[#E55B3C] text-black"
+                className="h-10 border-2 px-3 py-2 rounded bg-[#f8f1ed] border-[#E55B3C] text-black"
                 onChange={(e) => {
                   const level = e.target.value;
                   setFilteredCourses(
@@ -105,7 +106,7 @@ export default function AdminDashboard() {
 
               {/* Filter by Type */}
               <select
-                className="border-2 px-3 py-2 rounded bg-[#f8eae2]white border-[#E55B3C] text-black"
+                className="h-10 border-2 px-3 py-2 rounded bg-[#f8eae2]white border-[#E55B3C] text-black"
                 onChange={(e) => {
                   const type = e.target.value;
                   setFilteredCourses(
@@ -120,13 +121,14 @@ export default function AdminDashboard() {
                 <option value="In Person">In Person</option>
                 <option value="Workshop">Workshop</option>
               </select>
+              </div>
+              <button
+                onClick={() => setView("create")}
+                className="h-10 bg-[#E55B3C] text-white px-4 py-2 rounded-lg hover:bg-[#c94b2d]"
+              >
+                Create Course
+              </button>
             </div>
-            <button
-              onClick={() => setView("create")}
-              className="bg-[#E55B3C] text-white px-4 py-2 rounded-lg hover:bg-[#c94b2d]"
-            >
-              Create Course
-            </button>
           </div>
 
           <div className="w-full">
@@ -144,7 +146,7 @@ export default function AdminDashboard() {
               <p className="text-gray-600 p-4">No courses found.</p>
             )}
           </div>
-        </div>
+        </>
       )}
 
       {view === "create" && (

@@ -153,7 +153,7 @@ function AdminDashboardCore() {
         </h1>
 
         <div className="flex flex-row gap-6">
-          <div className="ml-0 w-60 rounded-lg bg-white p-1 flex flex-col shadow">
+          <div className="ml-0 w-60 h-70 min-w-35 rounded-lg bg-white p-1 flex flex-col shadow">
             <TabBtn v="message">Message</TabBtn>
             <TabBtn v="users">Users</TabBtn>
             <TabBtn v="requests">Requests</TabBtn>

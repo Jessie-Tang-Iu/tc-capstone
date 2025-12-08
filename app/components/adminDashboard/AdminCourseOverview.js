@@ -54,7 +54,7 @@ export default function AdminCourseOverview({ courseId, onBack, onEdit }) {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow p-6 w-4/5 mx-auto">
+    <div className="mb-6 rounded-xl bg-white p-6 shadow">
         
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
@@ -158,7 +158,7 @@ export default function AdminCourseOverview({ courseId, onBack, onEdit }) {
                     <select
                     value={selectedLessonIndex}
                     onChange={(e) => setSelectedLessonIndex(Number(e.target.value))}
-                    className="border rounded p-2 text-black cursor-pointer"
+                    className="min-w-50 border rounded p-2 text-black cursor-pointer"
                     >
                     {lessons.map((l, idx) => (
                         <option key={l.id} value={idx}>
