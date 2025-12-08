@@ -22,6 +22,8 @@ const SectionTitle = ({ children }) => (
 
 export default function ApplicationDetailsPage() {
   const { id } = useParams();
+
+  const { user, isLoaded } = useUser();
   const router = useRouter();
   const numericId = Number(id);
 
@@ -131,13 +133,8 @@ export default function ApplicationDetailsPage() {
     }
   };
 
-  if (loading)
+  if (!isLoaded)
     return <div className="p-10 text-center text-black">Loading...</div>;
-
-  if (!app)
-    return (
-      <div className="p-10 text-center text-black">Application not found.</div>
-    );
 
   return (
     <div className="w-full min-h-screen bg-linear-to-br from-[#f8eae2] to-white">
@@ -150,6 +147,9 @@ export default function ApplicationDetailsPage() {
         <div className="flex gap-6">
           <EmployerSidebar />
 
+          {!app ? (
+            <div className="p-10 text-center text-black">{loading ? "Loading..." : "Application not found"}</div>
+          ) : (
           <section className="flex-1 rounded-xl bg-white shadow">
             <div className="flex items-center justify-between border-b px-4 py-3">
               <div className="flex items-center text-base font-semibold text-black">
@@ -224,24 +224,39 @@ export default function ApplicationDetailsPage() {
 
             <hr />
 
-            {/* Relative Information */}
-            {(app.relative_first_name != "" || app.relative_last_name != "") && (
-              <RelativePreview title="Relative Information" app={app} />
-            )}
-
             <div className="px-4 py-4 text-gray-700">
-              {userResume && <ResumePreview title="Resume Information" app={app} resume={userResume} />}
-              <div className="py-2"></div>
-              {userCoverLetter && <CoverLetterPreview title="Cover Letter Information" app={app} coverLetter={userCoverLetter} /> }
+              {/* Relative Information */}
+              {(app.relative_first_name != "" || app.relative_last_name != "") && (
+                <div className="mb-4">
+                  <RelativePreview title="Relative Information" app={app} />
+                </div>
+              )}
+
+              {/* Resume Information */}
+              {userResume && 
+                <div className="mb-4"> 
+                  <ResumePreview title="Resume Information" app={app} resume={userResume} />
+                </div>
+              }
+
+              {/* Cover letter Information */}
+              {userCoverLetter && 
+                <div className="mb-4">
+                  <CoverLetterPreview title="Cover Letter Information" app={app} coverLetter={userCoverLetter} /> 
+                </div>
+              }
+
+              {/* Answer employer Questions */}
               <AnswerPreview title="Employer Questions" app={app} />            
             </div>
           </section>
+          )}
         </div>
 
-        {openChat && (
+        {openChat && app && (
           <ChatWindow
-            me={app.user_id}
-            recipient={`${app.first_name} ${app.last_name}`}
+            me={user.id}
+            recipient={app.user_id}
             onClose={() => setOpenChat(false)}
             onSend={(text) => console.log("send:", text)}
           />

@@ -105,6 +105,7 @@ function AdminDashboardCore() {
   const renderUsers = () =>
     details?.type === "user" ? (
       <UserDetailsCard
+        isPublic={false}
         user={details.user}
         roleLabel={details.roleLabel}
         onClose={closeDetails}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 
@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "@/app/components/EmployerNavBar";
 import EmployerSidebar from "@/app/components/employerDashboard/EmployerSideBar";
 import PopupMessage from "@/app/components/ui/PopupMessage";
+import { useUser } from "@clerk/nextjs";
 
 const FieldLabel = ({ children }) => (
   <div className="text-xs font-medium text-gray-700 mb-1">{children}</div>
@@ -122,6 +123,7 @@ const toolbarOptions = [
 ];
 
 export default function JobPostEditForm() {
+  const { user, isLoaded } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -176,6 +178,15 @@ export default function JobPostEditForm() {
   const [skillsNeed, setSkillsNeed] = useState("");
   const [moreDetails, setMoreDetails] = useState("");
   const [benefits, setBenefits] = useState("");
+
+  const employerData = useMemo(() => {
+    if (user) {
+      fetch(`/api/employer/${user.id}`)
+        .then((r) => r.json())
+        .then((data) => { setCompany(data.company_name); return data;} )
+        .catch((err) => { console.error('Error fetch employer data: ', err); return null; })
+    } else return null;
+  }, [user]);
 
   const prefillForm = (data) => {
     setTitle(data.title || "");
@@ -295,6 +306,7 @@ export default function JobPostEditForm() {
 
     const payload = {
       title,
+      employerId: user.id,
       company,
       location,
       postedAt: new Date().toISOString(),
@@ -331,7 +343,7 @@ export default function JobPostEditForm() {
       // If creating a new job, navigate to the edit page for the new job
       if (!isEdit) {
         const result = await res.json();
-        router.push(`/employerDashboard/jobPost/edit?id=${result.id}`);
+        router.push(`/employerDashboard/jobPost`);
       }
     } catch (err) {
       console.error("Error saving job:", err);
@@ -344,15 +356,16 @@ export default function JobPostEditForm() {
     }
   };
 
-  if (loading)
+  if (!isLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-600">
-        Loading...
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">Loading...</p>
       </div>
     );
+  }
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white text-black">
+    <div className="w-full min-h-screen bg-linear-to-br from-[#f8eae2] to-white text-black">
       <Navbar />
       <main className="mx-auto w-full px-6 py-8">
         <h1 className="mb-6 text-3xl font-bold text-[#DD5B45]">
@@ -362,6 +375,9 @@ export default function JobPostEditForm() {
         <div className="flex gap-6">
           <EmployerSidebar />
 
+          {loading ? (
+            <div className="flex-1 rounded-xl bg-white shadow px-4 py-4">Loading...</div>
+          ) : (
           <section className="flex-1 rounded-xl bg-white shadow px-4 py-4">
             {/* Header: Simplified and cleaner buttons */}
             <div className="flex items-center justify-between border-b pb-3 mb-6">
@@ -600,6 +616,7 @@ export default function JobPostEditForm() {
               />
             </div>
           </section>
+          )}
         </div>
 
         {popup && (

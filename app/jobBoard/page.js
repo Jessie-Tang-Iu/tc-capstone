@@ -293,7 +293,7 @@ export default function JobBoardPage() {
             errorMessage={errorMessage}
             setErrorMessage={setErrorMessage}
             onSubmit={handleApplySubmit}
-            onClose={() => {setShowApplyForm(false); setCurrentStep(1);}} 
+            onClose={() => { setShowApplyForm(false); setCurrentStep(1); }} 
           />
         )}
   

@@ -99,7 +99,7 @@ export default function ApplicationItem({
           disabled={loading}
           value={selectedStatus}
           onChange={(e) => handleStatusChange(e.target.value)}
-          className={`w-32 h-9 rounded-md text-base font-semibold border text-center ${statusStyle} ${
+          className={`w-32 h-9 rounded-md text-base border text-center ${statusStyle} ${
             loading
               ? "opacity-50 cursor-not-allowed"
               : "hover:opacity-90 active:scale-[0.98] transition"

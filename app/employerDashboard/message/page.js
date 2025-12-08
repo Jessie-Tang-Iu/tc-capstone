@@ -9,7 +9,6 @@ export default function EmployerMessagePage() {
   const { user, isLoaded } = useUser();
 
   if (!isLoaded) {
-    // router.push("/");
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-gray-500">Loading...</p>

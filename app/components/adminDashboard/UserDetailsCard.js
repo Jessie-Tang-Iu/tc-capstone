@@ -18,10 +18,12 @@ const LabelValue = ({label, value}) => (
   </div>
 )
 
-export default function UserDetailsCard({ user, roleLabel, onClose }) {
+export default function UserDetailsCard({ isPublic=true, user, roleLabel, onClose }) {
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  
+  const hideContent = isPublic ? ["clerk_id", "username", "role", "status", "show_email", "show_phone"] : ["show_email", "show_phone"];
 
   useEffect(() => {
     if (!user?.clerk_id) return;
@@ -115,12 +117,12 @@ export default function UserDetailsCard({ user, roleLabel, onClose }) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {keys.map((key) => {
-              if (data[key] && data[key].trim() !== "" && data[key].replaceAll("|","").trim() !== "") {
+              if (!hideContent.includes(key) && data[key] && data[key].trim() !== "" && data[key].replaceAll("|","").trim() !== "") {
                 if (key === "email") {
                   return data.show_email ? <LabelValue key={key} label="Email" value={data.email} /> : null;
                 } else if (key === "phone") {
                   return data.show_phone ? <LabelValue key={key} label="Phone number" value={data.phone} /> : null;
-                } else if (key !== "show_email" && key !== "show_phone") {
+                } else {
                   return <LabelValue key={key} label={key} value={data[key]} />;
                 }
               }
