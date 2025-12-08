@@ -258,17 +258,21 @@ export default function JobBoardPage() {
       <main className="w-full min-h-screen bg-gray-100">
         {/* Navigation */}
         <MemberNavbar />
-  
-        {/* Search Bar */}
-        <div className="pt-1">
-          <SearchBar
-            query={query}
-            onQueryChange={setQuery}
-            location={location}
-            onLocationChange={setLocation}
-            onSearch={search}
-            onAdvancedSearch={() => setShowAdvancedSearch(true)}
-          />
+
+        <div className="my-4 mx-2 rounded-xl bg-white p-6 shadow text-center">
+          <div className="mb-4 text-4xl font-semibold text-[#E55B3C]">
+            Job Board Page
+          </div>
+          <div className="flex justify-center">
+            <SearchBar
+              query={query}
+              onQueryChange={setQuery}
+              location={location}
+              onLocationChange={setLocation}
+              onSearch={search}
+              onAdvancedSearch={() => setShowAdvancedSearch(true)}
+            />
+          </div>
         </div>
   
         {showAdvancedSearch && (
