@@ -36,11 +36,11 @@ export default function CoverLetter({coverLetter, setCoverLetter, isNew, setErro
           <div className="mb-4 text-2xl font-semibold text-[#E55B3C] text-center">
             TC Alberta Cover Letter
           </div>
-          <label className="block text-xs text-gray-700 font-medium mb-1">Content</label>
+          <label className="block text-sm text-gray-700 font-medium mb-1">Content</label>
           <div className="h-80">
             <ReactQuill
               theme="snow"
-              className="h-68 text-black rounded-md text-sm"
+              className="h-68 text-black rounded-md text-base"
               value={content}
               onChange={setContent}
               modules={{ toolbar: toolbarOptions }}
@@ -53,10 +53,10 @@ export default function CoverLetter({coverLetter, setCoverLetter, isNew, setErro
             rows={10}
             className="w-full px-4 py-2 text-black bg-white rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E55B3C]"
           /> */}
-          <div className="text-right text-xs text-gray-500 mr-1 w-full">
+          <div className="text-right text-sm text-gray-500 mt-6 mr-1 w-full">
             {content.length} / 800
           </div>
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-2">
             <button 
               className="text-sm px-6 py-2 bg-[#E55B3C] hover:bg-[#d14f32] font-semibold rounded-md transition duration-200 cursor-pointer focus:outline-none active:scale-95 text-white"
               onClick={onSave}

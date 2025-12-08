@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/app/components/EmployerNavBar";
 import EmployerSidebar from "../../components/employerDashboard/EmployerSideBar";
 import ApplicationItem from "../../components/employerDashboard/EmployerApplicationItem";
+import { useUser } from "@clerk/nextjs";
 
 const IconChevronLeft = () => (
   <svg viewBox="0 0 24 24" className="h-5 w-5">
@@ -25,7 +26,9 @@ const IconChevronRight = () => (
 );
 
 export default function ApplicationsPage() {
+  const { user, isLoaded } = useUser();
   const router = useRouter();
+  
   const [applications, setApplications] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -41,7 +44,7 @@ export default function ApplicationsPage() {
       try {
         setLoading(true);
 
-        const employerId = "testEmployer1";
+        const employerId = user.id;
 
         // fetch applications
         const resApp = await fetch(
@@ -51,20 +54,20 @@ export default function ApplicationsPage() {
         const apps = await resApp.json();
 
         // fetch jobs
-        const resJob = await fetch(`/api/job?employer_id=${employerId}`);
-        if (!resJob.ok) throw new Error("Failed to fetch jobs");
-        const jobs = await resJob.json();
+        // const resJob = await fetch(`/api/job?employer_id=${employerId}`);
+        // if (!resJob.ok) throw new Error("Failed to fetch jobs");
+        // const jobs = await resJob.json();
 
-        // merge
-        const merged = apps.map((a) => {
-          const job = jobs.find((j) => Number(j.id) === Number(a.job_id));
-          return {
-            ...a,
-            job_title: job?.title || "Unknown Job",
-          };
-        });
-
-        setApplications(merged);
+        // // merge
+        // const merged = apps.map((a) => {
+        //   const job = jobs.find((j) => Number(j.id) === Number(a.job_id));
+        //   return {
+        //     ...a,
+        //     job_title: job?.title || "Unknown Job",
+        //   };
+        // });
+        // console.log("Applications: ", apps);
+        setApplications(apps);
       } catch (err) {
         console.error("Error fetching applications:", err);
         setApplications([]);
@@ -73,30 +76,35 @@ export default function ApplicationsPage() {
       }
     };
 
-    fetchApps();
+    if (user) fetchApps();
 
     // Re-fetch when returning to tab
     const handleFocus = () => fetchApps();
     window.addEventListener("focus", handleFocus);
 
     return () => window.removeEventListener("focus", handleFocus);
-  }, []);
+  }, [user]);
 
   const rows = useMemo(
     () => applications.slice(start, end),
     [applications, page]
   );
 
-  if (loading) {
-    return <div className="p-10 text-center text-black">Loading...</div>;
-  }
+  if (!isLoaded) {
+      // router.push("/");
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <p className="text-gray-500">Loading...</p>
+        </div>
+      );
+    }
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
+    <div className="w-full min-h-screen bg-linear-to-br from-[#f8eae2] to-white">
       <Navbar />
 
       <main className="mx-auto w-full px-6 py-8 rounded-xl">
-        <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
+        <h1 className="mb-6 text-3xl font-bold text-[#DD5B45]">
           Employer Dashboard
         </h1>
 
@@ -105,11 +113,11 @@ export default function ApplicationsPage() {
 
           <section className="flex-1 rounded-xl bg-white shadow">
             <div className="flex items-center justify-between border-b px-4 py-3">
-              <div className="text-sm font-semibold text-black">
+              <div className="text-base font-semibold text-black">
                 Total Applications: {total}
               </div>
 
-              <div className="flex items-center gap-3 text-sm text-black">
+              <div className="flex items-center gap-3 text-base text-black">
                 <span>
                   {start + 1} - {end}
                 </span>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/app/components/EmployerNavBar";
 import EmployerSidebar from "../../components/employerDashboard/EmployerSideBar";
 import EmployerJobPostItem from "../../components/employerDashboard/EmployerJobPostItem";
+import { useUser } from "@clerk/nextjs";
 
 const IconChevronLeft = () => (
   <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
@@ -25,6 +26,7 @@ const IconChevronRight = () => (
 );
 
 export default function JobPostsPage() {
+  const { user, isLoaded, isSignedIn } = useUser();
   const router = useRouter();
   const [jobs, setJobs] = useState([]);
   const [page, setPage] = useState(1);
@@ -37,9 +39,10 @@ export default function JobPostsPage() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await fetch("/api/job/public", { cache: "no-store" });
+        const res = await fetch(`/api/job/employer/${user.id}`, { cache: "no-store" });
         if (!res.ok) throw new Error("Failed to fetch jobs");
         const data = await res.json();
+        // console.log("Jobs by employer: ", data);
         setJobs(data);
       } catch (err) {
         console.error("Error fetching jobs:", err.message || err);
@@ -47,8 +50,8 @@ export default function JobPostsPage() {
         setLoading(false);
       }
     };
-    fetchJobs();
-  }, []);
+    if (user) fetchJobs();
+  }, [user]);
 
   const total = jobs.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -56,11 +59,20 @@ export default function JobPostsPage() {
   const end = Math.min(start + pageSize, total);
   const rows = useMemo(() => jobs.slice(start, end), [jobs, page]);
 
+  if (!isLoaded) {
+    return <p>Loading...</p>;
+  }
+
+  if (!isSignedIn) {
+    // Don’t render anything while redirecting
+    return null;
+  }
+
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
       <Navbar />
       <main className="mx-auto w-full px-6 py-8">
-        <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
+        <h1 className="mb-6 text-3xl font-bold text-[#DD5B45]">
           Employer DashBoard
         </h1>
 

@@ -41,6 +41,9 @@ export default function AdvisorSearchPage() {
         company_role: advisor.company_role,
         education: advisor.education,
         experience: advisor.experience,
+        skill_1: advisor.skill_1,
+        skill_2: advisor.skill_2,
+        skill_3: advisor.skill_3,
       }));
 
       setAdvisorList(advisorArray);
@@ -64,7 +67,7 @@ export default function AdvisorSearchPage() {
   );
 
   return (
-    <main className='bg-gradient-to-br from-[#f8eae2] to-white min-h-screen pb-5'>
+    <main className='bg-linear-to-br from-[#f8eae2] to-white min-h-screen pb-5'>
       <Navbar />
       <div className='w-4/5 mx-auto mt-10'>
         <button onClick={handleBackToAdvisorList} className="text-[20px] text-black font-semibold mb-2">&lt; Back to Advisor List</button>
@@ -81,10 +84,10 @@ export default function AdvisorSearchPage() {
           </div>
         </div>
         
-        <div className="flex flex-wrap lg:justify-start sm:justify-center my-4 lg:space-x-6 sm:space-x-5 space-y-10 text-center text-black">
+        <div className="flex flex-wrap lg:justify-start sm:justify-center my-4 space-x-5 space-y-10 text-center text-black">
           {advisorList.length > 0 ? (
-            filteredAdvisor.map((advisor) => (
-              <AdvisorCard key={advisor.advisorID} advisor={advisor} />
+            filteredAdvisor.map((advisor,idx) => (
+              <AdvisorCard key={idx} advisor={advisor} />
             ))
           ) : (
             <p className="text-gray-600 p-4">No advisors found.</p>

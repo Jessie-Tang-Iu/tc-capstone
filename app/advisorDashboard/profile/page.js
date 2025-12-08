@@ -3,10 +3,14 @@
 import Button from "@/app/components/ui/Button";
 import Navbar from "../../components/AdvisorNavBar";
 import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 
 
 
 export default function Profile() {
+
+    const { user } = useUser();
+    const advisorId = user?.id;
 
     const [advisor, setAdvisor] = useState({
         username: null, 
@@ -19,15 +23,16 @@ export default function Profile() {
         company_role: null,
         education: null,
         experience: null,
+        skill_1: null,
+        skill_2: null,
+        skill_3: null,
     });
 
-    const ME = "testAdvisor1"; // for testing without login
-
     useEffect(() => {
-        if (!ME) return;
+        if (!advisorId) return;
 
-       fetchAdvisor(ME);
-    }, [ME]);
+       fetchAdvisor(advisorId);
+    }, [advisorId]);
 
     const fetchAdvisor = async (advisorId) => {
         try {
@@ -68,6 +73,9 @@ export default function Profile() {
             advisorId: advisor.clerk_id,
             education: advisor.education,
             experience: advisor.experience,
+            skill1: advisor.skill_1,
+            skill2: advisor.skill_2,
+            skill3: advisor.skill_3,
         }
 
         console.log("Submitting advisor profile: ", newAdvisorProfile);
@@ -80,13 +88,17 @@ export default function Profile() {
                 },
                 body: JSON.stringify({ advisorId: advisor.clerk_id,
                     education: advisor.education,
-                    experience: advisor.experience, })}
+                    experience: advisor.experience, 
+                    skill1: advisor.skill_1,
+                    skill2: advisor.skill_2,
+                    skill3: advisor.skill_3 })
+            }
                 );
             if (!res.ok) {console.error("Failed to update profile"); return;}
         
             console.log("Profile updated successfully");
 
-            fetchAdvisor(ME); // refresh data
+            fetchAdvisor(advisorId); // refresh data
             
         } catch (error) {
             console.error("Error submitting profile: ", error);
@@ -95,7 +107,7 @@ export default function Profile() {
     }
 
     return(
-        <main className="bg-gradient-to-br from-[#f8eae2] to-white min-h-screen">
+        <main className="bg-linear-to-br from-[#f8eae2] to-white min-h-screen">
             <Navbar />
         
             <div className="mx-auto mt-10">
@@ -201,13 +213,14 @@ export default function Profile() {
                         <div className="mb-10 flex flex-col">
                             <h1 className="text-2xl text-black font-bold mb-2">Skills</h1>
 
-                            <div className="flex flex-row space-x-4">
+                            <div className="flex flex-row sm:flex-col space-x-4">
                                 <div className="flex flex-row space-x-2 mb-6 items-center">
                                     <label className="text-1xl text-black">Skill 1:</label>
                                     <input
                                     className="border rounded border-black p-1"
                                     type="text"
-                                    value={""}
+                                    value={advisor.skill_1 || ""}
+                                    onChange={(e) => setAdvisor({...advisor, skill_1: e.target.value})}
                                     />
                                 </div>
 
@@ -216,7 +229,8 @@ export default function Profile() {
                                     <input
                                     className="border rounded border-black p-1"
                                     type="text"
-                                    value={""}
+                                    value={advisor.skill_2 || ""}
+                                    onChange={(e) => setAdvisor({...advisor, skill_2: e.target.value})}
                                     />
                                 </div>
 
@@ -225,27 +239,8 @@ export default function Profile() {
                                     <input
                                     className="border rounded border-black p-1"
                                     type="text"
-                                    value={""}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="flex flex-row space-x-4">
-                                <div className="flex flex-row space-x-2 mb-6 items-center">
-                                    <label className="text-1xl text-black">Skill 4:</label>
-                                    <input
-                                    className="border rounded border-black p-1"
-                                    type="text"
-                                    value={""}
-                                    />
-                                </div>
-
-                                <div className="flex flex-row space-x-2 mb-6 items-center">
-                                    <label className="text-1xl text-black">Skill 5:</label>
-                                    <input
-                                    className="border rounded border-black p-1"
-                                    type="text"
-                                    value={""}
+                                    value={advisor.skill_3 || ""}
+                                    onChange={(e) => setAdvisor({...advisor, skill_3: e.target.value})}
                                     />
                                 </div>
                             </div>

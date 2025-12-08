@@ -21,7 +21,7 @@ export default function RequestsPanel({ onShowDetails }) {
   const fetchRequestsByRole = async (roleKey) => {
     try {
       const res = await fetch(
-        `/api/users?status=under_review&role=${roleKey}`,
+        `/api/users?status=under-review&role=${roleKey}`,
         {
           cache: "no-store",
         }
@@ -65,19 +65,50 @@ export default function RequestsPanel({ onShowDetails }) {
     }
   };
 
+  const fetchUserStatus = async (userId) => {
+    try {
+      const res = await fetch(`/api/users/${userId}`);
+      if (!res.ok) throw new Error("Failed to fetch user status for pre-check");
+      const data = await res.json();
+      return data.status;
+    } catch (err) {
+      console.error("Fetch user status error:", err);
+      return null;
+    }
+  };
+
   const acceptRequest = async (roleKey, id) => {
     const confirmAccept = window.confirm("Approve this request?");
     if (!confirmAccept) return;
 
-    const updated = await updateUserStatus(id, "active");
-    if (updated) {
-      alert("User approved successfully");
+    const currentStatus = await fetchUserStatus(id);
+
+    if (currentStatus === "active" || currentStatus === "banned") {
+      alert("User has already been reviewed.");
+      // Remove the user from the list immediately since they are no longer pending
       setRequestsByRole((prev) => ({
         ...prev,
         [roleKey]: prev[roleKey].filter((u) => u.clerk_id !== id),
       }));
+      return;
+    }
+
+    if (currentStatus === "under_review") {
+      const updated = await updateUserStatus(id, "active");
+      if (updated) {
+        alert("User approved successfully");
+        setRequestsByRole((prev) => ({
+          ...prev,
+          [roleKey]: prev[roleKey].filter((u) => u.clerk_id !== id),
+        }));
+      } else {
+        alert("Failed to update user status");
+      }
     } else {
-      alert("Failed to update user status");
+      // Fallback for null status, or unexpected status
+      alert(
+        "Cannot approve: User status is unknown or invalid. Refresh the page."
+      );
     }
   };
 
@@ -85,15 +116,33 @@ export default function RequestsPanel({ onShowDetails }) {
     const confirmRefuse = window.confirm("Reject this request?");
     if (!confirmRefuse) return;
 
-    const updated = await updateUserStatus(id, "banned");
-    if (updated) {
-      alert("User rejected successfully");
+    const currentStatus = await fetchUserStatus(id);
+
+    if (currentStatus === "active" || currentStatus === "banned") {
+      alert("User has already been reviewed.");
       setRequestsByRole((prev) => ({
         ...prev,
         [roleKey]: prev[roleKey].filter((u) => u.clerk_id !== id),
       }));
+      return;
+    }
+
+    if (currentStatus === "under_review") {
+      const updated = await updateUserStatus(id, "banned");
+      if (updated) {
+        alert("User rejected successfully");
+        setRequestsByRole((prev) => ({
+          ...prev,
+          [roleKey]: prev[roleKey].filter((u) => u.clerk_id !== id),
+        }));
+      } else {
+        alert("Failed to update user status");
+      }
     } else {
-      alert("Failed to update user status");
+      // Fallback for null status, or unexpected status
+      alert(
+        "Cannot reject: User status is unknown or invalid. Refresh the page."
+      );
     }
   };
 

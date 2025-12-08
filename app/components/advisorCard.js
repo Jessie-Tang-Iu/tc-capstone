@@ -22,11 +22,10 @@ export default function AdvisorCard({ advisor }) {
     }
 
 
-
     return(
         <div className='w-115 h-40 bg-white shadow rounded-xl flex flex-row py-3 px-4 text-start'>
-            <div className='flex flex-col mr-5'>
-                <div className="flex flex-row space-x-2">
+            <div className='flex flex-col flex-2'>
+                <div className="flex flex-row space-x-2 mr-5">
                     <RxAvatar size={90} />
                     <div className="text-start">
                         <p className='font-bold text-[20px] mb-2'>{advisor.first_name} {advisor.last_name}</p>
@@ -38,18 +37,31 @@ export default function AdvisorCard({ advisor }) {
                 
 
                 {/* Skills Tag */}
-                <div className="flex flex-wrap space-x-2 mt-2">
-                    <div className='border border-[#9d9977] shadow rounded-4xl bg-[#f6f0bb] px-2 w-18'>
-                        <p>Node.js</p>
-                    </div>
-                    <div className='border border-[#839c9d] shadow rounded-4xl bg-[#c7ecee] px-2 w-19'>
-                        <p>Tailwind</p>
-                    </div>
-                    <div className='border border-[#8daa88] shadow rounded-4xl bg-[#c1e7bb] px-2 w-24'>
-                        <p>JavaScript</p>
-                    </div>
+                <div className="flex flex-wrap justify-center text-center space-x-2 mt-2">
+                    {!advisor.skill_1 && !advisor.skill_2 && !advisor.skill_3 &&
+                        <div className='border border-gray-300 shadow-lg rounded-xl bg-white/10 backdrop-blur-sm px-2'>
+                            <p>No Skills Provided</p>
+                        </div>
+                    }
+
+                    {advisor.skill_1 && (
+                        <div className='border  border-gray-300 shadow-lg rounded-xl bg-[#f6f0bb] backdrop-blur-sm px-2'>
+                            <p>{advisor.skill_1 || ""}</p>
+                        </div>
+                    )}
+
+                    {advisor.skill_2 && (
+                        <div className='border border-gray-300 shadow-lg rounded-xl bg-[#c7ecee] backdrop-blur-sm px-2'>
+                            <p>{advisor.skill_2 || ""}</p>
+                        </div>
+                    )}
+
+                    {advisor.skill_3 && (
+                        <div className='border border-gray-300 shadow-lg rounded-xl bg-[#c1e7bb] backdrop-blur-sm px-2'>
+                            <p>{advisor.skill_3 || ""}</p>
+                        </div>
+                    )}
                 </div>
-                
             </div>
             
             <div className='flex flex-col my-3 justify-between items-start space-x-3.5 ml-auto'>

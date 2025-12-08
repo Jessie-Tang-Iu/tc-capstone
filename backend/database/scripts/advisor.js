@@ -27,7 +27,7 @@ export async function getAdvisorById(id) {
 }
 
 export async function updateAdvisorProfile(advisorProfile) {
-    const { advisorId, education, experience } = advisorProfile;
+    const { advisorId, education, experience, skill1, skill2, skill3 } = advisorProfile;
 
     const existingProfile = await query(
         `SELECT * FROM advisory_profile WHERE advisor_id = $1`,
@@ -36,18 +36,18 @@ export async function updateAdvisorProfile(advisorProfile) {
     if (existingProfile.rows.length) {
         const result = await query(
             `UPDATE advisory_profile 
-            SET education = $1, experience = $2
+            SET education = $1, experience = $2, skill_1 = $4, skill_2 = $5, skill_3 = $6
             WHERE advisor_id = $3
             RETURNING *;`,
-            [education, experience, advisorId]
+            [education, experience, advisorId, skill1, skill2, skill3]
         );    
         return result.rows[0];
     } else {
         const result = await query(
-          `INSERT INTO advisory_profile (advisor_id, education, experience)
-          VALUES ($1, $2, $3)
+          `INSERT INTO advisory_profile (advisor_id, education, experience, skill_1, skill_2, skill_3)
+          VALUES ($1, $2, $3, $4, $5, $6)
           RETURNING *;`,
-          [advisorId, education, experience]
+          [advisorId, education, experience, skill1, skill2, skill3]
         );
         return result.rows[0];
     }

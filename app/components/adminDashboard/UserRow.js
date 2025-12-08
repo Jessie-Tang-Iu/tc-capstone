@@ -43,7 +43,7 @@ export default function UserRow({
       const res = await fetch(`/api/users/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ newStatus: newStatus }),
       });
 
       if (!res.ok) throw new Error("Failed to update status");

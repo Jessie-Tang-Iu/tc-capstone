@@ -63,6 +63,7 @@ export default function MessagePage({ currentUserId }) {
       );
       if (!res.ok) return;
       const rows = await res.json();
+      console.log("messages: ", rows);
       const mapped = rows.map((m) => {
         const peer =
           m.sent_user_id === currentUserId ? m.receiver_name : m.sender_name;

@@ -1,20 +1,21 @@
 "use client";
 
-import { useSignIn, useSession } from "@clerk/nextjs";
+import { useSignIn, useSession, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { jwtDecode } from "jwt-decode"; // Helps Decode the Clerk JWT for the user's role
 import Image from "next/image";
 
 export default function ClerkSignIn() {
   const { isLoaded, signIn, setActive } = useSignIn();
   const { session } = useSession();
+  const { signOut } = useClerk();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showError, setShowError] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleAuth = async (e) => {
@@ -32,16 +33,54 @@ export default function ClerkSignIn() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/post-login");
-      } else {
+      } else if (
+        result.status === "needs_first_factor" ||
+        result.status === "needs_second_factor"
+      ) {
         setError("Additional steps required (e.g. MFA).");
+      } else {
+        // console.error("Unexpected Sign-In Status:", result.status);
+        setError(
+          "Sign-in failed due to an unexpected status. Please try again."
+        );
       }
     } catch (err) {
-      setError(err.errors ? err.errors[0].message : err.message);
+      const errorMessage = err.errors ? err.errors[0].message : err.message;
+
+      if (
+        errorMessage === "Failed to fetch" ||
+        errorMessage === "Network Error" ||
+        err.name === "TypeError" ||
+        errorMessage.includes("timeout") ||
+        err.name === "_ClerkRuntimeError" ||
+        errorMessage.includes("Clerk:")
+      ) {
+        setError(
+          "Connection timeout or network error. Please check your internet connection."
+        );
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const getStatus = async () => {
+      if (session) {
+        // console.log("Session: ", session.user.publicMetadata.status);
+        let status = session.user.publicMetadata.status;
+        if (status == "active") {
+          router.push("/post-login");
+        } else {
+          setError("Your account is currently under review. Please try logging in again later.");
+          await signOut(() => router.push("/signIn"));
+        }
+      }
+    }
+    getStatus();
+  }, [session]);
 
   return (
     <div className="flex justify-center items-center">
@@ -112,7 +151,10 @@ export default function ClerkSignIn() {
 
             <p className="text-gray-600 text-sm mt-2 text-center">
               Forget Password?{" "}
-              <Link href="/forgetPassword" className="underline hover:text-blue-400">
+              <Link
+                href="/forgetPassword"
+                className="underline hover:text-blue-400"
+              >
                 Click Here
               </Link>
             </p>

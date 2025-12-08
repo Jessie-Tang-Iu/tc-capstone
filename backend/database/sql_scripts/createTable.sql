@@ -15,7 +15,8 @@ DROP TABLE IF EXISTS lessons CASCADE;
 DROP TABLE IF EXISTS courses CASCADE;
 
 
-DROP TABLE IF EXISTS
+DROP TABLE IF EXISTS  
+  admin,
   reports,
   comments,
   posts,
@@ -42,31 +43,44 @@ CASCADE;
 -- CORE: Users
 -- =========================================
 CREATE TABLE users (
-    clerk_id VARCHAR(255) PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    first_name VARCHAR(100) NOT NULL,
-    last_name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    phone VARCHAR(20),
-    status VARCHAR(20) NOT NULL DEFAULT 'under_review',
-    role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'member', 'advisor', 'employer'))
+    clerk_id        VARCHAR(255) PRIMARY KEY,
+    username        VARCHAR(50)  UNIQUE NOT NULL,
+    first_name      VARCHAR(100) NOT NULL,
+    last_name       VARCHAR(100) NOT NULL,
+    preferred_name  VARCHAR(100) DEFAULT '',
+    pronouns        VARCHAR(100) DEFAULT '',
+    address         TEXT DEFAULT '',
+    link            VARCHAR(500) DEFAULT '',
+    email           VARCHAR(255) UNIQUE NOT NULL,
+    show_email      BOOLEAN DEFAULT FALSE,
+    phone           VARCHAR(20) DEFAULT '',
+    show_phone      BOOLEAN DEFAULT FALSE,
+    role            VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'member', 'advisor', 'employer')),
+    status          VARCHAR(50) NOT NULL CHECK (status IN ('banned', 'active', 'under-review'))
 );
 
 CREATE TABLE employers (
-    clerk_id VARCHAR(255) PRIMARY KEY,
-    company_name VARCHAR(255) NOT NULL,
-    company_role VARCHAR(100) NOT NULL,
-    company_id VARCHAR(100),
+    clerk_id        VARCHAR(255) PRIMARY KEY,
+    company_name    VARCHAR(255) NOT NULL,
+    company_role    VARCHAR(100) NOT NULL,
     CONSTRAINT fk_employer_user FOREIGN KEY (clerk_id) REFERENCES users(clerk_id) ON DELETE CASCADE
 );
 
 CREATE TABLE advisors (
-    clerk_id VARCHAR(255) PRIMARY KEY,
-    company_name VARCHAR(255) NOT NULL,
-    company_role VARCHAR(100) NOT NULL,
+    clerk_id        VARCHAR(255) PRIMARY KEY,
+    company_name    VARCHAR(255) NOT NULL,
+    company_role    VARCHAR(100) NOT NULL,
     CONSTRAINT fk_advisor_user FOREIGN KEY (clerk_id) REFERENCES users(clerk_id) ON DELETE CASCADE
 );
 
+CREATE TABLE admin (
+  admin_id TEXT PRIMARY KEY,
+  office_location TEXT,
+  department TEXT,
+  status VARCHAR(20) NOT NULL DEFAULT 'active',
+  CONSTRAINT fk_admin_user FOREIGN KEY (admin_id)
+    REFERENCES users(clerk_id) ON DELETE CASCADE
+);
 
 -- =========================================
 -- Events
@@ -114,7 +128,7 @@ CREATE TABLE message (
   sent_user_id     TEXT NOT NULL,
   receive_user_id  TEXT NOT NULL,
   content          TEXT NOT NULL,
-  sent_at          TIMESTAMP NOT NULL DEFAULT now(),
+  sent_at          TIMESTAMP NOT NULL DEFAULT NOW(),
   status           CHAR(1) NOT NULL DEFAULT 'S', -- S: sent/read-state app-level
   conversation_id  TEXT GENERATED ALWAYS AS
     (LEAST(sent_user_id, receive_user_id) || ':' || GREATEST(sent_user_id, receive_user_id))
@@ -271,7 +285,10 @@ CREATE TABLE advisory_sessions (
 CREATE TABLE advisory_profile (
   advisor_id TEXT  PRIMARY KEY,
   experience TEXT,
-  education  TEXT
+  education  TEXT,
+  skill_1     TEXT,
+  skill_2     TEXT,
+  skill_3     TEXT
 );
 
 -- =========================================

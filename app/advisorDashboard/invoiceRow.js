@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import Button from "../components/ui/Button";
 
 
@@ -8,6 +9,13 @@ export default function InvoiceRow({
     location,
     timeAgo,
 }) {
+
+    const router = useRouter();
+
+    const handleInvoiceClick = () => {
+        console.log("Invoice clicked:", invoiceId);
+        router.push(`/advisorDashboard/invoiceDetail/${invoiceId}`);
+    }
 
     return(
         <div className="flex items-stretch gap-4 bg-white border-b border-black py-3">
@@ -28,7 +36,7 @@ export default function InvoiceRow({
     
             {/* Right action */}
             <div className="flex items-center">
-            <Button text="Download" onClick={() => console.log("download", invoiceId)} />
+            <Button text="Invoice Detail" onClick={handleInvoiceClick} />
             </div>
         </div>
     );

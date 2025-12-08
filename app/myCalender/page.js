@@ -9,7 +9,6 @@ import MemberNavbar from "../components/MemberNavBar";
 import Button from "../components/ui/Button";
 import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
 import CalendarBigEvent from "../components/myCalender/calenderBig";
-import { deleteBookingByWorkshopId } from "@/lib/workshop_booking_crud";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 

@@ -19,7 +19,7 @@ export default function AdvisorPage() {
   const userID = userContext?.user?.id;
   const router = useRouter();
 
-  console.log("User Id: ", userID);
+  // console.log("User Id: ", userID);
 
   useEffect(() => {
     if (!userID) return;
@@ -56,7 +56,7 @@ export default function AdvisorPage() {
 
 
   return (
-    <main className='bg-gradient-to-br from-[#f8eae2] to-white min-h-screen pb-5'>
+    <main className='bg-linear-to-br from-[#f8eae2] to-white min-h-screen pb-5'>
       <Navbar />
 
       <div className='w-4/5 sm:h-200 mx-auto mt-10'>

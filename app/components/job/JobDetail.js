@@ -4,7 +4,7 @@ export default function JobDetail({ role, job, isApplied, onApply }) {
   if (!job) {
     return (
       <div className="flex items-center justify-center h-full bg-white rounded-xl mr-2">
-        <p className="text-gray-600 text-lg">Select a job to view details</p>
+        <p className="text-gray-600 text-base">Select a job to view details</p>
       </div>
     );
   }
@@ -70,7 +70,7 @@ export default function JobDetail({ role, job, isApplied, onApply }) {
       <div className="p-5 space-y-6">
         {/* About the company */}
         <div className="border border-gray-200 rounded-lg bg-white">
-          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">About the company</div>
+          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#F3E1D5]">About the company</div>
           <div 
             dangerouslySetInnerHTML={{ __html: job.company_info }} 
             className="px-5 py-3 text-sm font-medium text-black break-words leading-relaxed"
@@ -79,7 +79,7 @@ export default function JobDetail({ role, job, isApplied, onApply }) {
 
         {/* About the job */}
         <div className="border border-gray-200 rounded-lg bg-white">
-          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">About the job</div>
+          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#F3E1D5]">About the job</div>
           <div 
             dangerouslySetInnerHTML={{ __html: job.description }} 
             className="px-5 py-3 text-sm font-medium text-black break-words leading-relaxed"
@@ -89,7 +89,7 @@ export default function JobDetail({ role, job, isApplied, onApply }) {
         {/* Responsibilities */}
         {job.responsibilities?.trim() &&
         <div className="border border-gray-200 rounded-lg bg-white">
-          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">What you bring to the team</div>
+          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#F3E1D5]">What you bring to the team</div>
           <div 
             dangerouslySetInnerHTML={{ __html: job.responsibilities }} 
             className="px-5 py-3 text-sm font-medium text-black break-words leading-relaxed"
@@ -99,7 +99,7 @@ export default function JobDetail({ role, job, isApplied, onApply }) {
         {/* Requirements */}
         {job.requirements?.trim() &&
         <div className="border border-gray-200 rounded-lg bg-white">
-          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">What skills you need</div>
+          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#F3E1D5]">What skills you need</div>
           <div 
             dangerouslySetInnerHTML={{ __html: job.requirements }} 
             className="px-5 py-3 text-sm font-medium text-black break-words leading-relaxed"
@@ -109,7 +109,7 @@ export default function JobDetail({ role, job, isApplied, onApply }) {
         {/* More details */}
         {job.details?.trim() &&
         <div className="border border-gray-200 rounded-lg bg-white">
-          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">More details</div>
+          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#F3E1D5]">More details</div>
           <div 
             dangerouslySetInnerHTML={{ __html: job.details }} 
             className="px-5 py-3 text-sm font-medium text-black break-words leading-relaxed"
@@ -119,7 +119,7 @@ export default function JobDetail({ role, job, isApplied, onApply }) {
         {/* Benefits */}
         {job.benefits?.trim() &&
         <div className="border border-gray-200 rounded-lg bg-white">
-          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">Benefits</div>
+          <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#F3E1D5]">Benefits</div>
           <div 
             dangerouslySetInnerHTML={{ __html: job.benefits }} 
             className="px-5 py-3 text-sm font-medium text-black break-words leading-relaxed"

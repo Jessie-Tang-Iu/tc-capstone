@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import { query } from "@/backend/database/db.js";
 import {
   getJobPostById,
+  deleteJobController,
   updateJobController,
 } from "@/backend/controllers/jobsController.js";
 
 // GET job by id
 export async function GET(_req, { params }) {
-  const { id } = params;
+  const { id } = await params;
   try {
     const job = await getJobPostById(Number(id));
     if (!job)
@@ -22,8 +23,9 @@ export async function GET(_req, { params }) {
 // PUT job update
 export async function PUT(req, { params }) {
   try {
+    const { id } = await params;
     const body = await req.json();
-    const updatedJob = await updateJobController(Number(params.id), body);
+    const updatedJob = await updateJobController(Number(id), body);
     return NextResponse.json(updatedJob, { status: 200 });
   } catch (err) {
     console.error("PUT /api/job/[id] error:", err);
@@ -50,6 +52,23 @@ export async function PATCH(req, { params }) {
     return NextResponse.json(result.rows[0], { status: 200 });
   } catch (err) {
     console.error("PATCH /api/job/[id] failed:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(_req, { params }) {
+  const { id } = await params;
+  try {
+    const result = await deleteJobController(Number(id));
+    return NextResponse.json(
+      { message: "Job deleted successfully", id },
+      { status: 200 }
+    );
+  } catch (err) {
+    console.error("DELETE /api/job/[id] error:", err);
+    if (err.message.includes("Job not found")) {
+      return NextResponse.json({ error: err.message }, { status: 404 });
+    }
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

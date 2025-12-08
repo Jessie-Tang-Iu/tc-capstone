@@ -156,21 +156,23 @@ export default function Applications() {
 
   return (
     <>
-      <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
+      <div className="w-full min-h-screen bg-gray-100">
         <MemberNavBar />
 
         <div className="mx-auto w-full px-6 py-4">
           <h1 className="text-3xl font-bold text-[#DD5B45]">
             My Applications
           </h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-base text-gray-600 mt-1">
             Track the jobs you have applied for.
           </p>
           
         </div>
 
         {/* Main Content */}
-        {applications.length > 0 && (
+        {applications.length === 0 ? (
+          <div className="text-center text-gray-500 py-10">No applications found</div>
+        ) : (
         <div className="flex flex-col md:flex-row ml-2">
           {/* Job Listings Sidebar */}
           <div
@@ -202,7 +204,7 @@ export default function Applications() {
             {/* Mobile Back Button */}
             <button
               onClick={handleBackToList}
-              className="md:hidden top-4 ml-5 z-10 text-black rounded-lg text-sm font-normal hover:underline transition-colors"
+              className="md:hidden top-4 ml-5 z-10 text-black rounded-lg text-base font-normal hover:underline transition-colors"
             >
               ← Back to Applications
             </button>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import MemberNavbar from "../../components/MemberNavBar";
+import AdvisorNavbar from "../../components/AdvisorNavBar";
 import ProfileSection from "./profileMember";
 import Security from "./security";
 import Privacy from "./privacy";
@@ -38,6 +39,8 @@ function ProfileDashboardContent() {
     },
   });
 
+  const [userRole, setUserRole] = useState("");
+
 
   useEffect(() => {
     if (user) {
@@ -62,12 +65,20 @@ function ProfileDashboardContent() {
         router.push(`/profile?tab=${v}`);
         setShowDetail(true);
       }}
-      className={`w-full text-left rounded-md px-4 py-2 my-1 text-sm font-medium transition text-black hover:bg-[#F0E0D5] ${tab === v ? "bg-[#E2B596]" : ""}`}
+      className={`w-full text-left rounded-md px-4 py-2 my-1 text-base font-medium transition text-black hover:bg-[#F0E0D5] ${tab === v ? "bg-[#E2B596]" : ""}`}
     >
       {children} <span className="ml-1"></span>
       {">"}
     </button>
   );
+
+  // check user role
+  useEffect(() => {
+    // console.log("Profile data in role check: ", profile);
+    if (profile && profile.role) {
+      setUserRole(profile.role);
+    }
+  }, [profile]);
 
   const handleBackToList = () => setShowDetail(false);
 
@@ -82,8 +93,16 @@ function ProfileDashboardContent() {
 
   return (
     <>
-    <div className="w-full min-h-screen bg-gradient-to-br from-[#f8eae2] to-white">
-      <MemberNavbar />
+    <div className="w-full min-h-screen bg-gray-100">
+      
+      {userRole === "member" && (
+        <MemberNavbar />
+      )}
+
+      {userRole === "advisor" && (
+        <AdvisorNavbar />
+      )}
+      
 
       <main className="mx-auto w-full px-6 py-8">
         <h1 className="mb-6 text-3xl font-bold text-[#DD5B45]">
@@ -95,7 +114,7 @@ function ProfileDashboardContent() {
         <div
           className={`w-full px-2 min-w-3xs md:w-50 lg:w-[250px]
             ${showDetail ? "hidden md:block" : "block"}
-            h-46 bg-white rounded-lg p-1 shadow`}
+            h-50 bg-white rounded-lg p-1 shadow`}
         >
           <TabBtn v="security">Profile & Security</TabBtn>
           <TabBtn v="profile">User Information</TabBtn>

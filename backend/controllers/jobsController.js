@@ -58,3 +58,8 @@ export async function updateJobController(id, body) {
 export async function getAllJobPostsPublicController() {
   return await jobs.getAllJobPostsPublic();
 }
+
+export async function deleteJobController(id) {
+  if (!id) throw new Error("Job ID required");
+  return await jobs.deleteJobPost(id);
+}

@@ -39,7 +39,7 @@ export default function MemberNavbar() {
   return (
     <header className="sticky top-0 z-50 flex justify-between items-center p-4 bg-white border-b border-gray-200 shadow-[0_6px_14px_-6px_rgba(0,0,0,0.18)]">
       {/* Brand: icon always; text only ≥ sm */}
-      <Link href="/memberFlow" className="flex items-center space-x-2">
+      <Link href="/advisorDashboard" className="flex items-center space-x-2">
         <img src="/logo.jpg" alt="Logo" className="w-8 h-8 shrink-0" />
         <span className="hidden sm:inline font-bold text-lg text-black whitespace-nowrap">
           Tech Connect Alberta
@@ -51,7 +51,7 @@ export default function MemberNavbar() {
         <button
           aria-label="Open menu"
           aria-expanded={isMobileMenuOpen}
-          className="p-2 text-black"
+          className="p-2 text-black cursor-pointer"
           onClick={() => setIsMobileMenuOpen((v) => !v)}
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -63,7 +63,7 @@ export default function MemberNavbar() {
                 <li>
                     <button 
                     onClick={() => router.push("/advisorDashboard")}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-50"
+                    className="w-full text-left px-4 py-2 cursor-pointer hover:bg-gray-50"
                     >
                         Home
                     </button>
@@ -71,15 +71,23 @@ export default function MemberNavbar() {
                 <li>
                     <button 
                     onClick={() => router.push("/advisorDashboard/profile")}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-50"
+                    className="w-full text-left px-4 py-2 cursor-pointer hover:bg-gray-50"
                     >
-                        Profile
+                        Advisor Profile
+                    </button>
+                </li>
+                <li>
+                    <button 
+                    onClick={() => router.push("/profile")}
+                    className="w-full text-left px-4 py-2 cursor-pointer hover:bg-gray-50"
+                    >
+                        User Profile
                     </button>
                 </li>
                 <li>
                     <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-50"
+                    className="w-full text-left px-4 py-2 cursor-pointer hover:bg-gray-50"
                     >
                     Log Out
                     </button>
@@ -93,17 +101,22 @@ export default function MemberNavbar() {
       <nav className="hidden lg:block">
         <ul className="flex items-center space-x-6 text-black">
             <li>
-                <button onClick={() => router.push("/advisorDashboard")} className="hover:text-orange-500">
+                <button onClick={() => router.push("/advisorDashboard")} className="cursor-pointer hover:text-orange-500">
                     Home
                 </button>
             </li>
             <li>
-                <button onClick={() => router.push("/advisorDashboard/profile")} className="hover:text-orange-500">
-                    Profile
+                <button onClick={() => router.push("/advisorDashboard/profile")} className="cursor-pointer hover:text-orange-500">
+                    Advisor Profile
                 </button>
             </li>
             <li>
-                <button onClick={handleLogout} className="hover:text-orange-500">
+                <button onClick={() => router.push("/profile")} className="cursor-pointer hover:text-orange-500">
+                    User Profile
+                </button>
+            </li>
+            <li>
+                <button onClick={handleLogout} className="cursor-pointer hover:text-orange-500">
                 Log Out
                 </button>
             </li>

@@ -53,14 +53,14 @@ export default function SkillCard({ index, skill, setNewSkill, isLoading, setIsL
             setSelectedSkill(null); }}
         >
           <div className="flex-1">
-            <label className="inline-block w-25 text-xs text-gray-700 font-medium">Name:</label>
+            <label className="inline-block w-25 text-sm text-gray-700 font-medium">Name:</label>
             <input
               required
               type="text"
               value={editingSkill}
               onChange={(e) => setEditingSkill(e.target.value)}
               placeholder="Ex: Python, Java, C#"
-              className="w-auto h-8 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
+              className="w-auto h-8 rounded-md border border-gray-300 px-3 py-2 text-base text-black outline-none focus:ring-2 focus:ring-gray-200"
             />
           </div>
           <button 

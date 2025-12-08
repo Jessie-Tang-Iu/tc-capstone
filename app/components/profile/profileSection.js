@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import InputField from "./inputField";
 
 export default function Profile({profile, setProfile, onSave}) {
   // console.log("Profile Data: ", profile);
@@ -35,61 +36,25 @@ export default function Profile({profile, setProfile, onSave}) {
       </div>
           
       <div className="grid md:grid-cols-2 gap-4 mb-4">
-        <div>
-          <label className="block text-xs text-gray-700 font-bold mb-1">First name</label>
-          <input
-            required
-            type="text"
-            value={profile.first_name}
-            disabled={true}
-            className="w-full h-10 px-3 py-2 text-sm text-gray-500 bg-gray-100 rounded-lg border border-gray-300 focus:outline-none cursor-not-allowed"
-          />
-        </div>
-        <div> 
-          <label className="block text-xs text-gray-700 font-bold mb-1">Last name</label>
-          <input
-            required
-            type="text"
-            value={profile.last_name}
-            disabled={true}
-            className="w-full h-10 px-3 py-2 text-sm text-gray-500 bg-gray-100 rounded-lg border border-gray-300 focus:outline-none cursor-not-allowed"
-          />
-        </div>
+        <InputField label="First name" value={profile.first_name} isEdit={false} />
+        <InputField label="Last name" value={profile.last_name} isEdit={false} />
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4 mb-4">
+        <InputField 
+          label="Preferred name" value={profile.preferred_name}
+          onChange={(e) => handleProfileChange('preferred_name', e.target.value)}
+        />
+        <InputField 
+          type="select" options={["Select pronouns", "She/Her/Hers", "He/Him/His"]} 
+          label="Pronouns" value={profile.pronouns}
+          onChange={(e) => handleProfileChange('pronouns', e.target.value)}
+        />
       </div>
 
       <div className="grid md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="block text-xs text-gray-700 font-medium mb-1">Preferred name</label>
-          <input
-            type="text"
-            value={profile.preferred_name}
-            onChange={(e) => handleProfileChange('preferred_name', e.target.value)}
-            className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
-          />
-        </div>
-        <div>
-          <label className="block text-xs text-gray-700 font-medium mb-1">Pronouns</label>
-          <select
-            value={profile.pronouns}
-            onChange={(e) => handleProfileChange('pronouns', e.target.value)}
-            className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
-          >
-            <option value="She/Her/Hers">She/Her/Hers</option>
-            <option value="He/Him/His">He/Him/His</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-4 mb-4">
-        <div>
-          <label className="block text-xs text-gray-700 font-bold mb-1">Email</label>
-          <input
-            required
-            type="text"
-            value={profile.email}
-            disabled={true}
-            className="w-full h-10 px-3 py-2 text-sm text-gray-500 bg-gray-100 rounded-lg border border-gray-300 focus:outline-none cursor-not-allowed"
-          />
+          <InputField label="Email" value={profile.email} isEdit={false} />
           <div className="flex items-center gap-2 pt-1">
             <input
               type="checkbox"
@@ -97,17 +62,11 @@ export default function Profile({profile, setProfile, onSave}) {
               onChange={(e) => handleProfileChange('show_email', e.target.checked)}
               className="rounded border-black"
             />
-            <label className="text-xs text-black">Show in profile</label>
+            <label className="text-sm text-black">Show in profile</label>
           </div>
         </div>
         <div>
-          <label className="block text-xs text-gray-700 font-bold mb-1">Phone Number</label>
-          <input
-            type="tel"
-            value={profile.phone}
-            disabled={true}
-            className="w-full h-10 px-3 py-2 text-sm text-gray-500 bg-gray-100 rounded-lg border border-gray-300 focus:outline-none cursor-not-allowed"
-          />
+          <InputField label="Phone number" value={profile.phone} isEdit={false} />
           <div className="flex items-center gap-2 pt-1">
             <input
               type="checkbox"
@@ -115,53 +74,33 @@ export default function Profile({profile, setProfile, onSave}) {
               onChange={(e) => handleProfileChange('show_phone', e.target.checked)}
               className="rounded border-black"
             />
-            <label className="text-xs text-black">Show in profile</label>
+            <label className="text-sm text-black">Show in profile</label>
           </div>
         </div>
       </div>
 
       <div className="mb-4">
-        <label className="block text-xs text-gray-700 font-medium mb-1">Address</label>
-        <input
-          value={address.address1}
+        <InputField 
+          label="Address" placeholder="Ex: 1301 16 Avenue NW" value={address.address1}
           onChange={(e) => handleAddressChange('address1', e.target.value)}
-          placeholder="Ex: 1301 16 Avenue NW"
-          className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
-        />
+        />        
       </div>
 
       <div className="grid md:grid-cols-2 gap-4 mb-4">
-        <div>
-          <label className="block text-xs text-gray-700 font-medium mb-1">City</label>
-          <input
-            type="text"
-            value={address.city}
-            onChange={(e) => handleAddressChange('city', e.target.value)}
-            placeholder="Ex: Calgary, Alberta"
-            className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
-          />
-        </div>
-        <div>
-          <label className="block text-xs text-gray-700 font-medium mb-1">Country/Region</label>
-          <div className="flex items-center gap-3">
-            <input
-              type="email"
-              value={address.country}
-              onChange={(e) => handleAddressChange('country', e.target.value)}
-              placeholder="Ex: Canada"
-              className="flex-1 h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
-            />
-          </div>
-        </div>
+        <InputField 
+          label="City" placeholder="Ex: Calgary, Alberta" value={address.city}
+          onChange={(e) => handleAddressChange('city', e.target.value)}
+        />
+        <InputField
+          label="Country/Region" placeholder="Ex: Canada" value={address.country}
+          onChange={(e) => handleAddressChange('country', e.target.value)}
+        />
       </div>
 
       <div className="mb-4">
-        <label className="block text-xs text-gray-700 font-medium mb-1">Website</label>
-        <input
-          type="url"
-          value={profile.link}
+        <InputField 
+          label="Website" value={profile.link}
           onChange={(e) => handleProfileChange('link', e.target.value)}
-          className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
         />
       </div>
 
