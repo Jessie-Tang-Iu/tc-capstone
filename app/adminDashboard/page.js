@@ -14,15 +14,25 @@ import RequestDetailsCard from "../components/adminDashboard/RequestDetailsCard"
 import ReportDetailsCard from "../components/adminDashboard/ReportDetailsCard";
 import withAdminAuth from "../components/adminDashboard/withAdminAuth";
 import CoursePage from "@/app/adminDashboard/Courses";
+import { useUser } from "@clerk/nextjs";
 
 const ME = "11111111-1111-1111-1111-111111111111";
 
 function AdminDashboardCore() {
+  const { user, isLoaded } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const [tab, setTab] = useState(() => searchParams.get("tab") || "message");
   const [details, setDetails] = useState(null);
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -153,7 +163,7 @@ function AdminDashboardCore() {
           </div>
 
           <div className="w-full">
-            {tab === "message" && <MessagePage currentUserId={ME} />}
+            {tab === "message" && user && <MessagePage currentUserId={user.id} />}
             {tab === "users" && renderUsers()}
             {tab === "requests" && renderRequests()}
             {tab === "reports" && renderReports()}
