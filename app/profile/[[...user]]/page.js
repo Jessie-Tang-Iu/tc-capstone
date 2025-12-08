@@ -74,7 +74,7 @@ function ProfileDashboardContent() {
 
   // check user role
   useEffect(() => {
-    console.log("Profile data in role check: ", profile);
+    // console.log("Profile data in role check: ", profile);
     if (profile && profile.role) {
       setUserRole(profile.role);
     }
@@ -93,7 +93,7 @@ function ProfileDashboardContent() {
 
   return (
     <>
-    <div className="w-full min-h-screen bg-linear-to-br from-[#f8eae2] to-white">
+    <div className="w-full min-h-screen bg-gray-100">
       
       {userRole === "member" && (
         <MemberNavbar />

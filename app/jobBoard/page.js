@@ -26,7 +26,7 @@ export default function JobBoardPage() {
     const [industries, setIndustries] = useState([]);
     const [workplaces, setWorkplaces] = useState([]);
 
-    const [filteredJobs, setFilteredJobs] = useState([]);
+    const [filteredJobs, setFilteredJobs] = useState();
     const [query, setQuery] = useState("");
     const [location, setLocation] = useState("");
     const [filters, setFilters] = useState({
@@ -258,17 +258,21 @@ export default function JobBoardPage() {
       <main className="w-full min-h-screen bg-gray-100">
         {/* Navigation */}
         <MemberNavbar />
-  
-        {/* Search Bar */}
-        <div className="pt-1">
-          <SearchBar
-            query={query}
-            onQueryChange={setQuery}
-            location={location}
-            onLocationChange={setLocation}
-            onSearch={search}
-            onAdvancedSearch={() => setShowAdvancedSearch(true)}
-          />
+
+        <div className="my-4 mx-2 rounded-xl bg-white p-6 shadow text-center">
+          <div className="mb-4 text-4xl font-semibold text-[#E55B3C]">
+            Job Board Page
+          </div>
+          <div className="flex justify-center">
+            <SearchBar
+              query={query}
+              onQueryChange={setQuery}
+              location={location}
+              onLocationChange={setLocation}
+              onSearch={search}
+              onAdvancedSearch={() => setShowAdvancedSearch(true)}
+            />
+          </div>
         </div>
   
         {showAdvancedSearch && (
@@ -293,11 +297,15 @@ export default function JobBoardPage() {
             errorMessage={errorMessage}
             setErrorMessage={setErrorMessage}
             onSubmit={handleApplySubmit}
-            onClose={() => {setShowApplyForm(false); setCurrentStep(1);}} 
+            onClose={() => { setShowApplyForm(false); setCurrentStep(1); }} 
           />
         )}
   
         {/* Main Content */}
+        {!filteredJobs ? (
+          <div className="text-center text-gray-500 py-10">Loading...</div>
+        ) : (
+        <>
         {filteredJobs.length === 0 ? (
           <div className="text-center text-gray-500 py-10">No jobs found</div>
         ) : (
@@ -347,6 +355,7 @@ export default function JobBoardPage() {
             </div>
           </div>
         )}
+      </>)}
       </main>
     );
 }

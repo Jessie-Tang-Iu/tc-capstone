@@ -34,8 +34,7 @@ export default function ChatWindow({
 
   // Load conversation
   useEffect(() => {
-    if (!me || !recipient) return;
-    (async () => {
+    const loadConversation = async () => {
       // after fetch of GET conversation
       const res = await fetch(
         `/api/messages/conversation?userA=${encodeURIComponent(
@@ -60,7 +59,18 @@ export default function ChatWindow({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fromUser: recipient, toUser: me }),
       }).catch(() => {});
-    })();
+    };
+
+    if (me && recipient) loadConversation();
+
+    const intervalId = setInterval(loadConversation, 5000);
+
+    // 3. Cleanup function: This runs when the component unmounts or dependencies change.
+    return () => {
+      console.log("Stopping message polling interval.");
+      clearInterval(intervalId);
+    };
+
   }, [me, recipient]);
 
   // ESC to close

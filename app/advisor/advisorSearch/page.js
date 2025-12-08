@@ -86,8 +86,8 @@ export default function AdvisorSearchPage() {
         
         <div className="flex flex-wrap lg:justify-start sm:justify-center my-4 space-x-5 space-y-10 text-center text-black">
           {advisorList.length > 0 ? (
-            filteredAdvisor.map((advisor) => (
-              <AdvisorCard key={advisor.advisorID} advisor={advisor} />
+            filteredAdvisor.map((advisor,idx) => (
+              <AdvisorCard key={idx} advisor={advisor} />
             ))
           ) : (
             <p className="text-gray-600 p-4">No advisors found.</p>

@@ -28,24 +28,6 @@ function PageContent() {
 
   const userID = user?.id;
 
-  const MOCK_MESSAGES = [
-    {
-      id: 1,
-      name: "John Doe",
-      message:
-        "Sure! You can see my available time on the booking management",
-      date: "Jun 15, 2025",
-    },
-    // dummy data → total 50 messages
-    ...Array.from({ length: 49 }, (_, i) => ({
-      id: i + 2,
-      name: `User Dummy ${i + 1}`,
-      message:
-        "Yes, you are right about the job application, i will have a …",
-      date: "Jun 15, 2025",
-    })),
-  ];
-
   return (
     <>
       {/* Navigation */}

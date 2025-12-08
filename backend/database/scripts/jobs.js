@@ -149,7 +149,7 @@ export async function createJobPost(post) {
 
   const values = [
     post.title,
-    post.employerId || "testEmployer1", // fallback for testing
+    post.employerId, // fallback for testing
     post.aboutCompany || post.company_info || "",
     post.location,
     post.postedAt,
@@ -172,7 +172,7 @@ export async function createJobPost(post) {
 // Update an existing job post
 export async function updateJobPost(id, data) {
   if (!id) throw new Error("Missing job ID");
-
+  console.log("update app: ", data);
   const { rows } = await query(
     `UPDATE job
      SET title = $1,
@@ -194,7 +194,7 @@ export async function updateJobPost(id, data) {
      RETURNING *;`,
     [
       data.title,
-      data.employerId || "testEmployer1", // fallback for test
+      data.employerId, // fallback for test
       data.aboutCompany || data.company_info || "",
       data.location,
       data.industryId,

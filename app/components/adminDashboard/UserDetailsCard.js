@@ -1,10 +1,29 @@
 "use client";
 import { useEffect, useState } from "react";
 
-export default function UserDetailsCard({ user, roleLabel, onClose }) {
+const formatKey = (k) =>
+    k.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
+const LabelValue = ({label, value}) => (
+  <div
+    key={label}
+    className="flex flex-col bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition"
+  >
+    <span className="text-sm font-semibold text-gray-500">
+      {formatKey(label)}
+    </span>
+    <span className="mt-1 text-gray-900 wrap-break-word">
+      {String(value ?? "—")}
+    </span>
+  </div>
+)
+
+export default function UserDetailsCard({ isPublic=true, user, roleLabel, onClose }) {
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  
+  const hideContent = isPublic ? ["clerk_id", "username", "role", "status", "show_email", "show_phone"] : ["show_email", "show_phone"];
 
   useEffect(() => {
     if (!user?.clerk_id) return;
@@ -46,6 +65,7 @@ export default function UserDetailsCard({ user, roleLabel, onClose }) {
 
   const formatKey = (k) =>
     k.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  
   const skip = ["password", "token", "metadata", "created_at", "updated_at"];
   const keys = Object.keys(data).filter((k) => !skip.includes(k.toLowerCase()));
 
@@ -54,7 +74,7 @@ export default function UserDetailsCard({ user, roleLabel, onClose }) {
       ? "bg-green-100 text-green-800"
       : data.status === "banned"
       ? "bg-red-100 text-red-800"
-      : data.status === "underreview"
+      : data.status === "under-review"
       ? "bg-yellow-100 text-yellow-800"
       : "bg-gray-100 text-gray-600";
 
@@ -96,19 +116,18 @@ export default function UserDetailsCard({ user, roleLabel, onClose }) {
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {keys.map((key) => (
-              <div
-                key={key}
-                className="flex flex-col bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition"
-              >
-                <span className="text-sm font-semibold text-gray-500">
-                  {formatKey(key)}
-                </span>
-                <span className="mt-1 text-gray-900 break-words">
-                  {String(data[key] ?? "—")}
-                </span>
-              </div>
-            ))}
+            {keys.map((key) => {
+              if (!hideContent.includes(key) && data[key] && data[key].trim() !== "" && data[key].replaceAll("|","").trim() !== "") {
+                if (key === "email") {
+                  return data.show_email ? <LabelValue key={key} label="Email" value={data.email} /> : null;
+                } else if (key === "phone") {
+                  return data.show_phone ? <LabelValue key={key} label="Phone number" value={data.phone} /> : null;
+                } else {
+                  return <LabelValue key={key} label={key} value={data[key]} />;
+                }
+              }
+              return null;
+            })}
           </div>
 
           {keys.length === 0 && (
