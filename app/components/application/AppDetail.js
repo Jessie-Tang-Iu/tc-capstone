@@ -1,13 +1,19 @@
 import { ExternalLink, Download } from "lucide-react";
 import { useState } from "react";
+import LabelValue from "./InfoCard";
+import ContactPreview from "./ContactPreview";
+import RelativePreview from "./RelativePreview";
+import ResumePreview from "./ResumePreview";
+import CoverLetterPreview from "./CoverLetterPreview";
+import AnswerPreview from "./AnswerPreview";
 
 const statusColors = {
     "S": "bg-gray-100 text-gray-800 border-gray-300",
     "U": "bg-blue-100 text-blue-800 border-blue-300",
     "I": "bg-green-100 text-green-800 border-green-300",
     "R": "bg-red-100 text-red-800 border-red-300",
-    "O": "bg-emerald-100 text-emerald-800 border-emerald-300",
-    "D": "bg-yellow-100 text-yellow-800 border-yellow-300",
+    "O": "bg-yellow-100 text-yellow-800 border-yellow-300",
+    "D": "bg-orange-100 text-orange-800 border-orange-300",
 };
 
 const statusOptions = {
@@ -18,46 +24,6 @@ const statusOptions = {
     "O": "Offer",
     "D": "Withdrawn",
 };
-
-const LabelValue = ({ label, value }) => (
-  <div className="border border-gray-200 rounded-md p-3 bg-white">
-    <div className="text-sm font-bold text-gray-600 mb-1">{label}</div>
-
-    {/* if value is a string */}
-    {typeof value == 'string' && (
-      <div className="text-base font-medium text-black break-words">
-        {value ? `${value}` : "—"}
-      </div>
-    )}
-
-    {/* if value is an array */}
-    {typeof value == 'object' && (
-      <div className="flex flex-wrap gap-2">
-        {value.map((tag, index) => {
-          let information = tag;
-          if (label == "Education") {
-            let eduSplit = tag.split(' | ');
-            information = `${eduSplit[1]} in ${eduSplit[2]} from ${eduSplit[0]} (${eduSplit[3]}-${eduSplit[4]})`;
-          }
-          if (label == "Experience") {
-            let expSplit = tag.split(' | ');
-            if (expSplit[5] == "" && expSplit[6] == "") {
-              information = `${expSplit[0]} (${expSplit[2]}) at ${expSplit[1]} (from ${expSplit[3]}-${expSplit[4]})`
-            } else {
-              information = `${expSplit[0]} (${expSplit[2]}) at ${expSplit[1]} (from ${expSplit[3]}-${expSplit[4]} to ${expSplit[5]}-${expSplit[6]})`
-            }
-          }
-          return (
-          <span
-            key={index}
-            className="px-2 py-1 bg-gray-200 rounded text-base font-medium text-black"
-          >{information}</span>
-          );
-        })}
-      </div>
-    )}
-  </div>
-);
 
 export default function AppDetail({app, resume, coverLetter, onDownload}) {
 
@@ -76,46 +42,6 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
   const appliedDate = app.applied_at
     ? new Date(app.applied_at).toLocaleDateString()
     : null;
-
-  const getMimeType = (fileName) => {
-    if (!fileName) return 'application.octet-stream';
-
-    const extension = fileName.split('.').pop().toLowerCase();
-    switch (extension) {
-      case 'pdf': return 'application/pdf';
-      case 'doc': return 'application/msword';
-      case 'docx': return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-    }
-  }
-
-  const downloadFile = (fileObject, fileName = 'document') => {
-    // File validation
-    if (!fileObject || !fileObject.data || !Array.isArray(fileObject.data)) {
-      console.log('Invalid file object structure for download.')
-      return;
-    }
-
-    // Use byte array and get MIME type from fileName
-    const bytes = fileObject.data;   
-    const mineType = getMimeType(fileName);
-
-    // Create Unit8Array and Blob
-    const byteArray = new Uint8Array(bytes); 
-    const blob = new Blob([byteArray], { type: mineType });
-
-    // Trigger the download
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a')
-    link.href = url;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-
-    // Clean up
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    // console.log(`Download started for ${fileName} with type ${mineType}`);
-  }
 
   return (
     <div className="bg-white h-full rounded-xl overflow-y-auto mr-2">
@@ -144,112 +70,23 @@ export default function AppDetail({app, resume, coverLetter, onDownload}) {
         <section className="space-y-3">
 
           {/* Contact Information */}
-          <div className="border border-gray-200 rounded-lg bg-white">
-            <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">Contact Information</div>
-            <div className="p-4 grid md:grid-cols-2 gap-3">
-              <LabelValue label="First Name" value={app.first_name} />
-              <LabelValue label="Last Name" value={app.last_name} />
-              <LabelValue label="Email address" value={app.email} />
-              <LabelValue label="Phone Number" value={app.phone || ""} />
-            </div>
-          </div>
+          <ContactPreview title="Contact Information" app={app} />
 
           {/* Relative Information */}
           {(app.relative_first_name != "" || app.relative_last_name != "") && (
-          <div className="border border-gray-200 rounded-lg bg-white">
-            <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">Relative Information</div>
-            <div className="p-4 grid md:grid-cols-2 gap-3">
-              <LabelValue label="First Name" value={app.relative_first_name} />
-              <LabelValue label="Last Name" value={app.relative_last_name} />
-              <LabelValue label="Email address" value={app.relative_email} />
-              <LabelValue label="Phone Number" value={app.relative_phone} />
-            </div>
-          </div>
+            <RelativePreview title="Relative Information" app={app} />
           )}
         </section>
 
         {/* Resume */}
-        <section className="space-y-3">
-          <div className="border border-gray-200 rounded-lg bg-white">
-            <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">Resume</div>
-              
-            {(!resume.error && !app.resume_data) && (
-              <div className="p-4 grid gap-3">
-                <LabelValue label="Summary" value={resume.summary} />
-                <LabelValue label="Certificate" value={resume.certifications} />
-                <LabelValue label="Skills" value={resume.skills} />
-                <LabelValue label="Education" value={resume.education} />
-                <LabelValue label="Experience" value={resume.experience} />
-                <LabelValue label="Additional Information" value={resume.additional_info} />
-              </div>
-            )}
-            {app.resume_data && (
-              <div className="p-4 items-center gap-2 text-base text-black">
-                <span className="inline-flex items-center justify-center px-2 py-1 mr-3 rounded bg-orange-100 text-[#E55B3C] text-sm font-bold">{app.resume_name.split('.').pop().toUpperCase()}</span>
-                <span className="font-bold truncate">{app.resume_name}</span>
-                <div className="mt-3">
-                  <div className="text-base text-black">
-                    {"We can't load a preview of your resume right now, but it will be submitted as part of your application. Download your resume to make sure everything is correct before you submit your application."}
-                  </div>
-                  <button
-                    onClick={() => downloadFile(app.resume_data, app.resume_name)}
-                    className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded bg-[#E55B3C]/80 text-white text-sm font-bold hover:bg-[#E55B3C]/90 transition-colors"
-                  >
-                    <Download className="w-4 h-4" /> Download Resume
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
+        <ResumePreview title="Resume" app={app} resume={resume} />
 
         {/* Cover Letter */}
-        <section className="space-y-3">
-          <div className="border border-gray-200 rounded-lg bg-white">
-            <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">Cover Letter</div>
-          {(!coverLetter.error && !app.cover_letter_name) && (
-            <div 
-              dangerouslySetInnerHTML={{ __html: coverLetter.content }} 
-              className="p-4 text-base font-medium text-black break-words leading-relaxed"
-            />
-          )}
-          {app.cover_letter_name && (
-            <div className="p-4 items-center gap-2 text-base text-black">
-              <span className="inline-flex items-center justify-center px-2 py-1 mr-3 rounded bg-orange-100 text-[#E55B3C] text-sm font-bold">{app.cover_letter_name.split('.').pop().toUpperCase()}</span>
-              <span className="font-bold truncate">{app.cover_letter_name}</span>
-              <div className="mt-3">
-                  <div className="text-base text-black">
-                  {"We can't load a preview of your resume right now, but it will be submitted as part of your application. Download your resume to make sure everything is correct before you submit your application."}
-                </div>
-                {app.cover_letter_name && (
-                  <button
-                    onClick={onDownload}
-                    className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded bg-[#E55B3C]/80 text-white text-sm font-bold hover:bg-[#E55B3C]/90 transition-colors"
-                  >
-                    <Download className="w-4 h-4" /> Download Cover Letter
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-          </div>
-        </section>
+        <CoverLetterPreview title="Cover Letter" app={app} coverLetter={coverLetter} />
+        
 
         {/* Employer questions */}
-        <section className="space-y-3">
-          <div className="border border-gray-200 rounded-lg bg-white">
-            <div className="px-4 py-3 border-b border-gray-200 text-base font-bold rounded-t-lg text-black bg-[#E55B3C]/20">Employer questions</div>
-            <div className="p-4 grid gap-3">
-              {(app && app.questions?.length > 0) ? (
-                app.questions.map((qa, idx) => (
-                  <LabelValue key={idx} label={qa} value={app.answers[idx]} />
-                ))
-              ) : (
-                <div className="border border-gray-200 rounded-md p-3 bg-white text-base font-bold text-black">No questions provided.</div>
-              )}
-            </div>
-          </div>
-        </section>
+        <AnswerPreview title="Employer questions" app={app} />
       </div>
     </div>
   );

@@ -1,9 +1,9 @@
 import { Pencil, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import InputField from "./inputField";
 
-const monthOptions = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const yearOptions = Array.from({ length: 50 }, (_, i) => new Date().getFullYear() - i);
-
+const monthOptions = ["Select a month", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const yearOptions = ["Select a year", ...Array.from({ length: 50 }, (_, i) => 2030 - i)];
 export default function ExperienceCard({ index, exp, setNewExp, isLoading, setIsLoading, setErrorMessage, onSave, onRemove}) {
 
   const [error, setError] = useState(null);
@@ -89,35 +89,31 @@ export default function ExperienceCard({ index, exp, setNewExp, isLoading, setIs
       {/* Click to edit   */}
       {(editingExp === exp || !exp) && (
       <div className="py-2 px-4">
-        {error && <p className="text-red-600 text-xs font-base">{error}</p>}
+        {error && <p className="text-red-600 text-sm font-base">{error}</p>}
         <div className="my-2">
-          <label className="block text-xs text-gray-700 font-medium mb-1">Company or organization*</label>
-          <input
-            type="text"
-            value={experience.company}
+          <InputField 
+            label="Company or organization *" value={experience.company} placeholder="Ex: Google"
             onChange={(e) => handleExperienceChange('company', e.target.value)}
-            placeholder="Ex: Google"
-            className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
           />
         </div>
 
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-2 mb-2">
+          <InputField 
+            label="Title *" value={experience.title} placeholder="Ex: Retail Sales Manager"
+            onChange={(e) => handleExperienceChange('title', e.target.value)}
+          />
+          {/* {typeOptions.length > 0 && 
+          <InputField
+            type="select" options={typeOptions}
+            label="Employment type" value={experience.type}
+            onChange={(e) => handleExperienceChange('type', e.target.value)}
+          />} */}
           <div>
-            <label className="block text-xs text-gray-700 font-medium mb-1">Title*</label>
-            <input
-              type="text"
-              value={experience.title}
-              onChange={(e) => handleExperienceChange('title', e.target.value)}
-              placeholder="Ex: Retail Sales Manager"
-              className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-gray-700 font-medium mb-1">Employment type</label>
+            <label className="block text-sm text-gray-700 font-medium mb-1">Employment type</label>
             <select
               value={experience.type}
               onChange={(e) => handleExperienceChange('type', e.target.value)}
-              className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
+              className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-base text-black outline-none focus:ring-2 focus:ring-gray-200"
             >
               <option key={0} value="" disabled>Select a job type</option>
               {typeOptions.map((type) => (
@@ -138,70 +134,38 @@ export default function ExperienceCard({ index, exp, setNewExp, isLoading, setIs
         </div> */}
 
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-2 mb-2">
-          <div>
-            <label className="block text-xs text-gray-700 font-medium mb-1">Start month*</label>
-            <select
-              value={experience.startMonth}
-              onChange={(e) => handleExperienceChange('startMonth', e.target.value)}
-              className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
-            >
-              <option key={0} value={""} disabled>Select a month</option>
-              {monthOptions.map((month) => (
-                <option key={month} value={month}>{month}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-black text-xs font-medium mb-1">Start year*</label>
-            <select
-              value={experience.startYear}
-              onChange={(e) => handleExperienceChange('startYear', e.target.value)}
-              className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
-            >
-              <option key={0} value={""} disabled>Select a year</option>
-              {yearOptions.map((year) => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
-          </div>
+          <InputField
+            type="select" options={monthOptions}
+            label="Start month *" value={experience.startMonth}
+            onChange={(e) => handleExperienceChange('startMonth', e.target.value)}
+          />
+          <InputField
+            type="select" options={yearOptions}
+            label="Start year *" value={experience.startYear}
+            onChange={(e) => handleExperienceChange('startYear', e.target.value)}
+          />
         </div>
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-2 mb-2">
-          <div>
-            <label className="block text-xs text-gray-700 font-medium mb-1">End month</label>
-            <select
-              value={experience.endMonth}
-              onChange={(e) => handleExperienceChange('endMonth', e.target.value)}
-              className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
-            >
-              <option key={0} value={""} disabled>Select a month</option>
-              {monthOptions.map((month) => (
-                <option key={month} value={month}>{month}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-black text-xs font-medium mb-1">End year</label>
-            <select
-              value={experience.endYear}
-              onChange={(e) => handleExperienceChange('endYear', e.target.value)}
-              className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
-            >
-              <option key={0} value={""} disabled>Select a year</option>
-              {yearOptions.map((year) => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
-          </div>
+          <InputField
+            type="select" options={monthOptions}
+            label="End month" value={experience.endMonth}
+            onChange={(e) => handleExperienceChange('endMonth', e.target.value)}
+          />
+          <InputField
+            type="select" options={yearOptions}
+            label="End year" value={experience.endYear}
+            onChange={(e) => handleExperienceChange('endYear', e.target.value)}
+          />
         </div>
 
         <div className="my-2">
-          <label className="block text-xs text-gray-700 font-medium mb-1">Description</label>
+          <label className="block text-sm text-gray-700 font-medium mb-1">Description</label>
           <textarea
             value={experience.description}
             onChange={(e) => handleExperienceChange('description', e.target.value)}
             placeholder="List your major duties and successes, highlighting specific projects"
             rows={3}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-base text-black outline-none focus:ring-2 focus:ring-gray-200"
           />
           <div className="text-right text-sm text-gray-500 mt-1 max-w-3xl">
             {/* {formData.description.length} / 500 */}
@@ -211,7 +175,7 @@ export default function ExperienceCard({ index, exp, setNewExp, isLoading, setIs
         <div className="w-full flex justify-center py-1">
           <div>
           <button 
-            className="bg-[#EE7D5E] text-white hover:opacity-90 px-6 py-2 rounded-md text-xs font-semibold transition cursor-pointer"
+            className="bg-[#EE7D5E] text-white hover:opacity-90 px-6 py-2 rounded-md text-sm font-semibold transition cursor-pointer"
             onClick={() => {
               let errorMessage = "";
               if (experience.company == "" || experience.title == "" || experience.startMonth == "" || experience.startYear == "")

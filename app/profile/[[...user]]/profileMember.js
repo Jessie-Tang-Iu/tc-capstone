@@ -19,12 +19,12 @@ export default function ProfileSection({ setSuccessMessage, setErrorMessage }) {
 
   useEffect(() => {
     if (user) {
-      console.log("User from Clerk: ", user);
+      // console.log("User from Clerk: ", user);
       // Fetch user data
       fetch(`/api/users/${user.id}`)
         .then((res) => res.json())
         .then((data) => {
-          console.log("Profile: ", data);
+          // console.log("Profile: ", data);
           setProfile(data);
           setProfile(prev => ({ 
             ...prev, 

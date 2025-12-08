@@ -216,7 +216,7 @@ export default function Resume({
               onChange={(e) => handleResumeChange("summary", e.target.value)}
               placeholder="List your major duties and successes, highlighting specific projects"
               rows={3}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-base text-black outline-none focus:ring-2 focus:ring-gray-200"
             />
             <div className="text-right text-sm text-gray-500 mr-1 w-full">
               {resumeData.summary.length} / 500
@@ -355,7 +355,7 @@ export default function Resume({
               }
               placeholder="List your major duties and successes, highlighting specific projects"
               rows={3}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-base text-black outline-none focus:ring-2 focus:ring-gray-200"
             />
             <div className="text-right text-sm text-gray-500 mr-1 w-full">
               {resumeData.additional_info?.length} / 500

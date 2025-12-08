@@ -23,8 +23,9 @@ export async function GET(_req, { params }) {
 // PUT job update
 export async function PUT(req, { params }) {
   try {
+    const { id } = await params;
     const body = await req.json();
-    const updatedJob = await updateJobController(Number(params.id), body);
+    const updatedJob = await updateJobController(Number(id), body);
     return NextResponse.json(updatedJob, { status: 200 });
   } catch (err) {
     console.error("PUT /api/job/[id] error:", err);

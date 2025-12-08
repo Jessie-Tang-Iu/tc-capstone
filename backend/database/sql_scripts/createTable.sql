@@ -128,7 +128,7 @@ CREATE TABLE message (
   sent_user_id     TEXT NOT NULL,
   receive_user_id  TEXT NOT NULL,
   content          TEXT NOT NULL,
-  sent_at          TIMESTAMP NOT NULL DEFAULT now(),
+  sent_at          TIMESTAMP NOT NULL DEFAULT NOW(),
   status           CHAR(1) NOT NULL DEFAULT 'S', -- S: sent/read-state app-level
   conversation_id  TEXT GENERATED ALWAYS AS
     (LEAST(sent_user_id, receive_user_id) || ':' || GREATEST(sent_user_id, receive_user_id))

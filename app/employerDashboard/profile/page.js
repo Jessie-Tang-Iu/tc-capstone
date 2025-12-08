@@ -97,7 +97,7 @@ export default function EmployerProfile() {
   };
 
   return (
-    <main className="relative bg-gradient-to-br from-[#f8eae2] to-white min-h-screen">
+    <main className="relative bg-linear-to-br from-[#f8eae2] to-white min-h-screen">
       <Navbar />
 
       <div className="mx-auto mt-10 p-4">

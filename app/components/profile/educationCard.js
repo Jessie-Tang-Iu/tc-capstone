@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2 } from 'lucide-react';
+import InputField from "./inputField";
 
-const degreeOptions = ["Diploma", "Bachelors", "Masters", "PhD"];
-const fieldOfStudy = ["Arts", "Biology", "Business", "Chemistry", "Computer Science", "Data Science", "Economics", "Education", "Engineering", "Environmental Science", "Health Sciences", "History", "Information Technology", "Literature", "Mathematics", "Philosophy", "Physics", "Political Science", "Psychology", "Social Sciences", "Sociology", "Software Development"];
-const years = Array.from({ length: 50 }, (_, i) => 2030 - i);
+const degreeOptions = ["Select a degree", "Diploma", "Bachelors", "Masters", "PhD"];
+const fieldOfStudy = ["Select a field", "Arts", "Biology", "Business", "Chemistry", "Computer Science", "Data Science", "Economics", "Education", "Engineering", "Environmental Science", "Health Sciences", "History", "Information Technology", "Literature", "Mathematics", "Philosophy", "Physics", "Political Science", "Psychology", "Social Sciences", "Sociology", "Software Development"];
+const years = ["Select a year", ...Array.from({ length: 50 }, (_, i) => 2030 - i)];
 
 export default function EducationCard({ index, edu, setNewEdu, isLoading, setIsLoading, setErrorMessage, onSave, onRemove }) {
 
@@ -78,80 +79,44 @@ export default function EducationCard({ index, edu, setNewEdu, isLoading, setIsL
       {/* Modify option  */}
       {(editingEdu === edu || !edu) && (
       <div className="py-2 px-4">
-        {error && <p className="text-red-600 text-xs font-base">{error}</p>}
+        {error && <p className="text-red-600 text-sm font-base">{error}</p>}
         {/* School */}
         <div className="my-2">
-          <label className="block text-xs text-gray-700 font-medium mb-1">School*</label>
-          <input
-            type="text"
-            value={education.school}
+          <InputField 
+            label="School *" value={education.school} placeholder="Ex: Western University"
             onChange={(e) => handleEducationChange('school', e.target.value)}
-            placeholder="Ex: Western University"
-            className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
           />
         </div>
 
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-2 mb-2">
-          <div>
-            <label className="block text-xs text-gray-700 font-medium mb-1">Degree*</label>
-            <select
-              value={education.degree}
-              onChange={(e) => handleEducationChange('degree', e.target.value)}
-              className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
-            >
-              <option key={0} value={""} disabled>Select a degree</option>
-              {degreeOptions.map((degree) => (
-                <option key={degree} value={degree}>{degree}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-xs text-gray-700 font-medium mb-1">Field of study*</label>
-            <select
-              value={education.fieldOfStudy}
-              onChange={(e) => handleEducationChange('fieldOfStudy', e.target.value)}
-              className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
-            >
-              <option key={0} value={""} disabled>Select a field</option>
-              {fieldOfStudy.map((field) => (
-                <option key={field} value={field}>{field}</option>
-              ))}
-            </select>
-          </div>
+          <InputField 
+            type="select" options={degreeOptions} 
+            label="Degree *" value={education.degree}
+            onChange={(e) => handleEducationChange('degree', e.target.value)}
+          />
+          <InputField 
+            type="select" options={fieldOfStudy}
+            label="Field of study *" value={education.fieldOfStudy}
+            onChange={(e) => handleEducationChange('fieldOfStudy', e.target.value)}
+          />
         </div>
 
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-2 mb-2">
-          <div>
-            <label className="block text-xs text-gray-700 font-medium mb-1">Start year*</label>
-            <select
-              value={education.startYear}
-              onChange={(e) => handleEducationChange('startYear', e.target.value)}
-              className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
-            >
-              <option key={0} value={""} disabled>Select a year</option>
-              {years.map((year) => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-xs text-gray-700 font-medium mb-1">End year (expected year)*</label>
-            <select
-              value={education.endYear}
+          <InputField 
+            label="Start year *" value={education.startYear}
+            type="select" options={years}
+            onChange={(e) => handleEducationChange('startYear', e.target.value)}
+          />
+          <InputField 
+              label="End year (expected year) *" value={education.endYear}
+              type="select" options={years}
               onChange={(e) => handleEducationChange('endYear', e.target.value)}
-              className="w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-gray-200"
-            >
-              <option key={0} value={""} disabled>Select a year</option>
-              {years.map((year) => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
-          </div>
+            />
         </div>
         <div className="w-full flex justify-center py-1">
           <div>
           <button 
-            className="bg-[#EE7D5E] text-white hover:opacity-90 px-6 py-2 rounded-md text-xs font-semibold transition cursor-pointer"
+            className="bg-[#EE7D5E] text-white hover:opacity-90 px-6 py-2 rounded-md text-sm font-semibold transition cursor-pointer"
             onClick={() => {
               let errorMessage = "";
               if (education.school == "" || education.fieldOfStudy == "" || education.degree == "" || education.startYear == "" || education.endYear == "") errorMessage = "Missing required information";
