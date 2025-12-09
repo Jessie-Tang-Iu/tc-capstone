@@ -194,7 +194,11 @@ export default function MemberNavbar() {
           <li className="relative group">
             <button 
               className="flex items-center gap-1 hover:text-orange-500"
-              onClick={() => setIsDesktopServicesOpen((v) => !v)}
+              onClick={() => { 
+                let isOpen = isDesktopServicesOpen;
+                setIsDesktopServicesOpen(!isOpen); 
+                if (isDesktopJobOpen) setIsDesktopJobOpen(isOpen);
+              }}
             >
               Services <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDesktopServicesOpen ? 'rotate-180' : ''}`} />
             </button>
@@ -223,7 +227,11 @@ export default function MemberNavbar() {
           <li className="relative group">
             <button 
               className="flex items-center gap-1 hover:text-orange-500"
-              onClick={() => setIsDesktopJobOpen((v) => !v)}
+              onClick={() => { 
+                let isOpen = isDesktopJobOpen;
+                setIsDesktopJobOpen(!isOpen); 
+                if (isDesktopServicesOpen) setIsDesktopServicesOpen(isOpen);
+              }}
             >
               Job <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDesktopJobOpen ? 'rotate-180' : ''}`} />
             </button>

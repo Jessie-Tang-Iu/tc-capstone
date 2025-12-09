@@ -100,7 +100,7 @@ export default function PageContent() {
       <Navbar />
 
       {/* Search Bar */}
-      <header className="my-2 mx-2 rounded-xl bg-white p-6 shadow text-center">
+      <header className="mt-5 mb-2 mx-2 md:mx-10 rounded-xl bg-white p-6 shadow text-center">
         <div className="mb-4 text-4xl font-semibold text-[#E55B3C]">
           Courses
         </div>
@@ -117,9 +117,9 @@ export default function PageContent() {
       </header>
 
       {/* Filters and Courses */}
-      <main className="flex flex-col md:flex-row mx-2">
-        <div className="block w-full md:w-60 bg-white rounded text-black mt-0 md:mt-5 py-4">
-          <div className="flex md:flex-col flex-row  mx-4 gap-4">
+      <main className="flex flex-col md:flex-row mx-2 md:mx-10 gap-2 md:gap-4">
+        <div className="w-full md:w-50 md:h-75 bg-white rounded-lg p-1 shadow mt-0 md:mt-2 py-4">
+          <div className="flex md:flex-col flex-row mx-4 gap-4">
             <h2 className="hidden md:block min-w-22 font-bold text-xl">Filter By</h2>
 
             {/* LEVEL DROPDOWN */}
@@ -156,7 +156,7 @@ export default function PageContent() {
             </div>
 
             {/* TYPE DROPDOWN */}
-            <div className="w-full min-w-30">
+            <div className="w-full min-w-30 ">
               <label className="font-bold text-sm block mb-1">Course Type</label>
               <select
                 className="border p-2 rounded w-full bg-[#f8f1ed] border-[#E55B3C] text-black text-base"
@@ -174,7 +174,7 @@ export default function PageContent() {
           </div>
         </div>
 
-        <div className="w-5/6 min-h-screen flex flex-wrap content-start">
+        <div className="w-5/6 my-2 min-h-screen flex flex-wrap content-start">
           {filteredCourses.length > 0 ? (
             filteredCourses.map((course) => (
               <CourseCard key={course.id} course={course} userId={user.id} />

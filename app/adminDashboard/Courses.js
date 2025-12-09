@@ -70,57 +70,57 @@ export default function AdminDashboard() {
               Courses Management
             </div>
 
-            <div className="flex flex-wrap justify-between items-center mb-4 gap-3">
+            <div className="flex flex-wrap justify-center items-center gap-3 lg:gap-15 mb-4">
               <div className="flex justify-center gap-3">
-              {/* Search by name */}
-              <input
-                type="text"
-                placeholder="Search by name..."
-                className="h-10 border-2 px-3 py-2 rounded w-1/3 bg-[#f8f1ed] border-[#E55B3C] text-black"
-                onChange={(e) => {
-                  const text = e.target.value.toLowerCase();
-                  setFilteredCourses(
-                    courses.filter((c) =>
-                      c.title.toLowerCase().includes(text)
-                    )
-                  );
-                }}
-              />
-              {/* Filter by Level */}
-              <select
-                className="h-10 border-2 px-3 py-2 rounded bg-[#f8f1ed] border-[#E55B3C] text-black"
-                onChange={(e) => {
-                  const level = e.target.value;
-                  setFilteredCourses(
-                    level === ""
-                      ? courses
-                      : courses.filter((c) => c.level === level)
-                  );
-                }}
-              >
-                <option value="">All Levels</option>
-                <option value="Beginner">Beginner</option>
-                <option value="Intermediate">Intermediate</option>
-                <option value="Advanced">Advanced</option>
-              </select>
+                {/* Search by name */}
+                <input
+                  type="text"
+                  placeholder="Search by name..."
+                  className="h-10 border-2 px-3 py-2 rounded w-1/3 bg-[#f8f1ed] border-[#E55B3C] text-black"
+                  onChange={(e) => {
+                    const text = e.target.value.toLowerCase();
+                    setFilteredCourses(
+                      courses.filter((c) =>
+                        c.title.toLowerCase().includes(text)
+                      )
+                    );
+                  }}
+                />
+                {/* Filter by Level */}
+                <select
+                  className="h-10 border-2 px-3 py-2 rounded bg-[#f8f1ed] border-[#E55B3C] text-black"
+                  onChange={(e) => {
+                    const level = e.target.value;
+                    setFilteredCourses(
+                      level === ""
+                        ? courses
+                        : courses.filter((c) => c.level === level)
+                    );
+                  }}
+                >
+                  <option value="">All Levels</option>
+                  <option value="Beginner">Beginner</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Advanced">Advanced</option>
+                </select>
 
-              {/* Filter by Type */}
-              <select
-                className="h-10 border-2 px-3 py-2 rounded bg-[#f8eae2]white border-[#E55B3C] text-black"
-                onChange={(e) => {
-                  const type = e.target.value;
-                  setFilteredCourses(
-                    type === ""
-                      ? courses
-                      : courses.filter((c) => c.type === type)
-                  );
-                }}
-              >
-                <option value="">All Types</option>
-                <option value="Online">Online</option>
-                <option value="In Person">In Person</option>
-                <option value="Workshop">Workshop</option>
-              </select>
+                {/* Filter by Type */}
+                <select
+                  className="h-10 border-2 px-3 py-2 rounded bg-[#f8eae2]white border-[#E55B3C] text-black"
+                  onChange={(e) => {
+                    const type = e.target.value;
+                    setFilteredCourses(
+                      type === ""
+                        ? courses
+                        : courses.filter((c) => c.type === type)
+                    );
+                  }}
+                >
+                  <option value="">All Types</option>
+                  <option value="Online">Online</option>
+                  <option value="In Person">In Person</option>
+                  <option value="Workshop">Workshop</option>
+                </select>
               </div>
               <button
                 onClick={() => setView("create")}
