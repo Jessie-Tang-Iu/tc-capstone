@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function CourseCard ({ course, userId }) {
     return (
-        <Link className="border border-gray-300 rounded-lg p-4 m-4 w-[30%] bg-white text-black shadow-md" href={`/courses/${course.id}?userId=${userId}`}>
+        <Link className="border border-gray-300 rounded-lg p-4 m-4 w-[30%] min-w-70 bg-white text-black shadow-md" href={`/courses/${course.id}?userId=${userId}`}>
             <div className="">
                 <p className="text-sm">{course.type}</p>
                 <h2 className="text-lg font-medium">{course.title}</h2>

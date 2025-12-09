@@ -148,7 +148,7 @@ function AdminDashboardCore() {
       <Navbar />
 
       <div className="mx-auto w-full max-w-8xl px-6 py-8">
-        <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
+        <h1 className="mb-6 text-3xl font-bold text-[#DD5B45]">
           Admin DashBoard
         </h1>
 
