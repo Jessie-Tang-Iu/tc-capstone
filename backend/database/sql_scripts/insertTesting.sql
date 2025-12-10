@@ -549,7 +549,7 @@ VALUES
     ('user_34RDeo5WKU2K8s6AArG7XBAODkb', 'user_36LuW3xqICj7ZjdFec7xVsmFp9L', 'Your advisor application is currently under review. Please confirm your primary company role.', NOW() - INTERVAL '10 minutes', 'S'),
     ('user_36LuW3xqICj7ZjdFec7xVsmFp9L', 'user_34RDeo5WKU2K8s6AArG7XBAODkb', 'My primary role is Data Analyst. Thanks!', NOW() - INTERVAL '5 minutes', 'S');
 
-    INSERT INTO message (sent_user_id, receive_user_id, content, sent_at, status)
+INSERT INTO message (sent_user_id, receive_user_id, content, sent_at, status)
 VALUES (
     'user_36MVovbCJp6OkcXlDRHpBtfuDfX', 
     'user_34RDeo5WKU2K8s6AArG7XBAODkb', 
@@ -557,3 +557,56 @@ VALUES (
     NOW(), 
     'S' 
 );
+
+-- =========================================
+-- MESSAGE DATA INSERTS for Joy Wong (user_33TXk5AzMm228mH76TLzGUitM2U)
+-- =========================================
+
+-- Conversation 1: Joy (Member) to Admin
+INSERT INTO message (sent_user_id, receive_user_id, content, sent_at, status)
+VALUES
+    (
+        'user_33TXk5AzMm228mH76TLzGUitM2U', 
+        'user_34RDeo5WKU2K8s6AArG7XBAODkb', 
+        'I am having trouble accessing the "AI in Healthcare" conference details. Can you send me the link?', 
+        NOW() - INTERVAL '3 hours', 
+        'S'
+    ),
+    (
+        'user_34RDeo5WKU2K8s6AArG7XBAODkb', 
+        'user_33TXk5AzMm228mH76TLzGUitM2U', 
+        'Hi Joy, I have verified the link. Please clear your cache and try again. Let me know if the issue persists.', 
+        NOW() - INTERVAL '2 hours', 
+        'R'
+    );
+
+-- Conversation 2: Advisor (Mary White) initiating contact with Joy (Member)
+INSERT INTO message (sent_user_id, receive_user_id, content, sent_at, status)
+VALUES
+    (
+        'user_36LsgiytrqklL4r6V2fqus5wfVo', 
+        'user_33TXk5AzMm228mH76TLzGUitM2U', 
+        'I saw your resume on the platform. Would you be interested in a quick 15-minute chat about your career goals?', 
+        NOW() - INTERVAL '1 hour', 
+        'S'
+    ),
+    (
+        'user_33TXk5AzMm228mH76TLzGUitM2U', 
+        'user_36LsgiytrqklL4r6V2fqus5wfVo', 
+        'Yes, I would! Thank you for reaching out. Are you available next Tuesday afternoon?', 
+        NOW() - INTERVAL '40 minutes', 
+        'S'
+    );
+
+-- Conversation 3: Employer (TechCorp) sends an application status update to Joy
+INSERT INTO message (sent_user_id, receive_user_id, content, sent_at, status)
+VALUES
+    (
+        'user_36MVovbCJp6OkcXlDRHpBtfuDfX', 
+        'user_33TXk5AzMm228mH76TLzGUitM2U', 
+        'Your application for the Software Engineer position is now under review. We will contact you soon for an interview.', 
+        NOW() - INTERVAL '10 minutes', 
+        'S'
+    );
+
+
