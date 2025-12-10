@@ -23,6 +23,7 @@ DROP TABLE IF EXISTS
   advisory_bookings,
   advisory_sessions,
   advisory_profile,
+  invoices,
   application,
   cover_letter,
   resume,
@@ -275,6 +276,7 @@ CREATE TABLE advisory_sessions (
   advisor_id TEXT NOT NULL,
   client_id  TEXT NOT NULL,
   message    TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
   status     TEXT
 );
 
@@ -289,6 +291,23 @@ CREATE TABLE advisory_profile (
   skill_1     TEXT,
   skill_2     TEXT,
   skill_3     TEXT
+);
+
+-- =========================================
+-- Invoices
+-- (kept TEXT ids to match your current usage; add FKs later if needed)
+-- =========================================
+CREATE TABLE invoices (
+  invoice_id      SERIAL PRIMARY KEY,
+  advisor_id      TEXT NOT NULL,
+  client_id       TEXT NOT NULL,
+  quantity        INT NOT NULL,
+  unit_price      NUMERIC(10, 2) NOT NULL,
+  tax             NUMERIC(10, 2) NOT NULL,
+  amount          NUMERIC(10, 2) NOT NULL,
+  issued_date     DATE,
+  due_date        DATE,
+  status          TEXT
 );
 
 -- =========================================

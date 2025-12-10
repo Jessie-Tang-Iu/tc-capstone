@@ -25,6 +25,21 @@ export default function ClientRow({
         }
     }, [selectedStatus]);
 
+
+    // Format created_at timestamp
+    const date = new Date(client.created_at);
+
+    // Use date.getDate() which gives you the local day (after UTC conversion)
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // +1 because getMonth is 0-indexed
+    const year = date.getFullYear();
+
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    const formattedTime = `${day}/${month}/${year} ${hours}:${minutes}`;
+
+
     const handleChangeStatus = (newStatus) => {
         const userConfirmed = confirm("Are you sure to change the " + client.first_name + ' ' + client.last_name + " status to: " + newStatus + "?");
         if (userConfirmed) {
@@ -98,7 +113,7 @@ export default function ClientRow({
                     </select>
                 )}
             </div>
-            <p className="w-2/12 px-2 py-1">10/5/2025 20:00 MTU</p>
+            <p className="w-2/12 px-2 py-1">{formattedTime}</p>
             <div className="w-1/12">
                 <button
                     onClick={onMessage}

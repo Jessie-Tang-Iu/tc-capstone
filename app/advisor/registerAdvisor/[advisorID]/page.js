@@ -76,7 +76,7 @@ export default function RegisterAdvisor({ params }) {
                     <div className="w-3/5 flex flex-col items-start">
                         {/* Session 1 */}
                         <div className='my-7 mb-10 text-left'>
-                            <h1 className="text-[25px] font-bold text-[#E55B3C] mb-6">Register Advisory Session {advisorID}</h1>
+                            <h1 className="text-[25px] font-bold text-[#E55B3C] mb-6">Register Advisory Session with {recipientName}</h1>
                             <p className="text-[15px] text-gray-700">At Tech Connect, we believe technology should amplify your mission—not your expenses. That&apos;s why we&apos;re offering free or low-cost tech and automation support to nonprofits, based on your organization&apos;s size and budget.</p>
                             {/* <hr className='text-black' /> */}
                         </div>

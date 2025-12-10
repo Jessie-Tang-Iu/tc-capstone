@@ -53,33 +53,33 @@ INSERT INTO comments (post_id, author_id, content) VALUES
 
 --booked slots
 INSERT INTO advisory_bookings (advisor_id, client_id, date, startTime, description, endTime, status) VALUES 
-('user_354NOlnmVLauZqHMM9kKE4mxprm', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-11-6', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('user_354NOlnmVLauZqHMM9kKE4mxprm', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-11-5', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('user_36LsgiytrqklL4r6V2fqus5wfVo', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-11-6', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('user_36LsgiytrqklL4r6V2fqus5wfVo', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-11-5', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
-('user_36LtMEozUBovhSFgSeW8hkWRJ6J', 'user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-10-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked');
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-12-6', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-12-5', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-12-6', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-12-5', '10:00:00', 'I need some advise on my front-end project', '12:00:00', 'booked'),
+('user_36LtMEozUBovhSFgSeW8hkWRJ6J', 'user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-12-22', '12:00:00', 'I need some advise on my front-end project', '14:00:00', 'booked');
 
 --open slots
 INSERT INTO advisory_bookings (advisor_id, date, startTime, endTime, status) VALUES 
-('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-3', '10:00:00', '12:00:00', 'open'),
-('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-4', '12:00:00', '14:00:00', 'open'),
-('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-5', '12:00:00', '14:00:00', 'open'),
-('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-5', '14:00:00', '16:00:00', 'open'),
-('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-6', '11:00:00', '13:00:00', 'open'),
-('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-7', '10:00:00', '12:00:00', 'open'),
-('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-11-3', '10:00:00', '12:00:00', 'open'),
-('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-11-3', '10:00:00', '12:00:00', 'open'),
-('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-11-4', '12:00:00', '14:00:00', 'open'),
-('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-11-5', '12:00:00', '14:00:00', 'open'),
-('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-11-5', '14:00:00', '16:00:00', 'open'),
-('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-11-6', '11:00:00', '13:00:00', 'open'),
-('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-11-7', '10:00:00', '12:00:00', 'open'),
-('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-11-3', '10:00:00', '12:00:00', 'open'),
-('user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-10-13', '12:00:00', '14:00:00', 'open'),
-('user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-10-14', '12:00:00', '14:00:00', 'open'),
-('user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-10-15', '12:00:00', '14:00:00', 'open'),
-('user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-10-16', '11:00:00', '13:00:00', 'open'),
-('user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-10-17', '10:00:00', '12:00:00', 'open');
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-12-3', '10:00:00', '12:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-12-4', '12:00:00', '14:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-12-5', '12:00:00', '14:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-12-5', '14:00:00', '16:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-12-6', '11:00:00', '13:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-12-7', '10:00:00', '12:00:00', 'open'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '2025-12-3', '10:00:00', '12:00:00', 'open'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-12-3', '10:00:00', '12:00:00', 'open'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-12-4', '12:00:00', '14:00:00', 'open'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-12-5', '12:00:00', '14:00:00', 'open'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-12-5', '14:00:00', '16:00:00', 'open'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-12-6', '11:00:00', '13:00:00', 'open'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-12-7', '10:00:00', '12:00:00', 'open'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', '2025-12-3', '10:00:00', '12:00:00', 'open'),
+('user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-12-13', '12:00:00', '14:00:00', 'open'),
+('user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-12-14', '12:00:00', '14:00:00', 'open'),
+('user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-12-15', '12:00:00', '14:00:00', 'open'),
+('user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-12-16', '11:00:00', '13:00:00', 'open'),
+('user_36LtMEozUBovhSFgSeW8hkWRJ6J', '2025-12-17', '10:00:00', '12:00:00', 'open');
 
 -- test data for advisory session
 INSERT INTO advisory_sessions (advisor_id, client_id, message, status) VALUES 
@@ -90,6 +90,29 @@ INSERT INTO advisory_sessions (advisor_id, client_id, message, status) VALUES
 ('user_36LsgiytrqklL4r6V2fqus5wfVo', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', 'I need help with backend', 'pending'),
 ('user_36LsgiytrqklL4r6V2fqus5wfVo', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', null, 'closed'),
 ('user_36LtMEozUBovhSFgSeW8hkWRJ6J', 'user_36LsgiytrqklL4r6V2fqus5wfVo', 'I need help with front-end', 'active');
+
+-- test data for advisor
+INSERT INTO advisory_profile (advisor_id, experience, education, skill_1, skill_2, skill_3) VALUES
+('user_36LsgiytrqklL4r6V2fqus5wfVo', '5 years in software development', 'BSc Computer Science', 'JavaScript', 'React', 'Node.js'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', '3 years in career advising', 'MSc Counseling', 'Resume Writing', 'Interview Coaching', 'Career Planning'),
+('user_36LtMEozUBovhSFgSeW8hkWRJ6J', '7 years in project management', 'MBA', 'Agile', 'Scrum', 'Leadership'),
+('user_36LtbOmcHhwL8SFxMVejTJuidjl', '4 years in front-end development', 'BSc Software Engineering', 'HTML/CSS', 'Vue.js', 'UX Design'),
+('user_36Lu1gq63tyhea7IZS2yPISpObd', '6 years in full stack development', 'BSc Information Technology', 'Python', 'Django', 'AWS'),
+('user_36LuOUs6t5eeG3LcltRac4UHXID', '8 years in project management', 'MBA', 'Kanban', 'Risk Management', 'Communication'),
+('user_36LuW3xqICj7ZjdFec7xVsmFp9L', 'Software Engineer with 2 years of experience', 'BSc Computer Science from University A', 'Python', 'Django', 'REST APIs'),
+('user_36Lud5Qr140OWVjnGzyI8sgKNsp', 'Front-end Developer with 3 years of experience', 'BSc Software Engineering from University B', 'JavaScript', 'React', 'CSS'),
+('user_36LujVUa51HBuJYktaa7GVGBQuS', 'Data Scientist with 4 years of experience', 'MSc Data Science from University C', 'Python', 'Machine Learning', 'Data Visualization'),
+('user_36LwKkX9d7lcxmNoVeOmO5AMgXC', 'DevOps Engineer with 5 years of experience', 'BSc Information Technology from University D', 'AWS', 'Docker', 'Kubernetes'),
+('user_36LwS1Twi0OQlRCt1ReErjZhjjJ', 'Mobile App Developer with 3 years of experience', 'BSc Computer Science from University E', 'Swift', 'iOS Development', 'UI/UX Design'),
+('user_36Lwa069wSfjnhrOxX5aYumDZ78', 'Backend Developer with 6 years of experience', 'BSc Software Engineering from University F', 'Java', 'Spring Boot', 'Microservices'),
+('user_36LwpQ3kb4RPiZYrxhMmHiKkh6g', 'Full Stack Developer with 4 years of experience', 'BSc Computer Science from University G', 'JavaScript', 'Node.js', 'Angular');
+
+-- test data for invoices
+INSERT INTO invoices (advisor_id, client_id, quantity, unit_price, tax, amount, issued_date, due_date, status) VALUES
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', 1, 100, 5, 105, '2025-11-01', '2025-11-15', 'unpaid'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', 1, 100, 5, 105, '2025-11-02', '2025-11-15', 'unpaid'),
+('user_36LsgiytrqklL4r6V2fqus5wfVo', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', 1, 100, 5, 105, '2025-11-03', '2025-11-15', 'paid'),
+('user_354NOlnmVLauZqHMM9kKE4mxprm', 'user_36LtMEozUBovhSFgSeW8hkWRJ6J', 2, 150, 15, 315, '2025-10-01', '2025-10-15', 'paid');
 
 -- Test data for applications
 

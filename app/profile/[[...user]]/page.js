@@ -93,7 +93,7 @@ function ProfileDashboardContent() {
 
   return (
     <>
-    <div className="w-full min-h-screen bg-gray-100">
+    <div className="w-full min-h-screen bg-linear-to-br from-[#f8eae2] to-white">
       
       {userRole === "member" && (
         <MemberNavbar />

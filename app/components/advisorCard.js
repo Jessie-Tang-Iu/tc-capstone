@@ -23,7 +23,7 @@ export default function AdvisorCard({ advisor }) {
 
 
     return(
-        <div className='w-115 h-40 bg-white shadow rounded-xl flex flex-row py-3 px-4 text-start'>
+        <div className='w-115 h-45 bg-white shadow rounded-xl flex flex-row py-3 px-4 text-start'>
             <div className='flex flex-col flex-2'>
                 <div className="flex flex-row space-x-2 mr-5">
                     <RxAvatar size={90} />
@@ -37,9 +37,9 @@ export default function AdvisorCard({ advisor }) {
                 
 
                 {/* Skills Tag */}
-                <div className="flex flex-wrap justify-center text-center space-x-2 mt-2">
+                <div className="flex flex-wrap justify-center text-center mt-2 gap-1.5">
                     {!advisor.skill_1 && !advisor.skill_2 && !advisor.skill_3 &&
-                        <div className='border border-gray-300 shadow-lg rounded-xl bg-white/10 backdrop-blur-sm px-2'>
+                        <div className='border border-gray-300 shadow-lg rounded-xl bg-white/10 backdrop-blur-sm px-2 '>
                             <p>No Skills Provided</p>
                         </div>
                     }

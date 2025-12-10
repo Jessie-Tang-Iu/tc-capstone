@@ -6,8 +6,8 @@ import Button from "../components/ui/Button";
 export default function InvoiceRow({
     invoiceId,
     client,
-    location,
     timeAgo,
+    dueDate,
 }) {
 
     const router = useRouter();
@@ -30,8 +30,8 @@ export default function InvoiceRow({
             <div className="flex-1 text-sm text-black">
             <div className="font-semibold">{client}</div>
             <div className="mt-1">Official receipts</div>
-            {location && <div className="font-semibold">{location}</div>}
             {timeAgo && <div className="mt-1 text-gray-500">Applied {timeAgo}</div>}
+            {dueDate && <div className="mt-1 text-gray-500">Due Date: {dueDate}</div>}
             </div>
     
             {/* Right action */}
