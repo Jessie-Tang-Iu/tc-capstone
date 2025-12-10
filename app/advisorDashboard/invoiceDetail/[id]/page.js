@@ -39,7 +39,7 @@ export default function InvoiceDetail({ params }) {
         console.log("Fetching invoice details for ID:", id);
         try {
             const res = await fetch(`/api/invoice`, {
-                method: "POST",
+                method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ invoice_id: id }),
             });

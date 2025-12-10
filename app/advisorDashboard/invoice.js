@@ -36,10 +36,8 @@ export default function Invoice({ advisorId }) {
         (async () => {
             console.log("Fetching with advisorId:", advisorId);
             try {
-                const res = await fetch(`/api/invoice`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ advisorId: advisorId }),
+                const res = await fetch(`/api/invoice?advisor_id=${advisorId}`, {
+                    method: "GET",
                 });
                 if (!res.ok) {
                     console.error("Failed to fetch invoices");
