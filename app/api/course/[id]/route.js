@@ -49,8 +49,7 @@ export async function PUT(req, { params }) {
   try {
     const input = await params;
     const body = await req.json();
-    const courseId = input.id; 
-    const userId = body.userId || "";
+    const courseId = input.id;
 
     const res = await fetch(`${BACKEND_URL}/courses/${courseId}`, {
       method: "PUT",
