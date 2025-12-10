@@ -11,7 +11,6 @@ function PageContent() {
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
 
-  // Redirect if not signed in
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
       router.push("/signIn");
@@ -23,11 +22,9 @@ function PageContent() {
   }
 
   if (!isSignedIn) {
-    // Don’t render anything while redirecting
     return null;
   }
 
-  // Ensure user data is available before accessing user.id
   if (!user) {
     return <p>Loading user data...</p>;
   }
@@ -56,9 +53,9 @@ function PageContent() {
 
           {/* Message Section */}
           <section className="rounded-xl bg-white shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            {/* <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Your Messages
-            </h2>
+            </h2> */}
             <MessagePage currentUserId={userID} />
           </section>
         </div>

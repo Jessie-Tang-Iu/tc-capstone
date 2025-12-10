@@ -421,4 +421,9 @@ CREATE INDEX idx_reports_is_banned ON reports (is_banned);
 
 
 
+
+-- ADD THESE COLUMNS TO  message TABLE MIGRATION:
+ALTER TABLE message ADD COLUMN sender_deleted BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE message ADD COLUMN receiver_deleted BOOLEAN NOT NULL DEFAULT FALSE;
+
 COMMIT;
