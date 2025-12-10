@@ -68,9 +68,7 @@ export default function MessagePage({ currentUserId }) {
         const peer =
           m.sent_user_id === currentUserId ? m.receiver_name : m.sender_name;
         const peerId =
-          m.sent_user_id === currentUserId
-            ? m.receive_user_id
-            : m.sent_user_id;
+          m.sent_user_id === currentUserId ? m.receive_user_id : m.sent_user_id;
         const sentDate = new Date(m.sent_at);
         return {
           id: m.conversation_id,
@@ -127,6 +125,7 @@ export default function MessagePage({ currentUserId }) {
     }
   };
 
+  // --- FIX: Ensure refresh uses consistent date/time formatting ---
   const refresh = async () => {
     if (!currentUserId) return;
     const res = await fetch(
@@ -138,15 +137,20 @@ export default function MessagePage({ currentUserId }) {
         const peer =
           m.sent_user_id === currentUserId ? m.receiver_name : m.sender_name;
         const peerId =
-          m.sent_user_id === currentUserId
-            ? m.receive_user_id
-            : m.sent_user_id;
+          m.sent_user_id === currentUserId ? m.receive_user_id : m.sent_user_id;
+        const sentDate = new Date(m.sent_at);
         return {
           id: m.conversation_id,
           name: peer,
           recipientId: peerId,
           message: m.content,
-          date: new Date(m.sent_at).toLocaleString(),
+          date: sentDate.toLocaleDateString(),
+          time: sentDate.toLocaleTimeString([], {
+            // Added time formatting options
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          }),
           raw: m,
         };
       });
@@ -155,6 +159,7 @@ export default function MessagePage({ currentUserId }) {
       setPage(1);
     }
   };
+  // -----------------------------------------------------------------
 
   // search filter
   const filteredRows = useMemo(() => {
@@ -269,12 +274,14 @@ export default function MessagePage({ currentUserId }) {
             <tbody>
               {pageRows.map((row, idx) => {
                 const checked = selected.has(row.id);
-                const zebra = idx % 2 === 0 ? "bg-white" : "bg-white";
+                // Removed hardcoded zebra stripe logic
+                const bgColor = idx % 2 === 0 ? "bg-white" : "bg-gray-50";
+
                 return (
                   <tr
                     key={row.id}
                     className={`${
-                      checked ? "bg-[#F0D6C2]" : zebra
+                      checked ? "bg-[#F0D6C2]" : bgColor
                     } transition hover:bg-gray-100 cursor-pointer`}
                     onClick={() => handleRowClick(row)}
                   >

@@ -6,6 +6,7 @@ import Navbar from "@/app/components/EmployerNavBar";
 import EmployerSidebar from "../../components/employerDashboard/EmployerSideBar";
 import EmployerJobPostItem from "../../components/employerDashboard/EmployerJobPostItem";
 import { useUser } from "@clerk/nextjs";
+import withEmployerAuth from "@/app/components/employerDashboard/withEmployerAuth";
 
 const IconChevronLeft = () => (
   <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
@@ -25,7 +26,7 @@ const IconChevronRight = () => (
   </svg>
 );
 
-export default function JobPostsPage() {
+function JobPostsPage() {
   const { user, isLoaded, isSignedIn } = useUser();
   const router = useRouter();
   const [jobs, setJobs] = useState([]);
@@ -39,7 +40,9 @@ export default function JobPostsPage() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await fetch(`/api/job/employer/${user.id}`, { cache: "no-store" });
+        const res = await fetch(`/api/job/employer/${user.id}`, {
+          cache: "no-store",
+        });
         if (!res.ok) throw new Error("Failed to fetch jobs");
         const data = await res.json();
         // console.log("Jobs by employer: ", data);
@@ -145,3 +148,5 @@ export default function JobPostsPage() {
     </div>
   );
 }
+
+export default withEmployerAuth(JobPostsPage);

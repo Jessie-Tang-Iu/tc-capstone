@@ -31,7 +31,8 @@ export async function GET(req) {
 // body: { fromUser, toUser } -> mark messages from fromUser -> toUser as read
 export async function POST(req) {
   try {
-    const { fromUser, toUser } = await req.json();
+    const body = await req.json();
+    const { fromUser, toUser } = body; // Destructure required IDs
 
     if (!fromUser || !toUser) {
       return NextResponse.json(
@@ -40,7 +41,9 @@ export async function POST(req) {
       );
     }
 
-    const updated = await markReadByPairController({ fromUser, toUser });
+    // FIX: Call controller with two separate string arguments (fromUser, toUser)
+    const updated = await markReadByPairController(fromUser, toUser);
+
     return NextResponse.json(
       { updated: updated.map((r) => r.id) },
       { status: 200 }
@@ -50,5 +53,3 @@ export async function POST(req) {
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
-
-//chatwindow

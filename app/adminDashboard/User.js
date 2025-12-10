@@ -8,7 +8,6 @@ import PlaceholderCard from "@/app/components/adminDashboard/PlaceholderCard";
 import ChatWindow from "@/app/components/ChatWindow";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import { clerkBEClient } from "@/backend/lib/clerk";
 
 export default function UsersPanel({ onShowDetails }) {
   const [query, setQuery] = useState("");
@@ -61,7 +60,7 @@ export default function UsersPanel({ onShowDetails }) {
 
   const updateUserStatus = async (id, newStatus, oldStatus) => {
     try {
-      console.log("status: ", newStatus,"-",oldStatus)
+      console.log("status: ", newStatus, "-", oldStatus);
 
       const res = await fetch(`/api/users/${id}`, {
         method: "PATCH",
@@ -160,7 +159,9 @@ export default function UsersPanel({ onShowDetails }) {
                 status={u.status}
                 onMessage={() => openMessage(u.clerk_id)}
                 role={activeTab}
-                onInvestigate={() => {router.push(`/advisorDashboard?advisorId=${u.clerk_id}`)}}
+                onInvestigate={() => {
+                  router.push(`/advisorDashboard?advisorId=${u.clerk_id}`);
+                }}
                 onDetails={() =>
                   showDetails(u, roles.find((r) => r.key === activeTab)?.label)
                 }
