@@ -117,7 +117,7 @@ export default function PageContent() {
       </header>
 
       {/* Filters and Courses */}
-      <main className="flex flex-col md:flex-row mx-2 md:mx-10 gap-2 md:gap-4">
+      <main className="flex flex-col md:flex-row mx-2 md:mx-10 gap-2 md:gap-4 text-black">
         <div className="w-full md:w-50 md:h-75 bg-white rounded-lg p-1 shadow mt-0 md:mt-2 py-4">
           <div className="flex md:flex-col flex-row mx-4 gap-4">
             <h2 className="hidden md:block min-w-22 font-bold text-xl">Filter By</h2>

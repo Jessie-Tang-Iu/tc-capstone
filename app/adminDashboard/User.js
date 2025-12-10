@@ -17,6 +17,8 @@ export default function UsersPanel({ onShowDetails }) {
   const [activeTab, setActiveTab] = useState("admin");
   const [fetchedRoles, setFetchedRoles] = useState({});
 
+  const [loading, setLoading] = useState(false);
+
   const userContext = useUser();
   const currentUserId = userContext?.user?.id;
 
@@ -31,6 +33,7 @@ export default function UsersPanel({ onShowDetails }) {
 
   const fetchUsersByRole = async (roleKey) => {
     try {
+      setLoading(true);
       const res = await fetch(`/api/users?role=${roleKey}`, {
         cache: "no-store",
       });
@@ -46,6 +49,8 @@ export default function UsersPanel({ onShowDetails }) {
     } catch (err) {
       console.error(`Error loading ${roleKey}:`, err);
       setUsersByRole((prev) => ({ ...prev, [roleKey]: [] }));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -143,10 +148,15 @@ export default function UsersPanel({ onShowDetails }) {
         </div>
 
         {filterByQuery(currentList).length === 0 ? (
+          <>
+          {loading ? (
+            <p className="text-black items-center justify-between">Loading...</p>
+          ) : (
           <PlaceholderCard
-            title={`No ${activeTab}s found`}
+            title={` No ${activeTab}s found`}
             description="Try another search."
-          />
+          />)}
+          </>
         ) : (
           <div className="h-[700px] overflow-y-auto pr-2 bg-white">
             {filterByQuery(currentList).map((u) => (

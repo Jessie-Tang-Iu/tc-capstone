@@ -17,7 +17,7 @@ export default function SkillCard({ index, skill, setNewSkill, isLoading, setIsL
       {/* View */}
       {(!selectedSkill && skill) && (
         <div className="w-full flex justify-center my-1">
-          <h2 className="flex-3 text-sm font-medium text-black py-2 pl-4">{skill}</h2>
+          <h2 className="flex-3 text-base font-medium text-black py-2 pl-4">{skill}</h2>
           <button  
             className="text-blue-600 hover:bg-gray-200 py-2 px-2 rounded-full transition"
             aria-label="Modify Item"
