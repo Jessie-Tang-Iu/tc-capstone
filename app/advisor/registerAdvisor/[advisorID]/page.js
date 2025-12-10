@@ -53,6 +53,9 @@ export default function RegisterAdvisor({ params }) {
 
                 if (!res.ok) throw new Error("Failed to register advisor");
                 const registeredAdvisor = await res.json();
+
+                createInvoice();
+                
                 alert("Your payment is pending! Please wait for confirmation!");
                 setNewAdvisor({ advisorId: advisorID, clientId: userID , message: '', status: 'pending'  }); // reset form
 
@@ -60,6 +63,30 @@ export default function RegisterAdvisor({ params }) {
                 router.push('/advisor');
             } catch (error) {
                 console.error("Fetch error: ", error);
+            }
+        })();
+    };
+
+    const createInvoice = ()  => {
+        (async () => {
+            const newInvoice = {
+                advisor_id: advisorID,
+                client_id: userID
+            }
+            console.log("Creating Invoice: ", newInvoice);
+
+            try {
+                const res = await fetch(`/api/invoice`, {
+                    method: 'POST',
+                    headers: {  "Content-Type": "application/json" },
+                    body: JSON.stringify(newInvoice)
+                });
+                if (!res.ok) throw new Error("Failed to create invoice");
+                const invoiceData = await res.json();
+                console.log("Created Invoice: ", invoiceData);
+            } catch (error) {
+                console.error("Fetch error: ", error);
+                return;
             }
         })();
     };
@@ -76,7 +103,7 @@ export default function RegisterAdvisor({ params }) {
                     <div className="w-3/5 flex flex-col items-start">
                         {/* Session 1 */}
                         <div className='my-7 mb-10 text-left'>
-                            <h1 className="text-[25px] font-bold text-[#E55B3C] mb-6">Register Advisory Session {advisorID}</h1>
+                            <h1 className="text-[25px] font-bold text-[#E55B3C] mb-6">Register Advisory Session with {recipientName}</h1>
                             <p className="text-[15px] text-gray-700">At Tech Connect, we believe technology should amplify your mission—not your expenses. That&apos;s why we&apos;re offering free or low-cost tech and automation support to nonprofits, based on your organization&apos;s size and budget.</p>
                             {/* <hr className='text-black' /> */}
                         </div>

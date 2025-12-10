@@ -10,7 +10,7 @@ import MessagePage from "../components/MessagePage";
 function PageContent() {
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
-  // Redirect if not signed in
+
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
       router.push("/signIn");
@@ -22,11 +22,14 @@ function PageContent() {
   }
 
   if (!isSignedIn) {
-    // Don’t render anything while redirecting
     return null;
   }
 
-  const userID = user?.id;
+  if (!user) {
+    return <p>Loading user data...</p>;
+  }
+
+  const userID = user.id;
 
   return (
     <>
@@ -40,19 +43,19 @@ function PageContent() {
           <div className="mb-10 text-center">
             <h1 className="text-3xl font-bold text-[#E55B3C]">
               Welcome back
-              {user?.firstName ? `, ${user.firstName}` : ""}!
+              {user.firstName ? `, ${user.firstName}` : ""}!
             </h1>
             <p className="mt-2 text-gray-600 text-lg">
-              This is your personal message box. Stay connected and manage
-              your conversations easily.
+              This is your personal message box. Stay connected and manage your
+              conversations easily.
             </p>
           </div>
 
           {/* Message Section */}
           <section className="rounded-xl bg-white shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            {/* <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Your Messages
-            </h2>
+            </h2> */}
             <MessagePage currentUserId={userID} />
           </section>
         </div>

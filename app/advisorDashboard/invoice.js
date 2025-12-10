@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchBar from "../components/ui/SearchBar";
 import invoicesData from "@/app/data/invoices.json";
 import InvoiceRow from "./invoiceRow";
@@ -26,18 +26,38 @@ const IconChevronRight = () => (
 
 
 
-export default function Invoice() {
+export default function Invoice({ advisorId }) {
 
     const [query, setQuery] = useState("");
     const [invoices, setInvoices] = useState(invoicesData.invoices || []);
 
+    useEffect(() => {
+        // Fetch invoices from backend API
+        (async () => {
+            console.log("Fetching with advisorId:", advisorId);
+            try {
+                const res = await fetch(`/api/invoice?advisor_id=${advisorId}`, {
+                    method: "GET",
+                });
+                if (!res.ok) {
+                    console.error("Failed to fetch invoices");
+                    return;
+                }
+                const data = await res.json();
+                console.log("Fetched invoices:", data);
+                setInvoices(data);
+            } catch (error) {
+                console.error("Fetch error: ", error);
+            }
+        })();
+    }, []);
+
     const filtered = invoices.filter((i) => {
         const queryLC = query.toLowerCase();
         return (
-            String(i.id).toLowerCase().includes(queryLC) ||
-            (i.client && i.client.toLowerCase().includes(queryLC)) ||
-            (i.invoiceId && String(i.invoiceId).toLowerCase().includes(queryLC)) ||
-            (i.location && i.location.toLowerCase().includes(queryLC))
+            String(i.invoice_id).toLowerCase().includes(queryLC) ||
+            (i.client_name && i.client_name.toLowerCase().includes(queryLC)) ||
+            (i.invoice_id && String(i.invoice_id).toLowerCase().includes(queryLC))
         )
     });
 
@@ -48,6 +68,8 @@ export default function Invoice() {
     const start = (page - 1) * pageSize;
     const end = Math.min(start + pageSize, filtered.length);
     const pageRows = filtered.slice(start, end);
+
+    console.log("Invoice Data Rows:", pageRows.map(i => i.invoice_id));
 
     return(
         <main>
@@ -61,7 +83,7 @@ export default function Invoice() {
                         value={query}
                         onChange={setQuery}
                         onSearch={() => {}}
-                        placeholder="Invoice No | Client Name | Location"
+                        placeholder="Invoice No | Client Name"
                     />
                 </div>
             </div>
@@ -97,13 +119,13 @@ export default function Invoice() {
               />
             ) : (
                 <div className="rounded-xl bg-white p-3">
-                    {pageRows.map((i) => (
+                    {pageRows.map((i, index) => (
                         <InvoiceRow
-                            key={i.id}
-                            invoiceId={i.invoiceId}
-                            client={i.client}
-                            location={i.location}
-                            timeAgo={i.timeAgo}
+                            key={index}
+                            invoiceId={i.invoice_id}
+                            client={i.client_name}
+                            timeAgo={i.issued_date?.split("T")[0]}
+                            dueDate={i.due_date?.split("T")[0]}
                         />
                     ))}
                 </div>

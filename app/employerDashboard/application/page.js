@@ -6,6 +6,7 @@ import Navbar from "@/app/components/EmployerNavBar";
 import EmployerSidebar from "../../components/employerDashboard/EmployerSideBar";
 import ApplicationItem from "../../components/employerDashboard/EmployerApplicationItem";
 import { useUser } from "@clerk/nextjs";
+import withEmployerAuth from "@/app/components/employerDashboard/withEmployerAuth";
 
 const IconChevronLeft = () => (
   <svg viewBox="0 0 24 24" className="h-5 w-5">
@@ -25,10 +26,10 @@ const IconChevronRight = () => (
   </svg>
 );
 
-export default function ApplicationsPage() {
+function ApplicationsPage() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
-  
+
   const [applications, setApplications] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -91,13 +92,13 @@ export default function ApplicationsPage() {
   );
 
   if (!isLoaded) {
-      // router.push("/");
-      return (
-        <div className="min-h-screen flex items-center justify-center">
-          <p className="text-gray-500">Loading...</p>
-        </div>
-      );
-    }
+    // router.push("/");
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full min-h-screen bg-linear-to-br from-[#f8eae2] to-white">
@@ -175,3 +176,4 @@ export default function ApplicationsPage() {
     </div>
   );
 }
+export default withEmployerAuth(ApplicationsPage);

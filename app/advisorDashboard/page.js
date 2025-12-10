@@ -100,7 +100,7 @@ export default function AdvisorDashboard({ searchParams }) {
                         {menuSelection === "booking" && <MyBookingPage advisorId={advisorID} />}
                         {menuSelection === "client" && <MyClientPage currentUserId={advisorID}/>}
                         {menuSelection === "availability" && <MyAvailability advisorId={advisorID} />}
-                        {menuSelection === "invoice" && <Invoice />}
+                        {menuSelection === "invoice" && <Invoice advisorId={advisorID} />}
                     </div>
                 </div>
 

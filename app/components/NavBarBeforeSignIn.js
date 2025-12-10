@@ -64,22 +64,22 @@ export default function Navbar() {
                   (Temp) Advisor
                 </Link>
               </li> */}
-              <li>
+              {/* <li>
                 <Link
                   href="/employerDashboard/message"
                   className="block px-4 py-2 hover:text-orange-500"
                 >
                   (Temp) Employer
                 </Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Link
                   href="/adminDashboard"
                   className="block px-4 py-2 hover:text-orange-500"
                 >
                   (Temp) Admin
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link
                   href="/advisorRegister"
@@ -117,14 +117,14 @@ export default function Navbar() {
               (Temp) Advisor
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               href="/employerDashboard/message"
               className="hover:text-orange-500"
             >
               (Temp) Employer
             </Link>
-          </li>
+          </li> */}
           {/* <li>
             <Link href="/adminDashboard" className="hover:text-orange-500">
               (Temp) Admin

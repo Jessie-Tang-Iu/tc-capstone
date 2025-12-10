@@ -4,6 +4,7 @@ import Button from "@/app/components/ui/Button";
 import Navbar from "../../components/AdminNavBar";
 import { useEffect, useState } from "react";
 import withAdminAuth from "@/app/components/adminDashboard/withAdminAuth";
+import { useUser } from "@clerk/nextjs";
 
 const formatPhoneNumber = (phoneNumberString) => {
   if (!phoneNumberString) return "";
@@ -17,6 +18,8 @@ const formatPhoneNumber = (phoneNumberString) => {
 };
 
 function AdminProfile() {
+  const { user, isLoaded } = useUser();
+
   const [admin, setAdmin] = useState({
     clerk_id: null,
     username: null,
@@ -29,12 +32,11 @@ function AdminProfile() {
     department: null,
   });
 
-  const ME = "testAdmin1";
-
   useEffect(() => {
-    if (!ME) return;
-    fetchAdmin(ME);
-  }, [ME]);
+    if (isLoaded && user?.id) {
+      fetchAdmin(user.id);
+    }
+  }, [isLoaded, user?.id]);
 
   const fetchAdmin = async (userId) => {
     try {
@@ -45,7 +47,10 @@ function AdminProfile() {
       });
 
       if (!res.ok) {
-        console.error("Failed to fetch admin");
+        console.error(
+          "Failed to fetch admin profile. HTTP Status:",
+          res.status
+        );
         return;
       }
 
@@ -79,11 +84,14 @@ function AdminProfile() {
       });
 
       if (!res.ok) {
-        console.error("Failed to update admin profile");
+        console.error(
+          "Failed to update admin profile. HTTP Status:",
+          res.status
+        );
         return;
       }
 
-      fetchAdmin(ME);
+      if (user?.id) fetchAdmin(user.id);
     } catch (err) {
       console.error("Update error:", err);
     }
@@ -94,6 +102,14 @@ function AdminProfile() {
 
     setAdmin({ ...admin, phone: rawValue.substring(0, 10) });
   };
+
+  if (!isLoaded) {
+    return (
+      <main className="bg-gradient-to-br from-[#f8eae2] to-white min-h-screen flex items-center justify-center">
+        <p>Loading user profile...</p>
+      </main>
+    );
+  }
 
   return (
     <main className="bg-gradient-to-br from-[#f8eae2] to-white min-h-screen">
