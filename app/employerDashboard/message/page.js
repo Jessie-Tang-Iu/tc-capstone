@@ -34,6 +34,16 @@ export default function EmployerMessagePage() {
             {user && <MessagePage currentUserId={user.id} />}
           </div>
         </div>
+
+        {/* === TEMPORARY DEBUG COMPONENT: DISPLAY USER CLERK_ID === */}
+        <div className="mt-8 p-3 bg-red-100 border border-red-400 rounded-lg text-sm text-red-800">
+          <p className="font-bold mb-1">
+            DEBUG CLERK_ID (Remove after testing):
+          </p>
+          <code className="break-all select-all">
+            {user ? user.id : "User data not available"}
+          </code>
+        </div>
       </main>
     </div>
   );

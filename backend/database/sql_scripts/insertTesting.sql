@@ -508,3 +508,29 @@ VALUES
 ('user_36MXgqFiwNOAvQoUv2GYKJst8l7', 'BluePeak Digital', 'People Manager'),
 ('user_36MXogG7p1mO7syNAuvNYkL2ixV', 'CoreByte Systems', 'HR Specialist'),
 ('user_36MXwXUpY52BJCd5u1001eSz4qH', 'HoloView Media', 'HR Coordinator');
+
+-- =========================================
+-- MESSAGE DATA INSERTS (For admin (user_34RDeo5WKU2K8s6AArG7XBAODkb))
+-- =========================================
+INSERT INTO message (sent_user_id, receive_user_id, content, sent_at, status)
+VALUES
+    ('user_34RDeo5WKU2K8s6AArG7XBAODkb', 'user_36MVovbCJp6OkcXlDRHpBtfuDfX', 'We noticed high interest in your Software Engineer posting. Can you handle the volume of applications?', NOW() - INTERVAL '1 hour', 'S'),
+    ('user_36MVovbCJp6OkcXlDRHpBtfuDfX', 'user_34RDeo5WKU2K8s6AArG7XBAODkb', 'Yes, our HR team is on top of it. Thanks for checking in!', NOW() - INTERVAL '45 minutes', 'R');
+INSERT INTO message (sent_user_id, receive_user_id, content, sent_at, status)
+VALUES
+    ('user_33TygiU42yjY3nfWxD5cEPCACv7', 'user_34RDeo5WKU2K8s6AArG7XBAODkb', 'My profile summary isn''t saving properly. Could an admin please look into this?', NOW() - INTERVAL '30 minutes', 'S'), 
+    ('user_34RDeo5WKU2K8s6AArG7XBAODkb', 'user_33TygiU42yjY3nfWxD5cEPCACv7', 'Hello Lam, I''ve forwarded your issue to our tech team. We will update you shortly.', NOW() - INTERVAL '15 minutes', 'S');
+
+INSERT INTO message (sent_user_id, receive_user_id, content, sent_at, status)
+VALUES
+    ('user_34RDeo5WKU2K8s6AArG7XBAODkb', 'user_36LuW3xqICj7ZjdFec7xVsmFp9L', 'Your advisor application is currently under review. Please confirm your primary company role.', NOW() - INTERVAL '10 minutes', 'S'),
+    ('user_36LuW3xqICj7ZjdFec7xVsmFp9L', 'user_34RDeo5WKU2K8s6AArG7XBAODkb', 'My primary role is Data Analyst. Thanks!', NOW() - INTERVAL '5 minutes', 'S');
+
+    INSERT INTO message (sent_user_id, receive_user_id, content, sent_at, status)
+VALUES (
+    'user_36MVovbCJp6OkcXlDRHpBtfuDfX', 
+    'user_34RDeo5WKU2K8s6AArG7XBAODkb', 
+    'We are ready to post another job soon. What is the process for reviewing new employer posts?', 
+    NOW(), 
+    'S' 
+);
