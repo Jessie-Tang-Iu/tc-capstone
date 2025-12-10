@@ -31,8 +31,11 @@ export async function GET(req, { params }) {
 }
 
 export async function DELETE(req, { params }) {
+  const input = await params;
+  const courseId = input.id;
+
   try {
-    const res = await fetch(`${BACKEND_URL}/courses/${params.id}`, {
+    const res = await fetch(`${BACKEND_URL}/courses/${courseId}`, {
       method: "DELETE",
     });
     if (!res.ok) throw new Error(`Backend error: ${res.status}`);

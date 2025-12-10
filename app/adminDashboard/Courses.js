@@ -76,7 +76,7 @@ export default function AdminDashboard() {
                 <input
                   type="text"
                   placeholder="Search by name..."
-                  className="h-10 border-2 px-3 py-2 rounded w-1/3 bg-[#f8f1ed] border-[#E55B3C] text-black"
+                  className="h-10 border-2 px-3 py-2 rounded w-1/3 bg-[#f8f1ed] border-[#E55B3C] text-black cursor-text"
                   onChange={(e) => {
                     const text = e.target.value.toLowerCase();
                     setFilteredCourses(
@@ -88,7 +88,7 @@ export default function AdminDashboard() {
                 />
                 {/* Filter by Level */}
                 <select
-                  className="h-10 border-2 px-3 py-2 rounded bg-[#f8f1ed] border-[#E55B3C] text-black"
+                  className="h-10 border-2 px-3 py-2 rounded bg-[#f8f1ed] border-[#E55B3C] text-black cursor-pointer"
                   onChange={(e) => {
                     const level = e.target.value;
                     setFilteredCourses(
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
 
                 {/* Filter by Type */}
                 <select
-                  className="h-10 border-2 px-3 py-2 rounded bg-[#f8eae2]white border-[#E55B3C] text-black"
+                  className="h-10 border-2 px-3 py-2 rounded bg-[#f8eae2]white border-[#E55B3C] text-black cursor-pointer"
                   onChange={(e) => {
                     const type = e.target.value;
                     setFilteredCourses(
@@ -124,7 +124,7 @@ export default function AdminDashboard() {
               </div>
               <button
                 onClick={() => setView("create")}
-                className="h-10 bg-[#E55B3C] text-white px-4 py-2 rounded-lg hover:bg-[#c94b2d]"
+                className="h-10 bg-[#E55B3C] text-white px-4 py-2 rounded-lg hover:bg-[#c94b2d] cursor-pointer"
               >
                 Create Course
               </button>
@@ -168,6 +168,7 @@ export default function AdminDashboard() {
         <AdminCourseEdit
           courseId={selectedCourseId}
           onCancel={() => setView("overview")}
+          onDelete={() => setView("list")}
           onRefresh={fetchCourses}
         />
       )}
