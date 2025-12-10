@@ -185,34 +185,41 @@ export default function DiscussionBoard() {
     };
 
     return (
-        <main className="bg-gray-100 min-h-screen pb-10">
+        <main className="bg-gray-100 min-h-screen pb-5">
             <NavBar />
 
-            {/* Search Bar and Action Buttons */}
-            <div className="flex justify-between mx-10 mt-5">
-                <div className="flex justify-center">
+            <header className="mt-5 mb-2 mx-2 md:mx-10 rounded-xl bg-white p-6 shadow text-center">
+                <div className="mb-4 text-4xl font-semibold text-[#E55B3C]">
+                    Discussion Board
+                </div>
+                
+                {/* Search Bar and Action Buttons */}
+                <div className="flex flex-wrap justify-center items-center gap-3 lg:gap-15">
                     <SearchBar
                         value={query}
                         onChange={setQuery}
                         placeholder="Search by Author | Title | Keywords"
                     />
-                </div>
 
-                <div className="flex items-center rounded-xl overflow-hidden py-1 pr-2 mt-4 space-x-4">
-                    <Button text="New Post" onClick={() => setShowNewPostModal(true)} />
-                    <Button
-                        text="Add Comment"
-                        onClick={() => setShowCommentModal(true)}
-                        disabled={!selectedPost}
-                    />
+                    <div className="flex justify-center gap-3">
+                        <Button text="New Post" onClick={() => setShowNewPostModal(true)} />
+                        <Button
+                            text="Add Comment"
+                            onClick={() => setShowCommentModal(true)}
+                            disabled={!selectedPost}
+                        />
+                    </div>
                 </div>
-            </div>
+            </header>            
 
             {/* Main Board */}
-            <div className="flex h-screen mx-10 border border-gray-300 rounded-2xl shadow-lg mt-5">
+            <div className="flex flex-row min-h-screen gap-2 mx-2 md:mx-10 mt-4">
                 {/* Posts List */}
-                <div className="bg-[#efe7e1] w-1/4 border-r border-gray-200 rounded-2xl overflow-y-auto">
-                    <div className="p-4 space-y-4">
+                <div 
+                    className={`w-1/4 min-w-45 max-w-60 block
+                          h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto`}
+                >
+                    <div className="px-2 py-1 space-y-2">
                         {Array.isArray(filteredPost) &&
                             filteredPost.map((p) => (
                                 <PostItem
@@ -226,7 +233,7 @@ export default function DiscussionBoard() {
                 </div>
 
                 {/* Selected Post + Comments */}
-                <div className="w-3/4 overflow-y-auto pl-5">
+                <div className="w-3/4 bg-white my-1 min-h-screen rounded-xl overflow-y-auto">
                     {selectedPost && (
                         <div>
                             <PostDetail

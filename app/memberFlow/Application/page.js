@@ -159,7 +159,7 @@ export default function Applications() {
       <div className="w-full min-h-screen bg-gray-100">
         <MemberNavBar />
 
-        <div className="mx-auto w-full px-6 py-4">
+        <div className="w-full px-6 py-4">
           <h1 className="text-3xl font-bold text-[#DD5B45]">
             My Applications
           </h1>
@@ -173,7 +173,7 @@ export default function Applications() {
         {applications.length === 0 ? (
           <div className="text-center text-gray-500 py-10">No applications found</div>
         ) : (
-        <div className="flex flex-col md:flex-row ml-2">
+        <div className="flex flex-col md:flex-row mx-3">
           {/* Job Listings Sidebar */}
           <div
             className={`w-full md:w-80 

@@ -9,12 +9,12 @@ export default function PostItem({ title, first_name, last_name, username, onCli
 
   return (
     <button
-      className="w-full border-b border-gray-200 pb-4 cursor-pointer hover:bg-gray-50 p-2 rounded-md disabled:bg-[#E2B596]"
+      className="w-full bg-white rounded-lg px-3 py-3 mb-2 space-y-1 text-black cursor-pointer transition hover:bg-gray-50 disabled:ring-2 disabled:ring-[#E55B3C]"
       onClick={onClick}
       disabled={disabled}
     >
       <div className="flex justify-start items-start">
-        <p className="text-left font-semibold text-black">{title}</p>
+        <p className="text-left text-base font-semibold text-black">{title}</p>
       </div>
       <p className="text-left text-gray-700 text-sm mt-1">{displayName}</p>
     </button>

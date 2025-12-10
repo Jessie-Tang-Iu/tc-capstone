@@ -59,7 +59,7 @@ export default function AdvisorPage() {
     <main className='bg-linear-to-br from-[#f8eae2] to-white min-h-screen pb-5'>
       <Navbar />
 
-      <div className='w-4/5 sm:h-200 mx-auto mt-10'>
+      <div className='sm:h-200 mx-2 md:mx-10 mt-5'>
         {/* Header: centered title, search on its own row */}
         <div className="mb-4 rounded-xl bg-white p-6 shadow text-center">
             <div className="mb-4 text-4xl font-semibold text-[#E55B3C]">
@@ -111,7 +111,7 @@ export default function AdvisorPage() {
         
       </div>
 
-      <p className='text-red-600 w-4/5 mx-auto mt-10 mb-10'>* Disclaimer: View Availability feature is only available when status is &#39;active&#39;!</p>
+      <p className='text-red-600 mx-2 md:mx-10 mt-10 mb-10'>* Disclaimer: View Availability feature is only available when status is &#39;active&#39;!</p>
 
     </main>
     

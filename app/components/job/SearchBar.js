@@ -7,11 +7,11 @@ export default function SearchBar({
     onSearch, onAdvancedSearch
 }) {
     return (
-        <div className="w-full max-w-6xl mx-auto px-4 pb-6">
+        <div className="w-full max-w-6xl mx-auto px-4">
             {/* Desktop Search Bar */}
             <div className="hidden md:flex items-center h-11 overflow-hidden">
                 <div 
-                    className="flex items-center flex-1 h-full rounded-md border border-gray-300 bg-white px-3 py-2
+                    className="flex items-center flex-1 h-10 rounded-md border border-gray-300 bg-white px-3 py-2
                              text-black outline-none focus:ring-2 focus:ring-gray-200"
                 >
                     {/* Keyword Field */}

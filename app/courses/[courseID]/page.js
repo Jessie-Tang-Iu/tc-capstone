@@ -83,12 +83,12 @@ export default function CoursePage({}) {
 
 
   return (
-    <div className="bg-gray-100 min-h-screen text-black">
+    <div className="w-full min-h-screen bg-gray-100 text-black">
       <Navbar />
 
       <div className="flex">
         {/* Sidebar with lessons */}
-        <div className="fixed left-0 top-0 w-1/5 h-screen border-r border-gray-300 bg-white overflow-y-auto">
+        <div className="fixed left-0 top-18 w-1/5 h-screen border-r border-gray-300 bg-white overflow-y-auto">
           <div className="p-4 border-b font-semibold text-lg text-[#E55B3C]">
             {course.title}
           </div>
@@ -100,10 +100,10 @@ export default function CoursePage({}) {
             ← Back to Courses
           </div>
 
-          <div className="p-4 cursor-pointer" onClick={() => setSelectedLessonIndex(null)}>
+          <div className={`p-4 cursor-pointer ${selectedLessonIndex == null ? "font-bold" : ""}`} onClick={() => setSelectedLessonIndex(null)}>
             Course Home
           </div>
-          <div className="p-4 cursor-pointer font-semibold">Lessons & Quizzes</div>
+          <div className={`p-4 cursor-pointer ${selectedLessonIndex != null ? "font-bold" : ""}`}>Lessons & Quizzes</div>
 
           {lessons.map((lesson, i) => (
             <div

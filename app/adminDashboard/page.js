@@ -14,15 +14,25 @@ import RequestDetailsCard from "../components/adminDashboard/RequestDetailsCard"
 import ReportDetailsCard from "../components/adminDashboard/ReportDetailsCard";
 import withAdminAuth from "../components/adminDashboard/withAdminAuth";
 import CoursePage from "@/app/adminDashboard/Courses";
+import { useUser } from "@clerk/nextjs";
 
 const ME = "11111111-1111-1111-1111-111111111111";
 
 function AdminDashboardCore() {
+  const { user, isLoaded } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const [tab, setTab] = useState(() => searchParams.get("tab") || "message");
   const [details, setDetails] = useState(null);
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -138,12 +148,12 @@ function AdminDashboardCore() {
       <Navbar />
 
       <div className="mx-auto w-full max-w-8xl px-6 py-8">
-        <h1 className="mb-6 text-2xl font-bold text-[#DD5B45]">
+        <h1 className="mb-6 text-3xl font-bold text-[#DD5B45]">
           Admin DashBoard
         </h1>
 
         <div className="flex flex-row gap-6">
-          <div className="ml-0 w-60 rounded-lg bg-white p-1 flex flex-col shadow">
+          <div className="ml-0 w-60 h-70 min-w-35 rounded-lg bg-white p-1 flex flex-col shadow">
             <TabBtn v="message">Message</TabBtn>
             <TabBtn v="users">Users</TabBtn>
             <TabBtn v="requests">Requests</TabBtn>
@@ -153,7 +163,7 @@ function AdminDashboardCore() {
           </div>
 
           <div className="w-full">
-            {tab === "message" && <MessagePage currentUserId={ME} />}
+            {tab === "message" && user && <MessagePage currentUserId={user.id} />}
             {tab === "users" && renderUsers()}
             {tab === "requests" && renderRequests()}
             {tab === "reports" && renderReports()}
