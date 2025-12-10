@@ -45,4 +45,17 @@ export async function updateInvoiceById(body) {
     if (!result.rows.length) throw new Error("Not found");
     return result.rows[0];
 }
+
+
+// Create a new invoice
+export async function createInvoice(body) {
+    const { advisor_id, client_id } = body;
+    const result = await query(
+        `INSERT INTO invoices (advisor_id, client_id, quantity, unit_price, tax, amount, issued_date, due_date, status)
+        VALUES ($1, $2, 0, 0.0, 0.0, 0.0, CURRENT_DATE, CURRENT_DATE + INTERVAL '30 days', 'unpaid')
+        RETURNING *;`,
+        [advisor_id, client_id]
+    );
+    return result.rows[0];
+}
     

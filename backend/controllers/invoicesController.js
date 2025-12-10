@@ -4,6 +4,7 @@
  * This also allows us to check data in a safe environment before sending it to the database, ESPECIALLY IMPORTANT if files are being uploaded.
  */
 
+import { Asul } from "next/font/google/index.js";
 import * as invoices from "../database/scripts/invoices.js"; // Imports all scripts from the invoices.js file
 
 
@@ -19,7 +20,15 @@ export async function getInvoiceByIdController(invoiceId) {
   return await invoices.getInvoiceById(invoiceId);
 }
 
+// call this function to update an invoice by invoice id
 export async function updateInvoiceController(body) {
     if (!body.invoice_id) throw new Error("invoiceId required");
     return await invoices.updateInvoiceById(body);
+}
+
+// call this function to create a new invoice
+export async function createInvoiceController(body) {
+    if (!body.advisor_id) throw new Error("advisorId required");
+    if (!body.client_id) throw new Error("clientId required");
+    return await invoices.createInvoice(body);
 }

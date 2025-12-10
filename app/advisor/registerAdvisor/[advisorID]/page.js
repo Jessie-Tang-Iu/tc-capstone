@@ -53,6 +53,9 @@ export default function RegisterAdvisor({ params }) {
 
                 if (!res.ok) throw new Error("Failed to register advisor");
                 const registeredAdvisor = await res.json();
+
+                createInvoice();
+                
                 alert("Your payment is pending! Please wait for confirmation!");
                 setNewAdvisor({ advisorId: advisorID, clientId: userID , message: '', status: 'pending'  }); // reset form
 
@@ -60,6 +63,30 @@ export default function RegisterAdvisor({ params }) {
                 router.push('/advisor');
             } catch (error) {
                 console.error("Fetch error: ", error);
+            }
+        })();
+    };
+
+    const createInvoice = ()  => {
+        (async () => {
+            const newInvoice = {
+                advisor_id: advisorID,
+                client_id: userID
+            }
+            console.log("Creating Invoice: ", newInvoice);
+
+            try {
+                const res = await fetch(`/api/invoice`, {
+                    method: 'POST',
+                    headers: {  "Content-Type": "application/json" },
+                    body: JSON.stringify(newInvoice)
+                });
+                if (!res.ok) throw new Error("Failed to create invoice");
+                const invoiceData = await res.json();
+                console.log("Created Invoice: ", invoiceData);
+            } catch (error) {
+                console.error("Fetch error: ", error);
+                return;
             }
         })();
     };
