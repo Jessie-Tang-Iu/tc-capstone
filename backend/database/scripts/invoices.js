@@ -30,3 +30,19 @@ export async function getInvoiceById(id) {
   if (!result.rows.length) throw new Error("Not found");
   return result.rows[0];
 }
+
+
+// Update an invoice by invoiceId
+export async function updateInvoiceById(body) {
+    const { invoice_id, quantity, unit_price, tax, amount, issued_date, due_date, status } = body;
+    const result = await query(
+        `UPDATE invoices 
+        SET quantity = $1, unit_price = $2, tax = $3, amount = $4, issued_date = $5, due_date = $6, status = $7
+        WHERE invoice_id = $8
+        RETURNING *;`,
+        [quantity, unit_price, tax, amount, issued_date, due_date, status, invoice_id]
+    );
+    if (!result.rows.length) throw new Error("Not found");
+    return result.rows[0];
+}
+    

@@ -18,3 +18,8 @@ export async function getInvoiceByIdController(invoiceId) {
   if (!invoiceId) throw new Error("invoiceId required");
   return await invoices.getInvoiceById(invoiceId);
 }
+
+export async function updateInvoiceController(body) {
+    if (!body.invoice_id) throw new Error("invoiceId required");
+    return await invoices.updateInvoiceById(body);
+}

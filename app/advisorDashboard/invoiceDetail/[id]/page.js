@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 export default function InvoiceDetail({ params }) {
 
     const [invoice, setInvoice] = useState({});
+    const [originalInvoice, setOriginalInvoice] = useState(null);
     const [window, setWindow] = useState("viewInvoice");
 
     const { id } = useParams();
@@ -19,25 +20,7 @@ export default function InvoiceDetail({ params }) {
 
     useEffect(() => {
         // Fetch invoice details from backend API using id
-        (async () => {
-            console.log("Fetching invoice details for ID:", id);
-            try {
-                const res = await fetch(`/api/invoice`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ invoice_id: id }),
-                });
-                if (!res.ok) {
-                    console.error("Failed to fetch invoices");
-                    return;
-                }
-                const data = await res.json();
-                console.log("Fetched invoice:", data);
-                setInvoice(data);
-            } catch (error) {
-                console.error("Fetch error: ", error);
-            }
-        })();
+        fetchInvoiceDetails();
     }, [id]);
 
     useEffect(() => {
@@ -52,11 +35,84 @@ export default function InvoiceDetail({ params }) {
         }));
     }, [invoice.quantity, invoice.unit_price]);
 
-    console.log("Invoice Detail State:", invoice);
+    const fetchInvoiceDetails = async () => {
+        console.log("Fetching invoice details for ID:", id);
+        try {
+            const res = await fetch(`/api/invoice`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ invoice_id: id }),
+            });
+            if (!res.ok) {
+                console.error("Failed to fetch invoices");
+                return;
+            }
+            const data = await res.json();
+            console.log("Fetched invoice:", data);
+            setInvoice(data);
+            setOriginalInvoice(data); // Store original for reset
+        } catch (error) {
+            console.error("Fetch error: ", error);
+        }
+    };
 
     const sendToClient = () => {
         console.log("Send to client clicked for invoice:", id, "\nAmount: $157.50");
         alert(`Invoice ${id} sent to client!`);
+    }
+
+    const handleReset = () => {
+        if (originalInvoice) {
+            setInvoice(originalInvoice);
+        } else {
+            console.warn("Original invoice data not available for reset.");
+        }
+    };
+
+    const handleSave = async () => {
+
+        if (invoice) {
+
+            const updateInvoice = {
+                invoice_id: invoice.invoice_id,
+                quantity: invoice.quantity,
+                unit_price: invoice.unit_price,
+                tax: invoice.tax,
+                amount: invoice.amount,
+                issued_date: invoice.issued_date,
+                due_date: invoice.due_date,
+                status: invoice.status
+            };
+
+            console.log("front-end id: ", invoice.invoice_id);
+
+            try {
+                const res = await fetch(`/api/invoice`, {
+                    method: 'PATCH',
+                    headers: {  "Content-Type": "application/json" },
+                    body: JSON.stringify(updateInvoice)
+                });
+
+                if (!res.ok) {
+                    console.error("Failed to fetch invoices");
+                    return;
+                }
+                setWindow("viewInvoice");
+                alert("Invoice saved successfully!");
+                fetchInvoiceDetails(); // Refresh invoice details
+                // Implement save logic here
+                console.log("Save clicked. Invoice data to be saved:", invoice);
+            } catch (error) {
+                console.error("Fetch error: ", error);
+            }
+        } else {
+            console.warn("No invoice data available to save.");
+        }
+    }
+
+    const handleBackToView = () => {
+        setInvoice(originalInvoice);
+        setWindow("viewInvoice");
     }
 
     return (
@@ -157,9 +213,18 @@ export default function InvoiceDetail({ params }) {
                                                     <p className="text-black mb-2"><strong>Phone:</strong> {invoice.client_phone}</p>
                                                     <p className="text-black mb-2"><strong>Email:</strong> {invoice.client_email}</p>
                                             </div>
-                                            <div>
-                                                <Button text="Back to View" onClick={() => setWindow("viewInvoice")}/>
+                                            <div className="flex flex-row space-x-2">
+                                                <div>
+                                                    <Button text="Reset" onClick={handleReset}/>
+                                                </div>
+                                                <div>
+                                                    <Button text="Save" onClick={handleSave}/>
+                                                </div>
+                                                <div>
+                                                    <Button text="Back to View" onClick={handleBackToView}/>
+                                                </div>
                                             </div>
+                                            
                                         </div>
 
                                         <h2 className="text-2xl font-semibold text-[#E55B3C] mb-4">Description</h2>
