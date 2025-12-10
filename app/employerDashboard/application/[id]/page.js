@@ -15,12 +15,12 @@ import ResumePreview from "@/app/components/application/ResumePreview";
 import CoverLetter from "@/app/components/profile/coverLetterSection";
 import CoverLetterPreview from "@/app/components/application/CoverLetterPreview";
 import AnswerPreview from "@/app/components/application/AnswerPreview";
-
+import withEmployerAuth from "@/app/components/employerDashboard/withEmployerAuth";
 const SectionTitle = ({ children }) => (
   <h3 className="mb-3 mt-6 text-base font-semibold text-black">{children}</h3>
 );
 
-export default function ApplicationDetailsPage() {
+function ApplicationDetailsPage() {
   const { id } = useParams();
 
   const { user, isLoaded } = useUser();
@@ -67,7 +67,7 @@ export default function ApplicationDetailsPage() {
           })
           .catch((error) => {
             console.error("Error fetching resume:", error);
-            setUserResume({ error: error.message })
+            setUserResume({ error: error.message });
           });
 
         fetch(`/api/cover_letter/user/${data.user_id}`)
@@ -80,7 +80,6 @@ export default function ApplicationDetailsPage() {
             console.error("Error fetching cover letter:", error);
             setUserCoverLetter({ error: error.message });
           });
-
       } catch (err) {
         console.error("Error fetching application:", err);
         setApp(null);
@@ -148,108 +147,121 @@ export default function ApplicationDetailsPage() {
           <EmployerSidebar />
 
           {!app ? (
-            <div className="p-10 text-center text-black">{loading ? "Loading..." : "Application not found"}</div>
+            <div className="p-10 text-center text-black">
+              {loading ? "Loading..." : "Application not found"}
+            </div>
           ) : (
-          <section className="flex-1 rounded-xl bg-white shadow">
-            <div className="flex items-center justify-between border-b px-4 py-3">
-              <div className="flex items-center text-base font-semibold text-black">
-                Application: {String(app.id).padStart(3, "0")}
-              </div>
-
-              <div className="flex items-center gap-3">
-                <select
-                  disabled={loading}
-                  value={app.status}
-                  onChange={(e) => updateStatus(e.target.value)}
-                  className={`w-35 h-9 rounded-md text-base font-semibold border text-center ${statusStyle} ${
-                    loading
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:opacity-90 active:scale-[0.98] transition"
-                  }`}
-                >
-                  <option value="S" className="bg-gray-100 text-gray-800">
-                    Submitted
-                  </option>
-                  <option value="U" className="bg-blue-100 text-blue-800">
-                    Under Review
-                  </option>
-                  <option value="I" className="bg-green-100 text-green-800">
-                    Interview
-                  </option>
-                  <option value="R" className="bg-red-100 text-red-800">
-                    Rejected
-                  </option>
-                  <option value="O" className="bg-yellow-100 text-yellow-800">
-                    Offer
-                  </option>
-                  <option value="D" className="bg-orange-100 text-orange-800">
-                    Withdrawn
-                  </option>
-                </select>
-
-                <button
-                  onClick={() => router.push("/employerDashboard/application")}
-                  className="rounded-md bg-[#F3E1D5] px-4 py-2 text-base font-semibold text-black hover:opacity-90 active:scale-[0.98] transition"
-                >
-                  Back
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-start justify-between gap-4 px-4 py-4">
-              <div className="flex-1 text-base text-black">
-                <div className="text-2xl font-semibold">
-                  {app.first_name} {app.last_name}
+            <section className="flex-1 rounded-xl bg-white shadow">
+              <div className="flex items-center justify-between border-b px-4 py-3">
+                <div className="flex items-center text-base font-semibold text-black">
+                  Application: {String(app.id).padStart(3, "0")}
                 </div>
-                <div className="mt-1 font-semibold">{app.location}</div>
-                <div className="mt-1">
-                  Applied: {new Date(app.applied_at).toLocaleDateString()}
+
+                <div className="flex items-center gap-3">
+                  <select
+                    disabled={loading}
+                    value={app.status}
+                    onChange={(e) => updateStatus(e.target.value)}
+                    className={`w-35 h-9 rounded-md text-base font-semibold border text-center ${statusStyle} ${
+                      loading
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:opacity-90 active:scale-[0.98] transition"
+                    }`}
+                  >
+                    <option value="S" className="bg-gray-100 text-gray-800">
+                      Submitted
+                    </option>
+                    <option value="U" className="bg-blue-100 text-blue-800">
+                      Under Review
+                    </option>
+                    <option value="I" className="bg-green-100 text-green-800">
+                      Interview
+                    </option>
+                    <option value="R" className="bg-red-100 text-red-800">
+                      Rejected
+                    </option>
+                    <option value="O" className="bg-yellow-100 text-yellow-800">
+                      Offer
+                    </option>
+                    <option value="D" className="bg-orange-100 text-orange-800">
+                      Withdrawn
+                    </option>
+                  </select>
+
+                  <button
+                    onClick={() =>
+                      router.push("/employerDashboard/application")
+                    }
+                    className="rounded-md bg-[#F3E1D5] px-4 py-2 text-base font-semibold text-black hover:opacity-90 active:scale-[0.98] transition"
+                  >
+                    Back
+                  </button>
                 </div>
               </div>
-              <div className="flex w-40 shrink-0 flex-col gap-2">
-                <button
-                  onClick={() => setOpenChat(true)}
-                  className="rounded-md bg-[#EE7D5E] px-4 py-2 text-base font-medium text-white hover:opacity-90"
-                >
-                  Message
-                </button>
-                <button
-                  onClick={() => setShowProfile(true)}
-                  className="rounded-md bg-[#F3E1D5] px-4 py-2 text-base font-medium text-black hover:opacity-90"
-                >
-                  View Profile
-                </button>
+
+              <div className="flex items-start justify-between gap-4 px-4 py-4">
+                <div className="flex-1 text-base text-black">
+                  <div className="text-2xl font-semibold">
+                    {app.first_name} {app.last_name}
+                  </div>
+                  <div className="mt-1 font-semibold">{app.location}</div>
+                  <div className="mt-1">
+                    Applied: {new Date(app.applied_at).toLocaleDateString()}
+                  </div>
+                </div>
+                <div className="flex w-40 shrink-0 flex-col gap-2">
+                  <button
+                    onClick={() => setOpenChat(true)}
+                    className="rounded-md bg-[#EE7D5E] px-4 py-2 text-base font-medium text-white hover:opacity-90"
+                  >
+                    Message
+                  </button>
+                  <button
+                    onClick={() => setShowProfile(true)}
+                    className="rounded-md bg-[#F3E1D5] px-4 py-2 text-base font-medium text-black hover:opacity-90"
+                  >
+                    View Profile
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <hr />
+              <hr />
 
-            <div className="px-4 py-4 text-gray-700">
-              {/* Relative Information */}
-              {(app.relative_first_name != "" || app.relative_last_name != "") && (
-                <div className="mb-4">
-                  <RelativePreview title="Relative Information" app={app} />
-                </div>
-              )}
+              <div className="px-4 py-4 text-gray-700">
+                {/* Relative Information */}
+                {(app.relative_first_name != "" ||
+                  app.relative_last_name != "") && (
+                  <div className="mb-4">
+                    <RelativePreview title="Relative Information" app={app} />
+                  </div>
+                )}
 
-              {/* Resume Information */}
-              {userResume && 
-                <div className="mb-4"> 
-                  <ResumePreview title="Resume Information" app={app} resume={userResume} />
-                </div>
-              }
+                {/* Resume Information */}
+                {userResume && (
+                  <div className="mb-4">
+                    <ResumePreview
+                      title="Resume Information"
+                      app={app}
+                      resume={userResume}
+                    />
+                  </div>
+                )}
 
-              {/* Cover letter Information */}
-              {userCoverLetter && 
-                <div className="mb-4">
-                  <CoverLetterPreview title="Cover Letter Information" app={app} coverLetter={userCoverLetter} /> 
-                </div>
-              }
+                {/* Cover letter Information */}
+                {userCoverLetter && (
+                  <div className="mb-4">
+                    <CoverLetterPreview
+                      title="Cover Letter Information"
+                      app={app}
+                      coverLetter={userCoverLetter}
+                    />
+                  </div>
+                )}
 
-              {/* Answer employer Questions */}
-              <AnswerPreview title="Employer Questions" app={app} />            
-            </div>
-          </section>
+                {/* Answer employer Questions */}
+                <AnswerPreview title="Employer Questions" app={app} />
+              </div>
+            </section>
           )}
         </div>
 
@@ -288,3 +300,5 @@ export default function ApplicationDetailsPage() {
     </div>
   );
 }
+
+export default withEmployerAuth(ApplicationDetailsPage);
