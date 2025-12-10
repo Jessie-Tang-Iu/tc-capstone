@@ -13,7 +13,7 @@ export default function SearchBar({ value, onChange, onSearch, placeholder }) {
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
         placeholder={effectivePlaceholder}
-        className="w-72 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm
+        className="w-full min-w-75 h-10 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm
                    text-black placeholder:text-gray-500 placeholder:opacity-100
                    outline-none focus:ring-2 focus:ring-gray-200"
       />

@@ -96,38 +96,37 @@ export default function PageContent() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-[#f8f1ed] to-white min-h-screen">
+    <div className="w-full min-h-screen bg-gray-100">
       <Navbar />
 
       {/* Search Bar */}
-      <header className="flex justify-between mx-8">
-        <div className="border border-[#E55B3C] rounded-xl overflow-hidden py-1 px-3 my-4 w-fit">
+      <header className="mt-5 mb-2 mx-2 md:mx-10 rounded-xl bg-white p-6 shadow text-center">
+        <div className="mb-4 text-4xl font-semibold text-[#E55B3C]">
+          Courses
+        </div>
+        
+        <div className="flex justify-center">
           <input
             type="text"
             placeholder="Search by Course Title or Tags"
-            className="px-2 py-2 w-60 focus:outline-none placeholder-gray-700 bg-[#f8f1ed] text-black"
+            className="px-4 py-2 w-full max-w-200 border border-[#E55B3C] rounded-xl focus:outline-none placeholder-gray-700 text-black"
             value={searchQuery}
             onChange={handleSearchChange}
           />
         </div>
-        <h1 className="self-baseline font-bold text-3xl text-[#E55B3C] mt-8 mr-8">
-          Courses
-        </h1>
-        {/* Blank for Spacing */}
-        <div></div>
       </header>
 
       {/* Filters and Courses */}
-      <main className="flex">
-        <div className="w-1/6 border-r-black border-r-1 min-h-screen text-black my-5">
-          <div className="ml-8 mb-6">
-            <h2 className="font-bold text-xl mb-4">Filter By</h2>
+      <main className="flex flex-col md:flex-row mx-2 md:mx-10 gap-2 md:gap-4">
+        <div className="w-full md:w-50 md:h-75 bg-white rounded-lg p-1 shadow mt-0 md:mt-2 py-4">
+          <div className="flex md:flex-col flex-row mx-4 gap-4">
+            <h2 className="hidden md:block min-w-22 font-bold text-xl">Filter By</h2>
 
             {/* LEVEL DROPDOWN */}
-            <div className="mb-4">
-              <label className="font-medium text-lg block mb-1 ">Course Level</label>
+            <div className="w-full min-w-30">
+              <label className="font-bold text-sm block mb-1 ">Course Level</label>
               <select
-                className="border p-2 rounded w-40 bg-[#f8f1ed] border-[#E55B3C] text-black"
+                className="w-full border p-2 rounded bg-[#f8f1ed] border-[#E55B3C] text-base text-black"
                 value={filters.level || ""}
                 onChange={(e) =>
                   setFilters((prev) => ({ ...prev, level: e.target.value }))
@@ -141,10 +140,10 @@ export default function PageContent() {
             </div>
 
             {/* CERTIFICATE DROPDOWN */}
-            <div className="mb-4">
-              <label className="font-medium text-lg block mb-1">Certificate</label>
+            <div className="w-full min-w-30">
+              <label className="font-bold text-sm block mb-1">Certificate</label>
               <select
-                className="border p-2 rounded w-40 bg-[#f8f1ed] border-[#E55B3C] text-black"
+                className="border p-2 rounded w-full bg-[#f8f1ed] border-[#E55B3C] text-black text-base"
                 value={filters.certificate || ""}
                 onChange={(e) =>
                   setFilters((prev) => ({ ...prev, certificate: e.target.value }))
@@ -157,10 +156,10 @@ export default function PageContent() {
             </div>
 
             {/* TYPE DROPDOWN */}
-            <div className="mb-4">
-              <label className="font-medium text-lg block mb-1">Course Type</label>
+            <div className="w-full min-w-30 ">
+              <label className="font-bold text-sm block mb-1">Course Type</label>
               <select
-                className="border p-2 rounded w-40 bg-[#f8f1ed] border-[#E55B3C] text-black"
+                className="border p-2 rounded w-full bg-[#f8f1ed] border-[#E55B3C] text-black text-base"
                 value={filters.type || ""}
                 onChange={(e) =>
                   setFilters((prev) => ({ ...prev, type: e.target.value }))
@@ -175,7 +174,7 @@ export default function PageContent() {
           </div>
         </div>
 
-        <div className="w-5/6 min-h-screen flex flex-wrap content-start">
+        <div className="w-5/6 my-2 min-h-screen flex flex-wrap content-start">
           {filteredCourses.length > 0 ? (
             filteredCourses.map((course) => (
               <CourseCard key={course.id} course={course} userId={user.id} />

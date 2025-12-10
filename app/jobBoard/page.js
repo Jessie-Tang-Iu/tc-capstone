@@ -261,7 +261,7 @@ export default function JobBoardPage() {
 
         <div className="my-4 mx-2 rounded-xl bg-white p-6 shadow text-center">
           <div className="mb-4 text-4xl font-semibold text-[#E55B3C]">
-            Job Board Page
+            Job Board
           </div>
           <div className="flex justify-center">
             <SearchBar
@@ -302,7 +302,7 @@ export default function JobBoardPage() {
         )}
   
         {/* Main Content */}
-        {!filteredJobs ? (
+        {jobs.length === 0 ? (
           <div className="text-center text-gray-500 py-10">Loading...</div>
         ) : (
         <>

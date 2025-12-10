@@ -124,7 +124,7 @@ export default function AdminCourseOverview({ courseId, onBack, onEdit }) {
                 </button>
             </div>
 
-            {/* Tab Navigation */}
+            {/* Lesson Navigation */}
             <div className="border-b mb-6 flex gap-8">
                 <button
                 onClick={() => setActiveTab("course")}
