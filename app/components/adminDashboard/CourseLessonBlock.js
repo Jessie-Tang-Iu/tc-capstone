@@ -62,7 +62,7 @@ export default function CourseLessonBlock({ lesson, onChange, onDelete }) {
         </h3>
         <button
           onClick={onDelete}
-          className="text-red-500 hover:text-red-700 text-sm"
+          className="text-red-500 hover:text-red-700 text-sm cursor-pointer"
         >
           Remove
         </button>

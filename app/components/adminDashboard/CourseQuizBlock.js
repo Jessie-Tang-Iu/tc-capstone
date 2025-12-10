@@ -22,9 +22,9 @@ export default function CourseQuizBlock({ index, quiz, onChange, onRemove }) {
         <h3 className="font-semibold text-lg text-[#6C63FF]">Quiz {index + 1}</h3>
         <button
           onClick={onRemove}
-          className="text-gray-500 text-sm hover:text-red-600"
+          className="text-red-500 hover:text-red-700 text-sm cursor-pointer"
         >
-          ✕ Remove
+          Remove
         </button>
       </div>
 
@@ -55,7 +55,7 @@ export default function CourseQuizBlock({ index, quiz, onChange, onRemove }) {
             </h4>
             <button
               type="button"
-              className="text-xs text-red-500 hover:text-red-700"
+              className="text-xs text-red-500 hover:text-red-700 cursor-pointer"
               onClick={() => {
                 const updatedQuiz = { ...quiz };
                 updatedQuiz.questions = updatedQuiz.questions.filter(
