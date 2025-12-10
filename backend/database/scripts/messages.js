@@ -5,15 +5,28 @@ import { query } from "../../database/db.js";
 export async function getInbox(userId, { limit = 100, offset = 0 } = {}) {
   const result = await query(
     `
-    SELECT DISTINCT ON (conversation_id)
-           m.id, m.conversation_id, m.sent_user_id, m.receive_user_id, m.content, m.sent_at, m.status, 
-           (u.first_name || ' ' || u.last_name) AS sender_name, (u2.first_name || ' ' || u2.last_name) AS receiver_name
-      FROM message m
-      LEFT OUTER JOIN public.users u ON m.sent_user_id = u.clerk_id
-      LEFT OUTER JOIN public.users u2 ON m.receive_user_id = u2.clerk_id
-     WHERE sent_user_id = $1 OR receive_user_id = $1
-  ORDER BY conversation_id, sent_at DESC
-     LIMIT $2 OFFSET $3
+    WITH LatestMessagePerConversation AS (
+      SELECT
+          *,
+          ROW_NUMBER() OVER (PARTITION BY conversation_id ORDER BY sent_at DESC) as rn
+      FROM
+          message
+      WHERE
+          sent_user_id = $1 OR receive_user_id = $1
+    )
+    SELECT
+        lm.*,
+        sender.first_name || ' ' || sender.last_name AS sender_name,
+        receiver.first_name || ' ' || receiver.last_name AS receiver_name
+    FROM
+        LatestMessagePerConversation lm
+    LEFT JOIN users sender ON lm.sent_user_id = sender.clerk_id
+    LEFT JOIN users receiver ON lm.receive_user_id = receiver.clerk_id
+    WHERE
+        lm.rn = 1
+    ORDER BY
+        lm.sent_at DESC
+    LIMIT $2 OFFSET $3
     `,
     [userId, limit, offset]
   );
