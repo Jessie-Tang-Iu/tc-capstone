@@ -81,7 +81,8 @@ export async function updateAvailability(booking) {
 }
 
 export async function getAdvisorySessionsByAdvisorId(advisorId) {
-  const result = await query(`SELECT a.*, u.clerk_id, u.username, u.first_name, u.last_name, u.email, u.phone, u.role FROM advisory_sessions a 
+  const result = await query(`SELECT a.*, u.clerk_id, u.username, u.first_name, u.last_name, u.email, u.phone, u.role 
+                                FROM advisory_sessions a 
                                 JOIN users u
                                 ON a.client_id = u.clerk_id
                                 WHERE a.advisor_id = $1`, [
