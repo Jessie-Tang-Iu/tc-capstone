@@ -16,7 +16,7 @@ import withAdminAuth from "../components/adminDashboard/withAdminAuth";
 import CoursePage from "@/app/adminDashboard/Courses";
 import { useUser } from "@clerk/nextjs";
 
-const ME = "11111111-1111-1111-1111-111111111111";
+//const ME = "11111111-1111-1111-1111-111111111111";
 
 function AdminDashboardCore() {
   const { user, isLoaded } = useUser();
@@ -163,7 +163,9 @@ function AdminDashboardCore() {
           </div>
 
           <div className="w-full">
-            {tab === "message" && user && <MessagePage currentUserId={user.id} />}
+            {tab === "message" && user && (
+              <MessagePage currentUserId={user.id} />
+            )}
             {tab === "users" && renderUsers()}
             {tab === "requests" && renderRequests()}
             {tab === "reports" && renderReports()}
