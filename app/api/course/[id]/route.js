@@ -47,8 +47,9 @@ export async function DELETE(req, { params }) {
 
 export async function PUT(req, { params }) {
   try {
+    const input = await params;
     const body = await req.json();
-    const courseId = params.id; 
+    const courseId = input.id; 
     const userId = body.userId || "";
 
     const res = await fetch(`${BACKEND_URL}/courses/${courseId}`, {
