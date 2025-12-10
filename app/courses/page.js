@@ -34,6 +34,7 @@ export default function PageContent() {
         if (!res.ok) throw new Error("Failed to fetch courses");
         const data = await res.json();
         setCourses(data);
+        console.log("Fetched courses:", data);
         setFilteredCourses(data);
       } catch (err) {
         console.error("Error loading courses:", err);
@@ -96,7 +97,7 @@ export default function PageContent() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gray-100">
+    <div className="w-full min-h-screen from-[#f3d7c8] to-[#fff5f0] bg-gradient-to-b">
       <Navbar />
 
       {/* Search Bar */}
@@ -117,7 +118,7 @@ export default function PageContent() {
       </header>
 
       {/* Filters and Courses */}
-      <main className="flex flex-col md:flex-row mx-2 md:mx-10 gap-2 md:gap-4">
+      <main className="flex flex-col md:flex-row mx-2 md:mx-10 gap-2 md:gap-4 h-full text-black">
         <div className="w-full md:w-50 md:h-75 bg-white rounded-lg p-1 shadow mt-0 md:mt-2 py-4">
           <div className="flex md:flex-col flex-row mx-4 gap-4">
             <h2 className="hidden md:block min-w-22 font-bold text-xl">Filter By</h2>
