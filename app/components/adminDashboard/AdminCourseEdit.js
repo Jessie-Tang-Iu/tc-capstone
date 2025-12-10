@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import CourseLessonBlock from "./CourseLessonBlock";
 import CourseQuizBlock from "./CourseQuizBlock";
 
-export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
+export default function AdminCourseEdit({ courseId, onCancel, onDelete, onRefresh }) {
     const [loading, setLoading] = useState(true);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -154,7 +154,7 @@ export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
         const res = await fetch(`/api/course/${courseId}`, { method: "DELETE" });
         if (!res.ok) throw new Error("Failed to delete course");
             alert("Course deleted successfully");
-            onCancel();
+            onDelete();
             onRefresh();
         } catch (err) {
         console.error(err);
@@ -191,7 +191,7 @@ export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
             <select
                 value={level}
                 onChange={(e) => setLevel(e.target.value)}
-                className="w-full border border-gray-300 rounded p-2 text-sm text-black"
+                className="w-full border border-gray-300 rounded p-2 text-sm text-black cursor-pointer"
             >
                 <option>Beginner</option>
                 <option>Intermediate</option>
@@ -203,7 +203,7 @@ export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
             <select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
-                className="w-full border border-gray-300 rounded p-2 text-sm text-black"
+                className="w-full border border-gray-300 rounded p-2 text-sm text-black cursor-pointer"
             >
                 <option>Online</option>
                 <option>In Person</option>
@@ -225,18 +225,18 @@ export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
         {/* Add Buttons */}
         <div className="flex justify-center gap-4 mt-6 mb-8">
             <button
-            onClick={() => addBlock("lesson")}
-            type="button"
-            className="bg-[#E55B3C] text-white px-5 py-2 rounded-lg text-sm hover:bg-[#c94b2d]"
+                onClick={() => addBlock("lesson")}
+                type="button"
+                className="bg-[#E55B3C] text-white px-5 py-2 rounded-lg text-sm hover:bg-[#c94b2d] cursor-pointer"
             >
-            + Add Lesson
+                + Add Lesson
             </button>
             <button
-            onClick={() => addBlock("quiz")}
-            type="button"
-            className="bg-[#6C63FF] text-white px-5 py-2 rounded-lg text-sm hover:bg-[#5951d8]"
+                onClick={() => addBlock("quiz")}
+                type="button"
+                className="bg-[#6C63FF] text-white px-5 py-2 rounded-lg text-sm hover:bg-[#5951d8] cursor-pointer"
             >
-            + Add Quiz
+                + Add Quiz
             </button>
         </div>
 
@@ -266,21 +266,21 @@ export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
         {/* Footer */}
         <div className="flex justify-between mt-8">
             <button
-            onClick={onCancel}
-            className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+                onClick={onCancel}
+                className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 cursor-pointer"
             >
             Cancel
             </button>
             <div className="flex gap-4">
             <button
                 onClick={() => setShowDeleteModal(true)}
-                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-500"
+                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-500 cursor-pointer"
             >
                 Delete Course
             </button>
             <button
                 onClick={handleSave}
-                className="bg-[#E55B3C] text-white px-6 py-2 rounded-lg hover:bg-[#c94b2d]"
+                className="bg-[#E55B3C] text-white px-6 py-2 rounded-lg hover:bg-[#c94b2d] cursor-pointer"
             >
                 Save Changes
             </button>
@@ -298,20 +298,26 @@ export default function AdminCourseEdit({ courseId, onCancel, onRefresh }) {
                 Type the course name <strong>{title}</strong> to confirm deletion:
                 </p>
                 <input
-                value={deleteConfirm}
-                onChange={(e) => setDeleteConfirm(e.target.value)}
-                className="w-full border border-gray-300 text-black rounded p-2 mb-4 text-sm"
+                    value={deleteConfirm}
+                    onChange={(e) => setDeleteConfirm(e.target.value)}
+                    className="w-full border border-gray-300 text-black rounded p-2 mb-4 text-sm"
                 />
                 <div className="flex justify-end gap-4">
                 <button
                     onClick={() => setShowDeleteModal(false)}
-                    className="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600"
+                    className="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600 cursor-pointer"
                 >
                     Cancel
                 </button>
                 <button
                     onClick={handleDelete}
-                    className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-500"
+                    className={`px-4 py-2 rounded text-white
+                        ${
+                        deleteConfirm === title
+                            ? "bg-red-600 hover:bg-red-500 cursor-pointer transition"
+                            : "bg-red-300 cursor-not-allowed"
+                        }
+                    `}
                 >
                     Delete
                 </button>

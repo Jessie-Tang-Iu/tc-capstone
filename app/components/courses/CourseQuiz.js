@@ -72,9 +72,7 @@ export default function CourseQuiz({ lesson, backToContent, onCompleted }) {
         <div className="text-center py-10">
           <h2 className="text-2xl font-semibold mb-3">{lesson.title}</h2>
           {lesson.content && (
-            <p className="text-gray-700 max-w-xl mx-auto mb-6">
-              {lesson.content}
-            </p>
+            <div className="text-gray-700 max-w-xl mx-auto mb-6" dangerouslySetInnerHTML={{ __html: lesson.content }}></div>
           )}
 
           <button
