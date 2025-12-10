@@ -10,6 +10,7 @@ import MessagePage from "../components/MessagePage";
 function PageContent() {
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
+
   // Redirect if not signed in
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -26,7 +27,12 @@ function PageContent() {
     return null;
   }
 
-  const userID = user?.id;
+  // Ensure user data is available before accessing user.id
+  if (!user) {
+    return <p>Loading user data...</p>;
+  }
+
+  const userID = user.id;
 
   return (
     <>
@@ -40,11 +46,11 @@ function PageContent() {
           <div className="mb-10 text-center">
             <h1 className="text-3xl font-bold text-[#E55B3C]">
               Welcome back
-              {user?.firstName ? `, ${user.firstName}` : ""}!
+              {user.firstName ? `, ${user.firstName}` : ""}!
             </h1>
             <p className="mt-2 text-gray-600 text-lg">
-              This is your personal message box. Stay connected and manage
-              your conversations easily.
+              This is your personal message box. Stay connected and manage your
+              conversations easily.
             </p>
           </div>
 
