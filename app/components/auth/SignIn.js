@@ -74,7 +74,8 @@ export default function ClerkSignIn() {
         if (status == "active") {
           router.push("/post-login");
         } else {
-          setError("Your account is currently under review. Please try logging in again later.");
+          if (status == 'under-review') setError("Your account is currently under review. Please try logging in again later.")
+          else setError("Your account has been banned. You cannot access our system.");
           await signOut(() => router.push("/signIn"));
         }
       }
