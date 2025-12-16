@@ -143,7 +143,7 @@ function ApplicationsPage() {
 
             {total === 0 ? (
               <div className="p-6 text-gray-500 text-center">
-                No applications found.
+                {loading ? "Loading..." : "No applications found."}
               </div>
             ) : (
               <ul className="divide-y">

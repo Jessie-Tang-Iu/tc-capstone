@@ -216,7 +216,7 @@ export default function DiscussionBoard() {
             <div className="flex flex-row min-h-screen gap-2 mx-2 md:mx-10 mt-4">
                 {/* Posts List */}
                 <div 
-                    className={`w-1/4 min-w-45 max-w-60 block
+                    className={`w-1/4 min-w-45 max-w-80 block
                           h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto`}
                 >
                     <div className="px-2 py-1 space-y-2">
@@ -233,7 +233,7 @@ export default function DiscussionBoard() {
                 </div>
 
                 {/* Selected Post + Comments */}
-                <div className="w-3/4 bg-white my-1 min-h-screen rounded-xl overflow-y-auto">
+                <div className="w-full bg-white my-1 min-h-screen rounded-xl overflow-y-auto">
                     {selectedPost && (
                         <div>
                             <PostDetail

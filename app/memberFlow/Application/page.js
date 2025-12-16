@@ -26,6 +26,8 @@ export default function Applications() {
   //   return;
   // }
 
+  const [loading, setLoading] = useState(false);
+
   const [resume, setResume] = useState();
   const [coverLetter, setCoverLetter] = useState();
 
@@ -40,37 +42,44 @@ export default function Applications() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  useEffect(() => {
-    if (user) {
+  const sortedApplications = (applications) => {
+    return [...applications].sort((a, b) => {
+      const dateA = new Date(a.applied_at).getTime();
+      const dateB = new Date(b.applied_at).getTime();
+      return dateB - dateA;
+    });
+  }
+
+  const fetchAppData = useCallback(async () => {
+    try {
+      setLoading(true);
+
       // Fetch applications by user_id
-      fetch(`/api/application/user/${user.id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setApplications(data);
-          // console.log("Fetched applications:", data);
-        })
-        .catch((error) => {
-          console.error("Error fetching applications:", error);
-        });
+      const resApp = await fetch(`/api/application/user/${user.id}`, { cache: "no-store" });
+      if (!resApp.ok) throw new Error("Failed to fetch user's applications");
+      const appData = await resApp.json();
+      setApplications(sortedApplications(appData));
 
       // Fetch resume by user_id
-      fetch(`/api/resume/user/${user.id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setResume(data);
-          // console.log("Resume: ", data);
-        })
-        .catch((error) => console.error("Error fetching resume:", error));
+      const resResume = await fetch(`/api/resume/user/${user.id}`, { cache: "no-store" });
+      if (!resResume.ok) throw new Error("Failed to fetch user's resume");
+      const resumeData = await resResume.json();
+      setResume(resumeData);
 
       // Fetch cover letter by user_id
-      fetch(`/api/cover_letter/user/${user.id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setCoverLetter(data);
-          // console.log("CV: ", data);
-        })
-        .catch((error) => console.error("Error fetching cover letter: ", error));
+      const resCL = await fetch(`/api/cover_letter/user/${user.id}`, { cache: "no-store" });
+      if (!resCL.ok) throw new Error("Failed to fetch user's cover letter");
+      const clData = await resCL.json();
+      setCoverLetter(clData);
+    } catch (error) {
+      console.error("Error to fetch data: ", error);
+    } finally {
+      setLoading(false);
     }
+  })
+
+  useEffect(() => {
+    if (user) fetchAppData();
   }, [user]);
 
 
@@ -90,14 +99,6 @@ export default function Applications() {
         });
     }
   }, [selectedAppId]);
-
-  const sortedApplications = (applications) => {
-    return [...applications].sort((a, b) => {
-      const dateA = new Date(a.applied_at).getTime();
-      const dateB = new Date(b.applied_at).getTime();
-      return dateB - dateA;
-    });
-  }
 
   const handleAppSelect = (appId) => {
     setSelectedAppId(appId);
@@ -150,7 +151,6 @@ export default function Applications() {
   }
 
   if (!isSignedIn) {
-    // Don’t render anything while redirecting
     return null;
   }
 
@@ -171,7 +171,7 @@ export default function Applications() {
 
         {/* Main Content */}
         {applications.length === 0 ? (
-          <div className="text-center text-gray-500 py-10">No applications found</div>
+          <div className="text-center text-gray-500 py-10">{loading ? "Loading..." : "No applications found"}</div>
         ) : (
         <div className="flex flex-col md:flex-row mx-3">
           {/* Job Listings Sidebar */}

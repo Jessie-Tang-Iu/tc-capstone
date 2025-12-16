@@ -22,32 +22,33 @@ export default function AdvisorSearchPage() {
     (async() => {
       setLoading(true);
       try {
-      const res = await fetch(
-          `/api/advisor_list`
-      ); // fetch all advisors from the backend
-      if (!res.ok) throw new Error("Failed to fetch advisors");
+        setLoading(true);
+        const res = await fetch(
+            `/api/advisor_list`
+        ); // fetch all advisors from the backend
+        if (!res.ok) throw new Error("Failed to fetch advisors");
 
-      const data = await res.json();
+        const data = await res.json();
 
-      const advisorArray = data.map(advisor => ({
-        advisorID: advisor.clerk_id,
-        username: advisor.username,
-        first_name: advisor.first_name,
-        last_name: advisor.last_name,
-        email: advisor.email,
-        phone: advisor.phone,
-        role: advisor.role,
-        company_name: advisor.company_name,
-        company_role: advisor.company_role,
-        education: advisor.education,
-        experience: advisor.experience,
-        skill_1: advisor.skill_1,
-        skill_2: advisor.skill_2,
-        skill_3: advisor.skill_3,
-      }));
+        const advisorArray = data.map(advisor => ({
+          advisorID: advisor.clerk_id,
+          username: advisor.username,
+          first_name: advisor.first_name,
+          last_name: advisor.last_name,
+          email: advisor.email,
+          phone: advisor.phone,
+          role: advisor.role,
+          company_name: advisor.company_name,
+          company_role: advisor.company_role,
+          education: advisor.education,
+          experience: advisor.experience,
+          skill_1: advisor.skill_1,
+          skill_2: advisor.skill_2,
+          skill_3: advisor.skill_3,
+        }));
 
-      setAdvisorList(advisorArray);
-      // console.log("Fetched Advisors: ", advisorArray);
+        setAdvisorList(advisorArray);
+        // console.log("Fetched Advisors: ", advisorArray);
 
       } catch (error) {
         console.error("Fetch error: ", error);
@@ -86,13 +87,13 @@ export default function AdvisorSearchPage() {
           </div>
         </div>
         
-        <div className="flex flex-wrap lg:justify-start sm:justify-center my-4 space-x-5 space-y-10 text-center text-black">
+        <div className="flex flex-wrap justify-center my-4 space-x-5 space-y-10 text-center text-black">
           {advisorList.length > 0 ? (
             filteredAdvisor.map((advisor,idx) => (
               <AdvisorCard key={idx} advisor={advisor} />
             ))
           ) : (
-            <p className="text-gray-600 p-4">No advisors found.</p>
+            <p className="text-gray-600 p-4">{loading ? "Loading..." : "No advisors found"}</p>
           )}
         </div>
       </div>

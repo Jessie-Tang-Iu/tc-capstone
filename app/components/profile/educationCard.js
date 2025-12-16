@@ -49,7 +49,7 @@ export default function EducationCard({ index, edu, setNewEdu, isLoading, setIsL
       {/* Edit & Remove option  */}
       {(!editingEdu && edu) && (
       <div className="w-full flex justify-center my-1">
-        <h2 className="flex-3 text-sm font-medium text-black py-2 pl-4">{education.school}</h2>
+        <h2 className="flex-3 text-base font-medium text-black py-2 pl-4">{education.school}</h2>
 
         <button  
           className="text-blue-600 hover:bg-gray-200 py-2 px-2 rounded-full transition"

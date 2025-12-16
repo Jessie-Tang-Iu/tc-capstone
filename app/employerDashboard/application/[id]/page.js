@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Navbar from "@/app/components/EmployerNavBar";
 import EmployerSidebar from "@/app/components/employerDashboard/EmployerSideBar";
@@ -39,55 +39,43 @@ function ApplicationDetailsPage() {
   const [showProfile, setShowProfile] = useState(false);
 
   // Fetch application info
+  const fetchAppData = useCallback(async () => {
+    try {
+      setLoading(true);
+
+      // Fetch applications by user_id
+      const resApp = await fetch(`/api/application/${numericId}`, { cache: "no-store" });
+      if (!resApp.ok) throw new Error("Failed to fetch application detail");
+      const appData = await resApp.json();
+      setApp(appData);
+
+      // Fetch applicant's profile
+      const resUser = await fetch(`/api/users/${appData.user_id}`);
+      if (!resUser.ok) throw new Error("Failed to fetch applicant's profile")
+      const user = await resUser.json();
+      // console.log("user: ", user);
+      setUserDetails(user);
+          
+      // Fetch resume by user_id
+      const resResume = await fetch(`/api/resume/user/${appData.user_id}`, { cache: "no-store" });
+      if (!resResume.ok) throw new Error("Failed to fetch user's resume");
+      const resumeData = await resResume.json();
+      setUserResume(resumeData);
+  
+      // Fetch cover letter by user_id
+      const resCL = await fetch(`/api/cover_letter/user/${appData.user_id}`, { cache: "no-store" });
+      if (!resCL.ok) throw new Error("Failed to fetch user's cover letter");
+      const clData = await resCL.json();
+      setUserCoverLetter(clData);
+    } catch (error) {
+      console.error("Error to fetch data: ", error);
+    } finally {
+      setLoading(false);
+    }
+  })
+
   useEffect(() => {
-    const fetchApp = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(`/api/application/${numericId}`);
-        const data = await res.json();
-        console.log("application: ", data);
-        setApp(data);
-
-        // Fetch user details if we have clerk_id
-        if (data.user_id) {
-          const resUser = await fetch(`/api/users/${data.user_id}`);
-          if (resUser.ok) {
-            const user = await resUser.json();
-            // console.log("user: ", user);
-            setUserDetails(user);
-          }
-        }
-
-        // Fetch user's database if not include file
-        fetch(`/api/resume/user/${data.user_id}`)
-          .then((res) => res.json())
-          .then((data) => {
-            setUserResume(data);
-            // console.log("Resume: ", data);
-          })
-          .catch((error) => {
-            console.error("Error fetching resume:", error);
-            setUserResume({ error: error.message });
-          });
-
-        fetch(`/api/cover_letter/user/${data.user_id}`)
-          .then((res) => res.json())
-          .then((data) => {
-            setUserCoverLetter(data);
-            // console.log("CV: ", data);
-          })
-          .catch((error) => {
-            console.error("Error fetching cover letter:", error);
-            setUserCoverLetter({ error: error.message });
-          });
-      } catch (err) {
-        console.error("Error fetching application:", err);
-        setApp(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (numericId) fetchApp();
+    if (numericId) fetchAppData();
   }, [numericId]);
 
   // Change badge color based on status
@@ -227,6 +215,7 @@ function ApplicationDetailsPage() {
 
               <hr />
 
+              {!loading &&
               <div className="px-4 py-4 text-gray-700">
                 {/* Relative Information */}
                 {(app.relative_first_name != "" ||
@@ -260,7 +249,7 @@ function ApplicationDetailsPage() {
 
                 {/* Answer employer Questions */}
                 <AnswerPreview title="Employer Questions" app={app} />
-              </div>
+              </div>}
             </section>
           )}
         </div>
