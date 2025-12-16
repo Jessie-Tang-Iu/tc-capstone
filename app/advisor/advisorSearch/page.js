@@ -73,7 +73,7 @@ export default function AdvisorSearchPage() {
     <main className='bg-linear-to-br from-[#f8eae2] to-white min-h-screen pb-5'>
       <Navbar />
       <div className='w-4/5 mx-auto mt-10'>
-        <button onClick={handleBackToAdvisorList} className="text-[20px] text-black font-semibold mb-2">&lt; Back to Advisor List</button>
+        <button onClick={handleBackToAdvisorList} className="text-[20px] text-black font-semibold mb-2 cursor-pointer hover:underline">&lt; Back to Advisor List</button>
         {/* header */}
         <div className='mb-10 text-center'>
           <h1 className="text-3xl font-bold text-[#E55B3C]">Advisor Search</h1>
@@ -87,7 +87,7 @@ export default function AdvisorSearchPage() {
           </div>
         </div>
         
-        <div className="flex flex-wrap justify-center my-4 space-x-5 space-y-10 text-center text-black">
+        <div className="flex flex-wrap lg:justify-start sm:justify-center my-4 space-x-5 space-y-10 text-center text-black">
           {advisorList.length > 0 ? (
             filteredAdvisor.map((advisor,idx) => (
               <AdvisorCard key={idx} advisor={advisor} />
