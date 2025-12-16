@@ -30,7 +30,6 @@ const MyCalendarPage = () => {
   const router = useRouter();
 
   const { user } = useUser();
-  const userId = user.id;
 
   // Redirect if not signed in
   useEffect(() => {
@@ -85,12 +84,13 @@ const MyCalendarPage = () => {
 
   // Fetch Advisory Sessions
   useEffect(() => {
-    if (!userId) throw new Error("User not signed in.");
-
-    (async () => {
+      (async () => {
         try {
+            setLoading(true);
+            if (!user) throw new Error("User not signed in.");
+
             const res = await fetch(
-                `/api/advisory_bookings/advisor?clientId=${encodeURIComponent(userId)}`, {
+                `/api/advisory_bookings/advisor?clientId=${encodeURIComponent(user.id)}`, {
                   method: 'PATCH'
                 }
             );
@@ -122,7 +122,7 @@ const MyCalendarPage = () => {
             console.error("Fetch error: ", error);
         }
     })();
-  }, [userId]);
+  }, [user]);
 
   // Merge All Events
   const allEvents = useMemo(() => {
