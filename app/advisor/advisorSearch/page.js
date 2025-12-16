@@ -20,6 +20,7 @@ export default function AdvisorSearchPage() {
   useEffect(() => {
 
     (async() => {
+      setLoading(true);
       try {
         setLoading(true);
         const res = await fetch(

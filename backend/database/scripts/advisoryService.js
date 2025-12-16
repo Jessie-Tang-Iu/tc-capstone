@@ -18,6 +18,20 @@ export async function getBookingsByAdvisorId(id) {
   return result.rows || [];
 }
 
+export async function getBookingsByClientId(id) {
+  const result = await query(`SELECT a.*, u.clerk_id, u.username, u.first_name, u.last_name, (c.first_name || ' ' || c.last_name) AS clientname  
+                              FROM advisory_bookings a 
+                              LEFT OUTER JOIN public.users u
+                              ON a.advisor_id = u.clerk_id
+                              LEFT OUTER JOIN public.users c
+                              ON a.client_id = c.clerk_id
+                              WHERE client_id = $1`, 
+    [id]
+  );
+  // if (!result.rows.length) throw new Error("Not found");
+  return result.rows || [];
+}
+
 // Get the booking by bookingId
 export async function getBookingByBookingId(id) {
   const result = await query(`SELECT * FROM advisory_bookings WHERE booking_id = $1`, [

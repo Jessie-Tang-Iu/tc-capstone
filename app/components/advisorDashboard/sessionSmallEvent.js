@@ -2,18 +2,18 @@
 
 
 
-export default function SessionSmallEvent({ time, title, client, onClick }) {
+export default function SessionSmallEvent({ time, title, client="", advisor="", onClick }) {
 
     return(
         <div
         onClick={onClick}
         className="bg-[#cff5fa] rounded-lg w-full px-2 py-1 cursor-pointer hover:bg-[#8db4ba]"
         >
-        <div className="text-xs font-bold text-black leading-tight break-words">
+        <div className="text-xs font-bold text-black leading-tight wrap-break-words">
             {time.toUpperCase()}
         </div>
-        <div className="text-xs text-black leading-tight break-words whitespace-normal">
-            {title} with {client}
+        <div className="text-xs text-black leading-tight wrap-break-words whitespace-normal">
+            {title} with {client? client : advisor}
         </div>
         </div>
     )

@@ -1,4 +1,4 @@
-import { getBookingsController } from "@/backend/controllers/advisoryServiceController";
+import { getBookingsController, getBookingsByClientIdController } from "@/backend/controllers/advisoryServiceController";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
@@ -11,3 +11,14 @@ export async function GET(req) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 };
+
+export async function PATCH(req) {
+  const { searchParams } = new URL(req.url);
+  const clientId = searchParams.get("clientId");
+  try {
+    const session = await getBookingsByClientIdController(clientId);
+    return NextResponse.json(session);
+  } catch (e) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+}

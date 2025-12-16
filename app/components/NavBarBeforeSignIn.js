@@ -112,11 +112,11 @@ export default function Navbar() {
       {/* Desktop nav (lg+) */}
       <nav className="hidden lg:block">
         <ul className="flex items-center space-x-6 text-black">
-          <li>
+          {/* <li>
             <Link href="/advisorDashboard" className="hover:text-orange-500">
               (Temp) Advisor
             </Link>
-          </li>
+          </li> */}
           {/* <li>
             <Link
               href="/employerDashboard/message"

@@ -56,9 +56,56 @@ export default function InvoiceDetail({ params }) {
         }
     };
 
-    const sendToClient = () => {
-        console.log("Send to client clicked for invoice:", id, "\nAmount: $157.50");
-        alert(`Invoice ${id} sent to client!`);
+    const sendToClient = async () => {
+        // console.log(`Send to client clicked for invoice:", id, "\nAmount: $${invoice.amount}`);
+        // alert(`Invoice ${id} sent to client!`);
+
+        // 1. Basic validation
+        if (!invoice.client_email) {
+            alert("Client email is missing. Cannot send invoice.");
+            return;
+        }
+
+        const confirmed = confirm(`Are you sure you want to send Invoice ${invoice.invoice_id} to ${invoice.client_email}?`);
+        if (!confirmed) return;
+
+        try {
+            console.log("Sending invoice email for ID:", invoice.invoice_id);
+
+            // 2. Make a POST request to a new dedicated email API route
+            const res = await fetch(`/api/invoice/send`, {
+                method: 'POST', // Use POST for an action that initiates a side effect (sending email)
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    invoiceId: invoice.invoice_id,
+                    clientEmail: invoice.client_email,
+                    // You might need to send more data for the email template:
+                    advisorName: invoice.advisor_name,
+                    client_name: invoice.client_name,
+                    totalAmount: invoice.amount,
+                    issued_date: invoice.issued_date,
+                    dueDate: invoice.due_date,
+                    clientPhone: invoice.clientPhone,
+                    quantity: invoice.quantity,
+                    unit_price: invoice.unit_price,
+                    tax: invoice.tax,
+                    status: invoice.status,
+                }),
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error || "Server failed to process email request.");
+            }
+
+            // 3. Success Feedback
+            alert(`Invoice ${invoice.invoice_id} successfully sent to ${invoice.client_email}!\n
+                (For development purpose, email is sent to techconnect.capstone.project@gmail.com)`);
+            
+        } catch (error) {
+            console.error("Email send failed:", error);
+            alert(`Failed to send invoice: ${error.message}`);
+        }
     }
 
     const handleReset = () => {

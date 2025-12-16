@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { DateTime } from "luxon";
@@ -11,6 +11,8 @@ import CalenderSmallEvent from "../components/myCalender/calenderSmallEvent";
 import CalendarBigEvent from "../components/myCalender/calenderBig";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import SessionSmallEvent from "../components/advisorDashboard/sessionSmallEvent";
+import SessionBigEvent from "../components/advisorDashboard/sessionBigEvent";
 
 const MyCalendarPage = () => {
   const calendarRef = useRef(null);
@@ -21,6 +23,8 @@ const MyCalendarPage = () => {
   const [isTodayDisabled, setIsTodayDisabled] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [sessions, setSessions] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
 
   const { isLoaded, isSignedIn } = useUser();
   const router = useRouter();
@@ -78,6 +82,55 @@ const MyCalendarPage = () => {
     if (user) fetchBookings();
   }, [user]);
 
+  // Fetch Advisory Sessions
+  useEffect(() => {
+      (async () => {
+        try {
+            setLoading(true);
+            if (!user) throw new Error("User not signed in.");
+
+            const res = await fetch(
+                `/api/advisory_bookings/advisor?clientId=${encodeURIComponent(user.id)}`, {
+                  method: 'PATCH'
+                }
+            );
+            if (!res.ok) {console.error("Failed to fetch sessions"); return;}
+      
+            const data = await res.json();
+
+            // Filter data to only include booked advisor session
+            const bookedSessions = data.filter(session => session.status === "booked");
+
+            const mappedSessions = bookedSessions.map(session => {
+              const dateOnly = session.date.split("T")[0];
+              console.log(session)
+              return {
+                id: session.booking_id,
+                title: `Advisory Session`,
+                start: `${dateOnly}T${session.starttime}`,
+                end: `${dateOnly}T${session.endtime}`,
+                extendedProps : {
+                  description: session.description,
+                  advisorName: (session.first_name || '') + ((' ' + session.last_name) || ''),
+                  clientName: session.clientname,
+                }
+            }});
+
+            setSessions(mappedSessions);
+            // console.log("fetching Sessions", mappedSessions);
+        } catch (error) {
+            console.error("Fetch error: ", error);
+        }
+    })();
+  }, [user]);
+
+  // Merge All Events
+  const allEvents = useMemo(() => {
+    return [...events, ...sessions];
+  }, [events, sessions]);
+
+  console.log("All Events: ", allEvents);
+
   // Set title and check today's button state
   const updateTitle = () => {
     const api = calendarRef.current?.getApi();
@@ -99,6 +152,25 @@ const MyCalendarPage = () => {
 
   // Handle clicking an event in the calendar
   const handleEventClick = (eventInfo) => {
+
+    // Determine if it's a general booking or an advisory session
+    if (eventInfo.event.title === 'Advisory Session') {
+        const selected = {
+            id: eventInfo.event.id,
+            title: eventInfo.event.title,
+            date: eventInfo.event.start?.toISOString().split("T")[0],
+            start_time: eventInfo.event.start?.toISOString().split("T")[1]?.slice(0,5),
+            end_time: eventInfo.event.end?.toISOString().split("T")[1]?.slice(0,5),
+            description: eventInfo.event.extendedProps.description || "",
+            advisorName: eventInfo.event.extendedProps.advisorName,
+            clientName: eventInfo.event.extendedProps.clientName,
+        }
+        setSelectedEvent(selected);
+        setIsOpen(true);
+        console.log("selected event: ", eventInfo.event.date);
+        return;
+    }
+
     const clicked = bookingData.find((item) => {
       const bookingStart = DateTime.fromISO(
         `${item.date.split("T")[0]}T${item.start_time}`
@@ -184,28 +256,41 @@ const MyCalendarPage = () => {
           ref={calendarRef}
           plugins={[dayGridPlugin]}
           initialView="dayGridMonth"
-          events={events}
+          events={allEvents}
           headerToolbar={false}
           height="auto"
           contentHeight="auto"
           eventClick={handleEventClick}
           eventContent={({ event }) => {
-            let startTime = "";
-            let endTime = "";
+            const isAdvisory = event.title === 'Advisory Session';
+
+            let displayTime = "";
 
             try {
-              const start = DateTime.fromISO(event.startStr);
-              if (start.isValid) startTime = start.toFormat("h:mm a");
+              const start = event.startStr ? DateTime.fromISO(event.startStr) : null;
+              const end = event.endStr ? DateTime.fromISO(event.endStr) : null;
 
-              if (event.end) {
-                const end = DateTime.fromISO(event.end);
-                if (end.isValid) endTime = end.toFormat("h:mm a");
+              if (start?.isValid) {
+                const startTime = start.toFormat("h:mm a");
+                const endTime = end?.isValid ? end.toFormat("h:mm a") : "";
+                displayTime = endTime ? `${startTime} - ${endTime}` : startTime;
               }
-            } catch {}
+            } catch (error) {
+              console.error("Time formatting error: ", error);
+            }
 
-            const displayTime = endTime
-              ? `${startTime} - ${endTime}`
-              : startTime || "End time TBD";
+            if (isAdvisory) {
+              const advisorName = event.extendedProps.advisorName;
+              const startTime = DateTime.fromJSDate(event.start).toFormat("h:mm a");
+
+              return (
+                <SessionSmallEvent
+                    time={startTime}
+                    title={event.title}
+                    advisor={advisorName}
+                />
+              );
+            }
 
             return (
               <CalenderSmallEvent time={displayTime} title={event.title} />
@@ -214,6 +299,20 @@ const MyCalendarPage = () => {
         />
         {loading && <p className="text-gray-600 mt-2">Loading…</p>}
       </div>
+
+      {isOpen===true &&
+          <div
+              className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50"
+          >
+              <div className="w-full max-w-lg" onClick={(e) => e.stopPropagation()}>
+                  <SessionBigEvent
+                      session={selectedEvent}
+                      onClose={() => setIsOpen(false)}
+                  />
+                  {console.log("Selected Event: ", selectedEvent)}
+              </div>
+          </div>
+      }
 
       {showModal && selectedEvent && (
         <div
