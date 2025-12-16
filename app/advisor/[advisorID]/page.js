@@ -18,6 +18,9 @@ export default function AdvisorPage({ params }) {
         company_role: null,
         education: null,
         experience: null,
+        skill_1: null,
+        skill_2: null,
+        skill_3: null,
     });
 
     const router = useRouter();
@@ -67,14 +70,13 @@ export default function AdvisorPage({ params }) {
 
 
     return (
-        <main className="bg-gradient-to-br from-[#f8eae2] to-white min-h-screen">
+        <main className="bg-linear-to-br from-[#f8eae2] to-white min-h-screen">
             <Navbar />
             <div className="w-4/5 mx-auto mt-10">
-                <button onClick={handleBackToAdvisorList} className="text-[20px] text-black font-semibold mb-2">&lt; Back to Advisor List</button>
+                <button onClick={handleBackToAdvisorList} className="text-[20px] text-black font-semibold mb-2 cursor-pointer hover:underline">&lt; Back to Advisor List</button>
                 {/* header */}
                 <div className='mb-10 text-center'>
                     <h1 className="text-3xl font-bold text-[#E55B3C] mt-5 mb-10">Advisor Details</h1>
-                    {/* <hr className='text-black' /> */}
                 </div>
 
                 {/* Advisor Details */}                
@@ -83,6 +85,33 @@ export default function AdvisorPage({ params }) {
                         <h1 className="text-2xl text-black font-bold">{advisor.first_name} {advisor.last_name}</h1>
                         <p>{advisor.company_role}</p>
                         <p className="text-gray-600">{advisor.company_name}</p>
+                    </div>
+
+                    <div className='mb-10'>
+                        <h1 className="text-2xl text-black font-bold mb-2">Skills</h1>
+                        {!advisor.skill_1 && !advisor.skill_2 && !advisor.skill_3 &&
+                            <div className='border border-gray-300 shadow-lg rounded-xl bg-white/10 backdrop-blur-sm px-2 '>
+                                <p className='text-[20px]'>No Skills Provided</p>
+                            </div>
+                        }
+
+                        {advisor.skill_1 && (
+                            <div className='w-fit border border-gray-300 shadow-lg rounded-xl bg-[#f6f0bb] backdrop-blur-sm px-2 mb-3'>
+                                <p className='text-[20px]'>{advisor.skill_1 || ""}</p>
+                            </div>
+                        )}
+
+                        {advisor.skill_2 && (
+                            <div className='w-fit border border-gray-300 shadow-lg rounded-xl bg-[#c7ecee] backdrop-blur-sm px-2 mb-3'>
+                                <p className='text-[20px]'>{advisor.skill_2 || ""}</p>
+                            </div>
+                        )}
+
+                        {advisor.skill_3 && (
+                            <div className='w-fit border border-gray-300 shadow-lg rounded-xl bg-[#c1e7bb] backdrop-blur-sm px-2 mb-3'>
+                                <p className='text-[20px]'>{advisor.skill_3 || ""}</p>
+                            </div>
+                        )}
                     </div>
                     
                     <div className='mb-10'>
@@ -95,19 +124,8 @@ export default function AdvisorPage({ params }) {
                     </div>
                     <div className='mb-10'>
                         <h1 className="text-2xl text-black font-bold mb-2">Contact Information</h1>
-                        <p>Phone: {advisor.phone}</p>
+                        {advisor.phone && <p>Phone: {advisor.phone}</p>}
                         <p>Email: {advisor.email}</p>
-                    </div>
-
-                    <div>
-                        {/* <h1 className="text-2xl text-black font-bold mb-2">Availability</h1> */}
-                        {/* <ul>
-                            {Object.entries(advisor.availability).map(([day, hours]) => (
-                                <li key={day}>
-                                    {day}: {hours ? `${hours.from} - ${hours.to}` : "Not Available"}
-                                </li>
-                            ))}
-                        </ul> */}
                     </div>
                 </div>
             </div>

@@ -65,15 +65,15 @@ export default function AdvisorCard({ advisor }) {
             </div>
             
             <div className='flex flex-col my-3 justify-between items-start space-x-3.5 ml-auto'>
-                <button onClick={() => handleViewProfile(advisor.advisorID)} className='flex flex-row hover:text-sky-600 active:text-gray-500'>
+                <button onClick={() => handleViewProfile(advisor.advisorID)} className='flex flex-row hover:text-sky-600 active:text-gray-500 cursor-pointer'>
                     <RxIdCard className='mr-2' size={24} />
                     View Profile
                 </button>
-                <button onClick={() => setIsChatOpen(true)} className='flex flex-row hover:text-sky-600 active:text-gray-500'>
+                <button onClick={() => setIsChatOpen(true)} className='flex flex-row hover:text-sky-600 active:text-gray-500 cursor-pointer'>
                     <RxChatBubble className='mr-2' size={24} />
                     Message
                 </button>
-                <button onClick={() => handleRegister(advisor.advisorID)} className='flex flex-row hover:text-sky-600 active:text-gray-500'>
+                <button onClick={() => handleRegister(advisor.advisorID)} className='flex flex-row hover:text-sky-600 active:text-gray-500 cursor-pointer'>
                     <RxPencil2 className='mr-2' size={24} />
                     Register
                 </button>
