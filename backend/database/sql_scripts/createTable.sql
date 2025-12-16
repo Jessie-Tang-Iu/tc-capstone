@@ -318,6 +318,7 @@ CREATE TABLE posts (
     id SERIAL PRIMARY KEY,
     author_id VARCHAR(255) REFERENCES users(clerk_id) ON DELETE CASCADE,
     title TEXT NOT NULL,
+    tags TEXT[],
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
