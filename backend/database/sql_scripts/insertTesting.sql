@@ -42,7 +42,7 @@ INSERT INTO posts (author_id, title, content) VALUES
 
 -- Insert fake comments (referencing posts by ID)
 INSERT INTO comments (post_id, author_id, content) VALUES
-(1, 'user_36MRxcVmgtvX9V7SuCkpT20UQ6n', 'I recommend the official React docs—they are super well written!'),
+(1, 'user_36MRxcVmgtvX9V7SuCkpT20UQ6n', 'I recommend the official React docs they are super well written!'),
 (1, 'user_36MRxcVmgtvX9V7SuCkpT20UQ6n', 'Try Scrimba or Frontend Mentor, very interactive.'),
 (2, 'user_36MRxcVmgtvX9V7SuCkpT20UQ6n', 'Use EXPLAIN ANALYZE to understand query performance.'),
 (2, 'user_36MRxcVmgtvX9V7SuCkpT20UQ6n', 'Don’t forget to index frequently used columns.'),

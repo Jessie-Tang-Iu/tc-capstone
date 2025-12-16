@@ -25,13 +25,6 @@ export default function CommentItem({
     <div className="border-b border-gray-300 py-4">
       <div className="flex items-center text-sm text-gray-500">
         <p className="font-semibold text-black">{displayName}</p>
-        {author_id && (
-          <Button
-            text="Edit Comment"
-            onClick={() => alert("Edit comment feature coming soon!")}
-            className="ml-auto"
-          />
-        )}
       </div>
       <p className="mt-2 ml-2 text-gray-700">{content}</p>
     </div>
