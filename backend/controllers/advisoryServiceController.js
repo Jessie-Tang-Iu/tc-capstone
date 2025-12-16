@@ -54,3 +54,8 @@ export async function makeBookingController(body)  {
     console.log("Booking controller result:", result);
     return result;
 }
+
+export async function getBookingsByClientIdController(clientId) {
+    if(!clientId) throw new Error("clientId required");
+    return await advisoryService.getBookingsByClientId(clientId);
+}

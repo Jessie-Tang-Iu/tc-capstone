@@ -89,7 +89,7 @@ export default function SessionBigEvent({
       {/* Advisor */}
       <div className="text-sm mb-4">
         <span className="font-medium">Advisor: </span>
-        {advisorName}
+        {advisorName || session.advisorName}
       </div>
 
       {/* Description */}
