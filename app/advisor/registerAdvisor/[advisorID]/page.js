@@ -97,7 +97,7 @@ export default function RegisterAdvisor({ params }) {
         <main className="bg-gray-100 min-h-screen">
             <MemberNavbar />
             <div className="w-4/5 h-full mx-auto mt-10 pb-10">
-                <button type='button' onClick={handleBackToAdvisorList} className="text-[20px] text-black font-semibold mb-5">&lt; Back to Advisor List</button>
+                <button type='button' onClick={handleBackToAdvisorList} className="text-[20px] text-black font-semibold mb-5 cursor-pointer hover:underline">&lt; Back to Advisor List</button>
 
                 <div className="flex flex-row mb-4 rounded-xl bg-linear-to-br from-[#F3E1D5] to-white shadow text-center px-20">
                     <div className="w-3/5 flex flex-col items-start">
