@@ -2,8 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import Navbar from "../../components/MemberNavBar";
-import advisors from "../../data/advisors.json";
-import userAdvisors from "../../data/usersAdvisors.json"; // This is here for future implementation of connecting a advisor to a user account
 import AdvisorCard from "../../components/advisorCard";
 import { useRouter } from "next/navigation";
 import SearchBar from "@/app/components/ui/SearchBar";
@@ -12,6 +10,7 @@ export default function AdvisorSearchPage() {
 
   // Advisor State
   const [advisorList, setAdvisorList] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   // Query Status
   const [query, setQuery] = useState("");
@@ -21,6 +20,7 @@ export default function AdvisorSearchPage() {
   useEffect(() => {
 
     (async() => {
+      setLoading(true);
       try {
       const res = await fetch(
           `/api/advisor_list`
@@ -51,6 +51,8 @@ export default function AdvisorSearchPage() {
 
       } catch (error) {
         console.error("Fetch error: ", error);
+      } finally {
+        setLoading(false);
       }
     })();
 
