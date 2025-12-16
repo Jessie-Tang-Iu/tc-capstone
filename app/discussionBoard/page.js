@@ -25,46 +25,48 @@ export default function DiscussionBoard() {
 
     const [query, setQuery] = useState("");
     const [showNewPostModal, setShowNewPostModal] = useState(false);
-    const [showCommentModal, setShowCommentModal] = useState(false);
     const [showEditPostModal, setShowEditPostModal] = useState(false);
 
-    const [newPost, setNewPost] = useState({ author_id: userID, author_name: userName, title: "", content: "", tags: "", });
-    const [newComment, setNewComment] = useState({ author_id: userID, author_name: userName, content: "" });
-    const [editPost, setEditPost] = useState({ id: null, title: "", content: "", tags: "" });
+    const [newPost, setNewPost] = useState({
+        title: "",
+        content: "",
+        tags: "",
+    });
 
+    const [newComment, setNewComment] = useState({
+        content: "",
+    });
 
-    // Loads all posts into the frontend on page load
+    const [editPost, setEditPost] = useState({
+        id: null,
+        title: "",
+        content: "",
+        tags: "",
+    });
+
     useEffect(() => {
         fetch("/api/posts")
-            .then((res) => {
-                if (!res.ok) {
-                    return res.json().then((err) => {
-                        throw new Error(err.error || "Unknown server error");
-                    });
-                }
-                return res.json();
-            })
+            .then((res) => res.json())
             .then((data) => {
                 setPosts(data);
                 if (data.length > 0) setSelectedPost(data[0]);
             })
-            .catch((err) => console.error("Failed to fetch posts:", err.message));
+            .catch(console.error);
     }, []);
 
-    // Load comments when selectedPost changes
     useEffect(() => {
         if (!selectedPost) return;
         fetch(`/api/comments?post_id=${selectedPost.id}`)
             .then((res) => res.json())
-            .then((data) => setComments(data))
-            .catch((err) => console.error("Failed to fetch comments:", err));
+            .then(setComments)
+            .catch(console.error);
     }, [selectedPost]);
 
-    // Handle New Post Submit
     const handleAddPost = async () => {
-        try {
-            // Build post payload
-            const postPayload = {
+        const res = await fetch("/api/posts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
                 author_id: userID,
                 author_name: userName,
                 title: newPost.title.trim(),
@@ -72,115 +74,90 @@ export default function DiscussionBoard() {
                 tags: newPost.tags
                     .split(",")
                     .map((t) => t.trim())
-                    .filter((t) => t !== ""),
-            };
+                    .filter(Boolean),
+            }),
+        });
 
-            console.log("Creating post with payload:", postPayload);
+        const created = await res.json();
 
-            // Send to backend
-            const res = await fetch("/api/posts", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(postPayload),
-            });
+        // Ensure author_name is set here
+        const postWithAuthor = {
+            ...created,
+            author_name: userName,
+            first_name: user?.firstName || null,
+            last_name: user?.lastName || null,
+            username: user?.username || null,
+        };
 
-            if (!res.ok) throw new Error("Failed to create post");
-
-            const createdPost = await res.json();
-
-            // Update UI
-            setPosts((prev) => [createdPost, ...prev]);
-            setSelectedPost(createdPost);
-            setNewPost({ title: "", content: "" });
-            setShowNewPostModal(false);
-        } catch (err) {
-            console.error("Error creating post:", err);
-        }
+        setPosts((p) => [postWithAuthor, ...p]);
+        setSelectedPost(postWithAuthor);
+        setShowNewPostModal(false);
+        setNewPost({ title: "", content: "", tags: "" });
     };
 
-    // Handle New Comment Submit
     const handleAddComment = async () => {
-        try {
-            if (!selectedPost) throw new Error("No post selected");
+        if (!newComment.content.trim()) return;
 
-            const commentPayload = {
+        const res = await fetch("/api/comments", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
                 post_id: selectedPost.id,
                 author_id: userID,
                 author_name: userName,
                 content: newComment.content.trim(),
-            };
+            }),
+        });
 
-            const res = await fetch("/api/comments", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(commentPayload),
-            });
+        const created = await res.json();
 
-            if (!res.ok) throw new Error("Failed to add comment");
+        const commentWithAuthor = {
+            ...created,
+            author_name: userName,
+            first_name: user?.firstName || null,
+            last_name: user?.lastName || null,
+            username: user?.username || null,
+        };
 
-            const createdComment = await res.json();
-
-            setComments((prev) => [...prev, createdComment]);
-            setNewComment({ content: "" });
-            setShowCommentModal(false);
-        } catch (err) {
-            console.error("Error adding comment:", err);
-        }
+        setComments((c) => [...c, commentWithAuthor])
+        setNewComment({ content: "" });
     };
-    
-    // Handle Edit Post, takes the new data and updates the post in the backend
+
     const handleEditPost = async () => {
-        try {
-            const updatedPayload = {
+        const res = await fetch("/api/posts", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
                 id: editPost.id,
                 author_id: userID,
                 title: editPost.title.trim(),
                 content: editPost.content.trim(),
-            };
+                tags: editPost.tags
+                    .split(",")
+                    .map((t) => t.trim())
+                    .filter(Boolean),
+            }),
+        });
 
-            console.log("Updating post with payload:", updatedPayload);
-
-            const res = await fetch("/api/posts", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(updatedPayload),
-            });
-
-            if (!res.ok) throw new Error("Failed to update post");
-            const updatedPost = await res.json();
-
-            // Update UI
-            setPosts((prev) =>
-            prev.map((p) => (p.id === updatedPost.id ? updatedPost : p))
-            );
-            setSelectedPost(updatedPost);
-            setShowEditPostModal(false);
-        } catch (err) {
-            console.error("Error updating post:", err);
-        }
+        const updated = await res.json();
+        setPosts((p) => p.map((x) => (x.id === updated.id ? updated : x)));
+        setSelectedPost(updated);
+        setShowEditPostModal(false);
     };
 
-    // Filter posts based on search query
-    const filteredPost = posts.filter(
+    const filteredPosts = posts.filter(
         (p) =>
-            (p.author_name?.toLowerCase() || "").includes(query.toLowerCase()) ||
-            (p.title?.toLowerCase() || "").includes(query.toLowerCase())
+            p.title?.toLowerCase().includes(query.toLowerCase()) ||
+            p.author_name?.toLowerCase().includes(query.toLowerCase())
     );
 
-    // Close modal handler
-    const handleCloseWindow = () => {
-        setShowNewPostModal(false);
-        setShowCommentModal(false);
-    };
-
-    // Configures what features are available in the Quill editor toolbar
     const quillModules = {
         toolbar: [
-        [{ header: [1, 2, 3, false] }],
-        ["bold", "italic", "underline", "strike"],
-        [{ list: "ordered" }, { list: "bullet" }],
-        ["link"],
-        ["clean"],
+            [{ header: [1, 2, 3, false] }],
+            ["bold", "italic", "underline"],
+            [{ list: "ordered" }, { list: "bullet" }],
+            ["link"],
+            ["clean"],
         ],
     };
 
@@ -188,54 +165,42 @@ export default function DiscussionBoard() {
         <main className="bg-gray-100 min-h-screen pb-5">
             <NavBar />
 
-            <header className="mt-5 mb-2 mx-2 md:mx-10 rounded-xl bg-white p-6 shadow text-center">
-                <div className="mb-4 text-4xl font-semibold text-[#E55B3C]">
+            <header className="mt-5 mx-2 md:mx-10 bg-white p-6 rounded-xl shadow relative">
+                <h1 className="text-4xl text-center font-semibold text-[#E55B3C]">
                     Discussion Board
-                </div>
-                
-                {/* Search Bar and Action Buttons */}
-                <div className="flex flex-wrap justify-center items-center gap-3 lg:gap-15">
+                </h1>
+
+                <button
+                    onClick={() => setShowNewPostModal(true)}
+                    className="absolute top-6 right-6 text-[#E55B3C] font-semibold hover:underline"
+                >
+                    + New Post
+                </button>
+
+                <div className="mt-6 flex justify-center">
                     <SearchBar
                         value={query}
                         onChange={setQuery}
-                        placeholder="Search by Author | Title | Keywords"
+                        placeholder="Search by author or title"
                     />
+                </div>
+            </header>
 
-                    <div className="flex justify-center gap-3">
-                        <Button text="New Post" onClick={() => setShowNewPostModal(true)} />
-                        <Button
-                            text="Add Comment"
-                            onClick={() => setShowCommentModal(true)}
-                            disabled={!selectedPost}
+            <div className="flex gap-2 mx-2 md:mx-10 mt-4">
+                <div className="w-1/4 max-w-80 overflow-y-auto p-2">
+                    {filteredPosts.map((p) => (
+                        <PostItem
+                            key={p.id}
+                            {...p}
+                            onClick={() => setSelectedPost(p)}
+                            disabled={p.id === selectedPost?.id}
                         />
-                    </div>
-                </div>
-            </header>            
-
-            {/* Main Board */}
-            <div className="flex flex-row min-h-screen gap-2 mx-2 md:mx-10 mt-4">
-                {/* Posts List */}
-                <div 
-                    className={`w-1/4 min-w-45 max-w-80 block
-                          h-[calc(100vh-180px)] md:h-[calc(100vh-240px)] overflow-y-auto`}
-                >
-                    <div className="px-2 py-1 space-y-2">
-                        {Array.isArray(filteredPost) &&
-                            filteredPost.map((p) => (
-                                <PostItem
-                                    key={p.id}
-                                    {...p}
-                                    onClick={() => setSelectedPost(p)}
-                                    disabled={p.id === selectedPost?.id}
-                                />
-                            ))}
-                    </div>
+                    ))}
                 </div>
 
-                {/* Selected Post + Comments */}
-                <div className="w-full bg-white my-1 min-h-screen rounded-xl overflow-y-auto">
+                <div className="w-full bg-white rounded-xl">
                     {selectedPost && (
-                        <div>
+                        <>
                             <PostDetail
                                 {...selectedPost}
                                 onEdit={(post) => {
@@ -248,184 +213,155 @@ export default function DiscussionBoard() {
                                     setShowEditPostModal(true);
                                 }}
                             />
-                            <div className="p-4 space-y-2">
-                                <h3 className="text-lg font-bold text-black border-b border-gray-500 pb-4">
+
+                            {/* Inline Comment Bar */}
+                            <div className="flex gap-3 p-4 border-t">
+                                <input
+                                    className="flex-1 border rounded px-3 py-2 text-black placeholder:text-gray-600"
+                                    placeholder="Write a comment..."
+                                    value={newComment.content}
+                                    onChange={(e) =>
+                                        setNewComment({ content: e.target.value })
+                                    }
+                                />
+                                <Button text="Send" onClick={handleAddComment} />
+                            </div>
+
+                            <div className="p-4">
+                                <h3 className="font-bold mb-3 border-b pb-2 text-black">
                                     Comments
                                 </h3>
+
                                 {comments.length === 0 ? (
-                                    <div>
-                                        <p className="text-black font-bold pt-4">
-                                            No comments for this post yet
-                                        </p>
-                                        <p className="mt-2 ml-2 text-gray-700">
-                                            Be the first to comment!
-                                        </p>
-                                    </div>
+                                    <p className="text-gray-600">
+                                        No comments yet.
+                                    </p>
                                 ) : (
-                                    comments.map((c) => <CommentItem key={c.id} {...c} />)
+                                    comments.map((c) => (
+                                        <CommentItem key={c.id} {...c} />
+                                    ))
                                 )}
                             </div>
-                        </div>
+                        </>
                     )}
                 </div>
             </div>
 
             {/* New Post Modal */}
             {showNewPostModal && (
-                <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-auto text-black">
-                        <div className="flex justify-between items-center px-6 py-4 border-b bg-gray-50">
-                        <h1 className="text-2xl font-bold text-[#E55B3C]">Create New Post</h1>
-                        <RxCross2
-                            onClick={handleCloseWindow}
-                            className="cursor-pointer text-gray-600 hover:text-black"
-                            size={22}
-                        />
-                        </div>
-
-                        <div className="p-6 space-y-5">
-                        <p className="text-sm text-gray-600">
-                            Posting as <span className="font-semibold">{userName}</span>
-                        </p>
-
-                        {/* Title */}
-                        <input
-                            type="text"
-                            className="border border-gray-300 focus:ring-2 focus:ring-[#E55B3C] w-full px-3 py-2 rounded-lg"
-                            placeholder="Enter post title"
-                            value={newPost.title}
-                            onChange={(e) =>
-                            setNewPost({ ...newPost, title: e.target.value })
-                            }
-                        />
-                        {/* Tags */}
-                        <input
-                            type="text"
-                            className="border border-gray-300 focus:ring-2 focus:ring-[#E55B3C] w-full px-3 py-2 rounded-lg"
-                            placeholder="Enter tags, separated by commas (e.g. react,nextjs,frontend)"
-                            value={newPost.tags}
-                            onChange={(e) => setNewPost({ ...newPost, tags: e.target.value })}
-                        />
-
-                        {/* Quill Editor */}
-                        <ReactQuill
-                            theme="snow"
-                            modules={quillModules}
-                            value={newPost.content}
-                            onChange={(val) => setNewPost({ ...newPost, content: val })}
-                            className="min-h-[10em] rounded-lg"
-                        />
-                        </div>
-
-                        <div className="flex justify-end gap-4 px-6 py-4 border-t bg-gray-50">
-                        <button
-                            onClick={handleCloseWindow}
-                            className="px-4 py-2 bg-gray-200 rounded-md font-semibold hover:bg-gray-300"
-                        >
-                            Cancel
-                        </button>
-                        <Button onClick={handleAddPost} text="Post" />
-                        </div>
-                    </div>
-                </div>
-            )}
-
-
-            {/* Add Comment Modal */}
-            {showCommentModal && (
-                <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
-                    <div className="bg-white p-6 rounded-xl shadow-xl text-black relative w-full max-w-lg mx-auto">
-                        <button onClick={handleCloseWindow} title="Close">
+                <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 text-black placeholder:text-gray-400">
+                    <div className="bg-white rounded-2xl w-full max-w-3xl">
+                        <div className="flex justify-between p-4 border-b ">
+                            <h2 className="text-2xl font-bold text-[#E55B3C]">
+                                Create Post
+                            </h2>
                             <RxCross2
-                                className="cursor-pointer text-gray-600 hover:text-black"
-                                size={20}
+                                onClick={() => setShowNewPostModal(false)}
+                                className="cursor-pointer"
                             />
-                        </button>
-                        <h1 className="text-2xl font-bold text-center text-[#E55B3C] mb-2">
-                            Add Comment
-                        </h1>
-                        <div className="flex flex-col px-20 my-3">
-                            <p className="text-sm text-gray-600 mb-3">
-                                Commenting as{" "}
-                                <span className="font-semibold">{userName}</span>
-                            </p>
+                        </div>
 
-                            <label>Comment:</label>
-                            <textarea
-                                className="border px-2 rounded min-h-[4.5em]"
-                                value={newComment.content}
+                        <div className="p-6 space-y-4 ">
+                            <input
+                                className="w-full border rounded px-3 py-2 text-black placeholder:text-gray-400"
+                                placeholder="Title"
+                                value={newPost.title}
                                 onChange={(e) =>
-                                    setNewComment({ ...newComment, content: e.target.value })
+                                    setNewPost({ ...newPost, title: e.target.value })
                                 }
                             />
-                            <p className="text-red-500 mb-3"></p>
+
+                            <input
+                                className="w-full border rounded px-3 py-2 text-black placeholder:text-gray-400"
+                                placeholder="Tags (comma separated)"
+                                value={newPost.tags}
+                                onChange={(e) =>
+                                    setNewPost({ ...newPost, tags: e.target.value })
+                                }
+                            />
+
+                            <ReactQuill
+                                modules={quillModules}
+                                value={newPost.content}
+                                onChange={(val) =>
+                                    setNewPost({ ...newPost, content: val })
+                                }
+                            />
                         </div>
-                        <div className="flex justify-center">
+
+                        <div className="flex justify-end gap-3 p-4 border-t">
                             <button
-                                onClick={() => setShowCommentModal(false)}
-                                type="button"
-                                className="font-semibold px-6 py-2 rounded-md mr-8 bg-[#D9D9D9] transition duration-200 ease-in-out cursor-pointer focus:outline-none active:scale-95"
+                                onClick={() => setShowNewPostModal(false)}
+                                className="px-4 py-2 bg-gray-200 rounded"
                             >
                                 Cancel
                             </button>
-                            <Button onClick={handleAddComment} text="Comment" />
+                            <Button text="Post" onClick={handleAddPost} />
                         </div>
                     </div>
                 </div>
             )}
-            
+
             {/* Edit Post Modal */}
             {showEditPostModal && (
-                <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-auto text-black">
-                        <div className="flex justify-between items-center px-6 py-4 border-b bg-gray-50">
-                        <h1 className="text-2xl font-bold text-[#E55B3C]">Edit Post</h1>
-                        <RxCross2
-                            onClick={handleCloseWindow}
-                            className="cursor-pointer text-gray-600 hover:text-black"
-                            size={22}
-                        />
+                <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 text-black placeholder:text-gray-400">
+                    <div className="bg-white rounded-2xl w-full max-w-3xl">
+                        <div className="flex justify-between p-4 border-b">
+                            <h2 className="text-2xl font-bold text-[#E55B3C]">
+                                Edit Post
+                            </h2>
+                            <RxCross2
+                                onClick={() => setShowEditPostModal(false)}
+                                className="cursor-pointer"
+                            />
                         </div>
 
-                        <div className="p-6 space-y-5">
-                        <p className="text-sm text-gray-600">
-                            Editing as <span className="font-semibold">{userName}</span>
-                        </p>
+                        <div className="p-6 space-y-4">
+                            <input
+                                className="w-full border rounded px-3 py-2 text-black placeholder:text-gray-400"
+                                value={editPost.title}
+                                onChange={(e) =>
+                                    setEditPost({
+                                        ...editPost,
+                                        title: e.target.value,
+                                    })
+                                }
+                            />
 
-                        <input
-                            type="text"
-                            className="border border-gray-300 focus:ring-2 focus:ring-[#E55B3C] w-full px-3 py-2 rounded-lg"
-                            value={editPost.title}
-                            onChange={(e) =>
-                            setEditPost({ ...editPost, title: e.target.value })
-                            }
-                        />
+                            <input
+                                className="w-full border rounded px-3 py-2 text-black placeholder:text-gray-400"
+                                value={editPost.tags}
+                                onChange={(e) =>
+                                    setEditPost({
+                                        ...editPost,
+                                        tags: e.target.value,
+                                    })
+                                }
+                            />
 
-                        <input
-                            type="text"
-                            className="border border-gray-300 focus:ring-2 focus:ring-[#E55B3C] w-full px-3 py-2 rounded-lg"
-                            placeholder="Enter tags separated by commas (e.g. react,nextjs,frontend)"
-                            value={editPost.tags}
-                            onChange={(e) => setEditPost({ ...editPost, tags: e.target.value })}
-                        />
-
-                        <ReactQuill
-                            theme="snow"
-                            modules={quillModules}
-                            value={editPost.content}
-                            onChange={(val) => setEditPost({ ...editPost, content: val })}
-                            className="min-h-[10em] rounded-lg"
-                        />
+                            <ReactQuill
+                                modules={quillModules}
+                                value={editPost.content}
+                                onChange={(val) =>
+                                    setEditPost({
+                                        ...editPost,
+                                        content: val,
+                                    })
+                                }
+                            />
                         </div>
 
-                        <div className="flex justify-end gap-4 px-6 py-4 border-t bg-gray-50">
-                        <button
-                            onClick={handleCloseWindow}
-                            className="px-4 py-2 bg-gray-200 rounded-md font-semibold hover:bg-gray-300"
-                        >
-                            Cancel
-                        </button>
-                        <Button onClick={handleEditPost} text="Save Changes" />
+                        <div className="flex justify-end gap-3 p-4 border-t">
+                            <button
+                                onClick={() => setShowEditPostModal(false)}
+                                className="px-4 py-2 bg-gray-200 rounded"
+                            >
+                                Cancel
+                            </button>
+                            <Button
+                                text="Save Changes"
+                                onClick={handleEditPost}
+                            />
                         </div>
                     </div>
                 </div>

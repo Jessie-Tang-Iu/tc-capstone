@@ -1,11 +1,28 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-export default function PostItem({ title, first_name, last_name, username, onClick, disabled = false }) {
-  const displayName = first_name && last_name
-    ? `${first_name} ${last_name}`
-    : username || "Unknown";
+export default function PostItem({
+  title,
+  first_name,
+  last_name,
+  username,
+  author_name,
+  onClick,
+  disabled = false,
+}) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  const displayName =
+    (first_name && last_name ? `${first_name} ${last_name}` : username) ||
+    author_name ||
+    "Unknown";
 
   return (
     <button

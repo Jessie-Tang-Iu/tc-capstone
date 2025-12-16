@@ -1,25 +1,39 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../ui/Button";
-import { useUser } from "@clerk/nextjs";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 
-export default function PostDetail({ id, title, author_id, first_name, last_name, username, content, created_at, onEdit, tags }) {
-  const { user } = useUser();
-  const userID = user?.id;
-  
+export default function PostDetail({
+  id,
+  title,
+  author_id,
+  first_name,
+  last_name,
+  username,
+  author_name,
+  content,
+  created_at,
+  onEdit,
+  tags,
+}) {
+  const [mounted, setMounted] = useState(false);
+  const [formattedDate, setFormattedDate] = useState("");
+
+  useEffect(() => {
+    setMounted(true);
+    setFormattedDate(new Date(created_at).toLocaleString());
+  }, [created_at]);
+
+  if (!mounted) return null; // skip rendering until mounted
+
   const displayName =
-    first_name && last_name
-      ? `${first_name} ${last_name}`
-      : username || "Unknown";
-
-  const formattedDate = new Date(created_at).toLocaleString();
+    (first_name && last_name ? `${first_name} ${last_name}` : username) ||
+    author_name ||
+    "Unknown";
 
   const formattedTags =
     typeof tags === "string"
-      ? tags.split(",").map((t) => t.trim()).filter((t) => t)
+      ? tags.split(",").map((t) => t.trim()).filter(Boolean)
       : Array.isArray(tags)
       ? tags
       : [];
@@ -28,8 +42,7 @@ export default function PostDetail({ id, title, author_id, first_name, last_name
     <div className="p-4 mb-10">
       <div className="flex flex-row justify-between items-start">
         <h2 className="text-2xl font-bold text-black mb-2">{title}</h2>
-
-        {author_id === userID && (
+        {author_id && (
           <div className="flex justify-end">
             <Button
               text="Edit Post"
@@ -64,7 +77,6 @@ export default function PostDetail({ id, title, author_id, first_name, last_name
         </div>
       )}
 
-      {/* Allows the content to render the HTML output from quill, TO-DO: Sanitize input to prevent XSS */}
       <div
         className="post-content mt-5 border-t border-gray-500 pt-4 text-black space-y-4 leading-relaxed"
         dangerouslySetInnerHTML={{ __html: content }}

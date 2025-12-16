@@ -1,22 +1,31 @@
-"user client";
+"use client";
 
-import { useUser } from "@clerk/nextjs";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../ui/Button";
 
-export default function CommentItem({ author_id, first_name, last_name, username, content }) {
-  const userContext = useUser();
-  const currentUserID = userContext?.user?.id;
+export default function CommentItem({
+  author_id,
+  first_name,
+  last_name,
+  username,
+  author_name,
+  content,
+}) {
+  const [mounted, setMounted] = useState(false);
 
-  const displayName = first_name && last_name
-    ? `${first_name} ${last_name}`
-    : username || "Unknown";
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+
+  const displayName =
+    (first_name && last_name ? `${first_name} ${last_name}` : username) ||
+    author_name ||
+    "Unknown";
 
   return (
     <div className="border-b border-gray-300 py-4">
       <div className="flex items-center text-sm text-gray-500">
         <p className="font-semibold text-black">{displayName}</p>
-        {author_id === currentUserID && (
+        {author_id && (
           <Button
             text="Edit Comment"
             onClick={() => alert("Edit comment feature coming soon!")}
